@@ -4,6 +4,8 @@
 
 역할 담당자는 확정되었다. 시작일과 종료일은 팀 일정 확정 후 입력한다.
 
+https://docs.google.com/spreadsheets/d/1E4s9fRkWV9CWqBU_eaYLZt1W7aAxbuuUmLPl04V08HM/edit?usp=sharing
+
 ## 역할
 
 | 역할 코드 | 역할 | 담당자 |
