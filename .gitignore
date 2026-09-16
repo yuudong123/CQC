@@ -5,3 +5,9 @@ outputs/*
 !*/.gitkeep
 __pycache__/
 .ipynb_checkpoints/
+
+.vscode/
+.codex/
+AGENTS.md
+
+.idea/

@@ -9,7 +9,9 @@
 - 기능 동결: **2026-10-13**. 이후 치명적 오류만 수정한다.
 - 두 번째 농산물 품목은 이번 WBS의 필수 범위에서 제외한다.
 
-## 2. 역할
+https://docs.google.com/spreadsheets/d/1E4s9fRkWV9CWqBU_eaYLZt1W7aAxbuuUmLPl04V08HM/edit?usp=sharing
+
+## 역할
 
 | 코드 | 역할 | 담당자 | 소유 문서 |
 |---|---|---|---|
