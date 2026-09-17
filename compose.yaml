@@ -1,0 +1,185 @@
+# ============================================================
+# CQC Docker Compose
+# WBS: MO-02
+# 담당: 홍유나
+# 목적:
+# - CQC 프로젝트의 5개 실행 단위를 Docker Compose로 관리하기 위한 기본 골격
+# - 이후 각 담당자가 구현한 실제 Dockerfile / 실행 명령을 연결할 예정
+#
+# 현재 MO-02 범위:
+# - simulator
+# - inference
+# - backend
+# - frontend
+# - mysql
+# 총 5개 서비스를 Compose에 등록
+# - 모든 서비스에 restart: unless-stopped 적용
+#
+# 아직 하지 않는 작업:
+# - healthcheck 및 서비스 기동 순서 → MO-04
+# - Volume / 비밀값 관리 → MO-05
+# - 실제 CI/CD 연동 → MO-03 이후
+# ============================================================
+
+services:
+  # ==========================================================
+  # MySQL
+  # ==========================================================
+  # 검사 결과, 통계, 제어 결과 등의 데이터를 저장하는 DB 서비스
+  #
+  # 현재 MySQL 사용은 프로젝트에서 확정된 상태이며,
+  # 실제 테이블 구조와 마이그레이션 방식은 Backend 작업에서 결정한다.
+  #
+  # 지금 단계에서는 MySQL 컨테이너가 실행될 수 있는 기본 설정만 작성한다.
+  # ==========================================================
+  mysql:
+    # MySQL 공식 Docker 이미지 사용
+    image: mysql:8.4
+
+    # 컨테이너가 비정상 종료되거나 Docker가 재시작되면 자동 재시작
+    # 단, 사용자가 직접 중지한 경우에는 자동으로 다시 실행하지 않음
+    restart: unless-stopped
+
+    # MySQL 초기 실행에 필요한 환경 변수
+    #
+    # ${환경변수:-기본값}
+    # 형태는 환경 변수가 존재하면 해당 값을 사용하고,
+    # 없으면 뒤의 기본값을 사용하는 Docker Compose 문법이다.
+    #
+    # 실제 배포 시 비밀번호는 .env에서 관리할 예정
+    environment:
+      # MySQL root 계정 비밀번호
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-cqc_local_root}
+
+      # 최초 생성할 기본 DB 이름
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-cqc}
+
+      # 프로젝트에서 사용할 일반 DB 사용자
+      MYSQL_USER: ${MYSQL_USER:-cqc}
+
+      # 일반 DB 사용자의 비밀번호
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-cqc_local_password}
+
+  # ==========================================================
+  # Inference
+  # ==========================================================
+  # AI 모델 추론을 담당하는 서비스
+  #
+  # Backend가 HTTP 요청으로 이미지를 전달하면
+  # 품종 / 품질 예측 결과와 신뢰도 등을 반환하는 역할이다.
+  #
+  # 현재 실제 inference Dockerfile 및 실행 명령이 없기 때문에
+  # Alpine Linux 이미지를 이용한 placeholder 상태로 구성한다.
+  #
+  # 모델 담당자의 inference 코드가 완성되면
+  # image / command 부분을 build 설정과 실제 실행 명령으로 교체한다.
+  # ==========================================================
+  inference:
+    # 실제 추론 이미지가 준비되기 전 임시 컨테이너
+    image: alpine:3.20
+
+    # Docker 또는 컨테이너 재시작 시 자동 복구
+    restart: unless-stopped
+
+    # 현재는 실제 추론 서버가 없기 때문에
+    # 안내 문구만 출력하고 컨테이너가 종료되지 않도록 유지한다.
+    command:
+      - sh
+      - -c
+      - |
+        echo "[MO-02 placeholder] inference"
+        tail -f /dev/null
+
+  # ==========================================================
+  # Backend
+  # ==========================================================
+  # CQC 전체 검사 흐름을 제어하는 핵심 API 서비스
+  #
+  # 주요 역할:
+  # - simulator 입력 수신
+  # - inference 호출
+  # - 품종 / 품질 결과 처리
+  # - 신뢰도 및 재검사 정책 처리
+  # - Virtual Control / bin 판정
+  # - MySQL 검사 이력 저장
+  # - Frontend용 API 제공
+  #
+  # Backend는 FastAPI 사용이 확정되어 있지만
+  # 실제 Dockerfile과 실행 명령은 아직 구현 중이므로 placeholder 사용
+  # ==========================================================
+  backend:
+    # 실제 Backend Docker 이미지가 준비되기 전 임시 이미지
+    image: alpine:3.20
+
+    # 서비스 비정상 종료 시 자동 재시작
+    restart: unless-stopped
+
+    # 실제 FastAPI 실행 명령은 BE 구현 이후 교체 예정
+    command:
+      - sh
+      - -c
+      - |
+        echo "[MO-02 placeholder] backend"
+        tail -f /dev/null
+
+  # ==========================================================
+  # Frontend
+  # ==========================================================
+  # 사용자에게 검사 상태와 결과를 보여주는 웹 서비스
+  #
+  # 주요 화면 예시:
+  # - 현재 검사 상태
+  # - 품종 / 품질 판정 결과
+  # - 최근 검사 이력
+  # - 통계 / 차트
+  # - 시스템 상태
+  #
+  # Frontend의 실제 프레임워크와 실행 명령이 확정되면
+  # placeholder를 실제 build 설정으로 변경한다.
+  # ==========================================================
+  frontend:
+    # 실제 Frontend Docker 이미지가 준비되기 전 임시 이미지
+    image: alpine:3.20
+
+    # 서비스가 비정상 종료되었을 때 자동 재시작
+    restart: unless-stopped
+
+    # 현재 Frontend 실행 코드가 없으므로 컨테이너만 유지
+    command:
+      - sh
+      - -c
+      - |
+        echo "[MO-02 placeholder] frontend"
+        tail -f /dev/null
+
+  # ==========================================================
+  # Simulator
+  # ==========================================================
+  # 실제 농산물 검사 장비 대신
+  # 저장된 사과 이미지 그룹을 자동으로 Backend에 전달하는 서비스
+  #
+  # 실제 프로젝트에서는 일정 간격으로 이미지 그룹을 전송하여
+  # 실제 검사 라인과 비슷한 흐름을 재현하는 역할을 한다.
+  #
+  # 목표:
+  # - 약 500ms 간격 입력
+  # - 초당 사과 그룹 2개 처리 환경 재현
+  #
+  # 실제 simulator 구현은 Backend 작업과 연결되므로
+  # 현재는 placeholder 상태로 유지한다.
+  # ==========================================================
+  simulator:
+    # 실제 Simulator 이미지가 준비되기 전 임시 이미지
+    image: alpine:3.20
+
+    # Docker 재시작 후에도 서비스 자동 재실행
+    restart: unless-stopped
+
+    # Simulator 코드가 아직 없기 때문에
+    # 안내 문구 출력 후 컨테이너를 계속 유지
+    command:
+      - sh
+      - -c
+      - |
+        echo "[MO-02 placeholder] simulator"
+        tail -f /dev/null
