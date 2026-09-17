@@ -65,6 +65,14 @@ PNG 청크를 최대 1MB 블록으로 읽어 SHA-256과 CRC를 계산했다. 대
 
 SHA-256이 같은 이미지 5쌍·10장을 찾았지만, 서로 다른 각도 라벨이 붙어 있다. 데이터 오류 후보인 것은 확실하지만 어떤 라벨을 유지할지는 육안 검토와 모델 오류 분석이 필요하므로 원본과 매니페스트에서 삭제하지 않았다.
 
+| 그룹 | 중복 파일 stem | 각도 차이 |
+|---|---|---|
+| `601032003000` | `apple_fuji_M_3-27`, `apple_fuji_M_3-28` | 수직 30° / 45° |
+| `601143003000` | `apple_yanggwang_S_3-41`, `apple_yanggwang_S_3-42` | 수직 240° / 255° |
+| `601143003000` | `apple_yanggwang_S_3-45`, `apple_yanggwang_S_3-46` | 수직 300° / 315° |
+| `601143004000` | `apple_yanggwang_S_4-85`, `apple_yanggwang_S_4-86` | 수직 180° / 195° |
+| `601032026000` | `apple_fuji_M_26-140`, `apple_fuji_M_26-141` | 수직 285° / 300° |
+
 ## 5. 검증 결과
 
 | 항목 | 결과 |
@@ -84,7 +92,7 @@ SHA-256이 같은 이미지 5쌍·10장을 찾았지만, 서로 다른 각도 �
 - `src/data/manifest.py`: CRC·중복 후보 요약과 PNG 해상도 검증 보강
 - `tests/test_image_quality.py`: 정상·CRC 오류·잘린 PNG 테스트
 - `tests/test_manifest.py`: PNG 해상도 불일치 테스트
-- `docs/data-work-review.md`: DM-01·DM-02 결과와 리뷰 순서
+- `docs/wbs/[DM-02] 그룹 EDA·품질 검사.md`: 작업 결과와 검증 기록
 - `docs/data-spec.md`: 품질 검사 결과 반영
 
 관련 커밋:
@@ -98,9 +106,9 @@ SHA-256이 같은 이미지 5쌍·10장을 찾았지만, 서로 다른 각도 �
 - 완전 중복 5쌍은 현재 보존하며 향후 제외 시 분할 파일과 모델 카드에 기록한다.
 - 운영 중 정상 이미지는 저장하지 않으며, 이번 원본 무결성 검사는 학습 데이터 준비 과정이다.
 
-## 8. 리뷰 파일
+## 8. 리뷰 대상
 
-- `docs/data-work-review.md`
+- `docs/wbs/[DM-02] 그룹 EDA·품질 검사.md`
 - `docs/data-spec.md`
 - `src/data/image_quality.py`
 - `tests/test_image_quality.py`
