@@ -11,6 +11,7 @@ import argparse
 import csv
 import json
 import re
+import struct
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
@@ -192,6 +193,21 @@ def _load_label(label_zip: ZipFile, info: ZipInfo) -> dict[str, Any]:
     return value
 
 
+def _read_png_dimensions(image_zip: ZipFile, info: ZipInfo) -> tuple[int, int]:
+    with image_zip.open(info) as stream:
+        header = stream.read(24)
+    if len(header) < 24 or header[:8] != b"\x89PNG\r\n\x1a\n":
+        raise DatasetValidationError(
+            f"PNG 시그니처가 올바르지 않습니다: {image_zip.filename}!{info.filename}"
+        )
+    chunk_length, chunk_type, width, height = struct.unpack(">I4sII", header[8:24])
+    if chunk_length != 13 or chunk_type != b"IHDR" or width <= 0 or height <= 0:
+        raise DatasetValidationError(
+            f"PNG IHDR이 올바르지 않습니다: {image_zip.filename}!{info.filename}"
+        )
+    return width, height
+
+
 def _validate_label(label: dict[str, Any], pair: ArchivePair, member: str) -> None:
     missing = sorted(REQUIRED_FIELDS - set(label))
     if missing:
@@ -285,7 +301,7 @@ def build_manifest(raw_root: Path) -> tuple[list[dict[str, Any]], dict[str, Any]
             with ZipFile(pair.image_archive) as image_zip, ZipFile(pair.label_archive) as label_zip:
                 images = _index_members(
                     image_zip.infolist(),
-                    suffixes={".png", ".jpg", ".jpeg"},
+                    suffixes={".png"},
                     archive=pair.image_archive,
                 )
                 labels = _index_members(
@@ -305,6 +321,13 @@ def build_manifest(raw_root: Path) -> tuple[list[dict[str, Any]], dict[str, Any]
                     label_info = labels[stem]
                     label = _load_label(label_zip, label_info)
                     _validate_label(label, pair, label_info.filename)
+                    png_width, png_height = _read_png_dimensions(image_zip, images[stem])
+                    if (png_width, png_height) != (label["img_width"], label["img_height"]):
+                        raise DatasetValidationError(
+                            f"PNG와 JSON 해상도가 다릅니다: {images[stem].filename}; "
+                            f"png={png_width}x{png_height}, "
+                            f"json={label['img_width']}x{label['img_height']}"
+                        )
                     for field, value in label.items():
                         field_types[field][_type_name(value)] += 1
                     for field in (
@@ -354,6 +377,14 @@ def build_manifest(raw_root: Path) -> tuple[list[dict[str, Any]], dict[str, Any]
         raise DatasetValidationError(f"sample_id가 중복됩니다: {duplicate_sample_ids[:5]}")
 
     group_size_distribution = Counter(group_sizes.values())
+    image_fingerprint_samples: dict[tuple[str, int], list[str]] = defaultdict(list)
+    for row in rows:
+        image_fingerprint_samples[
+            (row["image_crc32"], row["image_size_bytes"])
+        ].append(row["sample_id"])
+    image_fingerprints = Counter(
+        {fingerprint: len(samples) for fingerprint, samples in image_fingerprint_samples.items()}
+    )
     summary = {
         "contract": {
             "crop_type": "apple",
@@ -381,6 +412,13 @@ def build_manifest(raw_root: Path) -> tuple[list[dict[str, Any]], dict[str, Any]
             "duplicate_group_img_no_keys": sum(
                 1 for count in group_img_counts.values() if count > 1
             ),
+            "duplicate_image_fingerprint_keys": sum(
+                1 for count in image_fingerprints.values() if count > 1
+            ),
+            "duplicate_image_fingerprint_rows": sum(
+                count for count in image_fingerprints.values() if count > 1
+            ),
+            "png_json_dimension_mismatches": 0,
         },
         "angles": {
             field: sorted(values, key=lambda value: (str(type(value)), str(value)))
@@ -390,6 +428,15 @@ def build_manifest(raw_root: Path) -> tuple[list[dict[str, Any]], dict[str, Any]
             field: dict(sorted(type_counts.items()))
             for field, type_counts in sorted(field_types.items())
         },
+        "duplicate_image_candidates": [
+            {
+                "crc32": fingerprint[0],
+                "size_bytes": fingerprint[1],
+                "sample_ids": samples,
+            }
+            for fingerprint, samples in sorted(image_fingerprint_samples.items())
+            if len(samples) > 1
+        ],
         "archives": archive_summaries,
     }
     return rows, summary

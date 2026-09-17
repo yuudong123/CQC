@@ -2,7 +2,7 @@
 
 - 담당자: 조현재
 - 작성 기한: 2026-09-17
-- 상태: DM-01 완료, DM-02 그룹 EDA·품질 검사 착수 가능
+- 상태: DM-01·DM-02 완료, 리뷰 후 DM-03 그룹 층화 분할 착수 가능
 
 ## 현재 확정
 
@@ -11,7 +11,9 @@
 - 정답: 부사·양광 품종과 `L=특`, `M=상`, `S=보통` 품질
 - 원본 접근: ZIP을 풀지 않고 이미지·JSON 멤버를 파일명 stem으로 연결
 - 매니페스트 생성: `python -m src.data.manifest`
+- 전체 이미지 무결성 검사: `python -m src.data.image_quality`
 - 생성 위치: `data/processed/manifest.csv`, `data/processed/manifest-summary.json`
+- 무결성 결과: `data/processed/image-quality-report.json`
 - 모델 파일·체크포인트·생성 매니페스트는 Git에서 제외
 
 ## 다음 확정 항목

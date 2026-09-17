@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import struct
 import tempfile
 import unittest
 from pathlib import Path
@@ -37,6 +38,10 @@ def _label(cultivar: str, quality: str, group_no: int, img_no: int) -> dict:
     }
 
 
+def _png_header(width: int = 1000, height: int = 1000) -> bytes:
+    return b"\x89PNG\r\n\x1a\n" + struct.pack(">I4sII", 13, b"IHDR", width, height)
+
+
 class ManifestTest(unittest.TestCase):
     def _make_dataset(self, root: Path, *, mismatched_label: bool = False) -> None:
         group = 601000000000
@@ -51,7 +56,7 @@ class ManifestTest(unittest.TestCase):
                     archive = f"Apple_{cultivar}_{quality}.zip"
                     stem = f"apple_{cultivar}_{quality}_1-1"
                     with ZipFile(image_dir / archive, "w") as image_zip:
-                        image_zip.writestr(f"{stem}.PNG", b"fake-png")
+                        image_zip.writestr(f"{stem}.PNG", _png_header())
                     value = _label(cultivar, quality, group, 1)
                     if mismatched_label and split_dir == "1.Training" and cultivar == "fuji" and quality == "L":
                         value["cate3"] = "보통"
@@ -72,6 +77,9 @@ class ManifestTest(unittest.TestCase):
         self.assertEqual(12, summary["dataset"]["groups"])
         self.assertEqual("fuji", rows[0]["cultivar"])
         self.assertRegex(rows[0]["image_crc32"], r"^[0-9a-f]{8}$")
+        self.assertEqual(1, summary["dataset"]["duplicate_image_fingerprint_keys"])
+        self.assertEqual(12, summary["dataset"]["duplicate_image_fingerprint_rows"])
+        self.assertEqual(12, len(summary["duplicate_image_candidates"][0]["sample_ids"]))
 
     def test_rejects_label_that_conflicts_with_archive_name(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -91,7 +99,23 @@ class ManifestTest(unittest.TestCase):
                 / "Apple_fuji_L.zip"
             )
             with ZipFile(archive, "a") as image_zip:
-                image_zip.writestr("unpaired.png", b"fake-png")
+                image_zip.writestr("unpaired.png", _png_header())
+            with self.assertRaises(DatasetValidationError):
+                build_manifest(root)
+
+    def test_rejects_png_dimension_mismatch(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self._make_dataset(root)
+            archive = (
+                root
+                / "1.Training"
+                / "원천데이터_230921_add"
+                / "Apple_fuji_L.zip"
+            )
+            stem = "apple_fuji_L_1-1.PNG"
+            with ZipFile(archive, "w") as image_zip:
+                image_zip.writestr(stem, _png_header(width=500, height=500))
             with self.assertRaises(DatasetValidationError):
                 build_manifest(root)
 
