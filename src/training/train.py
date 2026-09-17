@@ -14,9 +14,8 @@ from torch.utils.data import DataLoader
 
 from src.data.multiview import MultiViewDataset, SUPPORTED_VIEW_COUNTS, load_groups
 from src.data.torch_dataset import TorchMultiViewDataset
-from src.models.multiview import MultiViewBaseline
-
 from .engine import run_epoch, save_checkpoint
+from .models import MODEL_KINDS, build_model
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -24,7 +23,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--manifest", type=Path, default=Path("data/processed/manifest.csv"))
     parser.add_argument("--splits", type=Path, default=Path("configs/splits/seed-42.csv"))
     parser.add_argument("--raw-root", type=Path, default=Path("data/raw"))
-    parser.add_argument("--output-dir", type=Path, default=Path("artifacts/training/baseline-8view"))
+    parser.add_argument("--output-dir", type=Path)
+    parser.add_argument("--model-kind", choices=MODEL_KINDS, default="joint")
     parser.add_argument("--views", type=int, choices=SUPPORTED_VIEW_COUNTS, default=8)
     parser.add_argument("--cv-fold", type=int, default=0)
     parser.add_argument("--epochs", type=int, default=20)
@@ -41,6 +41,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("epochs, batch-size, image-size는 1 이상이어야 합니다")
     if args.workers != 0:
         parser.error("ZIP 핸들 안전성을 위해 현재 workers는 0만 지원합니다")
+    if args.output_dir is None:
+        args.output_dir = (
+            Path("outputs/training")
+            / f"{args.model_kind}-{args.views}view-fold-{args.cv_fold}"
+        )
     return args
 
 
@@ -102,6 +107,7 @@ def main(argv: list[str] | None = None) -> int:
         "splits": str(args.splits),
         "raw_root": str(args.raw_root),
         "views": args.views,
+        "model_kind": args.model_kind,
         "cv_fold": args.cv_fold,
         "epochs": args.epochs,
         "batch_size": args.batch_size,
@@ -135,7 +141,9 @@ def main(argv: list[str] | None = None) -> int:
         num_workers=args.workers,
         pin_memory=device.type == "cuda",
     )
-    model = MultiViewBaseline(pretrained=not args.no_pretrained).to(device)
+    model = build_model(
+        args.model_kind, pretrained=not args.no_pretrained
+    ).to(device)
     optimizer = torch.optim.AdamW(
         model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay
     )

@@ -14,7 +14,12 @@
 - 전체 이미지 무결성 검사: `python -m src.data.image_quality`
 - 그룹 층화 분할 생성: `python -m src.data.split_groups`
 - 다각도 선택·마스킹 검증: `python -m src.data.multiview --smoke-load`
-- 8장 CV 기준선 학습: `python -m src.training.train --views 8 --cv-fold 0`
+- 학습 코드 위치: `src/training/`
+- 단일 학습 진입점: `python -m src.training.train --model-kind joint --views 8 --cv-fold 0`
+- 전체 비교 계획 생성: `python -m src.training.experiments` (`--execute` 없이는 학습하지 않음)
+- 5-fold 결과 집계: `python -m src.training.summarize ... --output outputs/summary.json`
+- CPU·GPU 추론시간 측정: `python -m src.training.benchmark ...`
+- 최종 Test 평가: `python -m src.training.evaluate ...` (확인 문자열 필수)
 - 생성 위치: `data/processed/manifest.csv`, `data/processed/manifest-summary.json`
 - 무결성 결과: `data/processed/image-quality-report.json`
 - 모델 파일·체크포인트·생성 매니페스트는 Git에서 제외

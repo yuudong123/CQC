@@ -19,6 +19,10 @@ class TrainingCliTest(unittest.TestCase):
         args = parse_args([])
         self.assertEqual(args.views, 8)
         self.assertEqual(args.cv_fold, 0)
+        self.assertEqual(args.model_kind, "joint")
+        self.assertEqual(
+            args.output_dir, Path("outputs/training/joint-8view-fold-0")
+        )
 
     def test_checkpoint_hash_is_stable(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
