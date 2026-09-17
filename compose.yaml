@@ -1,24 +1,30 @@
 # ============================================================
 # CQC Docker Compose
-# WBS: MO-02
+# WBS: MO-04
 # 담당: 홍유나
 # 목적:
-# - CQC 프로젝트의 5개 실행 단위를 Docker Compose로 관리하기 위한 기본 골격
-# - 이후 각 담당자가 구현한 실제 Dockerfile / 실행 명령을 연결할 예정
+# - CQC 프로젝트의 5개 실행 단위를 Docker Compose로 관리
+# - 각 서비스의 healthcheck를 통해 정상 상태 확인
+# - 서비스 간 기동 순서를 service_healthy 기준으로 제어
 #
-# 현재 MO-02 범위:
-# - simulator
-# - inference
-# - backend
-# - frontend
-# - mysql
-# 총 5개 서비스를 Compose에 등록
-# - 모든 서비스에 restart: unless-stopped 적용
+# 현재 MO-04 반영 범위:
+# - mysql healthcheck 적용
+# - inference placeholder healthcheck 적용
+# - backend healthcheck 적용
+# - backend는 mysql / inference가 healthy 상태 이후 기동
+# - frontend / simulator는 backend가 healthy 상태 이후 기동
+# - 모든 서비스에 restart: unless-stopped 유지
 #
-# 아직 하지 않는 작업:
-# - healthcheck 및 서비스 기동 순서 → MO-04
+# 현재 기동 구조:
+#   MySQL ─────┐
+#              ├→ Backend → Simulator
+#   Inference ─┘          └→ Frontend
+#
+# 이후 작업:
+# - inference 실제 API 구현 시 placeholder healthcheck를 실제 /health 검사로 교체
+# - backend 실제 FastAPI 구현 시 placeholder healthcheck를 실제 /health 검사로 교체
+# - 실제 Frontend / Simulator 실행 파일 준비 시 placeholder command 교체
 # - Volume / 비밀값 관리 → MO-05
-# - 실제 CI/CD 연동 → MO-03 이후
 # ============================================================
 
 services:
@@ -30,7 +36,8 @@ services:
   # 현재 MySQL 사용은 프로젝트에서 확정된 상태이며,
   # 실제 테이블 구조와 마이그레이션 방식은 Backend 작업에서 결정한다.
   #
-  # 지금 단계에서는 MySQL 컨테이너가 실행될 수 있는 기본 설정만 작성한다.
+  # MO-04에서는 MySQL 컨테이너 기본 설정과 함께
+  # 실제 연결 가능 여부를 확인하는 healthcheck를 적용한다.
   # ==========================================================
   mysql:
     # MySQL 공식 Docker 이미지 사용
@@ -60,6 +67,24 @@ services:
       # 일반 DB 사용자의 비밀번호
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-cqc_local_password}
 
+    # ==========================================================
+    # MO-04 Healthcheck
+    # ==========================================================
+    # 단순히 컨테이너가 실행 중인지가 아니라,
+    # MySQL이 실제 연결 요청을 받을 수 있는 상태인지 확인한다.
+    #
+    # $$MYSQL_ROOT_PASSWORD:
+    # Compose가 아닌 컨테이너 내부 환경 변수의 값을 사용하기 위해
+    # $ 문자를 두 번 작성한다.
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD --silent
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
   # ==========================================================
   # Inference
   # ==========================================================
@@ -68,11 +93,11 @@ services:
   # Backend가 HTTP 요청으로 이미지를 전달하면
   # 품종 / 품질 예측 결과와 신뢰도 등을 반환하는 역할이다.
   #
-  # 현재 실제 inference Dockerfile 및 실행 명령이 없기 때문에
+  # 현재 실제 inference Dockerfile 및 실행 명령이 아직 연결되지 않아
   # Alpine Linux 이미지를 이용한 placeholder 상태로 구성한다.
   #
-  # 모델 담당자의 inference 코드가 완성되면
-  # image / command 부분을 build 설정과 실제 실행 명령으로 교체한다.
+  # MO-04에서는 placeholder 컨테이너가 정상 기동했는지 healthcheck로 확인한다.
+  # 실제 inference API가 구현되면 image / command와 healthcheck를 함께 교체한다.
   # ==========================================================
   inference:
     # 실제 추론 이미지가 준비되기 전 임시 컨테이너
@@ -81,14 +106,29 @@ services:
     # Docker 또는 컨테이너 재시작 시 자동 복구
     restart: unless-stopped
 
-    # 현재는 실제 추론 서버가 없기 때문에
-    # 안내 문구만 출력하고 컨테이너가 종료되지 않도록 유지한다.
+    # 실제 추론 서버가 아직 연결되지 않았기 때문에
+    # placeholder 정상 기동 표시 파일을 생성한 뒤 컨테이너를 유지한다.
     command:
       - sh
       - -c
       - |
-        echo "[MO-02 placeholder] inference"
+        echo "[MO-04 placeholder] inference"
+        touch /tmp/inference-healthy
         tail -f /dev/null
+
+    # ==========================================================
+    # MO-04 Healthcheck
+    # ==========================================================
+    # 현재는 실제 inference 서버가 없으므로 placeholder용 검사이다.
+    # 추후 inference API가 구현되면 /health 등의 실제 엔드포인트 검사로 교체한다.
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - test -f /tmp/inference-healthy
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   # ==========================================================
   # Backend
@@ -105,7 +145,8 @@ services:
   # - Frontend용 API 제공
   #
   # Backend는 FastAPI 사용이 확정되어 있지만
-  # 실제 Dockerfile과 실행 명령은 아직 구현 중이므로 placeholder 사용
+  # 실제 Dockerfile과 실행 명령이 아직 연결되지 않아 placeholder를 사용한다.
+  # MO-04에서는 MySQL / Inference가 healthy 상태가 된 뒤 기동되도록 구성한다.
   # ==========================================================
   backend:
     # 실제 Backend Docker 이미지가 준비되기 전 임시 이미지
@@ -114,13 +155,39 @@ services:
     # 서비스 비정상 종료 시 자동 재시작
     restart: unless-stopped
 
-    # 실제 FastAPI 실행 명령은 BE 구현 이후 교체 예정
+    # ==========================================================
+    # MO-04 기동 의존성
+    # ==========================================================
+    # Backend는 DB와 AI 추론 서비스를 모두 사용하므로,
+    # 두 서비스가 단순 실행 상태가 아니라 healthy 상태가 된 뒤 기동한다.
+    depends_on:
+      mysql:
+        condition: service_healthy
+      inference:
+        condition: service_healthy
+
+    # 실제 FastAPI 실행 명령이 연결되면 현재 placeholder command를 교체한다.
     command:
       - sh
       - -c
       - |
-        echo "[MO-02 placeholder] backend"
+        echo "[MO-04 placeholder] backend"
+        touch /tmp/backend-healthy
         tail -f /dev/null
+
+    # ==========================================================
+    # MO-04 Healthcheck
+    # ==========================================================
+    # 현재는 실제 FastAPI 서버가 없으므로 placeholder용 검사이다.
+    # 추후 Backend API가 구현되면 /health 등의 실제 엔드포인트 검사로 교체한다.
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - test -f /tmp/backend-healthy
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   # ==========================================================
   # Frontend
@@ -134,8 +201,9 @@ services:
   # - 통계 / 차트
   # - 시스템 상태
   #
-  # Frontend의 실제 프레임워크와 실행 명령이 확정되면
-  # placeholder를 실제 build 설정으로 변경한다.
+  # 현재 Frontend는 placeholder 상태이며,
+  # MO-04에서는 Backend가 healthy 상태가 된 뒤 기동되도록 의존성을 적용한다.
+  # 실제 Frontend 실행 구성이 준비되면 image / build / command 설정을 교체한다.
   # ==========================================================
   frontend:
     # 실제 Frontend Docker 이미지가 준비되기 전 임시 이미지
@@ -144,12 +212,21 @@ services:
     # 서비스가 비정상 종료되었을 때 자동 재시작
     restart: unless-stopped
 
-    # 현재 Frontend 실행 코드가 없으므로 컨테이너만 유지
+    # ==========================================================
+    # MO-04 기동 의존성
+    # ==========================================================
+    # Frontend는 Backend API를 사용하므로,
+    # Backend가 healthy 상태가 된 뒤 기동한다.
+    depends_on:
+      backend:
+        condition: service_healthy
+
+    # 현재 Frontend 실행 코드가 없으므로 placeholder 컨테이너를 유지한다.
     command:
       - sh
       - -c
       - |
-        echo "[MO-02 placeholder] frontend"
+        echo "[MO-04 placeholder] frontend"
         tail -f /dev/null
 
   # ==========================================================
@@ -165,8 +242,9 @@ services:
   # - 약 500ms 간격 입력
   # - 초당 사과 그룹 2개 처리 환경 재현
   #
-  # 실제 simulator 구현은 Backend 작업과 연결되므로
-  # 현재는 placeholder 상태로 유지한다.
+  # 현재 Simulator는 placeholder 상태이며,
+  # MO-04에서는 Backend가 healthy 상태가 된 뒤 기동되도록 의존성을 적용한다.
+  # 실제 Simulator 코드가 연결되면 현재 command를 교체한다.
   # ==========================================================
   simulator:
     # 실제 Simulator 이미지가 준비되기 전 임시 이미지
@@ -175,11 +253,20 @@ services:
     # Docker 재시작 후에도 서비스 자동 재실행
     restart: unless-stopped
 
+    # ==========================================================
+    # MO-04 기동 의존성
+    # ==========================================================
+    # Simulator는 Backend로 검사 입력을 전송하므로,
+    # Backend가 healthy 상태가 된 뒤 기동한다.
+    depends_on:
+      backend:
+        condition: service_healthy
+
     # Simulator 코드가 아직 없기 때문에
-    # 안내 문구 출력 후 컨테이너를 계속 유지
+    # placeholder 안내 문구 출력 후 컨테이너를 계속 유지한다.
     command:
       - sh
       - -c
       - |
-        echo "[MO-02 placeholder] simulator"
+        echo "[MO-04 placeholder] simulator"
         tail -f /dev/null
