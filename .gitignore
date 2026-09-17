@@ -4,6 +4,7 @@ models/*
 outputs/*
 !*/.gitkeep
 __pycache__/
+.venv/
 .ipynb_checkpoints/
 
 .vscode/
