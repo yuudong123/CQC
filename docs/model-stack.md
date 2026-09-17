@@ -14,6 +14,7 @@
 - 전체 이미지 무결성 검사: `python -m src.data.image_quality`
 - 그룹 층화 분할 생성: `python -m src.data.split_groups`
 - 다각도 선택·마스킹 검증: `python -m src.data.multiview --smoke-load`
+- 8장 CV 기준선 학습: `python -m src.training.train --views 8 --cv-fold 0`
 - 생성 위치: `data/processed/manifest.csv`, `data/processed/manifest-summary.json`
 - 무결성 결과: `data/processed/image-quality-report.json`
 - 모델 파일·체크포인트·생성 매니페스트는 Git에서 제외
