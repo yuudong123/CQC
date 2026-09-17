@@ -16,7 +16,6 @@ pipeline {
         timeout(time: 20, unit: 'MINUTES')
 
         // Jenkins 빌드 기록을 최근 30개까지만 유지한다.
-        // 오래된 로그가 계속 쌓이는 것을 방지한다.
         buildDiscarder(
             logRotator(numToKeepStr: '30')
         )
@@ -26,10 +25,10 @@ pipeline {
     // ========================================================
     // 자동 실행 Trigger
     // ========================================================
-    // 현재는 GitHub ↔ Jenkins ↔ Docker 연결을 확인하는 단계이므로
-    // Build Now를 이용해 수동 실행한다.
+    // 현재는 GitHub ↔ Jenkins ↔ Docker ↔ Compose 연결을
+    // 확인하는 단계이므로 Build Now를 이용해 수동 실행한다.
     //
-    // 연결 검증이 끝나면 아래 설정을 활성화한다.
+    // 연결 검증 후 MO-03 마무리 단계에서 아래 설정을 활성화한다.
     //
     // triggers {
     //     githubPush()
@@ -40,30 +39,15 @@ pipeline {
     stages {
 
         // ====================================================
-        // 1. Git Clone
+        // 1. Environment Check
         // ====================================================
-        // 현재 MLOps 작업 브랜치인 feat/mlops를 가져온다.
+        // Pipeline script from SCM을 사용하고 있으므로
+        // Jenkins가 이미 feat/mlops 브랜치를 자동 checkout한다.
         //
-        // Jenkins 연결 및 Pipeline 검증이 완료되면
-        // 최종 CI/CD 기준 브랜치를 dev로 변경한다.
-        // ====================================================
-        stage('Git Clone') {
-
-            steps {
-
-                // 이전 Jenkins Workspace의 파일을 제거한다.
-                // 이전 빌드 파일 때문에 발생할 수 있는 충돌을 방지한다.
-                deleteDir()
-
-                // CQC GitHub 저장소의 feat/mlops 브랜치를 가져온다.
-                git branch: 'feat/mlops',
-                    url: 'https://github.com/yuudong123/CQC.git'
-            }
-        }
-
-
-        // ====================================================
-        // 2. Environment Check
+        // 따라서 별도의 Git Clone 단계는 사용하지 않는다.
+        //
+        // 이 단계에서는 Jenkins 컨테이너에서
+        // Git / Docker / Docker Compose 사용 가능 여부를 확인한다.
         // ====================================================
         stage('Environment Check') {
 
@@ -85,14 +69,19 @@ pipeline {
                     echo "======================================"
                     echo " Docker Compose Version"
                     echo "======================================"
-                    docker compose version
+                    docker-compose --version
                 '''
             }
         }
 
 
         // ====================================================
-        // 3. Compose Validate
+        // 2. Compose Validate
+        // ====================================================
+        // MO-02에서 작성한 compose.yaml의 설정을 검사한다.
+        //
+        // 실제 컨테이너를 변경하기 전에
+        // Compose 문법과 설정 오류를 먼저 확인한다.
         // ====================================================
         stage('Compose Validate') {
 
@@ -105,14 +94,22 @@ pipeline {
                     echo " Compose Validate"
                     echo "======================================"
 
-                    docker compose -f compose.yaml config --quiet
+                    docker-compose -f compose.yaml config
                 '''
             }
         }
 
 
         // ====================================================
-        // 4. Docker Build
+        // 3. Docker Build
+        // ====================================================
+        // Compose의 build 설정이 존재하는 서비스를 빌드한다.
+        //
+        // 현재 MO-02 단계에서는 placeholder 서비스가 있으므로
+        // 실제 Dockerfile이 없는 서비스는 빌드 대상이 없을 수 있다.
+        //
+        // 이후 Backend / Inference / Frontend / Simulator에
+        // Dockerfile이 추가되면 이 단계에서 실제 이미지가 빌드된다.
         // ====================================================
         stage('Docker Build') {
 
@@ -125,14 +122,20 @@ pipeline {
                     echo " Docker Build"
                     echo "======================================"
 
-                    docker compose -f compose.yaml build
+                    docker-compose -f compose.yaml build
                 '''
             }
         }
 
 
         // ====================================================
-        // 5. Basic Check
+        // 4. Basic Check
+        // ====================================================
+        // 현재 프로젝트에서 반드시 존재해야 하는
+        // 기본 디렉터리 구조를 확인한다.
+        //
+        // 추후 Docker 기반 테스트 환경이 확정되면
+        // pytest 실행 단계로 확장한다.
         // ====================================================
         stage('Basic Check') {
 
@@ -158,7 +161,13 @@ pipeline {
 
 
         // ====================================================
-        // 6. Deploy
+        // 5. Deploy
+        // ====================================================
+        // 이전 단계의 검증과 Build가 성공한 경우에만
+        // Compose 서비스를 실행한다.
+        //
+        // --no-build를 사용해 Deploy 단계에서
+        // 이미지를 다시 빌드하지 않는다.
         // ====================================================
         stage('Deploy') {
 
@@ -171,14 +180,20 @@ pipeline {
                     echo " CQC Deploy"
                     echo "======================================"
 
-                    docker compose -f compose.yaml up -d --no-build
+                    docker-compose                         -f compose.yaml                         up -d --no-build
                 '''
             }
         }
 
 
         // ====================================================
-        // 7. Verify
+        // 6. Verify
+        // ====================================================
+        // 현재 단계에서는 Compose 서비스가
+        // 실제로 실행 상태인지 확인한다.
+        //
+        // API healthcheck와 상세 기동 의존성 확인은
+        // MO-04에서 추가한다.
         // ====================================================
         stage('Verify') {
 
@@ -191,7 +206,7 @@ pipeline {
                     echo " CQC Container Status"
                     echo "======================================"
 
-                    docker compose -f compose.yaml ps
+                    docker-compose                         -f compose.yaml                         ps
                 '''
             }
         }
@@ -200,7 +215,7 @@ pipeline {
 
 
     // ========================================================
-    // Pipeline 결과
+    // Pipeline 최종 결과
     // ========================================================
     post {
 
@@ -217,6 +232,8 @@ pipeline {
         }
 
         always {
+            // 현재는 서비스 상태 확인이 필요하므로
+            // Pipeline 종료 후 컨테이너를 자동으로 내리지 않는다.
             echo 'CQC Pipeline finished.'
         }
     }
