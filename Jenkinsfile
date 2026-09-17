@@ -3,6 +3,36 @@ pipeline {
     agent any
 
     // ========================================================
+    // CQC Jenkins Pipeline
+    // WBS: MO-03 + MO-04 연동 검증
+    // 담당: 홍유나
+    //
+    // 목적:
+    // - GitHub에서 Jenkinsfile과 프로젝트 코드를 checkout
+    // - Docker / Docker Compose 실행 환경 확인
+    // - compose.yaml 문법 검증
+    // - Compose 서비스 빌드 및 기동
+    // - MO-04에서 추가한 healthcheck / 기동 의존성 검증
+    //
+    // 현재 검증 대상:
+    // - mysql
+    // - inference
+    // - backend
+    // - frontend
+    // - simulator
+    //
+    // Healthcheck 대상:
+    // - mysql
+    // - inference
+    // - backend
+    //
+    // 기동 의존성:
+    //   MySQL ─────┐
+    //              ├→ Backend → Simulator
+    //   Inference ─┘          └→ Frontend
+    // ========================================================
+
+    // ========================================================
     // Jenkins 기본 실행 정책
     // ========================================================
     options {
@@ -21,32 +51,36 @@ pipeline {
         )
     }
 
-
     // ========================================================
     // 자동 실행 Trigger
     // ========================================================
-    // 현재는 GitHub ↔ Jenkins ↔ Docker ↔ Compose 연결을
-    // 확인하는 단계이므로 Build Now를 이용해 수동 실행한다.
+    // GitHub에 push가 발생하면 Jenkins Pipeline을 자동 실행한다.
     //
-    // 연결 검증 후 MO-03 마무리 단계에서 아래 설정을 활성화한다.
+    // Jenkins Job은 Pipeline script from SCM을 사용하고,
+    // Branch Specifier는 */feat/mlops로 설정한다.
     //
-    // triggers {
-    //     githubPush()
-    // }
+    // GitHub 저장소의 Webhook이 Jenkins와 연결되어 있어야
+    // push 이벤트가 Jenkins로 전달된다.
     // ========================================================
-
+    triggers {
+        githubPush()
+    }
 
     stages {
 
         // ====================================================
         // 1. Environment Check
         // ====================================================
-        // Pipeline script from SCM을 사용하고 있으므로
-        // Jenkins가 이미 feat/mlops 브랜치를 자동 checkout한다.
+        // Pipeline script from SCM을 사용하므로
+        // Jenkins Job의 SCM 설정에 지정된 브랜치를 자동 checkout한다.
         //
-        // 따라서 별도의 Git Clone 단계는 사용하지 않는다.
+        // 따라서 Jenkinsfile 내부에서 별도의 git clone / checkout을
+        // 다시 수행하지 않는다.
         //
-        // 이 단계에서는 Jenkins 컨테이너에서
+        // 현재 작업 브랜치를 feat/mlops로 사용할 경우,
+        // Jenkins Job의 Branch Specifier를 */feat/mlops로 설정한다.
+        //
+        // 이 단계에서는 Jenkins 실행 환경에서
         // Git / Docker / Docker Compose 사용 가능 여부를 확인한다.
         // ====================================================
         stage('Environment Check') {
@@ -62,6 +96,12 @@ pipeline {
                     git --version
 
                     echo "======================================"
+                    echo " Current Git Branch / Commit"
+                    echo "======================================"
+                    git branch --show-current || true
+                    git rev-parse --short HEAD
+
+                    echo "======================================"
                     echo " Docker Version"
                     echo "======================================"
                     docker --version
@@ -74,14 +114,14 @@ pipeline {
             }
         }
 
-
         // ====================================================
         // 2. Compose Validate
         // ====================================================
-        // MO-02에서 작성한 compose.yaml의 설정을 검사한다.
+        // 현재 compose.yaml 전체 설정을 검사한다.
         //
         // 실제 컨테이너를 변경하기 전에
-        // Compose 문법과 설정 오류를 먼저 확인한다.
+        // YAML 문법, healthcheck, depends_on 등
+        // Compose 설정 오류가 없는지 먼저 확인한다.
         // ====================================================
         stage('Compose Validate') {
 
@@ -99,17 +139,16 @@ pipeline {
             }
         }
 
-
         // ====================================================
         // 3. Docker Build
         // ====================================================
         // Compose의 build 설정이 존재하는 서비스를 빌드한다.
         //
-        // 현재 MO-02 단계에서는 placeholder 서비스가 있으므로
-        // 실제 Dockerfile이 없는 서비스는 빌드 대상이 없을 수 있다.
+        // 현재 일부 서비스는 placeholder 이미지(alpine)를 사용하므로
+        // 실제 Dockerfile이 없는 서비스는 별도 build 작업이 없을 수 있다.
         //
         // 이후 Backend / Inference / Frontend / Simulator에
-        // Dockerfile이 추가되면 이 단계에서 실제 이미지가 빌드된다.
+        // Dockerfile이 연결되면 이 단계에서 실제 이미지가 빌드된다.
         // ====================================================
         stage('Docker Build') {
 
@@ -127,15 +166,14 @@ pipeline {
             }
         }
 
-
         // ====================================================
         // 4. Basic Check
         // ====================================================
         // 현재 프로젝트에서 반드시 존재해야 하는
         // 기본 디렉터리 구조를 확인한다.
         //
-        // 추후 Docker 기반 테스트 환경이 확정되면
-        // pytest 실행 단계로 확장한다.
+        // 추후 테스트 환경이 확정되면
+        // pytest 등 실제 자동 테스트 단계로 확장한다.
         // ====================================================
         stage('Basic Check') {
 
@@ -159,7 +197,6 @@ pipeline {
             }
         }
 
-
         // ====================================================
         // 5. Deploy
         // ====================================================
@@ -168,6 +205,10 @@ pipeline {
         //
         // --no-build를 사용해 Deploy 단계에서
         // 이미지를 다시 빌드하지 않는다.
+        //
+        // compose.yaml의 depends_on + service_healthy 설정에 따라
+        // MySQL / Inference가 healthy 상태가 된 뒤 Backend가 기동되고,
+        // Backend가 healthy 상태가 된 뒤 Frontend / Simulator가 기동된다.
         // ====================================================
         stage('Deploy') {
 
@@ -180,20 +221,23 @@ pipeline {
                     echo " CQC Deploy"
                     echo "======================================"
 
-                    docker-compose                         -f compose.yaml                         up -d --no-build
+                    docker-compose -f compose.yaml up -d --no-build
                 '''
             }
         }
 
-
         // ====================================================
         // 6. Verify
         // ====================================================
-        // 현재 단계에서는 Compose 서비스가
-        // 실제로 실행 상태인지 확인한다.
+        // MO-04에서 적용한 healthcheck와 기동 상태를 검증한다.
         //
-        // API healthcheck와 상세 기동 의존성 확인은
-        // MO-04에서 추가한다.
+        // 1) 전체 서비스 상태 출력
+        // 2) mysql / inference / backend 컨테이너 존재 여부 확인
+        // 3) 각 컨테이너의 Health.Status가 healthy인지 확인
+        // 4) frontend / simulator가 실행 중인지 확인
+        //
+        // healthcheck가 아직 완료되지 않은 경우를 고려해
+        // 최대 60초 동안 반복 확인한다.
         // ====================================================
         stage('Verify') {
 
@@ -206,13 +250,90 @@ pipeline {
                     echo " CQC Container Status"
                     echo "======================================"
 
-                    docker-compose                         -f compose.yaml                         ps
+                    docker-compose -f compose.yaml ps
+
+                    echo "======================================"
+                    echo " Healthcheck Verification"
+                    echo "======================================"
+
+                    HEALTH_SERVICES="mysql inference backend"
+
+                    for service in $HEALTH_SERVICES; do
+
+                        container_id="$(docker-compose -f compose.yaml ps -q "$service")"
+
+                        if [ -z "$container_id" ]; then
+                            echo "[ERROR] $service container not found"
+                            exit 1
+                        fi
+
+                        echo "Waiting for $service to become healthy..."
+
+                        healthy="false"
+
+                        for i in $(seq 1 12); do
+
+                            status="$(docker inspect \
+                                --format='{{if .State.Health}}{{.State.Health.Status}}{{else}}no-healthcheck{{end}}' \
+                                "$container_id")"
+
+                            echo "[$i/12] $service health status: $status"
+
+                            if [ "$status" = "healthy" ]; then
+                                healthy="true"
+                                break
+                            fi
+
+                            if [ "$status" = "unhealthy" ]; then
+                                echo "[ERROR] $service became unhealthy"
+                                docker inspect "$container_id" || true
+                                exit 1
+                            fi
+
+                            sleep 5
+                        done
+
+                        if [ "$healthy" != "true" ]; then
+                            echo "[ERROR] $service did not become healthy within 60 seconds"
+                            docker inspect "$container_id" || true
+                            exit 1
+                        fi
+                    done
+
+                    echo "======================================"
+                    echo " Runtime Verification"
+                    echo "======================================"
+
+                    for service in frontend simulator; do
+
+                        container_id="$(docker-compose -f compose.yaml ps -q "$service")"
+
+                        if [ -z "$container_id" ]; then
+                            echo "[ERROR] $service container not found"
+                            exit 1
+                        fi
+
+                        running="$(docker inspect \
+                            --format='{{.State.Running}}' \
+                            "$container_id")"
+
+                        echo "$service running: $running"
+
+                        if [ "$running" != "true" ]; then
+                            echo "[ERROR] $service is not running"
+                            exit 1
+                        fi
+                    done
+
+                    echo "======================================"
+                    echo " MO-04 healthcheck verification OK"
+                    echo "======================================"
+
+                    docker-compose -f compose.yaml ps
                 '''
             }
         }
-
     }
-
 
     // ========================================================
     // Pipeline 최종 결과
@@ -221,7 +342,7 @@ pipeline {
 
         success {
             echo '======================================'
-            echo ' CQC CI/CD SUCCESS'
+            echo ' CQC CI/CD + MO-04 VERIFY SUCCESS'
             echo '======================================'
         }
 
@@ -229,10 +350,15 @@ pipeline {
             echo '======================================'
             echo ' CQC CI/CD FAILED'
             echo '======================================'
+
+            // 실패 시 원인 확인을 위해 현재 Compose 상태를 출력한다.
+            sh '''
+                docker-compose -f compose.yaml ps || true
+            '''
         }
 
         always {
-            // 현재는 서비스 상태 확인이 필요하므로
+            // 현재는 MO-04 서비스 상태 확인이 필요하므로
             // Pipeline 종료 후 컨테이너를 자동으로 내리지 않는다.
             echo 'CQC Pipeline finished.'
         }
