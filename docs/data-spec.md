@@ -165,9 +165,15 @@ JSON 스키마는 두 종류다. 18,156개는 기본 촬영 필드만 있고, 6,
 
 - 검사 단위: 동일 `group_no`의 다각도 이미지 목록과 각도 메타데이터
 - 전송 형식: Base64가 아닌 `multipart/form-data`
+- 지원 입력 장수 실험: 4·8·12·16·40장
+- 정렬: `angle_direction → horizontality_angle → verticality_angle → sample_id`
+- 선택: 정렬된 전체 범위에서 첫·마지막 프레임을 포함하는 균등 인덱스
+- 부족 뷰: 보유 프레임 뒤를 패딩하고 `view_mask=False` 적용
 - 지원 이미지 형식과 최대 크기: 백엔드·모델 담당 협의 TODO
 - 색상 공간, 리사이즈, 정규화: 모델 설정에 포함 TODO
 - 정답 품종은 모델 입력으로 전달하지 않고 모델이 이미지에서 예측한다.
+
+전체 179그룹 검증에서 4·8장은 패딩이 없고, 12·16장은 8장 그룹 하나만 각각 4·8슬롯을 패딩한다. 40장은 8·16·21·30장 그룹 네 개에 총 85슬롯을 패딩한다. 상세 결과는 [`multiview-review.md`](./multiview-review.md)와 `configs/view-selection-summary.json`에 기록한다.
 
 ### 8.2 출력 논리 필드
 
