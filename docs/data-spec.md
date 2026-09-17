@@ -141,27 +141,32 @@ JSON 스키마는 두 종류다. 18,156개는 기본 촬영 필드만 있고, 6,
 
 ### 8.1 입력
 
-- 검사 단위: 동일 `group_no`의 다각도 이미지 목록과 각도 메타데이터
+- 검사 단위: `1 inspection = 사과 1개 = group_no 1개`
+- Simulator 전송: 해당 그룹에서 균등 선택한 최대 40장. 40장 미만 그룹은 보유 이미지 전체를 전송
 - 전송 형식: Base64가 아닌 `multipart/form-data`
-- 지원 이미지 형식과 최대 크기: 백엔드·모델 담당 협의 TODO
+- 논리 필드: `inspection_id`, `images[]`, 이미지별 `view_index`, `angle_direction`, `verticality_angle`, `horizontality_angle`
+- `group_no`, 정답 품종과 정답 품질은 모델 입력에서 제외
+- 지원 이미지 형식, 파일별·요청 전체 최대 크기와 허용 프레임 수: 백엔드·모델 담당 협의 TODO
 - 색상 공간, 리사이즈, 정규화: 모델 설정에 포함 TODO
-- 정답 품종은 모델 입력으로 전달하지 않고 모델이 이미지에서 예측한다.
+- 최종 모델 입력 장수는 4·8·12·16·40장 비교 후 확정하며, 40장 미만 그룹의 누락 뷰는 Inference가 masking한다.
 
 ### 8.2 출력 논리 필드
 
 | 필드 | 의미 | 필수 |
 |---|---|---|
+| inspection_id | 요청과 동일한 공통 검사 식별값 | Y |
 | crop_type | 판정 품목 | Y |
-| cultivar_probabilities | 부사·양광 확률 | Y |
+| cultivar_probabilities | `fuji`·`yanggwang` 라벨을 key로 가진 확률 객체 | Y |
 | predicted_cultivar | 최대 확률의 품종 | Y |
 | cultivar_confidence | 품종 예측 신뢰도 | Y |
-| quality_probabilities | 특·상·보통 확률 | Y |
+| quality_probabilities | `L`·`M`·`S` 라벨을 key로 가진 확률 객체 | Y |
 | predicted_grade | 최대 확률의 품질 등급 | Y |
 | quality_confidence | 품질 예측 신뢰도 | Y |
 | inference_time_ms | 그룹 추론시간 | Y |
 | model_name | 모델 구조 식별 | Y |
 | model_version | 모델 버전 | Y |
-| preprocessing_version | 전처리 버전 | 권장 |
+| preprocessing_version | 전처리 버전 | Y |
+| used_frame_count | 실제 모델이 사용한 프레임 수 | Y |
 
 클래스 코드와 순서는 모델 산출물에 고정하고 백엔드에서 임의로 재정렬하지 않는다.
 
@@ -181,14 +186,20 @@ MySQL 사용 목적은 정해진 순환 보존 범위 안에서 검사 이력을
 | predicted_grade | 등급별 조회·통계 | Y |
 | cultivar_confidence | 품종 저신뢰 분석 | Y |
 | quality_confidence | 품질 저신뢰 분석 | Y |
+| applied_cultivar_threshold | 검사에 적용한 품종 confidence threshold | Y |
+| applied_quality_threshold | 검사에 적용한 품질 confidence threshold | Y |
 | review_required | 검수 대상 조회 | Y |
 | sorting_target | 선별 결과 확인 | Y |
 | model_version | 모델별 결과 추적 | Y |
 | inference_time_ms | 실제 추론시간과 CPU 성능 분석 | Y |
 | model_name | 모델 구조 비교와 운영 추적 | Y |
-| status | 성공·실패 상태 구분 | Y |
+| preprocessing_version | 전처리 설정 추적 | Y |
+| used_frame_count | 실제 사용 프레임 수 추적 | Y |
+| inspection_status | 검사 판정과 처리 흐름 상태 | Y |
+| control_status | Virtual Control 처리 상태 | Y |
+| persistence_status | DB 저장 결과 상태 | Y |
 | error_code | 실패 원인 분석 | 조건부 |
-| deadline_exceeded | 500ms 처리 제한시간 초과 여부 | Y |
+| deadline_exceeded | Backend의 Inference 요청 전송부터 응답 전체 수신까지 500ms 초과 여부 | Y |
 | late_result_received_at | 시간 초과 후 결과 도착 시각 | 조건부 |
 | late_cultivar | 시간 초과 후 도착한 품종 진단 결과 | 조건부 |
 | late_grade | 시간 초과 후 도착한 품질 진단 결과 | 조건부 |
@@ -205,7 +216,7 @@ MySQL 사용 목적은 정해진 순환 보존 범위 안에서 검사 이력을
 - 수동 검수 여부
 - 선별 목적지
 - 모델 버전
-- 성공·실패 상태
+- 검사·제어·저장 상태
 - 오류 유형
 - 오판 의심 유형
 
@@ -224,8 +235,8 @@ MySQL 사용 목적은 정해진 순환 보존 범위 안에서 검사 이력을
 ### 9.4 이력 보존과 내보내기
 
 - 검사 이력은 상한에 도달하기 전까지 누적한다.
-- 초당 사과 그룹 2개 기준 0.5일분인 86,400건에 도달하면 생성 시각이 오래된 8,640건을 삭제한다.
-- 삭제 후 77,760건부터 다시 누적하므로 보존 범위는 약 0.45~0.5일 사이에서 순환한다.
+- 검사 이력의 건수 상한 86,400건에 도달하면 생성 시각이 오래된 8,640건을 삭제한다.
+- 삭제 후 77,760건부터 다시 누적하므로 초당 사과 그룹 2개 기준 보존 범위는 약 10.8~12시간이다.
 - CSV는 관리 화면의 필터 조건을 그대로 적용한다.
 - CSV에는 별도의 행 수 제한을 두지 않고 현재 보존 중인 필터 결과 전체를 내보낸다.
 - CSV에는 이미지가 포함되지 않으며 검사 결과, 신뢰도, 성능, 오류, 모델 버전과 오판 의심 정보를 포함한다.
@@ -251,6 +262,9 @@ MySQL 사용 목적은 정해진 순환 보존 범위 안에서 검사 이력을
 | MySQL 물리 스키마 | 홍준희 | 별도 문서 TODO |
 | 마이그레이션 도구 | 홍준희·홍유나 | TODO |
 | 통계 API 응답 형식 | 홍준희·강성민 | TODO |
+| 지원 이미지 형식·파일/요청 크기·허용 프레임 수 | 조현재·홍준희 | TODO |
+| 상태 Enum·오류 코드·세부 OpenAPI Schema | 홍준희·관련 담당자 | TODO |
+| late result 비동기 수신 방식 | 홍준희 | Backend 구현 설계에서 결정 |
 | 장애 이미지 저장 한도·자동 삭제 기준 | 홍준희 | 최대 100개, 오래된 파일부터 삭제 확정 |
 | bin 코드·품종·품질 매핑 | 홍준희 | DB 설계 문서에서 결정 |
 | 보존·삭제 정책 | 홍준희·전체 | 86,400건 도달 시 오래된 8,640건 삭제 확정 |

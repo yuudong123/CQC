@@ -10,7 +10,8 @@
 | `architecture.md` | HTTP 서비스, 상태, 저장·배포 구조 | 고도화 합의 반영 | 파트별 기술 스택 확정 시 |
 | `wbs.md` | 09-16~10-16 역할별 일정·의존성·완료 조건 | 전면 개정 완료 | 실제 진행 지연·범위 변경 시 |
 | `decision-log.md` | 기획 인터뷰 확정 사항 | 최신 | 새 결정 즉시 |
-| `*-stack.md` 4개 | 파트별 기술 선택·버전·실행법 | 담당자 작성 대기 | 2026-09-17 담당자 작성 |
+| `backend-stack.md` | Backend 기술 선택·버전·실행법 | FastAPI·MySQL·HTTP 기초 합의 반영 | 세부 라이브러리·버전 선정 시 |
+| 나머지 `*-stack.md` 3개 | 모델·Frontend·MLOps 기술 선택·실행법 | 담당자 작성 대기 | 담당자 기술 선정 시 |
 
 ## 확정 사항
 
@@ -18,9 +19,10 @@
 - 프로젝트 기간: 2026-09-16~2026-10-16
 - MVP: 부사·양광의 품종과 특·상·보통 품질 판정
 - 입력 단위: 동일 `group_no`의 다각도 사과 그룹
+- 입력 방식: Simulator 전용, 그룹당 균등 선택한 최대 40장 전송
 - 데이터 분할: seed 42, 그룹 층화 70/15/15, 5-Fold Group CV
 - 입력 장수 실험: 4·8·12·16·40장
-- 처리 목표: 초당 사과 그룹 2개, 모델 500ms, 가상 제어 100ms
+- 처리 목표: 500ms 간격 입력과 초당 사과 그룹 2개, Inference HTTP 구간 500ms, 가상 제어 100ms
 - 서비스: simulator·inference·backend·frontend·MySQL, Kafka 제외
 - 데이터베이스: MySQL 검사 이력·통계
 - 기능 동결: 2026-10-13
@@ -31,7 +33,7 @@
 | 문서 | 담당자 | 작성할 핵심 내용 |
 |---|---|---|
 | `model-stack.md` | 조현재 | 프레임워크, 그룹 모델, 전처리, CPU 최적화, 실행법 |
-| `backend-stack.md` | 홍준희 | 프레임워크, OpenAPI, 오류 코드, MySQL 물리 설계, 마이그레이션 |
+| `backend-stack.md` | 홍준희 | FastAPI 세부 라이브러리·버전, OpenAPI, 오류 코드, MySQL 물리 설계, 마이그레이션 |
 | `frontend-stack.md` | 강성민 | 프레임워크, 차트, 화면 상태, 빌드·테스트 |
 | `mlops-stack.md` | 홍유나 | Compose, dev CI/CD, healthcheck, 볼륨·로그·복구 |
 
