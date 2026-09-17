@@ -123,6 +123,17 @@ JSON 스키마는 두 종류다. 18,156개는 기본 촬영 필드만 있고, 6,
 7. 품종·품질 Macro F1은 그룹 단위 교차검증으로 변동성도 기록한다.
 8. 최종 분할 전 조합별 그룹 수를 확인하고 70/15/15 층화가 불안정하면 비율을 재검토한다.
 
+### 6.1 seed 42 확정 분할
+
+- Train 125그룹, Validation 27그룹, Test 27그룹
+- 실제 그룹 비율: 69.8324% / 15.0838% / 15.0838%
+- 최종 Test를 제외한 152그룹의 5-Fold 크기: 31 / 31 / 30 / 30 / 30
+- 모든 품종×품질 조합이 각 fold에 포함되며 조합별 fold 크기 차이는 최대 1개
+- Train·Validation·Test의 `group_no` 교차 0건
+- 분할 파일: `configs/splits/seed-42.csv`
+- 요약 파일: `configs/splits/seed-42-summary.json`
+- 상세 검토: [`split-review.md`](./split-review.md)
+
 ## 7. 데이터 품질 검사
 
 | 검사 ID | 검사 | 실패 처리 | 결과 기록 |
