@@ -6,7 +6,7 @@
 
 | 영역 | 담당 | 현재 상태 |
 |---|---|---|
-| AI Hub 원본·라벨 분석 | 조현재 | 품종·품질·그룹 매핑 확인, 전체 JSON 필드 매핑 진행 중 |
+| AI Hub 원본·라벨 분석 | 조현재 | ZIP·JSON 필드와 라벨 매핑 확인 완료 |
 | 가공 데이터와 분할 | 조현재 | 논리 필드 정의 완료 |
 | 모델 출력 계약 | 조현재·홍준희 | 기초 계약 작성, 세부 형식 TODO |
 | MySQL 물리 설계 | 홍준희 | 별도 DB 설계 문서 TODO |
@@ -33,8 +33,11 @@
 - Validation: 이미지·JSON 3,128쌍, `group_no` 40개
 - 전체: 이미지·JSON 25,024쌍
 - 별도 Test 폴더: 없음
+- 이미지 ZIP 12개와 라벨 ZIP 12개를 조합별로 대조한 결과 파일명 짝 누락 0건
 
 각 `group_no`에는 동일 사과를 여러 각도에서 촬영한 이미지가 묶여 있으며 다수 그룹은 184장이다. 학습·평가·추론의 기본 단위는 개별 이미지가 아니라 `group_no`로 식별한 사과 한 개다.
+
+JSON의 `no`는 4,532개 값이 중복되고 `(group_no, img_no)`도 5,072개 조합이 중복된다. 따라서 두 필드는 샘플 고유키로 사용하지 않는다. 이미지와 라벨은 같은 조합 ZIP 안에서 **확장자를 제외한 파일명**을 대소문자 무시 기준으로 연결하고, 내부 `sample_id`는 `원본 분할:품종:품질:파일명 stem`으로 만든다. JSON의 `identifier`는 일부 값이 실제 ZIP 멤버 경로와 다르므로 연결 키로 사용하지 않는다.
 
 ### 2.2 다각도 프레임 가용성
 
@@ -59,24 +62,30 @@
 
 ## 4. AI Hub 원본 라벨 후보
 
-공식 페이지에서 확인한 항목이다. 품종·품질·`group_no`는 로컬 파일로 확인했으며, 나머지 항목은 실제 JSON 경로와 타입을 추가한다.
+전체 JSON 25,024개를 읽어 확인한 실제 매핑이다. JSON은 UTF-8이며 BOM 유무를 허용한다.
 
 | 논리 항목 | 공식 설명 | 필수 여부 | 프로젝트 사용 | 실제 매핑 |
 |---|---|---|---|---|
-| identifier | 파일명 | 확인 필요 | 샘플 식별 | TODO |
-| imsize | 이미지 파일 크기 | Y | 파일 검사 | TODO |
-| resolution | 해상도 | Y | 품질 검사 | TODO |
-| date | 취득 일자 | 확인 필요 | 그룹·편향 분석 후보 | TODO |
-| species_id | 종 ID | Y | 품목·품종 매핑 후보 | TODO |
-| crop_type | 과일 종류 | Y | 품목 필터 | TODO |
-| quality_grade | 품질 등급 | Y | 예측 정답 | TODO |
-| captured_side | 촬영면 | Y | 그룹·성능 분석 | TODO |
-| vertical_angle | 수직 촬영각도 | Y | 그룹·성능 분석 | TODO |
-| horizontal_angle | 수평 촬영각도 | Y | 그룹·성능 분석 | TODO |
-| height | 품목 높이 | Y | 메타데이터 분석 후보 | TODO |
-| width | 품목 너비 | Y | 메타데이터 분석 후보 | TODO |
-| weight | 품목 무게 | Y | 메타데이터 분석 후보 | TODO |
-| box_coordinates | 객체 좌표 | 확인 필요 | 객체 영역 확인 후보 | TODO |
+| sample_id | 내부 샘플 키 | Y | 프레임 고유 식별 | 원본 분할·ZIP명·멤버 파일명으로 생성 |
+| group_id | 동일 사과 묶음 | Y | 그룹 분할·추론 단위 | `group_no` 정수, 문자열로 정규화 |
+| identifier | 제공 파일명 | Y | 원본 추적 보조 | `identifier` 문자열, 연결 키로 사용 금지 |
+| image_size | 압축 전 이미지 바이트 | Y | 파일 검사 | 이미지 ZIP 멤버의 `file_size` |
+| image_crc32 | ZIP 멤버 CRC32 | Y | 빠른 무결성 확인 | 이미지 ZIP 멤버의 `CRC` |
+| resolution | 픽셀 수 | Y | 품질 검사 | `resolution` 정수 |
+| date | 취득 일시 | Y | 그룹·편향 분석 후보 | `date` 문자열 |
+| species_id | 품종 코드 | Y | 품종 검증 | `catecode`: 부사 `060103`, 양광 `060114` |
+| crop_type | 품목 | Y | 품목 필터 | `cate1`: `사과` |
+| cultivar | 품종 | Y | 품종 정답 | `cate2`: `부사`, `양광` |
+| quality_grade | 품질 등급 | Y | 품질 정답 | `cate3`: `특`, `상`, `보통` |
+| captured_side | 촬영면 | Y | 그룹·성능 분석 | `angle_direction`: `top`, `bottom` |
+| vertical_angle | 수직 촬영각도 | Y | 대표 프레임 선택 | `verticality_angle` 정수 |
+| horizontal_angle | 수평 촬영각도 | Y | 대표 프레임 선택 | `horizontality_angle` 정수 |
+| height | 품목 높이 | Y | 메타데이터 분석 후보 | `height` 숫자 문자열 |
+| width | 품목 너비 | Y | 메타데이터 분석 후보 | `width` 숫자 문자열 |
+| weight | 품목 무게 | Y | 메타데이터 분석 후보 | `weight` 숫자 문자열 |
+| box_coordinates | 객체 좌표 | Y | 객체 영역 확인 후보 | `bndbox.{xmin,ymin,xmax,ymax}` 정수 |
+
+JSON 스키마는 두 종류다. 18,156개는 기본 촬영 필드만 있고, 6,868개는 `camera_model`과 `camera_software`가 추가된다. `f_stop`, `exposure_time`, `iso`, `focal_length`, `full_aperture`, `white_balance`는 문자열과 숫자 타입이 섞여 있으므로 모델 입력에 바로 사용하지 않고 별도 정규화 후 사용한다. `no`와 `img_no`도 정수·문자열이 섞여 있어 문자열로 정규화한다.
 
 ## 5. 가공 데이터 매니페스트
 
@@ -84,11 +93,13 @@
 
 | 필드 | 의미 | 형식 후보 | 필수 | 생성 규칙 |
 |---|---|---|---|---|
-| sample_id | 내부 샘플 고유값 | 문자열 | Y | 원본 식별자를 안정적으로 정규화 |
-| source_image_path | 원본 이미지 상대 경로 | 문자열 | Y | `data/raw/` 기준 상대 경로 |
+| sample_id | 내부 샘플 고유값 | 문자열 | Y | `원본 분할:품종:품질:파일명 stem` |
+| source_image_archive | 이미지 ZIP 상대 경로 | 문자열 | Y | `data/raw/` 기준 상대 경로 |
+| source_image_member | 이미지 ZIP 멤버명 | 문자열 | Y | 라벨 멤버와 같은 stem |
 | processed_image_path | 가공 이미지 상대 경로 | 문자열 | 조건부 | 별도 파일을 만들 때 기록 |
-| source_label_path | 원본 라벨 상대 경로 | 문자열 | Y | 라벨 추적용 |
-| source_hash | 원본 이미지 해시 | 문자열 | Y | 중복 검사와 무결성 확인 |
+| source_label_archive | 라벨 ZIP 상대 경로 | 문자열 | Y | `data/raw/` 기준 상대 경로 |
+| source_label_member | 라벨 ZIP 멤버명 | 문자열 | Y | 원본 JSON 추적용 |
+| source_crc32 | 원본 이미지 ZIP CRC32 | 문자열 | Y | 빠른 무결성 확인, 중복 판정에는 별도 해시 사용 |
 | crop_type | 품목 | 범주 | Y | 현재 `apple`, 확장 시 한 품목 추가 |
 | cultivar | 품종 | 범주 | Y | `fuji=부사`, `yanggwang=양광` |
 | quality_grade | 품질 등급 | 범주 | Y | `L=특`, `M=상`, `S=보통` |
@@ -233,7 +244,7 @@ MySQL 사용 목적은 정해진 순환 보존 범위 안에서 검사 이력을
 
 | 항목 | 담당 | 상태 |
 |---|---|---|
-| AI Hub 실제 필드 매핑 | 조현재 | TODO |
+| AI Hub 실제 필드 매핑 | 조현재 | 전체 JSON 25,024개 확인 완료 |
 | 사과 품종명 2종 | 조현재 | 부사(`fuji`)·양광(`yanggwang`) 확정 |
 | 분할 파일 형식 | 조현재 | TODO |
 | 모델 클래스 코드·순서 | 조현재·홍준희 | TODO |
