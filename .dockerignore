@@ -1,0 +1,10 @@
+.git
+.venv
+__pycache__
+data
+models
+outputs
+notebooks
+tests
+docs
+cqc-logistics-platform

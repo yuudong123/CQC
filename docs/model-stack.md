@@ -18,8 +18,11 @@
 - 단일 학습 진입점: `python -m src.training.train --model-kind joint --views 8 --cv-fold 0`
 - 전체 비교 계획 생성: `python -m src.training.experiments` (`--execute` 없이는 학습하지 않음)
 - 5-fold 결과 집계: `python -m src.training.summarize ... --output outputs/summary.json`
+- 전체 비교표·차트·임시 후보: `python -m src.training.report --chart`
+- 승인 모델 패키징: `python -m src.training.package_model ...`
 - CPU·GPU 추론시간 측정: `python -m src.training.benchmark ...`
 - 최종 Test 평가: `python -m src.training.evaluate ...` (확인 문자열 필수)
+- 추론 서비스: `python -m src.inference.api --model-dir models/<version>`
 - 생성 위치: `data/processed/manifest.csv`, `data/processed/manifest-summary.json`
 - 무결성 결과: `data/processed/image-quality-report.json`
 - 모델 파일·체크포인트·생성 매니페스트는 Git에서 제외
