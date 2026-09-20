@@ -63,7 +63,7 @@ def main(argv: list[str] | None = None) -> int:
     ).to(device)
     model.load_state_dict(checkpoint["model_state"])
     try:
-        metrics = run_epoch(model, loader, device)
+        metrics = run_epoch(model, loader, device, include_predictions=True)
     finally:
         source.close()
     result = {

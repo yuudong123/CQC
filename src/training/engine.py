@@ -63,6 +63,7 @@ def run_epoch(
     optimizer: torch.optim.Optimizer | None = None,
     cultivar_loss_weight: float = 1.0,
     quality_loss_weight: float = 1.0,
+    include_predictions: bool = False,
 ) -> dict[str, Any]:
     training = optimizer is not None
     model.train(training)
@@ -73,6 +74,7 @@ def run_epoch(
     cultivar_predictions: list[Tensor] = []
     quality_targets: list[Tensor] = []
     quality_predictions: list[Tensor] = []
+    prediction_records: list[dict[str, Any]] = []
 
     for batch in batches:
         images = _move(batch, "images", device)
@@ -96,17 +98,38 @@ def run_epoch(
         quality_targets.append(quality_target.detach().cpu())
         cultivar_predictions.append(output["cultivar_logits"].argmax(dim=1).detach().cpu())
         quality_predictions.append(output["quality_logits"].argmax(dim=1).detach().cpu())
+        if include_predictions:
+            group_numbers = batch.get("group_no")
+            if not isinstance(group_numbers, (list, tuple)) or len(group_numbers) != batch_size:
+                raise TypeError("예측 기록 시 group_no 문자열 목록이 필요합니다")
+            cultivar_probabilities = output["cultivar_logits"].softmax(dim=1).detach().cpu()
+            quality_probabilities = output["quality_logits"].softmax(dim=1).detach().cpu()
+            for index, group_no in enumerate(group_numbers):
+                prediction_records.append(
+                    {
+                        "group_no": str(group_no),
+                        "cultivar_target_index": int(cultivar_target[index]),
+                        "cultivar_prediction_index": int(cultivar_probabilities[index].argmax()),
+                        "cultivar_probabilities": cultivar_probabilities[index].tolist(),
+                        "quality_target_index": int(quality_target[index]),
+                        "quality_prediction_index": int(quality_probabilities[index].argmax()),
+                        "quality_probabilities": quality_probabilities[index].tolist(),
+                    }
+                )
 
     if samples == 0:
         raise ValueError("빈 DataLoader는 평가할 수 없습니다")
     cultivar_matrix = confusion_matrix(torch.cat(cultivar_targets), torch.cat(cultivar_predictions), 2)
     quality_matrix = confusion_matrix(torch.cat(quality_targets), torch.cat(quality_predictions), 3)
-    return {
+    result = {
         "loss": total_loss / samples,
         "samples": samples,
         "cultivar": classification_metrics(cultivar_matrix),
         "quality": classification_metrics(quality_matrix),
     }
+    if include_predictions:
+        result["predictions"] = prediction_records
+    return result
 
 
 def save_checkpoint(

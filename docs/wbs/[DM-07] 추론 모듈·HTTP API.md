@@ -9,6 +9,7 @@
 - `src/inference/predictor.py`: 모델 패키지 로딩, 동일 전처리, 마스크 패딩, 확률·신뢰도 반환
 - `src/inference/api.py`: `/health`, `/v1/predict` FastAPI 어댑터
 - `src/inference/README.md`: 입력·응답과 책임 범위
+- 가짜 예측기를 사용한 `/health`, multipart 반복 이미지, 415 오류 HTTP 계약 테스트 완료
 - PNG/JPEG multipart 입력만 허용하고 빈 그룹을 거부한다.
 - 입력 장수 초과 시 전달 순서 전체에서 균등 선택하고 부족하면 0 텐서와 마스크로 패딩한다.
 - bin, 재검사, DB 정책은 포함하지 않는다.

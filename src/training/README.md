@@ -14,6 +14,7 @@
 | `benchmark.py` | Test를 사용하지 않는 CPU·GPU 평균·최대·p95 추론시간 측정 |
 | `benchmark_concurrency.py` | 순차·병렬 처리의 p95·처리량과 500ms·초당 2건 충족 여부 비교 |
 | `evaluate.py` | 최종 선정 체크포인트의 고정 Test 1회 평가 |
+| `model_card.py` | 패키지·CV·Test·임계값·CPU 측정 산출물로 최종 모델 카드 생성 |
 | `report.py` | 전체 50개 결과 비교표·차트와 정확도 기준 임시 후보 생성 |
 | `package_model.py` | 승인 체크포인트와 불변 메타데이터·SHA-256 패키징 |
 | `export_predictions.py` | validation fold 그룹별 확률·정답 CSV 생성 |
