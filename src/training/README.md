@@ -10,6 +10,7 @@
 | `engine.py` | 학습·평가 epoch, Accuracy·Macro F1·혼동행렬, 체크포인트 저장 |
 | `models.py` | 공유 인코더 joint 모델과 과제별 독립 인코더 separate 모델 생성 |
 | `experiments.py` | 2개 모델 × 5개 입력 장수 × 5-fold, 총 50개 비교 계획 생성 |
+| `audit.py` | 50개 실험의 파일 누락·epoch 수·설정·체크포인트 SHA-256 검사 |
 | `summarize.py` | 완료된 fold의 최고 epoch와 평균·표준편차 집계 |
 | `benchmark.py` | Test를 사용하지 않는 CPU·GPU 평균·최대·p95 추론시간 측정 |
 | `benchmark_concurrency.py` | 순차·병렬 처리의 p95·처리량과 500ms·초당 2건 충족 여부 비교 |
