@@ -12,3 +12,5 @@
 실제 모델 패키지와 서비스 통합 검증은 학습 결과 확인 및 모델 승인 후 진행한다.
 
 컨테이너는 `Dockerfile.inference`로 만들며 승인 모델 디렉터리를 `/app/models/approved`에 읽기 전용 마운트한다. CPU용 PyTorch 설치 방식과 모델 볼륨 경로는 MLOps Compose에서 최종 고정한다.
+
+`python -m src.inference.export_openapi`로 백엔드·프론트 공유용 OpenAPI JSON을 생성한다.

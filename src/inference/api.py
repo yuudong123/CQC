@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from .predictor import Predictor
+from .schemas import HealthResponse, PredictionResponse
 
 try:
     from fastapi import FastAPI, File, HTTPException, UploadFile
@@ -20,11 +21,19 @@ def create_app(predictor: Predictor) -> Any:
 
     app = FastAPI(title="CQC Inference API", version="1.0.0")
 
-    @app.get("/health")
+    @app.get("/health", response_model=HealthResponse)
     def health() -> dict[str, Any]:
         return predictor.health()
 
-    @app.post("/v1/predict")
+    @app.post(
+        "/v1/predict",
+        response_model=PredictionResponse,
+        responses={
+            415: {"description": "PNG/JPEG 외 형식"},
+            422: {"description": "빈 요청, 손상 이미지 또는 디코딩 실패"},
+            500: {"description": "예상하지 못한 추론 오류"},
+        },
+    )
     async def predict(images: list[UploadFile] = File(...)) -> dict[str, Any]:
         if not images:
             raise HTTPException(status_code=422, detail="images는 1장 이상 필요합니다")

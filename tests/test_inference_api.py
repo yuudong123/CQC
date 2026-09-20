@@ -12,7 +12,14 @@ from src.inference.predictor import Prediction
 
 class _FakePredictor:
     def health(self) -> dict[str, object]:
-        return {"status": "ready", "model_loaded": True, "model_version": "test-v1"}
+        return {
+            "status": "ready",
+            "model_loaded": True,
+            "model_name": "fake",
+            "model_version": "test-v1",
+            "device": "cpu",
+            "views": 4,
+        }
 
     def predict(self, images: list[bytes]) -> Prediction:
         if not images:
@@ -65,6 +72,12 @@ class InferenceApiTest(unittest.TestCase):
             files=[("images", ("note.txt", b"not-an-image", "text/plain"))],
         )
         self.assertEqual(response.status_code, 415)
+
+    def test_openapi_contains_typed_prediction_contract(self) -> None:
+        schema = self.client.app.openapi()
+        response = schema["paths"]["/v1/predict"]["post"]["responses"]["200"]
+        reference = response["content"]["application/json"]["schema"]["$ref"]
+        self.assertEqual(reference, "#/components/schemas/PredictionResponse")
 
 
 if __name__ == "__main__":
