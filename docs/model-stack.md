@@ -19,7 +19,7 @@
 - 전체 비교 계획 생성: `python -m src.training.experiments` (`--execute` 없이는 학습하지 않음)
 - 5-fold 결과 집계: `python -m src.training.summarize ... --output outputs/summary.json`
 - 전체 비교표·차트·임시 후보: `python -m src.training.report --chart`
-- 승인 모델 패키징: `python -m src.training.package_model ...`
+- 모델 후보 패키징: `python -m src.training.package_model ...` (품질 기준 통과 전에는 통합 검증용)
 - CPU·GPU 추론시간 측정: `python -m src.training.benchmark ...`
 - 최종 Test 평가: `python -m src.training.evaluate ...` (확인 문자열 필수)
 - 추론 서비스: `python -m src.inference.api --model-dir models/<version>`
@@ -27,7 +27,7 @@
 - 무결성 결과: `data/processed/image-quality-report.json`
 - 모델 파일·체크포인트·생성 매니페스트는 Git에서 제외
 
-## 최종 선택 설정
+## v1 선택 설정
 
 - 프레임워크: Python 3.11, PyTorch·torchvision
 - 구조: 품종·품질별 MobileNetV3 Small 인코더를 둔 `separate`
@@ -35,7 +35,7 @@
 - 그룹 결합: 누락 뷰를 제외한 특징 평균
 - 최종 학습: Test 제외 152그룹, 19 epoch
 - 신뢰도 기준: 품종 0.50, 품질 0.50
-- 요청 제한: 12파일, multipart 전체 24MiB
+- 요청 제한: 1~12파일, multipart 전체 24MiB
 - 모델 버전: `cqc-apple-separate12-v1.0.0` (기능 검증용, 품질 승인 실패)
 - 운영 기본 동시 처리: 1
 - 미결정: i7-4790 CPU 최종 평균·최대·p95

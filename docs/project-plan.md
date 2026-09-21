@@ -297,14 +297,14 @@ Backend는 **Python + FastAPI**, 데이터베이스는 **MySQL**을 사용한다
 
 | 영역 | 필요한 기능 | 선택 기준 | 상태 |
 |---|---|---|---|
-| 언어 | Backend와 데이터·모델 코드 | 팀 경험과 이미지 생태계 | Backend Python 확정, 모델 세부 스택 TODO |
-| 이미지 처리 | 로딩, 리사이즈, 증강 | 학습·추론 동일 처리 가능 | TODO |
-| 모델 학습 | 전이학습과 평가 | 시연 장비, GPU 유무, 재현성 | TODO |
+| 언어 | Backend와 데이터·모델 코드 | 팀 경험과 이미지 생태계 | Python 3.11 확정 |
+| 이미지 처리 | 로딩, 리사이즈, 증강 | 학습·추론 동일 처리 가능 | Pillow·torchvision v2, RGB 224×224·ImageNet 정규화 확정 |
+| 모델 학습 | 전이학습과 평가 | 시연 장비, GPU 유무, 재현성 | PyTorch·torchvision, MobileNetV3 Small 전이학습 확정 |
 | Backend API | Simulator 검사 요청과 Inference HTTP 호출 | 단순성, 자동 문서화 | **Python + FastAPI 확정**, 세부 버전 TODO |
 | 웹 | 입력, 결과, 이력 표시 | 1개월 구현 난이도 | TODO |
 | 데이터베이스 | 검사 이력 저장, 웹 통계·분석 조회 | 이력 조회와 집계 요구, 백업·재현성 | **MySQL 확정**, 상세 구조는 백엔드 담당 문서 TODO |
-| 테스트 | 데이터·추론·API 검증 | 핵심 실패를 재현할 수 있어야 함 | TODO |
-| 실행 | 팀 PC에서 동일 실행 | 설치 재현성과 시연 안정성 | TODO |
+| 테스트 | 데이터·추론·API 검증 | 핵심 실패를 재현할 수 있어야 함 | Python `unittest`와 파트별 수용시험 사용 |
+| 실행 | 팀 PC에서 동일 실행 | 설치 재현성과 시연 안정성 | Docker Compose 통합, 학습은 원격 Windows CUDA 환경 사용 |
 
 ### 4.2 기술 스택 확정 원칙
 
@@ -489,14 +489,14 @@ MLOps·CI/CD: 기본 실행 환경 → 영역별 자동 검사 → 통합 배포
 | 정확한 일정 | 확정 | 2026-09-16~2026-10-16, 2026-10-13 기능 동결 |
 | 사과 품종 2종 | 확정 | 부사(`fuji`)·양광(`yanggwang`) |
 | 두 번째 품목 | 확장 후보, 품목명 미정 | 사과 품종 2종의 MVP 진행률과 후보 품목 데이터 구조 |
-| 모델 프레임워크 | TODO | GPU, 설치 환경, 팀 경험 |
+| 모델 프레임워크 | PyTorch·torchvision 확정 | Python 3.11, 원격 CUDA 학습과 CPU 추론 |
 | Backend 기술 | Python + FastAPI 확정 | 구체적인 라이브러리·버전은 `backend-stack.md` 작성 시 결정 |
 | 웹 기술 | TODO | 팀 경험과 시연 환경 |
 | 데이터베이스 | MySQL 확정 | 백엔드 담당자가 DB 구조와 마이그레이션을 별도 문서화 |
 | 저신뢰 임계값 | 확정 | 품종 0.50·품질 0.50. 5-fold validation 152그룹에서 coverage 98.68%, 자동 처리 구간 품종 98.67%·품질 98.00% |
 | bin 코드·매핑 구조 | TODO | 백엔드 DB 담당자 설계 |
-| 모델 성능 승인값 | TODO | 기준선 결과와 클래스 분포 |
-| 이미지 형식·파일/요청 크기·허용 프레임 수 | TODO | Backend·Inference API 계약 |
+| 모델 성능 승인값 | 확정 | 품종·품질 Macro F1 각각 0.90 이상 |
+| 이미지 형식·파일/요청 크기·허용 프레임 수 | 확정 | PNG/JPEG, 1~12장, multipart 합계 24MiB |
 | 상태 Enum·오류 코드·세부 OpenAPI | TODO | Backend 계약 초안과 관련 담당자 검토 |
 | late result 비동기 수신 방식 | TODO | Backend 구현 설계 |
 
