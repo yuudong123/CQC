@@ -5,7 +5,7 @@ AI Hub 농산물 품질(QC) 이미지를 이용해 사과의 품종과 품질 �
 ## MVP 범위
 
 - 대상: 부사(`fuji`)·양광(`yanggwang`) 2개 품종
-- 입력: Simulator가 동일 `group_no`에서 균등 선택해 전송하는 최대 40장의 다각도 이미지 묶음
+- 입력: Simulator가 동일 `group_no`에서 각도 기준으로 선택한 대표 이미지 묶음. 모델 목표는 12장이며 요청은 1~12장을 허용
 - 출력: 품종·품질(`특/상/보통`) 예측, 각각의 확률·신뢰도, 선별 목적지
 - 자동화: 시뮬레이터 자동 입력, 저신뢰·오류 재검사 분기, 6개 정상 bin과 재검사 bin을 사용하는 가상 제어
 - 처리 목표: i7-4790·RAM 16GB CPU 환경에서 500ms 간격 입력과 초당 사과 그룹 2개 처리. Inference 제한시간 500ms는 Backend 요청 전송부터 응답 전체 수신까지 적용
@@ -23,7 +23,7 @@ simulator → FastAPI backend → inference HTTP API
 
 서비스 간 통신은 HTTP를 사용하며 Kafka는 사용하지 않습니다. Docker Compose 실행 단위는 `simulator`, `inference`, `backend`, `frontend`, `mysql`입니다.
 
-검사 한 건은 사과 한 개, 즉 `group_no` 한 개이며 모든 구성 요소는 동일한 `inspection_id`로 이 흐름을 추적합니다. 최종 모델 입력 장수와 품종·품질 confidence threshold는 모델 검증 후 확정합니다.
+검사 한 건은 사과 한 개, 즉 `group_no` 한 개이며 모든 구성 요소는 동일한 `inspection_id`로 이 흐름을 추적합니다. 모델 목표 입력은 12장, 요청 제한은 1~12장·24MiB, 품종·품질 confidence threshold는 각각 0.50으로 확정했습니다.
 
 ## 폴더 역할
 
@@ -36,7 +36,7 @@ simulator → FastAPI backend → inference HTTP API
 | `src/data/` | 데이터 읽기, 검증, 전처리와 그룹 분할 코드 |
 | `src/models/` | 다각도 그룹 모델 구조와 생성 코드 |
 | `src/training/` | 학습, 평가와 비교 실험 코드 |
-| `src/inference/` | 승인 모델의 HTTP 추론 서비스 코드 |
+| `src/inference/` | 모델 후보의 통합 검증과 승인 모델 배포에 공통으로 사용하는 HTTP 추론 서비스 코드 |
 | `src/api/` | 검사 오케스트레이션, 정책, 이력과 가상 제어 백엔드 코드 |
 | `src/web/` | 자동 검사 상태, 이력, 통계와 관리 화면 코드 |
 | `tests/` | 데이터·모델·API·통합 흐름 검증 코드 |
@@ -47,6 +47,6 @@ simulator → FastAPI backend → inference HTTP API
 
 ## 현재 상태
 
-기획과 역할별 WBS가 확정되었고 구현을 시작하는 단계입니다. 프로젝트 기간은 2026-09-16부터 2026-10-16까지이며, 2026-10-13에 기능을 동결합니다.
+기획과 역할별 WBS를 기준으로 파트별 구현과 통합을 진행 중입니다. 데이터·모델 파트는 `separate`·12장 구조와 HTTP 계약을 구현했으나 v1의 품질 Macro F1이 승인 기준에 미달하여 v2 개선 학습을 진행 중입니다. 프로젝트 기간은 2026-09-16부터 2026-10-16까지이며, 2026-10-13에 기능을 동결합니다.
 
 최상위 기획 기준은 [`docs/project-plan.md`](docs/project-plan.md)입니다. 세부 확정 기록은 [`docs/decision-log.md`](docs/decision-log.md), 역할별 일정은 [`docs/wbs.md`](docs/wbs.md)에서 관리합니다.
