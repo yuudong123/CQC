@@ -21,6 +21,7 @@
 | `export_predictions.py` | validation fold 그룹별 확률·정답 CSV 생성 |
 | `thresholds.py` | 품종·품질 신뢰도 기준 후보 탐색 |
 | `final_fit.py` | CV 최고 epoch 중앙값으로 Test 제외 전체 개발 데이터를 최종 학습 |
+| `run_final_fit.ps1` | 원격 Windows 예약 작업에서 최종 학습을 실행하고 로그 분리 저장 |
 
 ## 안전 장치
 
