@@ -24,6 +24,7 @@
 | `run_final_fit.ps1` | 원격 Windows 예약 작업에서 최종 학습을 실행하고 로그 분리 저장 |
 | `improvement_experiments.py` | 품질 v2 손실·정규화 4종의 5-fold·source holdout 24회 계획 |
 | `improvement_report.py` | 공통 epoch의 CV 최저 fold·source holdout을 함께 비교해 강건 후보 선정 |
+| `run_improvement_v2.ps1` | 원격 Windows 예약 작업에서 v2 24회 실험을 실행하고 로그 저장 |
 
 ## 안전 장치
 
