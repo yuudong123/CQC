@@ -73,6 +73,17 @@ class InferenceApiTest(unittest.TestCase):
         )
         self.assertEqual(response.status_code, 415)
 
+    def test_predict_rejects_more_files_than_model_views(self) -> None:
+        response = self.client.post(
+            "/v1/predict",
+            files=[
+                ("images", (f"{index}.png", _png(), "image/png"))
+                for index in range(5)
+            ],
+        )
+        self.assertEqual(response.status_code, 413)
+        self.assertIn("최대 4장", response.json()["detail"])
+
     def test_openapi_contains_typed_prediction_contract(self) -> None:
         schema = self.client.app.openapi()
         response = schema["paths"]["/v1/predict"]["post"]["responses"]["200"]

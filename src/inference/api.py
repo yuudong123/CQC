@@ -9,6 +9,9 @@ from typing import Any
 from .predictor import Predictor
 from .schemas import HealthResponse, PredictionResponse
 
+
+MAX_REQUEST_BYTES = 24 * 1024 * 1024
+
 try:
     from fastapi import FastAPI, File, HTTPException, UploadFile
 except ImportError:  # Optional runtime dependency.
@@ -20,6 +23,7 @@ def create_app(predictor: Predictor) -> Any:
         raise RuntimeError("FastAPI 실행 의존성을 설치해야 합니다")
 
     app = FastAPI(title="CQC Inference API", version="1.0.0")
+    max_files = int(predictor.health()["views"])
 
     @app.get("/health", response_model=HealthResponse)
     def health() -> dict[str, Any]:
@@ -30,6 +34,7 @@ def create_app(predictor: Predictor) -> Any:
         response_model=PredictionResponse,
         responses={
             415: {"description": "PNG/JPEG 외 형식"},
+            413: {"description": "파일 수 또는 전체 요청 크기 초과"},
             422: {"description": "빈 요청, 손상 이미지 또는 디코딩 실패"},
             500: {"description": "예상하지 못한 추론 오류"},
         },
@@ -37,11 +42,20 @@ def create_app(predictor: Predictor) -> Any:
     async def predict(images: list[UploadFile] = File(...)) -> dict[str, Any]:
         if not images:
             raise HTTPException(status_code=422, detail="images는 1장 이상 필요합니다")
+        if len(images) > max_files:
+            raise HTTPException(
+                status_code=413, detail=f"images는 최대 {max_files}장까지 허용합니다"
+            )
         payload = []
+        total_bytes = 0
         for image in images:
             if image.content_type not in {"image/png", "image/jpeg"}:
                 raise HTTPException(status_code=415, detail="PNG 또는 JPEG만 지원합니다")
-            payload.append(await image.read())
+            value = await image.read()
+            total_bytes += len(value)
+            if total_bytes > MAX_REQUEST_BYTES:
+                raise HTTPException(status_code=413, detail="전체 이미지는 최대 24MiB입니다")
+            payload.append(value)
         try:
             return predictor.predict(payload).to_dict()
         except (ValueError, OSError) as exc:
