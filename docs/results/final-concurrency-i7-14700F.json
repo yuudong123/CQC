@@ -1,0 +1,42 @@
+{
+  "checkpoint": "outputs\\final-training\\separate-12view\\final.pt",
+  "device": "cpu",
+  "cpu": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+  "logical_cpu_count": 28,
+  "platform": "Windows-10-10.0.26200-SP0",
+  "views": 12,
+  "torch_threads": 1,
+  "results": [
+    {
+      "concurrency": 1,
+      "requests": 100,
+      "mean_ms": 107.28826700018544,
+      "max_ms": 114.78830000123708,
+      "p95_ms": 113.59269999957178,
+      "throughput_per_second": 9.308904162321229,
+      "meets_500ms": true,
+      "meets_2_per_second": true
+    },
+    {
+      "concurrency": 2,
+      "requests": 100,
+      "mean_ms": 137.8706360002252,
+      "max_ms": 162.70500000246102,
+      "p95_ms": 151.15769999829354,
+      "throughput_per_second": 14.462183919934443,
+      "meets_500ms": true,
+      "meets_2_per_second": true
+    },
+    {
+      "concurrency": 4,
+      "requests": 100,
+      "mean_ms": 167.79394999990473,
+      "max_ms": 199.33489999675658,
+      "p95_ms": 182.074600001215,
+      "throughput_per_second": 23.405974164277353,
+      "meets_500ms": true,
+      "meets_2_per_second": true
+    }
+  ],
+  "test_used": false
+}
