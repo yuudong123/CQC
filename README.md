@@ -5,23 +5,25 @@ AI Hub 농산물 품질(QC) 이미지를 이용해 사과의 품종과 품질 �
 ## MVP 범위
 
 - 대상: 부사(`fuji`)·양광(`yanggwang`) 2개 품종
-- 입력: 동일 `group_no`에 속한 다각도 이미지 묶음
+- 입력: Simulator가 동일 `group_no`에서 균등 선택해 전송하는 최대 40장의 다각도 이미지 묶음
 - 출력: 품종·품질(`특/상/보통`) 예측, 각각의 확률·신뢰도, 선별 목적지
 - 자동화: 시뮬레이터 자동 입력, 저신뢰·오류 재검사 분기, 6개 정상 bin과 재검사 bin을 사용하는 가상 제어
-- 처리 목표: i7-4790·RAM 16GB CPU 환경에서 초당 사과 그룹 2개, 모델 제한시간 500ms
+- 처리 목표: i7-4790·RAM 16GB CPU 환경에서 500ms 간격 입력과 초당 사과 그룹 2개 처리. Inference 제한시간 500ms는 Backend 요청 전송부터 응답 전체 수신까지 적용
 - 조건부 확장: 사과 MVP 완료 후 두 번째 농산물 품목 검토
-- 제외: 사용자 수동 이미지 업로드, 실제 카메라·PLC·선별 장비 연동, 설비 고장예지
+- 제외: 스마트폰 카메라 입력, 사용자 이미지 파일 업로드, 실제 산업용 카메라·PLC·선별 장비 연동, 설비 고장예지
 
 ## 서비스 구성
 
 ```text
-simulator → backend → inference
+simulator → FastAPI backend → inference HTTP API
                     ├─ MySQL
                     ├─ 내부 가상 제어 API
                     └─ frontend
 ```
 
 서비스 간 통신은 HTTP를 사용하며 Kafka는 사용하지 않습니다. Docker Compose 실행 단위는 `simulator`, `inference`, `backend`, `frontend`, `mysql`입니다.
+
+검사 한 건은 사과 한 개, 즉 `group_no` 한 개이며 모든 구성 요소는 동일한 `inspection_id`로 이 흐름을 추적합니다. 최종 모델 입력 장수와 품종·품질 confidence threshold는 모델 검증 후 확정합니다.
 
 ## 폴더 역할
 
