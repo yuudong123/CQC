@@ -43,15 +43,27 @@ def select_final_epochs(
     views: int,
     folds: Iterable[int] = DEFAULT_FOLDS,
 ) -> tuple[int, list[int]]:
-    best_epochs = [
-        best_epoch_from_history(
-            training_root / f"{model_kind}-{views}view-fold-{fold}" / "history.json"
-        )
+    history_paths = [
+        training_root / f"{model_kind}-{views}view-fold-{fold}" / "history.json"
         for fold in folds
     ]
-    if not best_epochs:
+    if not history_paths:
         raise ValueError("fold가 하나 이상 필요합니다")
-    return int(statistics.median(best_epochs)), best_epochs
+    histories = [json.loads(path.read_text(encoding="utf-8")) for path in history_paths]
+    epoch_sets = [{int(row["epoch"]) for row in history} for history in histories]
+    common_epochs = set.intersection(*epoch_sets)
+    if not common_epochs:
+        raise ValueError("모든 fold에 공통으로 존재하는 epoch가 없습니다")
+    mean_scores = {
+        epoch: statistics.mean(
+            float(next(row for row in history if int(row["epoch"]) == epoch)["validation_score"])
+            for history in histories
+        )
+        for epoch in common_epochs
+    }
+    selected_epoch = max(mean_scores, key=lambda epoch: (mean_scores[epoch], -epoch))
+    best_epochs = [best_epoch_from_history(path) for path in history_paths]
+    return selected_epoch, best_epochs
 
 
 def development_groups(groups: Iterable[GroupRecord]) -> list[GroupRecord]:
@@ -108,7 +120,7 @@ def main(argv: list[str] | None = None) -> int:
     plan = {
         "model_kind": args.model_kind,
         "views": args.views,
-        "epoch_selection": "median_of_cv_best_epochs",
+        "epoch_selection": "best_mean_validation_score_at_common_epoch",
         "fold_best_epochs": fold_best_epochs,
         "epochs": epochs,
         "data_scope": "all_non_test_groups",

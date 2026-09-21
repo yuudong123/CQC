@@ -14,7 +14,7 @@ from torch.utils.data import DataLoader
 
 from src.data.multiview import MultiViewDataset, SUPPORTED_VIEW_COUNTS, load_groups
 from src.data.torch_dataset import TorchMultiViewDataset
-from .engine import run_epoch, save_checkpoint
+from .engine import QUALITY_LOSS_KINDS, run_epoch, save_checkpoint
 from .models import MODEL_KINDS, build_model
 
 
@@ -31,6 +31,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--batch-size", type=int, default=2)
     parser.add_argument("--learning-rate", type=float, default=1e-3)
     parser.add_argument("--weight-decay", type=float, default=1e-4)
+    parser.add_argument("--dropout", type=float, default=0.2)
+    parser.add_argument("--quality-loss", choices=QUALITY_LOSS_KINDS, default="cross_entropy")
+    parser.add_argument("--focal-gamma", type=float, default=2.0)
+    parser.add_argument("--ordinal-weight", type=float, default=0.25)
+    parser.add_argument("--validation-scheme", choices=("cv", "source"), default="cv")
     parser.add_argument("--image-size", type=int, default=224)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--workers", type=int, default=0)
@@ -39,13 +44,13 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     args = parser.parse_args(argv)
     if args.epochs <= 0 or args.batch_size <= 0 or args.image_size <= 0:
         parser.error("epochs, batch-size, image-size는 1 이상이어야 합니다")
+    if not 0 <= args.dropout < 1 or args.focal_gamma < 0 or args.ordinal_weight < 0:
+        parser.error("dropout은 0~1 미만, focal-gamma와 ordinal-weight는 0 이상이어야 합니다")
     if args.workers != 0:
         parser.error("ZIP 핸들 안전성을 위해 현재 workers는 0만 지원합니다")
     if args.output_dir is None:
-        args.output_dir = (
-            Path("outputs/training")
-            / f"{args.model_kind}-{args.views}view-fold-{args.cv_fold}"
-        )
+        suffix = f"fold-{args.cv_fold}" if args.validation_scheme == "cv" else "source"
+        args.output_dir = Path("outputs/training") / f"{args.model_kind}-{args.views}view-{suffix}"
     return args
 
 
@@ -88,17 +93,33 @@ def write_json(path: Path, value: Any) -> None:
         stream.write("\n")
 
 
+def select_development_groups(
+    groups: list[Any], *, validation_scheme: str, cv_fold: int
+) -> tuple[list[Any], list[Any]]:
+    development = [group for group in groups if group.split != "test"]
+    if validation_scheme == "cv":
+        return (
+            [group for group in development if group.cv_fold != cv_fold],
+            [group for group in development if group.cv_fold == cv_fold],
+        )
+    if validation_scheme == "source":
+        return (
+            [group for group in development if group.original_split == "train"],
+            [group for group in development if group.original_split == "validation"],
+        )
+    raise ValueError(f"지원하지 않는 validation_scheme입니다: {validation_scheme}")
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     set_reproducibility(args.seed)
     device = resolve_device(args.device)
     groups = load_groups(args.manifest, args.splits)
-    train_source = MultiViewDataset(
-        groups, args.raw_root, args.views, cv_fold=args.cv_fold, cv_role="train"
+    train_groups, validation_groups = select_development_groups(
+        groups, validation_scheme=args.validation_scheme, cv_fold=args.cv_fold
     )
-    validation_source = MultiViewDataset(
-        groups, args.raw_root, args.views, cv_fold=args.cv_fold, cv_role="validation"
-    )
+    train_source = MultiViewDataset(train_groups, args.raw_root, args.views)
+    validation_source = MultiViewDataset(validation_groups, args.raw_root, args.views)
     if not train_source.groups or not validation_source.groups:
         raise ValueError("선택한 CV fold의 학습 또는 검증 그룹이 비어 있습니다")
 
@@ -113,6 +134,11 @@ def main(argv: list[str] | None = None) -> int:
         "batch_size": args.batch_size,
         "learning_rate": args.learning_rate,
         "weight_decay": args.weight_decay,
+        "dropout": args.dropout,
+        "quality_loss": args.quality_loss,
+        "focal_gamma": args.focal_gamma,
+        "ordinal_weight": args.ordinal_weight,
+        "validation_scheme": args.validation_scheme,
         "image_size": args.image_size,
         "seed": args.seed,
         "workers": args.workers,
@@ -142,7 +168,7 @@ def main(argv: list[str] | None = None) -> int:
         pin_memory=device.type == "cuda",
     )
     model = build_model(
-        args.model_kind, pretrained=not args.no_pretrained
+        args.model_kind, pretrained=not args.no_pretrained, dropout=args.dropout
     ).to(device)
     optimizer = torch.optim.AdamW(
         model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay
@@ -152,8 +178,15 @@ def main(argv: list[str] | None = None) -> int:
     checkpoint_path = args.output_dir / "best.pt"
     try:
         for epoch in range(1, args.epochs + 1):
-            train_metrics = run_epoch(model, train_loader, device, optimizer=optimizer)
-            validation_metrics = run_epoch(model, validation_loader, device)
+            loss_options = {
+                "quality_loss_kind": args.quality_loss,
+                "focal_gamma": args.focal_gamma,
+                "ordinal_weight": args.ordinal_weight,
+            }
+            train_metrics = run_epoch(
+                model, train_loader, device, optimizer=optimizer, **loss_options
+            )
+            validation_metrics = run_epoch(model, validation_loader, device, **loss_options)
             score = validation_score(validation_metrics)
             epoch_result = {
                 "epoch": epoch,

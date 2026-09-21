@@ -10,21 +10,22 @@ from src.training.final_fit import development_groups, parse_args, select_final_
 
 
 class FinalFitTest(unittest.TestCase):
-    def test_selects_median_cv_best_epoch(self) -> None:
+    def test_selects_best_common_epoch_instead_of_median_fold_peak(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            best_epochs = [20, 15, 16, 19, 20]
+            best_epochs = [3, 1, 3, 1, 3]
             for fold, best_epoch in enumerate(best_epochs):
                 run = root / f"separate-12view-fold-{fold}"
                 run.mkdir()
                 history = [
-                    {"epoch": 1, "validation_score": 0.1},
-                    {"epoch": best_epoch, "validation_score": 0.9},
+                    {"epoch": 1, "validation_score": 0.9 if best_epoch == 1 else 0.2},
+                    {"epoch": 2, "validation_score": 0.8},
+                    {"epoch": 3, "validation_score": 0.9 if best_epoch == 3 else 0.2},
                 ]
                 (run / "history.json").write_text(json.dumps(history), encoding="utf-8")
             epochs, collected = select_final_epochs(root, "separate", 12)
             self.assertEqual(collected, best_epochs)
-            self.assertEqual(epochs, 19)
+            self.assertEqual(epochs, 2)
 
     def test_development_groups_exclude_test(self) -> None:
         groups = [

@@ -32,6 +32,7 @@ class FrameRecord:
     horizontality_angle: int
     image_archive: str
     image_member: str
+    original_split: str = ""
 
     @property
     def view_key(self) -> tuple[int, int, int, str]:
@@ -63,6 +64,7 @@ class GroupRecord:
     split: str
     cv_fold: int | None
     frames: tuple[FrameRecord, ...]
+    original_split: str = ""
 
 
 @dataclass(frozen=True)
@@ -143,11 +145,13 @@ def load_groups(manifest_path: Path, split_path: Path) -> list[GroupRecord]:
     assignments = load_assignments(split_path)
     frames_by_group: dict[str, list[FrameRecord]] = defaultdict(list)
     targets: dict[str, tuple[str, str]] = {}
+    original_splits: dict[str, str] = {}
     sample_ids: set[str] = set()
     with manifest_path.open("r", encoding="utf-8-sig", newline="") as stream:
         reader = csv.DictReader(stream)
         required = {
             "sample_id",
+            "original_split",
             "source_group_id",
             "cultivar",
             "quality_grade",
@@ -171,6 +175,14 @@ def load_groups(manifest_path: Path, split_path: Path) -> list[GroupRecord]:
             if group_no in targets and targets[group_no] != target:
                 raise MultiViewValidationError(f"그룹 라벨 불일치: {group_no}")
             targets[group_no] = target
+            original_split = row["original_split"].strip().lower()
+            if original_split not in {"train", "validation"}:
+                raise MultiViewValidationError(
+                    f"지원하지 않는 original_split입니다: {original_split!r}"
+                )
+            if group_no in original_splits and original_splits[group_no] != original_split:
+                raise MultiViewValidationError(f"그룹 original_split 불일치: {group_no}")
+            original_splits[group_no] = original_split
             frames_by_group[group_no].append(
                 FrameRecord(
                     sample_id=sample_id,
@@ -182,6 +194,7 @@ def load_groups(manifest_path: Path, split_path: Path) -> list[GroupRecord]:
                     horizontality_angle=int(row["horizontality_angle"]),
                     image_archive=row["image_archive"],
                     image_member=row["image_member"],
+                    original_split=original_split,
                 )
             )
 
@@ -201,6 +214,7 @@ def load_groups(manifest_path: Path, split_path: Path) -> list[GroupRecord]:
             split=assignments[group_no].split,
             cv_fold=assignments[group_no].cv_fold,
             frames=tuple(frames_by_group[group_no]),
+            original_split=original_splits[group_no],
         )
         for group_no in sorted(frames_by_group)
     ]

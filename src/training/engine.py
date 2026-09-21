@@ -7,7 +7,37 @@ from pathlib import Path
 from typing import Any
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor, nn
+
+
+QUALITY_LOSS_KINDS = ("cross_entropy", "focal", "ordinal", "focal_ordinal")
+
+
+def quality_loss(
+    logits: Tensor,
+    targets: Tensor,
+    *,
+    kind: str = "cross_entropy",
+    focal_gamma: float = 2.0,
+    ordinal_weight: float = 0.25,
+) -> Tensor:
+    if kind not in QUALITY_LOSS_KINDS:
+        raise ValueError(f"지원하지 않는 품질 손실입니다: {kind!r}")
+    per_sample = F.cross_entropy(logits, targets, reduction="none")
+    if kind in {"focal", "focal_ordinal"}:
+        target_probability = logits.softmax(dim=1).gather(1, targets.unsqueeze(1)).squeeze(1)
+        per_sample = (1 - target_probability).pow(focal_gamma) * per_sample
+    loss = per_sample.mean()
+    if kind in {"ordinal", "focal_ordinal"}:
+        class_positions = torch.arange(
+            logits.shape[1], device=logits.device, dtype=logits.dtype
+        )
+        expected_grade = (logits.softmax(dim=1) * class_positions).sum(dim=1)
+        loss = loss + ordinal_weight * F.mse_loss(
+            expected_grade, targets.to(dtype=logits.dtype)
+        )
+    return loss
 
 
 def confusion_matrix(targets: Tensor, predictions: Tensor, classes: int) -> Tensor:
@@ -63,6 +93,9 @@ def run_epoch(
     optimizer: torch.optim.Optimizer | None = None,
     cultivar_loss_weight: float = 1.0,
     quality_loss_weight: float = 1.0,
+    quality_loss_kind: str = "cross_entropy",
+    focal_gamma: float = 2.0,
+    ordinal_weight: float = 0.25,
     include_predictions: bool = False,
 ) -> dict[str, Any]:
     training = optimizer is not None
@@ -86,8 +119,14 @@ def run_epoch(
         with torch.set_grad_enabled(training):
             output = model(images, view_mask)
             cultivar_loss = criterion(output["cultivar_logits"], cultivar_target)
-            quality_loss = criterion(output["quality_logits"], quality_target)
-            loss = cultivar_loss_weight * cultivar_loss + quality_loss_weight * quality_loss
+            quality_task_loss = quality_loss(
+                output["quality_logits"],
+                quality_target,
+                kind=quality_loss_kind,
+                focal_gamma=focal_gamma,
+                ordinal_weight=ordinal_weight,
+            )
+            loss = cultivar_loss_weight * cultivar_loss + quality_loss_weight * quality_task_loss
             if training:
                 loss.backward()
                 optimizer.step()
