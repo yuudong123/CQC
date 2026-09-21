@@ -277,7 +277,7 @@ class MultiViewDataset:
     def __getitem__(self, index: int) -> dict[str, Any]:
         group = self.groups[index]
         if self.sampling == "angle_balanced_random":
-            from .sampling import select_angle_balanced_random_views
+            from data.sampling import select_angle_balanced_random_views
 
             selected = select_angle_balanced_random_views(
                 group.frames,
