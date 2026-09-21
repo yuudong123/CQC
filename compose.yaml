@@ -56,16 +56,19 @@ services:
     # 실제 배포 시 비밀번호는 .env에서 관리할 예정
     environment:
       # MySQL root 계정 비밀번호
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-cqc_local_root}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
 
       # 최초 생성할 기본 DB 이름
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-cqc}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
 
       # 프로젝트에서 사용할 일반 DB 사용자
-      MYSQL_USER: ${MYSQL_USER:-cqc}
+      MYSQL_USER: ${MYSQL_USER}
 
       # 일반 DB 사용자의 비밀번호
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-cqc_local_password}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+    volumes:
+      - mysql_data:/var/lib/mysql
 
     # ==========================================================
     # MO-04 Healthcheck
@@ -270,3 +273,6 @@ services:
       - |
         echo "[MO-04 placeholder] simulator"
         tail -f /dev/null
+
+volumes:
+  mysql_data:
