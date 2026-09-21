@@ -1,0 +1,59 @@
+{
+  "algorithm": "angle_direction, horizontality_angle, verticality_angle, sample_id 순으로 정렬 후 전체 범위에서 균등 인덱스 선택; 부족분은 오른쪽 padding",
+  "supported_view_counts": [
+    4,
+    8,
+    12,
+    16,
+    40
+  ],
+  "groups": 179,
+  "targets": {
+    "4": {
+      "groups": 179,
+      "padded_groups": 0,
+      "padding_slots": 0,
+      "real_frame_count_distribution": {
+        "4": 179
+      }
+    },
+    "8": {
+      "groups": 179,
+      "padded_groups": 0,
+      "padding_slots": 0,
+      "real_frame_count_distribution": {
+        "8": 179
+      }
+    },
+    "12": {
+      "groups": 179,
+      "padded_groups": 1,
+      "padding_slots": 4,
+      "real_frame_count_distribution": {
+        "8": 1,
+        "12": 178
+      }
+    },
+    "16": {
+      "groups": 179,
+      "padded_groups": 1,
+      "padding_slots": 8,
+      "real_frame_count_distribution": {
+        "8": 1,
+        "16": 178
+      }
+    },
+    "40": {
+      "groups": 179,
+      "padded_groups": 4,
+      "padding_slots": 85,
+      "real_frame_count_distribution": {
+        "8": 1,
+        "16": 1,
+        "21": 1,
+        "30": 1,
+        "40": 175
+      }
+    }
+  }
+}

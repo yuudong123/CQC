@@ -1,0 +1,215 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "CQC Inference API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/predict": {
+      "post": {
+        "summary": "Predict",
+        "operationId": "predict_v1_predict_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_predict_v1_predict_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PredictionResponse"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "PNG/JPEG 외 형식"
+          },
+          "413": {
+            "description": "파일 수 또는 전체 요청 크기 초과"
+          },
+          "422": {
+            "description": "빈 요청, 손상 이미지 또는 디코딩 실패"
+          },
+          "500": {
+            "description": "예상하지 못한 추론 오류"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Body_predict_v1_predict_post": {
+        "properties": {
+          "images": {
+            "items": {
+              "type": "string",
+              "contentMediaType": "application/octet-stream"
+            },
+            "type": "array",
+            "title": "Images"
+          }
+        },
+        "type": "object",
+        "required": [
+          "images"
+        ],
+        "title": "Body_predict_v1_predict_post"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "examples": [
+              "ready"
+            ]
+          },
+          "model_loaded": {
+            "type": "boolean",
+            "title": "Model Loaded"
+          },
+          "model_name": {
+            "type": "string",
+            "title": "Model Name"
+          },
+          "model_version": {
+            "type": "string",
+            "title": "Model Version"
+          },
+          "device": {
+            "type": "string",
+            "title": "Device"
+          },
+          "views": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Views"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status",
+          "model_loaded",
+          "model_name",
+          "model_version",
+          "device",
+          "views"
+        ],
+        "title": "HealthResponse"
+      },
+      "PredictionResponse": {
+        "properties": {
+          "crop_type": {
+            "type": "string",
+            "title": "Crop Type",
+            "examples": [
+              "apple"
+            ]
+          },
+          "predicted_cultivar": {
+            "type": "string",
+            "title": "Predicted Cultivar",
+            "examples": [
+              "fuji"
+            ]
+          },
+          "cultivar_confidence": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Cultivar Confidence"
+          },
+          "cultivar_probabilities": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Cultivar Probabilities"
+          },
+          "predicted_grade": {
+            "type": "string",
+            "title": "Predicted Grade",
+            "examples": [
+              "L"
+            ]
+          },
+          "quality_confidence": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Quality Confidence"
+          },
+          "quality_probabilities": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Quality Probabilities"
+          },
+          "inference_time_ms": {
+            "type": "number",
+            "minimum": 0.0,
+            "title": "Inference Time Ms"
+          },
+          "model_name": {
+            "type": "string",
+            "title": "Model Name"
+          },
+          "model_version": {
+            "type": "string",
+            "title": "Model Version"
+          },
+          "preprocessing_version": {
+            "type": "string",
+            "title": "Preprocessing Version"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "crop_type",
+          "predicted_cultivar",
+          "cultivar_confidence",
+          "cultivar_probabilities",
+          "predicted_grade",
+          "quality_confidence",
+          "quality_probabilities",
+          "inference_time_ms",
+          "model_name",
+          "model_version",
+          "preprocessing_version"
+        ],
+        "title": "PredictionResponse"
+      }
+    }
+  }
+}
