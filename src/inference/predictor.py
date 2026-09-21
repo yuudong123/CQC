@@ -31,6 +31,7 @@ class Prediction:
     model_name: str
     model_version: str
     preprocessing_version: str
+    used_frame_count: int
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -115,6 +116,7 @@ class Predictor:
             model_name=str(self.manifest["model_name"]),
             model_version=str(self.manifest["model_version"]),
             preprocessing_version=str(self.manifest["preprocessing_version"]),
+            used_frame_count=int(mask.sum().item()),
         )
 
     def health(self) -> dict[str, Any]:

@@ -19,6 +19,7 @@ class HealthResponse(BaseModel):
 class PredictionResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
+    inspection_id: str = Field(min_length=1)
     crop_type: str = Field(examples=["apple"])
     predicted_cultivar: str = Field(examples=["fuji"])
     cultivar_confidence: float = Field(ge=0, le=1)
@@ -30,3 +31,4 @@ class PredictionResponse(BaseModel):
     model_name: str
     model_version: str
     preprocessing_version: str
+    used_frame_count: int = Field(ge=1, le=12)
