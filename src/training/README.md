@@ -17,7 +17,7 @@
 | `evaluate.py` | 최종 선정 체크포인트의 고정 Test 1회 평가 |
 | `model_card.py` | 패키지·CV·Test·임계값·CPU 측정 산출물로 최종 모델 카드 생성 |
 | `report.py` | 전체 50개 결과 비교표·차트와 정확도 기준 임시 후보 생성 |
-| `package_model.py` | 승인 체크포인트와 불변 메타데이터·SHA-256 패키징 |
+| `package_model.py` | 승인 체크포인트와 클래스·전처리·신뢰도 기준·SHA-256 패키징 |
 | `export_predictions.py` | validation fold 그룹별 확률·정답 CSV 생성 |
 | `thresholds.py` | 품종·품질 신뢰도 기준 후보 탐색 |
 | `final_fit.py` | CV 최고 epoch 중앙값으로 Test 제외 전체 개발 데이터를 최종 학습 |

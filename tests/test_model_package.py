@@ -10,6 +10,7 @@ import torch
 
 from src.inference.predictor import Predictor
 from src.training.models import build_model
+from src.training.package_model import load_threshold_selection
 
 
 class ModelPackageTest(unittest.TestCase):
@@ -52,6 +53,25 @@ class ModelPackageTest(unittest.TestCase):
                 stream.write(b"tampered")
             with self.assertRaisesRegex(ValueError, "SHA-256"):
                 Predictor(root, device="cpu")
+
+    def test_loads_packaged_thresholds(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "thresholds.json"
+            path.write_text(
+                json.dumps(
+                    {
+                        "selection": {
+                            "cultivar_threshold": 0.5,
+                            "quality_threshold": 0.6,
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+            self.assertEqual(
+                load_threshold_selection(path),
+                {"cultivar_threshold": 0.5, "quality_threshold": 0.6},
+            )
 
 
 if __name__ == "__main__":

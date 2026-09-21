@@ -20,6 +20,20 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def load_threshold_selection(path: Path) -> dict[str, float]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    selection = payload.get("selection")
+    if not isinstance(selection, dict):
+        raise ValueError("신뢰도 결과에 selection이 없습니다")
+    result = {}
+    for key in ("cultivar_threshold", "quality_threshold"):
+        value = float(selection[key])
+        if not 0 <= value <= 1:
+            raise ValueError(f"{key}는 0~1 범위여야 합니다")
+        result[key] = value
+    return result
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="승인 모델 패키지 생성")
     parser.add_argument("--checkpoint", type=Path, required=True)
@@ -27,8 +41,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--model-kind", choices=("joint", "separate"), required=True)
     parser.add_argument("--views", type=int, choices=(4, 8, 12, 16, 40), required=True)
     parser.add_argument("--image-size", type=int, default=224)
+    parser.add_argument("--thresholds", type=Path, required=True)
     parser.add_argument("--output-root", type=Path, default=Path("models"))
     args = parser.parse_args(argv)
+    thresholds = load_threshold_selection(args.thresholds)
     destination = args.output_root / args.version
     if destination.exists():
         parser.error(f"이미 존재하는 모델 버전입니다: {destination}")
@@ -45,6 +61,7 @@ def main(argv: list[str] | None = None) -> int:
         "cultivar_classes": list(CULTIVAR_CLASSES),
         "quality_classes": list(QUALITY_CLASSES),
         "normalization": {"mean": list(IMAGENET_MEAN), "std": list(IMAGENET_STD)},
+        **thresholds,
         "checkpoint_sha256": sha256(model_path),
     }
     (destination / "model.json").write_text(

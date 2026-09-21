@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import platform
 import statistics
 import time
 from pathlib import Path
@@ -77,6 +79,9 @@ def main(argv: list[str] | None = None) -> int:
     result = {
         "checkpoint": str(args.checkpoint),
         "device": str(device),
+        "cpu": platform.processor() or "unknown",
+        "logical_cpu_count": os.cpu_count(),
+        "platform": platform.platform(),
         "views": config["views"],
         "repeats": args.repeats,
         "mean_ms": statistics.mean(timings),

@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import platform
 import statistics
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -82,6 +84,9 @@ def main(argv: list[str] | None = None) -> int:
     report = {
         "checkpoint": str(args.checkpoint),
         "device": str(device),
+        "cpu": platform.processor() or "unknown",
+        "logical_cpu_count": os.cpu_count(),
+        "platform": platform.platform(),
         "views": config["views"],
         "torch_threads": args.torch_threads,
         "results": results,
