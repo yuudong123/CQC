@@ -51,6 +51,9 @@
           "415": {
             "description": "PNG/JPEG 외 형식"
           },
+          "413": {
+            "description": "파일 수 또는 전체 요청 크기 초과"
+          },
           "422": {
             "description": "빈 요청, 손상 이미지 또는 디코딩 실패"
           },

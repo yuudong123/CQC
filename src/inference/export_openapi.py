@@ -11,6 +11,8 @@ from .api import create_app
 
 
 class _SchemaOnlyPredictor:
+    views = 12
+
     def health(self) -> dict[str, Any]:
         raise RuntimeError("schema-only predictor")
 

@@ -23,7 +23,8 @@ def create_app(predictor: Predictor) -> Any:
         raise RuntimeError("FastAPI 실행 의존성을 설치해야 합니다")
 
     app = FastAPI(title="CQC Inference API", version="1.0.0")
-    max_files = int(predictor.health()["views"])
+    predictor_views = getattr(predictor, "views", None)
+    max_files = int(predictor_views if predictor_views is not None else predictor.health()["views"])
 
     @app.get("/health", response_model=HealthResponse)
     def health() -> dict[str, Any]:
