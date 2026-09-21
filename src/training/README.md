@@ -28,6 +28,7 @@
 - `python -m src.training.experiments`는 계획 JSON만 만들며 학습하지 않는다.
 - 전체 학습은 `--execute`를 명시한 경우에만 시작한다.
 - 최종 Test 평가는 `--confirm-final-test RUN_FINAL_TEST_ONCE`가 없으면 거부한다.
+- 최종 Test를 시도하면 체크포인트 옆에 잠금 표식을 남기고 같은 체크포인트의 재실행을 거부한다.
 - `final_fit.py`는 기본적으로 계획만 만들며 `--execute`를 명시해야 학습한다.
 - 최종 학습 epoch는 선택 모델 5개 fold의 최고 epoch 중앙값으로 자동 결정한다.
 - 40장 입력은 기본 batch size를 1로 낮춘다.

@@ -30,6 +30,18 @@ def load_checkpoint(path: Path, device: torch.device) -> dict[str, Any]:
     return checkpoint
 
 
+def claim_final_test(checkpoint_path: Path, output_path: Path) -> Path:
+    marker = checkpoint_path.with_suffix(checkpoint_path.suffix + ".final-test.lock")
+    try:
+        with marker.open("x", encoding="utf-8", newline="\n") as stream:
+            stream.write(json.dumps({"output": str(output_path)}, ensure_ascii=False) + "\n")
+    except FileExistsError as error:
+        raise RuntimeError(
+            f"이 체크포인트의 최종 Test가 이미 실행 또는 시도되었습니다: {marker}"
+        ) from error
+    return marker
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="선정 모델 평가")
     parser.add_argument("--checkpoint", type=Path, required=True)
@@ -49,6 +61,7 @@ def main(argv: list[str] | None = None) -> int:
 
     device = resolve_device(args.device)
     checkpoint = load_checkpoint(args.checkpoint, device)
+    claim_final_test(args.checkpoint, args.output)
     config = checkpoint["config"]
     groups = load_groups(args.manifest, args.splits)
     source = MultiViewDataset(
