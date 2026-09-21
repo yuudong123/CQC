@@ -66,6 +66,18 @@ pipeline {
         githubPush()
     }
 
+    // ========================================================
+    // MO-05 MySQL 환경변수 / Credentials
+    // ========================================================
+    environment {
+        MYSQL_ROOT_PASSWORD = credentials('cqc-mysql-root-password')
+        MYSQL_CREDS = credentials('cqc-mysql-creds')
+
+        MYSQL_DATABASE = 'cqc'
+        MYSQL_USER = "${MYSQL_CREDS_USR}"
+        MYSQL_PASSWORD = "${MYSQL_CREDS_PSW}"
+    }
+
     stages {
 
         // ====================================================
