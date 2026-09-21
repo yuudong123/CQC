@@ -43,6 +43,8 @@ class ModelCardTest(unittest.TestCase):
         )
         self.assertIn("g1", card)
         self.assertIn("최종 Test 사용: 1회", card)
+        self.assertIn("모델 품질 승인: 실패", card)
+        self.assertIn("목표 i7-4790 수용시험: 미완료", card)
 
 
 if __name__ == "__main__":

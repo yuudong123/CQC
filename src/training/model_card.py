@@ -34,6 +34,18 @@ def render_card(
     threshold_selection = thresholds.get("selection")
     benchmark_rows = benchmark.get("results", [])
     failure_ids = ", ".join(row["group_no"] for row in failures[:10]) or "없음"
+    approved = (
+        test["cultivar"]["macro_f1"] >= 0.90
+        and test["quality"]["macro_f1"] >= 0.90
+    )
+    cpu = str(benchmark.get("cpu", "unknown"))
+    target_cpu_verified = "i7-4790" in cpu.lower()
+    benchmark_table = "\n".join(
+        "| {concurrency} | {p95_ms:.1f}ms | {throughput_per_second:.2f} | {meets_500ms} | {meets_2_per_second} |".format(
+            **row
+        )
+        for row in benchmark_rows
+    ) or "| - | - | - | - | - |"
     return f"""# CQC 모델 카드
 
 ## 식별 정보
@@ -62,18 +74,27 @@ def render_card(
 - 실패 그룹 수: {len(failures)}
 - 실패 그룹 예시: {failure_ids}
 - 최종 Test 사용: 1회
+- 승인 기준: 품종·품질 Macro F1 각각 0.90 이상
+- 모델 품질 승인: {'통과' if approved else '실패'}
 
 ## 운영 설정
 
 - 신뢰도 기준: `{json.dumps(threshold_selection, ensure_ascii=False)}`
-- 동시 처리 측정: `{json.dumps(benchmark_rows, ensure_ascii=False)}`
+- 측정 CPU: `{cpu}`
+- 논리 CPU 수: `{benchmark.get('logical_cpu_count', 'unknown')}`
+- 목표 i7-4790 수용시험: {'완료' if target_cpu_verified else '미완료'}
 - inference는 예측만 담당하며 bin·재검사·DB 정책은 백엔드가 담당한다.
+
+| 동시 처리 | p95 | 처리량/초 | 500ms | 초당 2건 |
+|---:|---:|---:|---|---|
+{benchmark_table}
 
 ## 한계
 
 - 사과 부사·양광과 L/M/S 품질 외 입력은 보장하지 않는다.
 - 촬영 환경과 품목 변화에 대한 일반화는 검증되지 않았다.
 - 중복 해시 이미지 5쌍은 원본에서 제거하지 않았다.
+- 목표 장비가 아닌 CPU 측정은 i7-4790 성능 승인 근거로 사용하지 않는다.
 """
 
 
