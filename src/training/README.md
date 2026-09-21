@@ -20,12 +20,15 @@
 | `package_model.py` | 승인 체크포인트와 불변 메타데이터·SHA-256 패키징 |
 | `export_predictions.py` | validation fold 그룹별 확률·정답 CSV 생성 |
 | `thresholds.py` | 품종·품질 신뢰도 기준 후보 탐색 |
+| `final_fit.py` | CV 최고 epoch 중앙값으로 Test 제외 전체 개발 데이터를 최종 학습 |
 
 ## 안전 장치
 
 - `python -m src.training.experiments`는 계획 JSON만 만들며 학습하지 않는다.
 - 전체 학습은 `--execute`를 명시한 경우에만 시작한다.
 - 최종 Test 평가는 `--confirm-final-test RUN_FINAL_TEST_ONCE`가 없으면 거부한다.
+- `final_fit.py`는 기본적으로 계획만 만들며 `--execute`를 명시해야 학습한다.
+- 최종 학습 epoch는 선택 모델 5개 fold의 최고 epoch 중앙값으로 자동 결정한다.
 - 40장 입력은 기본 batch size를 1로 낮춘다.
 - 모든 학습 산출물은 Git 제외 경로인 `outputs/training/` 아래에 저장한다.
 
