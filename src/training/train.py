@@ -36,6 +36,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--focal-gamma", type=float, default=2.0)
     parser.add_argument("--ordinal-weight", type=float, default=0.25)
     parser.add_argument("--validation-scheme", choices=("cv", "source"), default="cv")
+    parser.add_argument(
+        "--view-sampling",
+        choices=("fixed", "angle_balanced_random"),
+        default="fixed",
+    )
     parser.add_argument("--image-size", type=int, default=224)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--workers", type=int, default=0)
@@ -118,7 +123,13 @@ def main(argv: list[str] | None = None) -> int:
     train_groups, validation_groups = select_development_groups(
         groups, validation_scheme=args.validation_scheme, cv_fold=args.cv_fold
     )
-    train_source = MultiViewDataset(train_groups, args.raw_root, args.views)
+    train_source = MultiViewDataset(
+        train_groups,
+        args.raw_root,
+        args.views,
+        sampling=args.view_sampling,
+        sampling_seed=args.seed,
+    )
     validation_source = MultiViewDataset(validation_groups, args.raw_root, args.views)
     if not train_source.groups or not validation_source.groups:
         raise ValueError("선택한 CV fold의 학습 또는 검증 그룹이 비어 있습니다")
@@ -139,6 +150,7 @@ def main(argv: list[str] | None = None) -> int:
         "focal_gamma": args.focal_gamma,
         "ordinal_weight": args.ordinal_weight,
         "validation_scheme": args.validation_scheme,
+        "view_sampling": args.view_sampling,
         "image_size": args.image_size,
         "seed": args.seed,
         "workers": args.workers,
@@ -178,6 +190,7 @@ def main(argv: list[str] | None = None) -> int:
     checkpoint_path = args.output_dir / "best.pt"
     try:
         for epoch in range(1, args.epochs + 1):
+            train_source.set_epoch(epoch)
             loss_options = {
                 "quality_loss_kind": args.quality_loss,
                 "focal_gamma": args.focal_gamma,

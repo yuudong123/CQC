@@ -98,6 +98,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")
     parser.add_argument("--no-pretrained", action="store_true")
     parser.add_argument(
+        "--view-sampling",
+        choices=("fixed", "angle_balanced_random"),
+        default="fixed",
+    )
+    parser.add_argument(
         "--execute",
         action="store_true",
         help="명시한 경우에만 Test 제외 전체 개발 데이터 학습을 실행합니다",
@@ -140,7 +145,13 @@ def main(argv: list[str] | None = None) -> int:
     set_reproducibility(args.seed)
     device = resolve_device(args.device)
     groups = development_groups(load_groups(args.manifest, args.splits))
-    source = MultiViewDataset(groups, args.raw_root, args.views)
+    source = MultiViewDataset(
+        groups,
+        args.raw_root,
+        args.views,
+        sampling=args.view_sampling,
+        sampling_seed=args.seed,
+    )
     if not source.groups:
         raise ValueError("Test 제외 개발 그룹이 비어 있습니다")
 
@@ -158,6 +169,7 @@ def main(argv: list[str] | None = None) -> int:
         "device": str(device),
         "pretrained": not args.no_pretrained,
         "train_groups": len(source),
+        "view_sampling": args.view_sampling,
     }
     args.output_dir.mkdir(parents=True)
     write_json(args.output_dir / "config.json", config)
@@ -178,6 +190,7 @@ def main(argv: list[str] | None = None) -> int:
     checkpoint_path = args.output_dir / "final.pt"
     try:
         for epoch in range(1, epochs + 1):
+            source.set_epoch(epoch)
             train_metrics = run_epoch(model, loader, device, optimizer=optimizer)
             history.append({"epoch": epoch, "train": train_metrics})
             write_json(args.output_dir / "history.json", history)

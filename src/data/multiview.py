@@ -232,6 +232,8 @@ class MultiViewDataset:
         split: str | None = None,
         cv_fold: int | None = None,
         cv_role: str | None = None,
+        sampling: str = "fixed",
+        sampling_seed: int = 42,
     ) -> None:
         if cv_role not in {None, "train", "validation"}:
             raise MultiViewValidationError("cv_role은 train 또는 validation이어야 합니다")
@@ -243,6 +245,8 @@ class MultiViewDataset:
             raise MultiViewValidationError(
                 f"지원하지 않는 입력 장수입니다: {target_views}; {SUPPORTED_VIEW_COUNTS} 중 선택"
             )
+        if sampling not in {"fixed", "angle_balanced_random"}:
+            raise MultiViewValidationError(f"지원하지 않는 sampling입니다: {sampling!r}")
         selected_groups = []
         for group in groups:
             if split is not None and group.split != split:
@@ -257,14 +261,33 @@ class MultiViewDataset:
         self.groups = tuple(selected_groups)
         self.raw_root = raw_root.resolve()
         self.target_views = target_views
+        self.sampling = sampling
+        self.sampling_seed = sampling_seed
+        self.epoch = 0
         self._archives: dict[str, ZipFile] = {}
+
+    def set_epoch(self, epoch: int) -> None:
+        if epoch < 0:
+            raise MultiViewValidationError("epoch는 0 이상이어야 합니다")
+        self.epoch = epoch
 
     def __len__(self) -> int:
         return len(self.groups)
 
     def __getitem__(self, index: int) -> dict[str, Any]:
         group = self.groups[index]
-        selected = select_views(group.frames, self.target_views)
+        if self.sampling == "angle_balanced_random":
+            from .sampling import select_angle_balanced_random_views
+
+            selected = select_angle_balanced_random_views(
+                group.frames,
+                self.target_views,
+                seed=self.sampling_seed,
+                epoch=self.epoch,
+                group_no=group.group_no,
+            )
+        else:
+            selected = select_views(group.frames, self.target_views)
         images: list[bytes | None] = []
         angles: list[dict[str, int | str] | None] = []
         sample_ids: list[str | None] = []
