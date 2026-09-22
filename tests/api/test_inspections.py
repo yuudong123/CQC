@@ -2,11 +2,31 @@ from __future__ import annotations
 
 import json
 
+import pytest
 from fastapi.testclient import TestClient
 from httpx import Response
 
+from src.api.clients.inference import MockInferenceClient
 from src.api.core.config import Settings
 from src.api.main import create_app
+from src.api.schemas.inference import InferenceRequest, InferenceResponse
+from src.api.services.inspections import InspectionService
+
+
+class MismatchedResponseClient(MockInferenceClient):
+    def __init__(
+        self, *, inspection_id: bool = False, frame_count: bool = False
+    ) -> None:
+        self._mismatch_inspection_id = inspection_id
+        self._mismatch_frame_count = frame_count
+
+    async def predict(self, request: InferenceRequest) -> InferenceResponse:
+        response = await super().predict(request)
+        if self._mismatch_inspection_id:
+            response = response.model_copy(update={"inspection_id": "different-id"})
+        if self._mismatch_frame_count:
+            response = response.model_copy(update={"used_frame_count": 12})
+        return response
 
 
 def _metadata(
@@ -60,8 +80,18 @@ def test_inspection_accepts_valid_multipart_contract() -> None:
     assert response.status_code == 200
     assert response.json() == {
         "inspection_id": "inspection-001",
-        "image_count": 2,
-        "validation": "passed",
+        "crop_type": "apple",
+        "predicted_cultivar": "fuji",
+        "cultivar_confidence": 0.9,
+        "cultivar_probabilities": {"fuji": 0.9, "yanggwang": 0.1},
+        "predicted_grade": "L",
+        "quality_confidence": 0.8,
+        "quality_probabilities": {"L": 0.8, "M": 0.1, "S": 0.1},
+        "inference_time_ms": 12.5,
+        "model_name": "mock-separate",
+        "model_version": "mock-cqc-separate12-v1",
+        "preprocessing_version": "mock-v1",
+        "used_frame_count": 2,
     }
 
 
@@ -85,7 +115,25 @@ def test_inspection_accepts_twelve_images() -> None:
         )
 
     assert response.status_code == 200
-    assert response.json()["image_count"] == 12
+    assert response.json()["used_frame_count"] == 12
+
+
+@pytest.mark.parametrize(
+    "inference_client",
+    [
+        MismatchedResponseClient(inspection_id=True),
+        MismatchedResponseClient(frame_count=True),
+    ],
+)
+def test_inspection_returns_internal_error_for_mismatched_inference_response(
+    inference_client: MockInferenceClient,
+) -> None:
+    service = InspectionService(inference_client)
+    with TestClient(create_app(Settings(), inspection_service=service)) as client:
+        response = _post(client, files=_images(1), metadata=_metadata([0]))
+
+    assert response.status_code == 500
+    assert response.json() == {"detail": "Inference 응답 정합성 검증에 실패했습니다"}
 
 
 def test_inspection_requires_at_least_one_image() -> None:

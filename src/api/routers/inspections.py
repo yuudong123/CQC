@@ -8,7 +8,9 @@ from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile, s
 from pydantic import ValidationError
 
 from ..core.config import Settings
+from ..schemas.inference import InferenceResponse
 from ..schemas.inspections import InspectionImageMetadata, InspectionMetadata
+from ..services.inspections import InferenceResponseMismatchError, InspectionService
 
 router = APIRouter(prefix="/v1", tags=["inspections"])
 
@@ -17,6 +19,10 @@ SUPPORTED_IMAGE_TYPES = {"image/jpeg", "image/png"}
 
 def _settings_from(request: Request) -> Settings:
     return request.app.state.settings
+
+
+def _service_from(request: Request) -> InspectionService:
+    return request.app.state.inspection_service
 
 
 def _validate_request_size(
@@ -59,14 +65,14 @@ def _parse_metadata(value: str) -> list[InspectionImageMetadata]:
         ) from exc
 
 
-@router.post("/inspections")
+@router.post("/inspections", response_model=InferenceResponse)
 async def validate_inspection_request(
     request: Request,
     inspection_id: Annotated[str, Form(min_length=1)],
     images: Annotated[list[UploadFile], File()],
     metadata: Annotated[str, Form(min_length=1)],
-) -> dict[str, str | int]:
-    """검사 비즈니스 처리는 수행하지 않고 요청 전송 계약만 검증한다."""
+) -> InferenceResponse:
+    """검사 요청을 검증하고 Service의 Mock 추론 결과를 반환한다."""
 
     settings = _settings_from(request)
 
@@ -114,8 +120,15 @@ async def validate_inspection_request(
             detail="view_index는 현재 이미지 순서에 따라 0부터 연속되어야 합니다",
         )
 
-    return {
-        "inspection_id": inspection_id,
-        "image_count": len(images),
-        "validation": "passed",
-    }
+    try:
+        return await _service_from(request).inspect(
+            inspection_id=inspection_id,
+            images=images,
+            metadata=metadata_items,
+        )
+    except InferenceResponseMismatchError as exc:
+        # 최종 공통 error code 계약 전까지 정합성 오류를 단순 내부 오류로 응답한다.
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Inference 응답 정합성 검증에 실패했습니다",
+        ) from exc
