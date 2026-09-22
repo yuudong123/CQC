@@ -10,6 +10,7 @@ from src.models.multiview import MultiViewBaseline
 
 
 MODEL_KINDS = ("joint", "separate")
+TRAIN_MODEL_KINDS = MODEL_KINDS + ("separate_brix",)
 
 
 class _TaskEncoder(nn.Module):
@@ -50,9 +51,39 @@ class SeparateTaskBaseline(nn.Module):
         }
 
 
+class SeparateTaskBrixFusion(nn.Module):
+    """Fuse an explicitly simulated Brix proxy into the quality head only."""
+
+    def __init__(self, *, pretrained: bool = True, dropout: float = 0.2) -> None:
+        super().__init__()
+        self.cultivar_model = _TaskEncoder(2, pretrained=pretrained, dropout=dropout)
+        self.quality_encoder = _TaskEncoder(3, pretrained=pretrained, dropout=dropout)
+        feature_dim = self.quality_encoder.head.in_features
+        self.quality_encoder.head = nn.Identity()
+        self.quality_head = nn.Sequential(
+            nn.Dropout(dropout),
+            nn.Linear(feature_dim + 2, 128),
+            nn.ReLU(),
+            nn.Dropout(dropout),
+            nn.Linear(128, 3),
+        )
+
+    def forward(self, images: Tensor, view_mask: Tensor, virtual_brix: Tensor | None = None, brix_uncertainty: Tensor | None = None) -> dict[str, Tensor]:
+        if virtual_brix is None or brix_uncertainty is None:
+            raise ValueError("separate_brix 모델에는 virtual_brix와 brix_uncertainty가 필요합니다")
+        quality_features = self.quality_encoder(images, view_mask)
+        brix_features = torch.stack(((virtual_brix - 14.0) / 1.5, brix_uncertainty), dim=1)
+        return {
+            "cultivar_logits": self.cultivar_model(images, view_mask),
+            "quality_logits": self.quality_head(torch.cat((quality_features, brix_features), dim=1)),
+        }
+
+
 def build_model(kind: str, *, pretrained: bool = True, dropout: float = 0.2) -> nn.Module:
     if kind == "joint":
         return MultiViewBaseline(pretrained=pretrained, dropout=dropout)
     if kind == "separate":
         return SeparateTaskBaseline(pretrained=pretrained, dropout=dropout)
-    raise ValueError(f"지원하지 않는 모델 종류입니다: {kind!r}; {MODEL_KINDS} 중 선택")
+    if kind == "separate_brix":
+        return SeparateTaskBrixFusion(pretrained=pretrained, dropout=dropout)
+    raise ValueError(f"지원하지 않는 모델 종류입니다: {kind!r}; {TRAIN_MODEL_KINDS} 중 선택")

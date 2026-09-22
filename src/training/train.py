@@ -14,8 +14,9 @@ from torch.utils.data import DataLoader
 
 from src.data.multiview import MultiViewDataset, SUPPORTED_VIEW_COUNTS, load_groups
 from src.data.torch_dataset import TorchMultiViewDataset
+from src.data.virtual_brix import load_virtual_brix
 from .engine import QUALITY_LOSS_KINDS, run_epoch, save_checkpoint
-from .models import MODEL_KINDS, build_model
+from .models import TRAIN_MODEL_KINDS, build_model
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -23,9 +24,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--manifest", type=Path, default=Path("data/processed/manifest.csv"))
     parser.add_argument("--splits", type=Path, default=Path("configs/splits/seed-42.csv"))
     parser.add_argument("--raw-root", type=Path, default=Path("data/raw"))
+    parser.add_argument("--virtual-brix", type=Path)
     parser.add_argument("--output-dir", type=Path)
-    parser.add_argument("--model-kind", choices=MODEL_KINDS, default="joint")
-    parser.add_argument("--views", type=int, choices=SUPPORTED_VIEW_COUNTS, default=8)
+    parser.add_argument("--model-kind", choices=TRAIN_MODEL_KINDS, default="joint")
+    parser.add_argument("--views", type=int, choices=SUPPORTED_VIEW_COUNTS, default=12)
     parser.add_argument("--cv-fold", type=int, default=0)
     parser.add_argument("--epochs", type=int, default=20)
     parser.add_argument("--batch-size", type=int, default=2)
@@ -53,6 +55,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error("dropout은 0~1 미만, focal-gamma와 ordinal-weight는 0 이상이어야 합니다")
     if args.workers != 0:
         parser.error("ZIP 핸들 안전성을 위해 현재 workers는 0만 지원합니다")
+    if args.model_kind == "separate_brix" and args.virtual_brix is None:
+        parser.error("separate_brix 모델에는 --virtual-brix CSV가 필요합니다")
+    if args.model_kind != "separate_brix" and args.virtual_brix is not None:
+        parser.error("--virtual-brix는 separate_brix 모델에서만 사용합니다")
+    if args.model_kind == "separate_brix" and args.views != 12:
+        parser.error("separate_brix 비교 실험의 입력은 대표 12장으로 고정합니다")
     if args.output_dir is None:
         suffix = f"fold-{args.cv_fold}" if args.validation_scheme == "cv" else "source"
         args.output_dir = Path("outputs/training") / f"{args.model_kind}-{args.views}view-{suffix}"
@@ -120,6 +128,17 @@ def main(argv: list[str] | None = None) -> int:
     set_reproducibility(args.seed)
     device = resolve_device(args.device)
     groups = load_groups(args.manifest, args.splits)
+    virtual_brix = load_virtual_brix(args.virtual_brix) if args.virtual_brix else None
+    if virtual_brix is not None:
+        expected_groups = {group.group_no for group in groups}
+        actual_groups = set(virtual_brix)
+        if expected_groups != actual_groups:
+            missing = sorted(expected_groups - actual_groups)
+            extra = sorted(actual_groups - expected_groups)
+            raise ValueError(
+                "가상 당도 CSV의 그룹 구성이 매니페스트와 다릅니다: "
+                f"missing={missing[:5]} extra={extra[:5]}"
+            )
     train_groups, validation_groups = select_development_groups(
         groups, validation_scheme=args.validation_scheme, cv_fold=args.cv_fold
     )
@@ -138,6 +157,8 @@ def main(argv: list[str] | None = None) -> int:
         "manifest": str(args.manifest),
         "splits": str(args.splits),
         "raw_root": str(args.raw_root),
+        "virtual_brix": str(args.virtual_brix) if args.virtual_brix else None,
+        "brix_is_measured": False if args.virtual_brix else None,
         "views": args.views,
         "model_kind": args.model_kind,
         "cv_fold": args.cv_fold,
@@ -165,7 +186,7 @@ def main(argv: list[str] | None = None) -> int:
 
     generator = torch.Generator().manual_seed(args.seed)
     train_loader = DataLoader(
-        TorchMultiViewDataset(train_source, training=True, image_size=args.image_size),
+        TorchMultiViewDataset(train_source, training=True, image_size=args.image_size, virtual_brix=virtual_brix),
         batch_size=args.batch_size,
         shuffle=True,
         num_workers=args.workers,
@@ -173,7 +194,7 @@ def main(argv: list[str] | None = None) -> int:
         generator=generator,
     )
     validation_loader = DataLoader(
-        TorchMultiViewDataset(validation_source, training=False, image_size=args.image_size),
+        TorchMultiViewDataset(validation_source, training=False, image_size=args.image_size, virtual_brix=virtual_brix),
         batch_size=args.batch_size,
         shuffle=False,
         num_workers=args.workers,
