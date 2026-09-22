@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 
 from src.data.multiview import FrameRecord
-from src.data.sampling import select_angle_balanced_random_views
+from data.sampling import select_angle_balanced_random_views
 
 
 def frames(count_per_direction: int = 24) -> list[FrameRecord]:

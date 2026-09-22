@@ -7,7 +7,7 @@ import random
 from collections import defaultdict
 from collections.abc import Sequence
 
-from .multiview import FrameRecord, MultiViewValidationError, SelectedViews
+from src.data.multiview import FrameRecord, MultiViewValidationError, SelectedViews
 
 
 def _stable_rng(*, seed: int, epoch: int, group_no: str) -> random.Random:

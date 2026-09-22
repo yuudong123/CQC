@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from src.training.sampling_experiments import build_plan, plan_from_v2_report
+from data.sampling.experiments import build_plan, plan_from_v2_report
 
 
 class SamplingExperimentsTest(unittest.TestCase):
