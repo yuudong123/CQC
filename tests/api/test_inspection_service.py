@@ -71,7 +71,11 @@ def test_service_preserves_request_and_returns_mock_result(image_count: int) -> 
         list[InspectionImageMetadata],
     ]:
         client = RecordingInferenceClient()
-        service = InspectionService(client)
+        service = InspectionService(
+            client,
+            cultivar_confidence_threshold=0.50,
+            quality_confidence_threshold=0.50,
+        )
         images = _images(image_count)
         metadata = _metadata(image_count)
         response = await service.inspect(
@@ -87,6 +91,8 @@ def test_service_preserves_request_and_returns_mock_result(image_count: int) -> 
     assert response.used_frame_count == image_count
     assert response.predicted_cultivar == "fuji"
     assert response.predicted_grade == "L"
+    assert response.inspection_status == "COMPLETED"
+    assert response.review_required is False
     assert client.request is not None
     assert client.request.images == [
         f"image-{index}".encode() for index in range(image_count)
@@ -118,7 +124,11 @@ def test_service_rejects_mismatched_inference_response(
     client: MockInferenceClient,
     message: str,
 ) -> None:
-    service = InspectionService(client)
+    service = InspectionService(
+        client,
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.50,
+    )
 
     with pytest.raises(InferenceResponseMismatchError, match=message):
         asyncio.run(

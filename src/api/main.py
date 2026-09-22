@@ -19,7 +19,9 @@ def create_app(
 
     runtime_settings = settings or get_settings()
     runtime_inspection_service = inspection_service or InspectionService(
-        MockInferenceClient()
+        MockInferenceClient(),
+        cultivar_confidence_threshold=(runtime_settings.cultivar_confidence_threshold),
+        quality_confidence_threshold=runtime_settings.quality_confidence_threshold,
     )
     application = FastAPI(title=runtime_settings.app_name)
     application.state.settings = runtime_settings

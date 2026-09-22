@@ -24,6 +24,9 @@ class Settings(BaseSettings):
     database_url: str | None = None
     inference_max_files: int = Field(default=12, ge=1)
     inference_max_request_bytes: int = Field(default=24 * 1024 * 1024, ge=1)
+    cultivar_confidence_threshold: float = Field(default=0.50, ge=0, le=1)
+    quality_confidence_threshold: float = Field(default=0.50, ge=0, le=1)
+    inference_business_deadline_ms: int = Field(default=500, ge=1)
 
 
 @lru_cache

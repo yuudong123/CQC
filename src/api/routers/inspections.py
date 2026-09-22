@@ -8,7 +8,7 @@ from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile, s
 from pydantic import ValidationError
 
 from ..core.config import Settings
-from ..schemas.inference import InferenceResponse
+from ..schemas.inspection_results import InspectionResponse
 from ..schemas.inspections import InspectionImageMetadata, InspectionMetadata
 from ..services.inspections import InferenceResponseMismatchError, InspectionService
 
@@ -65,13 +65,13 @@ def _parse_metadata(value: str) -> list[InspectionImageMetadata]:
         ) from exc
 
 
-@router.post("/inspections", response_model=InferenceResponse)
+@router.post("/inspections", response_model=InspectionResponse)
 async def validate_inspection_request(
     request: Request,
     inspection_id: Annotated[str, Form(min_length=1)],
     images: Annotated[list[UploadFile], File()],
     metadata: Annotated[str, Form(min_length=1)],
-) -> InferenceResponse:
+) -> InspectionResponse:
     """검사 요청을 검증하고 Service의 Mock 추론 결과를 반환한다."""
 
     settings = _settings_from(request)

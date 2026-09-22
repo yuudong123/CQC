@@ -92,6 +92,8 @@ def test_inspection_accepts_valid_multipart_contract() -> None:
         "model_version": "mock-cqc-separate12-v1",
         "preprocessing_version": "mock-v1",
         "used_frame_count": 2,
+        "inspection_status": "COMPLETED",
+        "review_required": False,
     }
 
 
@@ -118,6 +120,19 @@ def test_inspection_accepts_twelve_images() -> None:
     assert response.json()["used_frame_count"] == 12
 
 
+def test_inspection_uses_thresholds_from_settings() -> None:
+    settings = Settings(
+        cultivar_confidence_threshold=0.95,
+        quality_confidence_threshold=0.50,
+    )
+    with TestClient(create_app(settings)) as client:
+        response = _post(client, files=_images(1), metadata=_metadata([0]))
+
+    assert response.status_code == 200
+    assert response.json()["inspection_status"] == "REINSPECTION_REQUIRED"
+    assert response.json()["review_required"] is True
+
+
 @pytest.mark.parametrize(
     "inference_client",
     [
@@ -128,7 +143,11 @@ def test_inspection_accepts_twelve_images() -> None:
 def test_inspection_returns_internal_error_for_mismatched_inference_response(
     inference_client: MockInferenceClient,
 ) -> None:
-    service = InspectionService(inference_client)
+    service = InspectionService(
+        inference_client,
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.50,
+    )
     with TestClient(create_app(Settings(), inspection_service=service)) as client:
         response = _post(client, files=_images(1), metadata=_metadata([0]))
 

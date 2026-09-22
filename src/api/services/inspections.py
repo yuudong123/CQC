@@ -5,8 +5,10 @@ from __future__ import annotations
 from fastapi import UploadFile
 
 from ..clients.inference import MockInferenceClient
-from ..schemas.inference import InferenceRequest, InferenceResponse
+from ..schemas.inference import InferenceRequest
+from ..schemas.inspection_results import InspectionResponse
 from ..schemas.inspections import InspectionImageMetadata
+from .inspection_policy import decide_inspection
 
 
 class InferenceResponseMismatchError(RuntimeError):
@@ -16,8 +18,16 @@ class InferenceResponseMismatchError(RuntimeError):
 class InspectionService:
     """이미지 요청을 구성하고 Inference 응답 정합성을 검증한다."""
 
-    def __init__(self, inference_client: MockInferenceClient) -> None:
+    def __init__(
+        self,
+        inference_client: MockInferenceClient,
+        *,
+        cultivar_confidence_threshold: float,
+        quality_confidence_threshold: float,
+    ) -> None:
         self._inference_client = inference_client
+        self._cultivar_confidence_threshold = cultivar_confidence_threshold
+        self._quality_confidence_threshold = quality_confidence_threshold
 
     async def inspect(
         self,
@@ -25,8 +35,8 @@ class InspectionService:
         inspection_id: str,
         images: list[UploadFile],
         metadata: list[InspectionImageMetadata],
-    ) -> InferenceResponse:
-        """업로드 이미지를 순서대로 읽어 Mock Inference 결과를 반환한다."""
+    ) -> InspectionResponse:
+        """Mock Inference 결과를 검증하고 confidence 정책을 적용한다."""
 
         image_payloads: list[bytes] = []
         for image in images:
@@ -50,4 +60,13 @@ class InspectionService:
                 "Inference 응답 used_frame_count가 요청 이미지 수와 일치하지 않습니다"
             )
 
-        return inference_response
+        decision = decide_inspection(
+            inference_response,
+            cultivar_confidence_threshold=self._cultivar_confidence_threshold,
+            quality_confidence_threshold=self._quality_confidence_threshold,
+        )
+        return InspectionResponse(
+            **inference_response.model_dump(),
+            inspection_status=decision.inspection_status,
+            review_required=decision.review_required,
+        )
