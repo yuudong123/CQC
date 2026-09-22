@@ -7,7 +7,9 @@ import pytest
 from fastapi import UploadFile
 
 from src.api.clients.inference import MockInferenceClient
+from src.api.control.virtual_control import MockVirtualControl
 from src.api.schemas.inference import InferenceRequest, InferenceResponse
+from src.api.schemas.inspection_results import ControlStatus
 from src.api.schemas.inspections import InspectionImageMetadata
 from src.api.services.inspections import (
     InferenceResponseMismatchError,
@@ -73,6 +75,7 @@ def test_service_preserves_request_and_returns_mock_result(image_count: int) -> 
         client = RecordingInferenceClient()
         service = InspectionService(
             client,
+            MockVirtualControl(),
             cultivar_confidence_threshold=0.50,
             quality_confidence_threshold=0.50,
         )
@@ -93,6 +96,8 @@ def test_service_preserves_request_and_returns_mock_result(image_count: int) -> 
     assert response.predicted_grade == "L"
     assert response.inspection_status == "COMPLETED"
     assert response.review_required is False
+    assert response.target_bin_code == "TEST_NORMAL_BIN_1"
+    assert response.control_status == "SUCCEEDED"
     assert client.request is not None
     assert client.request.images == [
         f"image-{index}".encode() for index in range(image_count)
@@ -126,6 +131,7 @@ def test_service_rejects_mismatched_inference_response(
 ) -> None:
     service = InspectionService(
         client,
+        MockVirtualControl(),
         cultivar_confidence_threshold=0.50,
         quality_confidence_threshold=0.50,
     )
@@ -138,3 +144,51 @@ def test_service_rejects_mismatched_inference_response(
                 metadata=_metadata(1),
             )
         )
+
+
+def test_service_falls_back_once_after_normal_bin_rejection() -> None:
+    control = MockVirtualControl([ControlStatus.REJECTED, ControlStatus.SUCCEEDED])
+    service = InspectionService(
+        MockInferenceClient(),
+        control,
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.50,
+    )
+
+    response = asyncio.run(
+        service.inspect(
+            inspection_id="inspection-control-fallback",
+            images=_images(1),
+            metadata=_metadata(1),
+        )
+    )
+
+    assert response.target_bin_code == "TEST_REINSPECTION_BIN"
+    assert response.control_status is ControlStatus.SUCCEEDED
+    assert [request.target_bin_code for request in control.requests] == [
+        "TEST_NORMAL_BIN_1",
+        "TEST_REINSPECTION_BIN",
+    ]
+
+
+def test_service_does_not_retry_failed_direct_reinspection() -> None:
+    control = MockVirtualControl([ControlStatus.FAILED])
+    service = InspectionService(
+        MockInferenceClient(),
+        control,
+        cultivar_confidence_threshold=0.95,
+        quality_confidence_threshold=0.50,
+    )
+
+    response = asyncio.run(
+        service.inspect(
+            inspection_id="inspection-direct-reinspection",
+            images=_images(1),
+            metadata=_metadata(1),
+        )
+    )
+
+    assert response.inspection_status == "REINSPECTION_REQUIRED"
+    assert response.target_bin_code == "TEST_REINSPECTION_BIN"
+    assert response.control_status is ControlStatus.FAILED
+    assert len(control.requests) == 1

@@ -67,3 +67,5 @@ class InspectionResponse(InferenceResponse):
 
     inspection_status: InspectionStatus
     review_required: bool
+    target_bin_code: str = Field(min_length=1)
+    control_status: ControlStatus

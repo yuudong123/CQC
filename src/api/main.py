@@ -6,6 +6,7 @@ import uvicorn
 from fastapi import FastAPI
 
 from .clients.inference import MockInferenceClient
+from .control.virtual_control import MockVirtualControl
 from .core.config import Settings, get_settings
 from .routers.inspections import router as inspections_router
 from .services.inspections import InspectionService
@@ -20,6 +21,7 @@ def create_app(
     runtime_settings = settings or get_settings()
     runtime_inspection_service = inspection_service or InspectionService(
         MockInferenceClient(),
+        MockVirtualControl(),
         cultivar_confidence_threshold=(runtime_settings.cultivar_confidence_threshold),
         quality_confidence_threshold=runtime_settings.quality_confidence_threshold,
     )

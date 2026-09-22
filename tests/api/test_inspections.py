@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 from httpx import Response
 
 from src.api.clients.inference import MockInferenceClient
+from src.api.control.virtual_control import MockVirtualControl
 from src.api.core.config import Settings
 from src.api.main import create_app
 from src.api.schemas.inference import InferenceRequest, InferenceResponse
@@ -94,6 +95,8 @@ def test_inspection_accepts_valid_multipart_contract() -> None:
         "used_frame_count": 2,
         "inspection_status": "COMPLETED",
         "review_required": False,
+        "target_bin_code": "TEST_NORMAL_BIN_1",
+        "control_status": "SUCCEEDED",
     }
 
 
@@ -131,6 +134,8 @@ def test_inspection_uses_thresholds_from_settings() -> None:
     assert response.status_code == 200
     assert response.json()["inspection_status"] == "REINSPECTION_REQUIRED"
     assert response.json()["review_required"] is True
+    assert response.json()["target_bin_code"] == "TEST_REINSPECTION_BIN"
+    assert response.json()["control_status"] == "SUCCEEDED"
 
 
 @pytest.mark.parametrize(
@@ -145,6 +150,7 @@ def test_inspection_returns_internal_error_for_mismatched_inference_response(
 ) -> None:
     service = InspectionService(
         inference_client,
+        MockVirtualControl(),
         cultivar_confidence_threshold=0.50,
         quality_confidence_threshold=0.50,
     )

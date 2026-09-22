@@ -5,9 +5,12 @@ from __future__ import annotations
 from fastapi import UploadFile
 
 from ..clients.inference import MockInferenceClient
+from ..control.virtual_control import MockVirtualControl
 from ..schemas.inference import InferenceRequest
 from ..schemas.inspection_results import InspectionResponse
 from ..schemas.inspections import InspectionImageMetadata
+from .bin_policy import TEMPORARY_REINSPECTION_BIN_CODE, determine_target_bin
+from .control_policy import execute_virtual_control
 from .inspection_policy import decide_inspection
 
 
@@ -21,11 +24,13 @@ class InspectionService:
     def __init__(
         self,
         inference_client: MockInferenceClient,
+        virtual_control: MockVirtualControl,
         *,
         cultivar_confidence_threshold: float,
         quality_confidence_threshold: float,
     ) -> None:
         self._inference_client = inference_client
+        self._virtual_control = virtual_control
         self._cultivar_confidence_threshold = cultivar_confidence_threshold
         self._quality_confidence_threshold = quality_confidence_threshold
 
@@ -65,8 +70,18 @@ class InspectionService:
             cultivar_confidence_threshold=self._cultivar_confidence_threshold,
             quality_confidence_threshold=self._quality_confidence_threshold,
         )
+        target_bin_code = determine_target_bin(inference_response, decision)
+        control_result = await execute_virtual_control(
+            self._virtual_control,
+            inspection_id=inference_response.inspection_id,
+            target_bin_code=target_bin_code,
+            reinspection_bin_code=TEMPORARY_REINSPECTION_BIN_CODE,
+        )
+        final_control_response = control_result.final_response
         return InspectionResponse(
             **inference_response.model_dump(),
             inspection_status=decision.inspection_status,
             review_required=decision.review_required,
+            target_bin_code=final_control_response.target_bin_code,
+            control_status=final_control_response.control_status,
         )
