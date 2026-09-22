@@ -31,7 +31,7 @@ MongoDB 데이터는 `logistics_mongodb_data` 볼륨에 보존한다. 세 서비
 - `LOGISTICS_PUBLIC_API_URL`: Web 빌드에 포함될 외부 API 주소
 - `GOOGLE_MAPS_API_KEY`: Jenkins Credentials 또는 Job 환경변수로 주입
 
-공개 주소 두 개는 Jenkins 배포 호스트의 실제 IP 또는 도메인으로 설정해야 한다. 지도 키는 저장소와 이미지 소스에 직접 기록하지 않는다.
+공개 주소는 Jenkins 배포 호스트 `192.168.133.106`을 사용한다. Web은 `http://192.168.133.106:3100`, API는 `http://192.168.133.106:8100/api/v1`이다. 지도 키는 저장소와 이미지 소스에 직접 기록하지 않는다.
 
 ## 이전 배포 종료 순서
 

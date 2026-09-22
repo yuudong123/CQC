@@ -76,6 +76,12 @@ pipeline {
         MYSQL_DATABASE = 'cqc'
         MYSQL_USER = "${MYSQL_CREDS_USR}"
         MYSQL_PASSWORD = "${MYSQL_CREDS_PSW}"
+
+        // 물류 Web 번들에 포함되는 Jenkins 배포 호스트의 공개 주소
+        LOGISTICS_PUBLIC_WEB_ORIGIN = 'http://192.168.133.106:3100'
+        LOGISTICS_PUBLIC_API_URL = 'http://192.168.133.106:8100/api/v1'
+        LOGISTICS_WEB_PORT = '3100'
+        LOGISTICS_API_PORT = '8100'
     }
 
     stages {

@@ -90,9 +90,9 @@ docker compose build logistics-api logistics-web
 docker compose up -d logistics-mongodb logistics-api logistics-web
 ```
 
-- 웹: `http://배포호스트:3100`
-- API 문서: `http://배포호스트:8100/docs`
+- 웹: `http://192.168.133.106:3100`
+- API 문서: `http://192.168.133.106:8100/docs`
 - MongoDB: 외부 포트를 열지 않고 Compose 내부 네트워크에서만 접근
 - Jenkins: 루트 `Jenkinsfile`의 Build, Deploy, Verify 단계에서 세 서비스를 함께 처리
 
-배포 호스트 주소가 `localhost`가 아니라면 Jenkins Job 환경변수 `LOGISTICS_PUBLIC_WEB_ORIGIN`, `LOGISTICS_PUBLIC_API_URL`을 실제 주소로 설정한다. 지도 키는 저장소에 넣지 않고 `GOOGLE_MAPS_API_KEY` 환경변수 또는 Jenkins Credentials로 주입한다.
+Jenkins는 `LOGISTICS_PUBLIC_WEB_ORIGIN`, `LOGISTICS_PUBLIC_API_URL`을 `192.168.133.106` 기준으로 Web 빌드에 주입한다. 지도 키는 저장소에 넣지 않고 `GOOGLE_MAPS_API_KEY` 환경변수 또는 Jenkins Credentials로 주입한다.
