@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     app_env: str = "local"
     app_host: str = "0.0.0.0"
     app_port: int = Field(default=8000, ge=1, le=65535)
+    database_url: str | None = None
     inference_max_files: int = Field(default=12, ge=1)
     inference_max_request_bytes: int = Field(default=24 * 1024 * 1024, ge=1)
 

@@ -10,7 +10,6 @@ from pydantic import ValidationError
 from ..core.config import Settings
 from ..schemas.inspections import InspectionImageMetadata, InspectionMetadata
 
-
 router = APIRouter(prefix="/v1", tags=["inspections"])
 
 SUPPORTED_IMAGE_TYPES = {"image/jpeg", "image/png"}
