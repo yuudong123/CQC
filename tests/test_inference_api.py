@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import io
+import json
 import unittest
 
 from fastapi.testclient import TestClient
@@ -36,6 +37,7 @@ class _FakePredictor:
             model_name="fake",
             model_version="test-v1",
             preprocessing_version="rgb-resize-imagenet-v1",
+            used_frame_count=len(images),
         )
 
 
@@ -57,6 +59,15 @@ class InferenceApiTest(unittest.TestCase):
     def test_predict_accepts_repeated_image_fields(self) -> None:
         response = self.client.post(
             "/v1/predict",
+            data={
+                "inspection_id": "inspection-001",
+                "metadata": json.dumps(
+                    [
+                        {"view_index": 0, "angle_direction": "top", "verticality_angle": 0, "horizontality_angle": 0},
+                        {"view_index": 1, "angle_direction": "bottom", "verticality_angle": 0, "horizontality_angle": 180},
+                    ]
+                ),
+            },
             files=[
                 ("images", ("front.png", _png(), "image/png")),
                 ("images", ("back.png", _png(), "image/png")),
@@ -65,10 +76,13 @@ class InferenceApiTest(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["predicted_cultivar"], "fuji")
         self.assertEqual(response.json()["predicted_grade"], "L")
+        self.assertEqual(response.json()["inspection_id"], "inspection-001")
+        self.assertEqual(response.json()["used_frame_count"], 2)
 
     def test_predict_rejects_unsupported_content_type(self) -> None:
         response = self.client.post(
             "/v1/predict",
+            data={"inspection_id": "inspection-002", "metadata": json.dumps([{"view_index": 0, "angle_direction": "top", "verticality_angle": 0, "horizontality_angle": 0}])},
             files=[("images", ("note.txt", b"not-an-image", "text/plain"))],
         )
         self.assertEqual(response.status_code, 415)
@@ -76,6 +90,15 @@ class InferenceApiTest(unittest.TestCase):
     def test_predict_rejects_more_files_than_model_views(self) -> None:
         response = self.client.post(
             "/v1/predict",
+            data={
+                "inspection_id": "inspection-003",
+                "metadata": json.dumps(
+                    [
+                        {"view_index": index, "angle_direction": "top", "verticality_angle": 0, "horizontality_angle": index * 10}
+                        for index in range(5)
+                    ]
+                ),
+            },
             files=[
                 ("images", (f"{index}.png", _png(), "image/png"))
                 for index in range(5)
@@ -83,6 +106,15 @@ class InferenceApiTest(unittest.TestCase):
         )
         self.assertEqual(response.status_code, 413)
         self.assertIn("최대 4장", response.json()["detail"])
+
+    def test_predict_rejects_metadata_count_mismatch(self) -> None:
+        response = self.client.post(
+            "/v1/predict",
+            data={"inspection_id": "inspection-004", "metadata": "[]"},
+            files=[("images", ("front.png", _png(), "image/png"))],
+        )
+        self.assertEqual(response.status_code, 422)
+        self.assertIn("항목 수", response.json()["detail"])
 
     def test_openapi_contains_typed_prediction_contract(self) -> None:
         schema = self.client.app.openapi()

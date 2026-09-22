@@ -68,6 +68,15 @@
     "schemas": {
       "Body_predict_v1_predict_post": {
         "properties": {
+          "inspection_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Inspection Id"
+          },
+          "metadata": {
+            "type": "string",
+            "title": "Metadata"
+          },
           "images": {
             "items": {
               "type": "string",
@@ -79,6 +88,8 @@
         },
         "type": "object",
         "required": [
+          "inspection_id",
+          "metadata",
           "images"
         ],
         "title": "Body_predict_v1_predict_post"
@@ -128,6 +139,11 @@
       },
       "PredictionResponse": {
         "properties": {
+          "inspection_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Inspection Id"
+          },
           "crop_type": {
             "type": "string",
             "title": "Crop Type",
@@ -191,11 +207,18 @@
           "preprocessing_version": {
             "type": "string",
             "title": "Preprocessing Version"
+          },
+          "used_frame_count": {
+            "type": "integer",
+            "maximum": 12.0,
+            "minimum": 1.0,
+            "title": "Used Frame Count"
           }
         },
         "additionalProperties": false,
         "type": "object",
         "required": [
+          "inspection_id",
           "crop_type",
           "predicted_cultivar",
           "cultivar_confidence",
@@ -206,7 +229,8 @@
           "inference_time_ms",
           "model_name",
           "model_version",
-          "preprocessing_version"
+          "preprocessing_version",
+          "used_frame_count"
         ],
         "title": "PredictionResponse"
       }

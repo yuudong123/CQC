@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from .improvement_experiments import VARIANTS
+from src.training.improvement_experiments import VARIANTS
 
 
 def build_plan(

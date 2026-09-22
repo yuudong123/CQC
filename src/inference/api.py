@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 from typing import Any
 
@@ -13,9 +14,36 @@ from .schemas import HealthResponse, PredictionResponse
 MAX_REQUEST_BYTES = 24 * 1024 * 1024
 
 try:
-    from fastapi import FastAPI, File, HTTPException, UploadFile
+    from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 except ImportError:  # Optional runtime dependency.
-    FastAPI = File = HTTPException = UploadFile = None  # type: ignore[assignment]
+    FastAPI = File = Form = HTTPException = UploadFile = None  # type: ignore[assignment]
+
+
+def _validate_metadata(value: str, image_count: int) -> list[dict[str, Any]]:
+    try:
+        metadata = json.loads(value)
+    except json.JSONDecodeError as exc:
+        raise ValueError("metadata는 JSON 배열이어야 합니다") from exc
+    if not isinstance(metadata, list) or len(metadata) != image_count:
+        raise ValueError("metadata 항목 수는 images 수와 같아야 합니다")
+    required = {
+        "view_index",
+        "angle_direction",
+        "verticality_angle",
+        "horizontality_angle",
+    }
+    for index, item in enumerate(metadata):
+        if not isinstance(item, dict) or not required.issubset(item):
+            raise ValueError(f"metadata[{index}] 필수 필드가 누락되었습니다")
+        if item["view_index"] != index:
+            raise ValueError("metadata의 view_index는 images 순서와 일치해야 합니다")
+        if item["angle_direction"] not in {"top", "bottom"}:
+            raise ValueError("angle_direction은 top 또는 bottom이어야 합니다")
+        if not isinstance(item["verticality_angle"], int) or not isinstance(
+            item["horizontality_angle"], int
+        ):
+            raise ValueError("촬영 각도는 정수여야 합니다")
+    return metadata
 
 
 def create_app(predictor: Predictor) -> Any:
@@ -40,13 +68,21 @@ def create_app(predictor: Predictor) -> Any:
             500: {"description": "예상하지 못한 추론 오류"},
         },
     )
-    async def predict(images: list[UploadFile] = File(...)) -> dict[str, Any]:
+    async def predict(
+        inspection_id: str = Form(..., min_length=1),
+        metadata: str = Form(...),
+        images: list[UploadFile] = File(...),
+    ) -> dict[str, Any]:
         if not images:
             raise HTTPException(status_code=422, detail="images는 1장 이상 필요합니다")
         if len(images) > max_files:
             raise HTTPException(
                 status_code=413, detail=f"images는 최대 {max_files}장까지 허용합니다"
             )
+        try:
+            _validate_metadata(metadata, len(images))
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
         payload = []
         total_bytes = 0
         for image in images:
@@ -58,7 +94,9 @@ def create_app(predictor: Predictor) -> Any:
                 raise HTTPException(status_code=413, detail="전체 이미지는 최대 24MiB입니다")
             payload.append(value)
         try:
-            return predictor.predict(payload).to_dict()
+            result = predictor.predict(payload).to_dict()
+            result["inspection_id"] = inspection_id
+            return result
         except (ValueError, OSError) as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
 

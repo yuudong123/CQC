@@ -66,6 +66,24 @@ pipeline {
         githubPush()
     }
 
+    // ========================================================
+    // MO-05 MySQL 환경변수 / Credentials
+    // ========================================================
+    environment {
+        MYSQL_ROOT_PASSWORD = credentials('cqc-mysql-root-password')
+        MYSQL_CREDS = credentials('cqc-mysql-creds')
+
+        MYSQL_DATABASE = 'cqc'
+        MYSQL_USER = "${MYSQL_CREDS_USR}"
+        MYSQL_PASSWORD = "${MYSQL_CREDS_PSW}"
+
+        // 물류 Web 번들에 포함되는 Jenkins 배포 호스트의 공개 주소
+        LOGISTICS_PUBLIC_WEB_ORIGIN = 'http://192.168.133.106:3100'
+        LOGISTICS_PUBLIC_API_URL = 'http://192.168.133.106:8100/api/v1'
+        LOGISTICS_WEB_PORT = '3100'
+        LOGISTICS_API_PORT = '8100'
+    }
+
     stages {
 
         // ====================================================
@@ -191,6 +209,8 @@ pipeline {
                     test -d docs
                     test -d models
                     test -d scripts
+                    test -d cqc-logistics-platform/apps/api
+                    test -d cqc-logistics-platform/apps/web
 
                     echo "CQC project structure OK"
                 '''
@@ -256,7 +276,7 @@ pipeline {
                     echo " Healthcheck Verification"
                     echo "======================================"
 
-                    HEALTH_SERVICES="mysql inference backend"
+                    HEALTH_SERVICES="mysql inference backend logistics-mongodb logistics-api logistics-web"
 
                     for service in $HEALTH_SERVICES; do
 

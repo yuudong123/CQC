@@ -45,7 +45,7 @@ C:\CQC
 └─ README.md
 ```
 
-2026-09-17 기준으로 `src/data/manifest.py`는 구현되어 있으나, `src/api`, `src/inference`, `src/web`, `scripts`는 아직 실행 코드가 없는 골격 상태다.
+2026-09-17 최초 작성 당시에는 `src/data/manifest.py`만 구현되어 있었고 나머지 서비스는 골격 상태였다. 이후 `src/inference`와 `Dockerfile.inference`가 추가되었으며 backend·frontend·simulator의 실제 실행 계약은 각 담당자 구현과 함께 연결한다.
 
 따라서 backend, inference, frontend, simulator의 실제 Dockerfile, 실행 명령, 포트와 healthcheck 경로는 각 담당자의 구현 완료 후 확정한다.
 
@@ -121,7 +121,7 @@ services:
     # 자동 입력 서비스
 ```
 
-현재 각 서비스의 실제 실행 코드가 완성되지 않았으므로 image, build, command, port, healthcheck의 세부 값은 아직 확정하지 않는다.
+초기 골격 작성 시에는 각 서비스의 image, build, command, port, healthcheck를 확정하지 않았다. 현재 inference는 실제 Dockerfile과 `/health` 계약을 사용하며 나머지 서비스 값은 담당자 구현에 맞춰 갱신한다.
 
 ## 6. 기동 순서와 의존성
 
@@ -215,7 +215,7 @@ CI에서 검사할 세부 항목은 각 파트의 실제 코드와 실행 명령
 
 API 요청·응답, 서비스 상태와 오류 코드 계약은 네 담당자가 합의한 문서를 기준으로 CI 검사에 연결한다.
 
-CI/CD 제품과 실제 Workflow 파일은 아직 확정하지 않는다.
+CI/CD는 Jenkins와 저장소 루트 `Jenkinsfile`을 기준으로 한다. 파트별 실제 실행 코드가 연결될 때 검사 단계를 추가하고 통합 환경에서 동작을 검증한다.
 
 ## 11. 배포 실패 정책
 
@@ -345,7 +345,7 @@ MLOps는 시험 환경과 실행 절차를 관리하며, 모델 성능 지표와
 
 ## 18. 실행·배포·복구 명령
 
-현재 실제 서비스 코드와 Dockerfile이 완성되지 않았으므로 아래 명령은 Docker Compose 공통 실행 기준만 먼저 기록한다.
+아래 명령은 Docker Compose 공통 실행 기준이다. 실제 구현이 연결된 서비스는 해당 Dockerfile과 healthcheck를 사용하고, placeholder 서비스는 담당자 구현 이후 교체한다.
 
 전체 서비스 실행:
 
@@ -419,19 +419,16 @@ Docker 서비스가 재시작되면 다음 장애 토글을 모두 OFF 상태로
 
 ## 22. 현재 미결정 사항
 
-2026-09-17 기준 다음 내용은 아직 확정하지 않는다.
+2026-09-17 최초 작성 목록 중 Jenkins·Compose·Inference Dockerfile·Inference 포트와 `/health` 계약은 이후 확정되었다. 현재 남은 항목은 다음과 같다.
 
-- CI/CD 제품 및 버전
 - backend Dockerfile과 실행 명령
-- inference Dockerfile과 실행 명령
 - frontend Dockerfile과 빌드·실행 명령
 - simulator Dockerfile과 실행 명령
-- 서비스별 포트
-- 실제 healthcheck URL과 명령
+- inference 외 서비스의 포트와 실제 healthcheck URL·명령
 - Docker Volume 이름과 세부 마운트 경로
 - 로그 최대 크기와 보존 개수
 - 배포 실패 시 기존 버전 유지의 실제 구현 방식
-- 모델 배포 경로와 파일 전달 방식
+- 모델 패키지를 배포 슬롯 `/app/models/approved`로 전달하는 방식
 
 위 항목은 각 파트의 실행 코드와 계약이 확정되는 시점에 순차적으로 결정한다.
 

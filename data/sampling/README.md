@@ -42,7 +42,7 @@ v2 보고서에서 선택된 variant와 공통 epoch를 읽어 다음 6회만 �
 - AI Hub 원본 Validation source holdout: 1회
 
 ```powershell
-python -m src.training.sampling_experiments
+python -m data.sampling.experiments
 ```
 
 위 명령은 기본적으로 계획만 생성한다. 실제 학습은 `--execute`를 명시해야 시작한다. 고정 12장 v2 결과와 각도 균형 랜덤 결과는 품질 Macro F1 평균뿐 아니라 최저 fold, source holdout, M Recall을 함께 비교한다.
