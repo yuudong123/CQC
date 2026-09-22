@@ -18,8 +18,8 @@ def test_health_returns_backend_status() -> None:
     }
 
 
-def test_openapi_exposes_only_phase_one_health_endpoint() -> None:
+def test_openapi_exposes_current_backend_endpoints() -> None:
     with TestClient(create_app(Settings())) as client:
         paths = client.app.openapi()["paths"]
 
-    assert set(paths) == {"/health"}
+    assert set(paths) == {"/health", "/v1/inspections"}
