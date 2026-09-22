@@ -30,6 +30,17 @@ def test_inspections_columns_have_expected_nullability() -> None:
     assert table.c.late_result_payload.nullable is True
 
 
+def test_datetime_columns_do_not_fix_a_database_timezone_default() -> None:
+    inspection_table = Inspection.__table__
+    bin_mapping_table = BinMapping.__table__
+
+    for column_name in ("created_at", "completed_at", "updated_at"):
+        assert inspection_table.c[column_name].server_default is None
+
+    for column_name in ("created_at", "updated_at"):
+        assert bin_mapping_table.c[column_name].server_default is None
+
+
 def test_control_attempts_have_fk_and_unique_attempt_constraint() -> None:
     table = ControlAttempt.__table__
     foreign_keys = {

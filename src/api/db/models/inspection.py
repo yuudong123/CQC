@@ -67,16 +67,9 @@ class Inspection(Base):
     source_reference: Mapped[str | None] = mapped_column(String(255))
 
     # TODO: DATETIME은 timezone 정보를 보존하지 않으므로 UTC/KST 정책을 확정해야 한다.
-    created_at: Mapped[datetime] = mapped_column(
-        DATETIME(fsp=3),
-        server_default=text("CURRENT_TIMESTAMP(3)"),
-    )
+    created_at: Mapped[datetime] = mapped_column(DATETIME(fsp=3))
     completed_at: Mapped[datetime | None] = mapped_column(DATETIME(fsp=3))
-    updated_at: Mapped[datetime] = mapped_column(
-        DATETIME(fsp=3),
-        server_default=text("CURRENT_TIMESTAMP(3)"),
-        onupdate=text("CURRENT_TIMESTAMP(3)"),
-    )
+    updated_at: Mapped[datetime] = mapped_column(DATETIME(fsp=3))
 
     crop_type: Mapped[str] = mapped_column(String(32))
     predicted_cultivar: Mapped[str | None] = mapped_column(String(32))

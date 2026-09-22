@@ -46,12 +46,5 @@ class BinMapping(Base):
         default=True,
         server_default=text("1"),
     )
-    created_at: Mapped[datetime] = mapped_column(
-        DATETIME(fsp=3),
-        server_default=text("CURRENT_TIMESTAMP(3)"),
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DATETIME(fsp=3),
-        server_default=text("CURRENT_TIMESTAMP(3)"),
-        onupdate=text("CURRENT_TIMESTAMP(3)"),
-    )
+    created_at: Mapped[datetime] = mapped_column(DATETIME(fsp=3))
+    updated_at: Mapped[datetime] = mapped_column(DATETIME(fsp=3))
