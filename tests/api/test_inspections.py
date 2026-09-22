@@ -12,6 +12,7 @@ from src.api.core.config import Settings
 from src.api.main import create_app
 from src.api.schemas.inference import InferenceRequest, InferenceResponse
 from src.api.services.inspections import InspectionService
+from src.api.services.late_results import LateResultManager
 
 
 class MismatchedResponseClient(MockInferenceClient):
@@ -147,6 +148,10 @@ def test_inspection_returns_timeout_without_fabricated_prediction() -> None:
         cultivar_confidence_threshold=0.50,
         quality_confidence_threshold=0.50,
         inference_business_deadline_ms=1,
+        late_result_manager=LateResultManager(
+            hard_timeout_ms=200,
+            max_tasks=4,
+        ),
     )
     with TestClient(create_app(Settings(), inspection_service=service)) as client:
         response = _post(client, files=_images(1), metadata=_metadata([0]))
@@ -181,6 +186,10 @@ def test_inspection_returns_internal_error_for_mismatched_inference_response(
         cultivar_confidence_threshold=0.50,
         quality_confidence_threshold=0.50,
         inference_business_deadline_ms=500,
+        late_result_manager=LateResultManager(
+            hard_timeout_ms=2000,
+            max_tasks=4,
+        ),
     )
     with TestClient(create_app(Settings(), inspection_service=service)) as client:
         response = _post(client, files=_images(1), metadata=_metadata([0]))

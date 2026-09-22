@@ -14,6 +14,7 @@ from ..schemas.inspections import InspectionImageMetadata
 from .bin_policy import TEMPORARY_REINSPECTION_BIN_CODE, determine_target_bin
 from .control_policy import execute_virtual_control
 from .inspection_policy import decide_inference_timeout, decide_inspection
+from .late_results import LateResultManager
 
 
 class InferenceResponseMismatchError(RuntimeError):
@@ -31,12 +32,19 @@ class InspectionService:
         cultivar_confidence_threshold: float,
         quality_confidence_threshold: float,
         inference_business_deadline_ms: int,
+        late_result_manager: LateResultManager,
     ) -> None:
         self._inference_client = inference_client
         self._virtual_control = virtual_control
         self._cultivar_confidence_threshold = cultivar_confidence_threshold
         self._quality_confidence_threshold = quality_confidence_threshold
         self._inference_business_deadline_ms = inference_business_deadline_ms
+        self._late_result_manager = late_result_manager
+
+    async def shutdown(self) -> None:
+        """서버 종료 시 남아 있는 late Inference task를 정리한다."""
+
+        await self._late_result_manager.shutdown()
 
     async def inspect(
         self,
@@ -58,18 +66,28 @@ class InspectionService:
             images=image_payloads,
             metadata=metadata,
         )
-        try:
-            inference_response = await asyncio.wait_for(
-                self._inference_client.predict(inference_request),
-                timeout=self._inference_business_deadline_ms / 1000,
+        event_loop = asyncio.get_running_loop()
+        inference_started_at = event_loop.time()
+        inference_task = asyncio.create_task(
+            self._inference_client.predict(inference_request)
+        )
+        completed, _ = await asyncio.wait(
+            {inference_task},
+            timeout=self._inference_business_deadline_ms / 1000,
+        )
+        if inference_task not in completed:
+            self._late_result_manager.track(
+                inspection_id=inspection_id,
+                inference_task=inference_task,
+                started_at=inference_started_at,
             )
-        except TimeoutError:
             inference_response = None
             decision = decide_inference_timeout(
                 cultivar_confidence_threshold=self._cultivar_confidence_threshold,
                 quality_confidence_threshold=self._quality_confidence_threshold,
             )
         else:
+            inference_response = inference_task.result()
             if inference_response.inspection_id != inference_request.inspection_id:
                 raise InferenceResponseMismatchError(
                     "Inference 응답 inspection_id가 요청과 일치하지 않습니다"

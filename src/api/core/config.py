@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -27,6 +27,19 @@ class Settings(BaseSettings):
     cultivar_confidence_threshold: float = Field(default=0.50, ge=0, le=1)
     quality_confidence_threshold: float = Field(default=0.50, ge=0, le=1)
     inference_business_deadline_ms: int = Field(default=500, ge=1)
+    inference_hard_timeout_ms: int = Field(default=2000, ge=1)
+    max_late_tasks: int = Field(default=4, ge=0)
+
+    @model_validator(mode="after")
+    def validate_inference_deadlines(self) -> Settings:
+        """Hard timeout이 business deadline보다 뒤에 오도록 검증한다."""
+
+        if self.inference_hard_timeout_ms <= self.inference_business_deadline_ms:
+            raise ValueError(
+                "INFERENCE_HARD_TIMEOUT_MS는 "
+                "INFERENCE_BUSINESS_DEADLINE_MS보다 커야 합니다"
+            )
+        return self
 
 
 @lru_cache

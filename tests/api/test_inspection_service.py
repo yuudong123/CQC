@@ -15,6 +15,7 @@ from src.api.services.inspections import (
     InferenceResponseMismatchError,
     InspectionService,
 )
+from src.api.services.late_results import LateResultManager
 
 
 class RecordingInferenceClient(MockInferenceClient):
@@ -64,6 +65,17 @@ def _metadata(count: int) -> list[InspectionImageMetadata]:
     ]
 
 
+def _late_result_manager(
+    *,
+    hard_timeout_ms: int = 2000,
+    max_tasks: int = 4,
+) -> LateResultManager:
+    return LateResultManager(
+        hard_timeout_ms=hard_timeout_ms,
+        max_tasks=max_tasks,
+    )
+
+
 @pytest.mark.parametrize("image_count", [1, 12])
 def test_service_preserves_request_and_returns_mock_result(image_count: int) -> None:
     async def run() -> tuple[
@@ -79,6 +91,7 @@ def test_service_preserves_request_and_returns_mock_result(image_count: int) -> 
             cultivar_confidence_threshold=0.50,
             quality_confidence_threshold=0.50,
             inference_business_deadline_ms=500,
+            late_result_manager=_late_result_manager(),
         )
         images = _images(image_count)
         metadata = _metadata(image_count)
@@ -138,6 +151,7 @@ def test_service_rejects_mismatched_inference_response(
         cultivar_confidence_threshold=0.50,
         quality_confidence_threshold=0.50,
         inference_business_deadline_ms=500,
+        late_result_manager=_late_result_manager(),
     )
 
     with pytest.raises(InferenceResponseMismatchError, match=message):
@@ -158,6 +172,7 @@ def test_service_falls_back_once_after_normal_bin_rejection() -> None:
         cultivar_confidence_threshold=0.50,
         quality_confidence_threshold=0.50,
         inference_business_deadline_ms=500,
+        late_result_manager=_late_result_manager(),
     )
 
     response = asyncio.run(
@@ -183,6 +198,7 @@ def test_service_accepts_delayed_response_well_before_deadline() -> None:
         cultivar_confidence_threshold=0.50,
         quality_confidence_threshold=0.50,
         inference_business_deadline_ms=100,
+        late_result_manager=_late_result_manager(),
     )
 
     response = asyncio.run(
@@ -206,6 +222,7 @@ def test_service_does_not_retry_failed_direct_reinspection() -> None:
         cultivar_confidence_threshold=0.95,
         quality_confidence_threshold=0.50,
         inference_business_deadline_ms=100,
+        late_result_manager=_late_result_manager(),
     )
 
     response = asyncio.run(
@@ -244,6 +261,7 @@ def test_service_timeout_uses_reinspection_bin_without_retry(
         cultivar_confidence_threshold=0.50,
         quality_confidence_threshold=0.50,
         inference_business_deadline_ms=1,
+        late_result_manager=_late_result_manager(),
     )
 
     response = asyncio.run(
