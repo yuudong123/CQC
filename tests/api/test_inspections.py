@@ -95,6 +95,8 @@ def test_inspection_accepts_valid_multipart_contract() -> None:
         "used_frame_count": 2,
         "inspection_status": "COMPLETED",
         "review_required": False,
+        "exclude_from_normal_stats": False,
+        "decision_reason": "NORMAL",
         "target_bin_code": "TEST_NORMAL_BIN_1",
         "control_status": "SUCCEEDED",
     }
@@ -138,6 +140,31 @@ def test_inspection_uses_thresholds_from_settings() -> None:
     assert response.json()["control_status"] == "SUCCEEDED"
 
 
+def test_inspection_returns_timeout_without_fabricated_prediction() -> None:
+    service = InspectionService(
+        MockInferenceClient(response_delay_ms=50),
+        MockVirtualControl(),
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.50,
+        inference_business_deadline_ms=1,
+    )
+    with TestClient(create_app(Settings(), inspection_service=service)) as client:
+        response = _post(client, files=_images(1), metadata=_metadata([0]))
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["inspection_id"] == "inspection-001"
+    assert body["predicted_cultivar"] is None
+    assert body["predicted_grade"] is None
+    assert body["used_frame_count"] is None
+    assert body["inspection_status"] == "REINSPECTION_REQUIRED"
+    assert body["review_required"] is True
+    assert body["exclude_from_normal_stats"] is True
+    assert body["decision_reason"] == "INFERENCE_DEADLINE_EXCEEDED"
+    assert body["target_bin_code"] == "TEST_REINSPECTION_BIN"
+    assert body["control_status"] == "SUCCEEDED"
+
+
 @pytest.mark.parametrize(
     "inference_client",
     [
@@ -153,6 +180,7 @@ def test_inspection_returns_internal_error_for_mismatched_inference_response(
         MockVirtualControl(),
         cultivar_confidence_threshold=0.50,
         quality_confidence_threshold=0.50,
+        inference_business_deadline_ms=500,
     )
     with TestClient(create_app(Settings(), inspection_service=service)) as client:
         response = _post(client, files=_images(1), metadata=_metadata([0]))

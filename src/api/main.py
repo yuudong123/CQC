@@ -24,6 +24,9 @@ def create_app(
         MockVirtualControl(),
         cultivar_confidence_threshold=(runtime_settings.cultivar_confidence_threshold),
         quality_confidence_threshold=runtime_settings.quality_confidence_threshold,
+        inference_business_deadline_ms=(
+            runtime_settings.inference_business_deadline_ms
+        ),
     )
     application = FastAPI(title=runtime_settings.app_name)
     application.state.settings = runtime_settings

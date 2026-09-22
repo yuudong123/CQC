@@ -13,7 +13,10 @@ from src.api.schemas.inspection_results import (
     InspectionStatus,
     PersistenceStatus,
 )
-from src.api.services.inspection_policy import decide_inspection
+from src.api.services.inspection_policy import (
+    decide_inference_timeout,
+    decide_inspection,
+)
 
 
 def _inference_response(
@@ -135,6 +138,18 @@ def test_decide_inspection_uses_configurable_thresholds() -> None:
     assert normal.inspection_status is InspectionStatus.COMPLETED
     assert low_quality.inspection_status is InspectionStatus.REINSPECTION_REQUIRED
     assert low_quality.reason is InspectionDecisionReason.LOW_QUALITY_CONFIDENCE
+
+
+def test_decide_inference_timeout_is_excluded_from_normal_stats() -> None:
+    decision = decide_inference_timeout(
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.50,
+    )
+
+    assert decision.inspection_status is InspectionStatus.REINSPECTION_REQUIRED
+    assert decision.review_required is True
+    assert decision.exclude_from_normal_stats is True
+    assert decision.reason is InspectionDecisionReason.INFERENCE_DEADLINE_EXCEEDED
 
 
 def test_status_values_remain_varchar_compatible_strings() -> None:

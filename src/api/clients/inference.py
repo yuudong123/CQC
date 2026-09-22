@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import asyncio
+
 from ..schemas.inference import (
     CultivarProbabilities,
     InferenceRequest,
@@ -13,8 +15,17 @@ from ..schemas.inference import (
 class MockInferenceClient:
     """HTTP 호출 없이 고정된 정상 추론 결과를 반환한다."""
 
+    def __init__(self, response_delay_ms: int = 0) -> None:
+        if response_delay_ms < 0:
+            raise ValueError("Mock Inference 지연 시간은 0 이상이어야 합니다")
+        self._response_delay_ms = response_delay_ms
+
     async def predict(self, request: InferenceRequest) -> InferenceResponse:
         """요청 식별자와 실제 이미지 수를 유지한 Mock 결과를 반환한다."""
+
+        response_delay_ms = getattr(self, "_response_delay_ms", 0)
+        if response_delay_ms:
+            await asyncio.sleep(response_delay_ms / 1000)
 
         return InferenceResponse(
             inspection_id=request.inspection_id,

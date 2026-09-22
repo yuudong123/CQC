@@ -78,6 +78,7 @@ def test_service_preserves_request_and_returns_mock_result(image_count: int) -> 
             MockVirtualControl(),
             cultivar_confidence_threshold=0.50,
             quality_confidence_threshold=0.50,
+            inference_business_deadline_ms=500,
         )
         images = _images(image_count)
         metadata = _metadata(image_count)
@@ -96,6 +97,8 @@ def test_service_preserves_request_and_returns_mock_result(image_count: int) -> 
     assert response.predicted_grade == "L"
     assert response.inspection_status == "COMPLETED"
     assert response.review_required is False
+    assert response.exclude_from_normal_stats is False
+    assert response.decision_reason == "NORMAL"
     assert response.target_bin_code == "TEST_NORMAL_BIN_1"
     assert response.control_status == "SUCCEEDED"
     assert client.request is not None
@@ -134,6 +137,7 @@ def test_service_rejects_mismatched_inference_response(
         MockVirtualControl(),
         cultivar_confidence_threshold=0.50,
         quality_confidence_threshold=0.50,
+        inference_business_deadline_ms=500,
     )
 
     with pytest.raises(InferenceResponseMismatchError, match=message):
@@ -153,6 +157,7 @@ def test_service_falls_back_once_after_normal_bin_rejection() -> None:
         control,
         cultivar_confidence_threshold=0.50,
         quality_confidence_threshold=0.50,
+        inference_business_deadline_ms=500,
     )
 
     response = asyncio.run(
@@ -171,13 +176,36 @@ def test_service_falls_back_once_after_normal_bin_rejection() -> None:
     ]
 
 
+def test_service_accepts_delayed_response_well_before_deadline() -> None:
+    service = InspectionService(
+        MockInferenceClient(response_delay_ms=1),
+        MockVirtualControl(),
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.50,
+        inference_business_deadline_ms=100,
+    )
+
+    response = asyncio.run(
+        service.inspect(
+            inspection_id="inspection-before-deadline",
+            images=_images(1),
+            metadata=_metadata(1),
+        )
+    )
+
+    assert response.inspection_status == "COMPLETED"
+    assert response.decision_reason == "NORMAL"
+    assert response.exclude_from_normal_stats is False
+
+
 def test_service_does_not_retry_failed_direct_reinspection() -> None:
     control = MockVirtualControl([ControlStatus.FAILED])
     service = InspectionService(
-        MockInferenceClient(),
+        MockInferenceClient(response_delay_ms=1),
         control,
         cultivar_confidence_threshold=0.95,
         quality_confidence_threshold=0.50,
+        inference_business_deadline_ms=100,
     )
 
     response = asyncio.run(
@@ -189,6 +217,51 @@ def test_service_does_not_retry_failed_direct_reinspection() -> None:
     )
 
     assert response.inspection_status == "REINSPECTION_REQUIRED"
+    assert response.review_required is True
+    assert response.exclude_from_normal_stats is False
+    assert response.decision_reason == "LOW_CULTIVAR_CONFIDENCE"
     assert response.target_bin_code == "TEST_REINSPECTION_BIN"
     assert response.control_status is ControlStatus.FAILED
+    assert len(control.requests) == 1
+
+
+@pytest.mark.parametrize(
+    "control_outcome",
+    [
+        ControlStatus.SUCCEEDED,
+        ControlStatus.REJECTED,
+        ControlStatus.NO_RESPONSE,
+        ControlStatus.FAILED,
+    ],
+)
+def test_service_timeout_uses_reinspection_bin_without_retry(
+    control_outcome: ControlStatus,
+) -> None:
+    control = MockVirtualControl([control_outcome])
+    service = InspectionService(
+        MockInferenceClient(response_delay_ms=50),
+        control,
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.50,
+        inference_business_deadline_ms=1,
+    )
+
+    response = asyncio.run(
+        service.inspect(
+            inspection_id="inspection-timeout",
+            images=_images(1),
+            metadata=_metadata(1),
+        )
+    )
+
+    assert response.inspection_id == "inspection-timeout"
+    assert response.inspection_status == "REINSPECTION_REQUIRED"
+    assert response.review_required is True
+    assert response.exclude_from_normal_stats is True
+    assert response.decision_reason == "INFERENCE_DEADLINE_EXCEEDED"
+    assert response.predicted_cultivar is None
+    assert response.predicted_grade is None
+    assert response.used_frame_count is None
+    assert response.target_bin_code == "TEST_REINSPECTION_BIN"
+    assert response.control_status is control_outcome
     assert len(control.requests) == 1

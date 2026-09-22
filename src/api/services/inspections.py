@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import asyncio
+
 from fastapi import UploadFile
 
 from ..clients.inference import MockInferenceClient
@@ -11,7 +13,7 @@ from ..schemas.inspection_results import InspectionResponse
 from ..schemas.inspections import InspectionImageMetadata
 from .bin_policy import TEMPORARY_REINSPECTION_BIN_CODE, determine_target_bin
 from .control_policy import execute_virtual_control
-from .inspection_policy import decide_inspection
+from .inspection_policy import decide_inference_timeout, decide_inspection
 
 
 class InferenceResponseMismatchError(RuntimeError):
@@ -28,11 +30,13 @@ class InspectionService:
         *,
         cultivar_confidence_threshold: float,
         quality_confidence_threshold: float,
+        inference_business_deadline_ms: int,
     ) -> None:
         self._inference_client = inference_client
         self._virtual_control = virtual_control
         self._cultivar_confidence_threshold = cultivar_confidence_threshold
         self._quality_confidence_threshold = quality_confidence_threshold
+        self._inference_business_deadline_ms = inference_business_deadline_ms
 
     async def inspect(
         self,
@@ -54,34 +58,52 @@ class InspectionService:
             images=image_payloads,
             metadata=metadata,
         )
-        inference_response = await self._inference_client.predict(inference_request)
-
-        if inference_response.inspection_id != inference_request.inspection_id:
-            raise InferenceResponseMismatchError(
-                "Inference 응답 inspection_id가 요청과 일치하지 않습니다"
+        try:
+            inference_response = await asyncio.wait_for(
+                self._inference_client.predict(inference_request),
+                timeout=self._inference_business_deadline_ms / 1000,
             )
-        if inference_response.used_frame_count != len(inference_request.images):
-            raise InferenceResponseMismatchError(
-                "Inference 응답 used_frame_count가 요청 이미지 수와 일치하지 않습니다"
+        except TimeoutError:
+            inference_response = None
+            decision = decide_inference_timeout(
+                cultivar_confidence_threshold=self._cultivar_confidence_threshold,
+                quality_confidence_threshold=self._quality_confidence_threshold,
             )
+        else:
+            if inference_response.inspection_id != inference_request.inspection_id:
+                raise InferenceResponseMismatchError(
+                    "Inference 응답 inspection_id가 요청과 일치하지 않습니다"
+                )
+            if inference_response.used_frame_count != len(inference_request.images):
+                raise InferenceResponseMismatchError(
+                    "Inference 응답 used_frame_count가 요청 이미지 수와 일치하지 않습니다"
+                )
 
-        decision = decide_inspection(
-            inference_response,
-            cultivar_confidence_threshold=self._cultivar_confidence_threshold,
-            quality_confidence_threshold=self._quality_confidence_threshold,
-        )
+            decision = decide_inspection(
+                inference_response,
+                cultivar_confidence_threshold=self._cultivar_confidence_threshold,
+                quality_confidence_threshold=self._quality_confidence_threshold,
+            )
         target_bin_code = determine_target_bin(inference_response, decision)
         control_result = await execute_virtual_control(
             self._virtual_control,
-            inspection_id=inference_response.inspection_id,
+            inspection_id=inspection_id,
             target_bin_code=target_bin_code,
             reinspection_bin_code=TEMPORARY_REINSPECTION_BIN_CODE,
         )
         final_control_response = control_result.final_response
+        inference_fields = (
+            inference_response.model_dump(exclude={"inspection_id"})
+            if inference_response is not None
+            else {}
+        )
         return InspectionResponse(
-            **inference_response.model_dump(),
+            inspection_id=inspection_id,
+            **inference_fields,
             inspection_status=decision.inspection_status,
             review_required=decision.review_required,
+            exclude_from_normal_stats=decision.exclude_from_normal_stats,
+            decision_reason=decision.reason,
             target_bin_code=final_control_response.target_bin_code,
             control_status=final_control_response.control_status,
         )

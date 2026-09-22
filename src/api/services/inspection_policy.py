@@ -46,3 +46,20 @@ def decide_inspection(
         cultivar_confidence_threshold=cultivar_confidence_threshold,
         quality_confidence_threshold=quality_confidence_threshold,
     )
+
+
+def decide_inference_timeout(
+    *,
+    cultivar_confidence_threshold: float,
+    quality_confidence_threshold: float,
+) -> InspectionDecision:
+    """Business deadline 안에 응답하지 못한 검사를 재검사 대상으로 판정한다."""
+
+    return InspectionDecision(
+        inspection_status=InspectionStatus.REINSPECTION_REQUIRED,
+        review_required=True,
+        exclude_from_normal_stats=True,
+        reason=InspectionDecisionReason.INFERENCE_DEADLINE_EXCEEDED,
+        cultivar_confidence_threshold=cultivar_confidence_threshold,
+        quality_confidence_threshold=quality_confidence_threshold,
+    )

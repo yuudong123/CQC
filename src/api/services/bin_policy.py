@@ -18,13 +18,16 @@ TEMPORARY_REINSPECTION_BIN_CODE = "TEST_REINSPECTION_BIN"
 
 
 def determine_target_bin(
-    inference_response: InferenceResponse,
+    inference_response: InferenceResponse | None,
     decision: InspectionDecision,
 ) -> str:
     """판정 상태와 예측 조합으로 현재 요청의 목적 bin을 결정한다."""
 
     if decision.inspection_status is InspectionStatus.REINSPECTION_REQUIRED:
         return TEMPORARY_REINSPECTION_BIN_CODE
+
+    if inference_response is None:
+        raise ValueError("정상 판정에는 Inference 응답이 필요합니다")
 
     key = (
         inference_response.predicted_cultivar,
