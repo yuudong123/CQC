@@ -1,14 +1,40 @@
 # 학습 코드 안내
 
+## 가상 당도 시연 실험
+
+가상 당도는 RGB 이미지에서 생성한 시연값이며 실측값이 아니다. 원본 매니페스트는 수정하지 않는다.
+
+```powershell
+python -m src.data.virtual_brix
+python -m src.training.brix_experiments
+```
+
+두 명령은 각각 가상 당도 CSV와 실행 전 48개 비교 계획만 만든다. 학습은 시작하지 않는다. 계획은 `separate`와 `separate_brix`에 대해 동일한 4개 손실 설정 × (5-fold CV + 원본 source holdout)를 구성하며 입력은 모두 대표 12장이다.
+
+계획을 확인한 뒤 실제 학습과 결과 비교는 다음처럼 실행한다.
+
+```powershell
+python -m src.training.brix_experiments --device cuda --execute
+python -m src.training.brix_report
+```
+
+중단 후 같은 명령을 다시 실행하면 `summary.json` 기준 완료된 run은 건너뛴다. 처음부터 다시 돌릴 때만 `--rerun-completed`를 붙인다.
+
+비교 기준선은 같은 분할·설정의 `separate` 결과다. Test는 모델 선택에 사용하지 않는다. 결합 모델의 개선을 실제 당도 측정 성능으로 해석하지 않는다.
+
+AI Hub `전북 장수 사과 당도 품질 데이터`는 RGB 이미지와 착즙/NIR 당도 필드를 가진 별도 후보지만, 현재 저장소에는 원본 파일이 없다. 따라서 이번 코드는 그 데이터로 실제 Brix 회귀를 학습하는 코드가 아니라 현재 데이터의 RGB 프록시 결합 실험이다.
+
 학습·비교·평가 코드는 이 폴더에 모아 둔다. 데이터 로더와 공통 모델 본체는 각각 `src/data`, `src/models`의 기존 구현을 가져와 사용한다.
 
 ## 파일
 
 | 파일 | 역할 |
 |---|---|
-| `train.py` | 4·8·12·16·40장, joint·separate 모델의 단일 fold 학습 |
+| `train.py` | 4·8·12·16·40장, joint·separate·가상 당도 late-fusion 모델의 단일 fold 학습 |
 | `engine.py` | 학습·평가 epoch, Accuracy·Macro F1·혼동행렬, 체크포인트 저장 |
 | `models.py` | 공유 인코더 joint 모델과 과제별 독립 인코더 separate 모델 생성 |
+| `brix_experiments.py` | 대표 12장 이미지 단독·가상 당도 late-fusion 개발 실험 48개 계획·실행 |
+| `brix_report.py` | 동일 epoch의 CV 최저점·source holdout으로 두 모델 비교 |
 | `experiments.py` | 2개 모델 × 5개 입력 장수 × 5-fold, 총 50개 비교 계획 생성 |
 | `audit.py` | 50개 실험의 파일 누락·epoch 수·설정·체크포인트 SHA-256 검사 |
 | `summarize.py` | 완료된 fold의 최고 epoch와 평균·표준편차 집계 |

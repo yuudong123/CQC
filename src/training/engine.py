@@ -117,7 +117,11 @@ def run_epoch(
         if training:
             optimizer.zero_grad(set_to_none=True)
         with torch.set_grad_enabled(training):
-            output = model(images, view_mask)
+            model_options = {}
+            if "virtual_brix" in batch:
+                model_options["virtual_brix"] = _move(batch, "virtual_brix", device)
+                model_options["brix_uncertainty"] = _move(batch, "brix_uncertainty", device)
+            output = model(images, view_mask, **model_options)
             cultivar_loss = criterion(output["cultivar_logits"], cultivar_target)
             quality_task_loss = quality_loss(
                 output["quality_logits"],
