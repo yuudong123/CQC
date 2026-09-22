@@ -81,4 +81,18 @@ uvicorn app.main:app --reload
 
 API 문서는 `http://localhost:8000/docs`, 상태 확인은 `http://localhost:8000/api/v1/health`다.
 
-현재 PC에는 Docker가 없어 Compose는 원격 `tep-server`의 Docker에서 검증한다. 원격 Mongo 모드에서 배송 완료까지 스모크 테스트를 통과했다.
+## 공통 Docker·Jenkins 배포
+
+물류 서비스는 GPU 서버나 별도 홈 서버에서 실행하지 않는다. 저장소 루트의 `compose.yaml`에서 기존 CQC 서비스와 함께 관리한다.
+
+```powershell
+docker compose build logistics-api logistics-web
+docker compose up -d logistics-mongodb logistics-api logistics-web
+```
+
+- 웹: `http://배포호스트:3100`
+- API 문서: `http://배포호스트:8100/docs`
+- MongoDB: 외부 포트를 열지 않고 Compose 내부 네트워크에서만 접근
+- Jenkins: 루트 `Jenkinsfile`의 Build, Deploy, Verify 단계에서 세 서비스를 함께 처리
+
+배포 호스트 주소가 `localhost`가 아니라면 Jenkins Job 환경변수 `LOGISTICS_PUBLIC_WEB_ORIGIN`, `LOGISTICS_PUBLIC_API_URL`을 실제 주소로 설정한다. 지도 키는 저장소에 넣지 않고 `GOOGLE_MAPS_API_KEY` 환경변수 또는 Jenkins Credentials로 주입한다.

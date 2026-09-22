@@ -203,6 +203,8 @@ pipeline {
                     test -d docs
                     test -d models
                     test -d scripts
+                    test -d cqc-logistics-platform/apps/api
+                    test -d cqc-logistics-platform/apps/web
 
                     echo "CQC project structure OK"
                 '''
@@ -268,7 +270,7 @@ pipeline {
                     echo " Healthcheck Verification"
                     echo "======================================"
 
-                    HEALTH_SERVICES="mysql inference backend"
+                    HEALTH_SERVICES="mysql inference backend logistics-mongodb logistics-api logistics-web"
 
                     for service in $HEALTH_SERVICES; do
 
