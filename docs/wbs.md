@@ -15,10 +15,10 @@ https://docs.google.com/spreadsheets/d/1E4s9fRkWV9CWqBU_eaYLZt1W7aAxbuuUmLPl04V0
 
 | 코드 | 역할 | 담당자 | 소유 문서 |
 |---|---|---|---|
-| DM | 데이터 분석·모델 | 조현재 | `data-spec.md`, `model-stack.md`, 모델 카드 |
-| FE | 프론트엔드 | 강성민 | `frontend-stack.md`, 화면 명세 |
-| BE | 백엔드·DB | 홍준희 | `backend-stack.md`, OpenAPI, DB 설계 |
-| MO | MLOps·CI/CD | 홍유나 | `mlops-stack.md`, Compose, CI/CD·운영 문서 |
+| DM | 데이터 분석·모델 | 조현재 | `docs/wbs/reference/DM/data-spec.md`, `docs/wbs/reference/DM/model-stack.md`, 모델 카드 |
+| FE | 프론트엔드 | 강성민 | `docs/wbs/reference/FE/frontend-stack.md`, 화면 명세 |
+| BE | 백엔드·DB | 홍준희 | `docs/wbs/reference/BE/backend-stack.md`, OpenAPI, DB 설계 |
+| MO | MLOps·CI/CD | 홍유나 | `docs/wbs/reference/MO/mlops-stack.md`, Compose, CI/CD·운영 문서 |
 
 ## 3. 마일스톤
 
@@ -51,7 +51,7 @@ https://docs.google.com/spreadsheets/d/1E4s9fRkWV9CWqBU_eaYLZt1W7aAxbuuUmLPl04V0
 
 | ID | 기간 | 작업 | 선행 | 완료 기준 |
 |---|---|---|---|---|
-| FE-01 | 09-16~09-18 | 기술 스택·화면 상태·mock 계약 작성 | M1 초안 | `frontend-stack.md`, 정상·저신뢰·시간초과·장애 화면 상태 |
+| FE-01 | 09-16~09-18 | 기술 스택·화면 상태·mock 계약 작성 | M1 초안 | `docs/wbs/reference/FE/frontend-stack.md`, 정상·저신뢰·시간초과·장애 화면 상태 |
 | FE-02 | 09-19~09-23 | 반응형 무스크롤 대시보드 골격 | FE-01, BE-01 | 고정 가독성 영역과 유동 이미지 영역 분리, 특정 해상도 고정 없음 |
 | FE-03 | 09-22~09-27 | 관리 화면·이력 필터·CSV UI | FE-01, BE-02 | 날짜·품종·품질·bin·상태·오류·오판 의심 필터, 50/100/200건 |
 | FE-04 | 09-24~09-30 | 처리 중 이미지 카드·시작/정지 | FE-02, BE-03 | 순차·병렬 카드 자동 대응, 기본 ON, 정지·재개 상태 표시 |
@@ -81,7 +81,7 @@ https://docs.google.com/spreadsheets/d/1E4s9fRkWV9CWqBU_eaYLZt1W7aAxbuuUmLPl04V0
 
 | ID | 기간 | 작업 | 선행 | 완료 기준 |
 |---|---|---|---|---|
-| MO-01 | 09-16~09-18 | 기술 스택·브랜치·환경 규칙 작성 | 없음 | `mlops-stack.md`, dev 자동 배포·main 표시 용도 문서화 |
+| MO-01 | 09-16~09-18 | 기술 스택·브랜치·환경 규칙 작성 | 없음 | `docs/wbs/reference/MO/mlops-stack.md`, dev 자동 배포·main 표시 용도 문서화 |
 | MO-02 | 09-19~09-22 | 5개 서비스 Compose 골격 | MO-01, BE-01 | simulator·inference·backend·frontend·mysql, `unless-stopped` |
 | MO-03 | 09-20~09-24 | PR·dev CI 기본 검사 | MO-01 | feat PR 테스트, 최소 1명 확인, dev 배포, main 자동 배포 없음 |
 | MO-04 | 09-23~09-27 | healthcheck·기동 의존성 | MO-02 | MySQL·inference→backend→simulator·frontend 순서와 상태 확인 |

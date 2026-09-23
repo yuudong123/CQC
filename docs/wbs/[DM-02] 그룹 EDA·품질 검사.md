@@ -93,7 +93,7 @@ SHA-256이 같은 이미지 5쌍·10장을 찾았지만, 서로 다른 각도 �
 - `tests/test_image_quality.py`: 정상·CRC 오류·잘린 PNG 테스트
 - `tests/test_manifest.py`: PNG 해상도 불일치 테스트
 - `docs/wbs/[DM-02] 그룹 EDA·품질 검사.md`: 작업 결과와 검증 기록
-- `docs/data-spec.md`: 품질 검사 결과 반영
+- `docs/wbs/reference/DM/data-spec.md`: 품질 검사 결과 반영
 
 관련 커밋:
 
@@ -109,7 +109,7 @@ SHA-256이 같은 이미지 5쌍·10장을 찾았지만, 서로 다른 각도 �
 ## 8. 리뷰 대상
 
 - `docs/wbs/[DM-02] 그룹 EDA·품질 검사.md`
-- `docs/data-spec.md`
+- `docs/wbs/reference/DM/data-spec.md`
 - `src/data/image_quality.py`
 - `tests/test_image_quality.py`
 - `data/processed/image-quality-report.json`

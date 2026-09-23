@@ -9,7 +9,7 @@
 - 프로젝트 기간: 1개월
 - 문서 상태: 실행 기준 문서. 부사·양광, 특·상·보통 라벨, MVP 운영 흐름, 역할, MySQL, CPU 배포 환경과 목표 처리량이 확정되었다. 모델은 `separate`·12장으로 확정했으나 최종 Test 품질 Macro F1 0.7778로 승인 기준 0.90에 미달했다.
 
-> 이 문서를 프로젝트의 최상위 기획 기준으로 사용한다. [의사결정 기록](./decision-log.md)은 세부 결정 근거를 보존하며, 두 문서가 충돌하면 이 문서를 우선한다.
+> 이 문서를 프로젝트의 최상위 기획 기준으로 사용한다. [의사결정 기록](<planning/decision-log.md>)은 세부 결정 근거를 보존하며, 두 문서가 충돌하면 이 문서를 우선한다.
 
 ## 0. 프로젝트 한 문장 정의
 
@@ -149,7 +149,7 @@ AI Hub 공식 소개에서 확인한 내용은 다음과 같다.
 - 촬영 장비와 배경이 통제된 데이터라면 휴대전화나 현장 컨베이어 이미지에서 성능이 낮아질 수 있다.
 - 품질 등급 차이를 만드는 세부 기준과 품종별 기준을 실제 라벨 설명서에서 추가 확인해야 한다.
 - 표면에 보이지 않는 당도, 내부 손상과 맛을 RGB 이미지 한 장으로 직접 판단할 수 없다.
-- 현재 확보한 표본 수와 품종·품질 분포는 `data-spec.md`에 기록했으며, 그룹 수가 적은 조합의 성능 변동성을 함께 공개해야 한다.
+- 현재 확보한 표본 수와 품종·품질 분포는 `docs/wbs/reference/DM/data-spec.md`에 기록했으며, 그룹 수가 적은 조합의 성능 변동성을 함께 공개해야 한다.
 - 물리 선별기를 연결하지 않으면 선별 자동화는 소프트웨어 신호와 화면 시뮬레이션 수준이다.
 - Grad-CAM 같은 시각화는 모델이 본 영역을 설명하는 보조 자료이며 품질 판정의 인과적 근거가 아니다.
 
@@ -508,7 +508,7 @@ MLOps·CI/CD: 기본 실행 환경 → 영역별 자동 검사 → 통합 배포
 | 사과 품종 2종 | 확정 | 부사(`fuji`)·양광(`yanggwang`) |
 | 두 번째 품목 | 확장 후보, 품목명 미정 | 사과 품종 2종의 MVP 진행률과 후보 품목 데이터 구조 |
 | 모델 프레임워크 | PyTorch·torchvision 확정 | Python 3.11, 원격 CUDA 학습과 CPU 추론 |
-| Backend 기술 | Python + FastAPI 확정 | 구체적인 라이브러리·버전은 `backend-stack.md` 작성 시 결정 |
+| Backend 기술 | Python + FastAPI 확정 | 구체적인 라이브러리·버전은 `docs/wbs/reference/BE/backend-stack.md` 작성 시 결정 |
 | 웹 기술 | TODO | 팀 경험과 시연 환경 |
 | 데이터베이스 | MySQL 확정 | 백엔드 담당자가 DB 구조와 마이그레이션을 별도 문서화 |
 | 저신뢰 임계값 | 확정 | 품종 0.50·품질 0.50. 5-fold validation 152그룹에서 coverage 98.68%, 자동 처리 구간 품종 98.67%·품질 98.00% |
@@ -522,10 +522,10 @@ MLOps·CI/CD: 기본 실행 환경 → 영역별 자동 검사 → 통합 배포
 
 이 문서는 문제, 데이터 적합성, 분석 설계, 서비스 범위와 실행 원칙을 다룬다. 세부 항목은 다음 문서에서 이어서 관리한다.
 
-- 기능과 수용 기준: [`requirements.md`](./requirements.md)
-- 학습 데이터와 판정 이력 필드: [`data-spec.md`](./data-spec.md)
-- 가상 당도 생성·검증 계획: [`virtual-brix-plan.md`](./virtual-brix-plan.md)
-- 구성 요소와 연결: [`architecture.md`](./architecture.md)
+- 기능과 수용 기준: [`requirements.md`](<planning/requirements.md>)
+- 학습 데이터와 판정 이력 필드: [`data-spec.md`](<wbs/reference/DM/data-spec.md>)
+- 가상 당도 생성·검증 계획: [`virtual-brix-plan.md`](<wbs/reference/DM/virtual-brix-plan.md>)
+- 구성 요소와 연결: [`architecture.md`](<planning/architecture.md>)
 - 일정과 담당: [`wbs.md`](./wbs.md)
 
-문서 간 우선순위와 충돌 처리 원칙은 [`decision-log.md`](./decision-log.md)를 따른다. 각 문서는 자신의 목적에 맞는 상세 수준을 유지하고 같은 계약을 서로 다르게 정의하지 않는다.
+문서 간 우선순위와 충돌 처리 원칙은 [`decision-log.md`](<planning/decision-log.md>)를 따른다. 각 문서는 자신의 목적에 맞는 상세 수준을 유지하고 같은 계약을 서로 다르게 정의하지 않는다.

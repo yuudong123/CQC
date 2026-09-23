@@ -78,12 +78,12 @@ DM-09의 최종 학습, Test 1회, 실패 분석, 모델 카드와 패키지 기
 
 ## 산출물
 
-- `docs/model-card.md`
-- `docs/results/final-test-result.json`
-- `docs/results/final-concurrency-i7-14700F.json`
-- `docs/results/thresholds-separate-12view.json`
-- `docs/results/model-comparison.json`
-- `docs/results/model-manifest.json`
+- `docs/wbs/reference/DM/model-card.md`
+- `docs/wbs/results/final-test-result.json`
+- `docs/wbs/results/final-concurrency-i7-14700F.json`
+- `docs/wbs/results/thresholds-separate-12view.json`
+- `docs/wbs/results/model-comparison.json`
+- `docs/wbs/results/model-manifest.json`
 
 모델 바이너리는 Git에 넣지 않고 집 PC의 `D:\Study\CQC\models\cqc-apple-separate12-v1.0.0`에 보관한다.
 
@@ -94,7 +94,7 @@ DM-09의 최종 학습, Test 1회, 실패 분석, 모델 카드와 패키지 기
 - dropout 0.4, learning rate 0.0003, weight decay 0.0005, 개발 152그룹이다.
 - `final_fit.py`에 명시적 epoch·품질 손실·dropout 전달을 추가했고 관련 테스트 20개 통과를 확인했다.
 - 원격 `outputs/final-training-brix-v1/separate-12view-focal-e4` 학습은 2026-09-23 08:53에 4/4 epoch 완료했다. 로그·summary·체크포인트 존재를 확인했다.
-- 완료 산출물 요약·패키지 manifest·동작 검증 결과를 `docs/results/candidate-v2-*.json`으로 수집했다.
+- 완료 산출물 요약·패키지 manifest·동작 검증 결과를 `docs/wbs/results/candidate-v2-*.json`으로 수집했다.
 - 남은 승인 조건: 신규 독립 holdout, 새 모델 신뢰도 기준 검증, i7-4790 성능시험. 기존 27그룹 평가를 새 독립 Test로 표시하지 않는다.
 
 ## 후속 후보 모델 카드 및 인계 정보

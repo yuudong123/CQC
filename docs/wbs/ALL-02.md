@@ -4,6 +4,15 @@
 - 상태: 점검 기록 작성, 독립 실행 전체 완료 미확인
 - WBS의 ID·담당·일정은 변경하지 않는다.
 
+## 문서 구조 정리 (2026-09-23)
+
+- 문서 진입점은 [docs 안내](../README.md)로 통일한다.
+- 기획 기준은 `docs/planning/`, 작업 부속 명세는 `docs/wbs/reference/<파트>/`로 분류했다.
+- 검증 JSON은 `docs/wbs/results/`, 공유 공지는 `docs/wbs/협업공지/`에 모았다.
+- 24개 문서를 이동하고 내용은 보존했다. 루트에 작업 요약 파일을 추가하지 않는다.
+- 발표 자료와 API 계약은 용도가 달라 기존 전용 폴더를 유지했다.
+- 다른 브랜치의 문서를 이 브랜치에 복제하거나 기존 WBS ID·담당·일정을 변경하지 않았다.
+
 ## 코드별 문서 작성 현황
 
 | 파트 | 확인된 명세 | 비고 |
@@ -30,7 +39,7 @@
 
 | 항목 | 현재 확인 상태 | 완료 조건 |
 |---|---|---|
-| 실제 QC → 물류 | 필드·전달 기준 문서화 | [QC 물류 연결 기준](../qc-logistics-handoff.md) 기준 실제 연결 시험 |
+| 실제 QC → 물류 | 필드·전달 기준 문서화 | [QC 물류 연결 기준](<reference/ALL/qc-logistics-handoff.md>) 기준 실제 연결 시험 |
 | 가상 당도 표시 | 생성 CSV·학습 실험 구현 | API·화면에 출처·비실측 표시 연결 |
 | QC Compose | origin/dev의 QC 4개 앱은 placeholder | 실제 이미지·명령·healthcheck 연결 |
 | CI | 구조 검사·기동 검사 중심 | 파트 테스트와 dev 배포 조건 반영, 실제 Job 설정 확인 |
@@ -50,15 +59,15 @@
 | 문서 | 목적 | 현재 상태 | 다음 갱신 조건 |
 |---|---|---|---|
 | `project-plan.md` | 프로젝트 배경, 데이터 조사, 범위와 실행 원칙 | 고도화 합의 반영 | 범위·성능 정책 변경 시 |
-| `requirements.md` | 기능·비기능 요구와 수용 기준 | 고도화 합의 반영 | API·화면 계약 변경 시 |
-| `data-spec.md` | 원본 데이터, 그룹 분할, 모델·MySQL 논리 명세 | 로컬 데이터 확인 결과 반영 | 백엔드 물리 DB 설계 완료 시 |
-| `architecture.md` | HTTP 서비스, 상태, 저장·배포 구조 | 고도화 합의 반영 | 파트별 기술 스택 확정 시 |
+| `docs/planning/requirements.md` | 기능·비기능 요구와 수용 기준 | 고도화 합의 반영 | API·화면 계약 변경 시 |
+| `docs/wbs/reference/DM/data-spec.md` | 원본 데이터, 그룹 분할, 모델·MySQL 논리 명세 | 로컬 데이터 확인 결과 반영 | 백엔드 물리 DB 설계 완료 시 |
+| `docs/planning/architecture.md` | HTTP 서비스, 상태, 저장·배포 구조 | 고도화 합의 반영 | 파트별 기술 스택 확정 시 |
 | `wbs.md` | 09-16~10-16 역할별 일정·의존성·완료 조건 | 전면 개정 완료 | 실제 진행 지연·범위 변경 시 |
-| `decision-log.md` | 기획 인터뷰 확정 사항 | 최신 | 새 결정 즉시 |
-| `backend-stack.md` | Backend 기술 선택·버전·실행법 | FastAPI·MySQL·HTTP 기초 합의 반영 | 세부 라이브러리·버전 선정 시 |
-| `model-stack.md` | 데이터·모델 기술 선택·실행법 | 구현·평가 결과 반영 | v2 결과와 i7-4790 수용시험 완료 시 |
-| `frontend-stack.md` | Frontend 기술 선택·실행법 | 담당자 작성 대기 | 담당자 기술 선정 시 |
-| `mlops-stack.md` | MLOps 기술 선택·실행법 | MO-01~05와 현재 통합 기반 반영 | QC 5개와 물류 3개 서비스 통합 시 |
+| `docs/planning/decision-log.md` | 기획 인터뷰 확정 사항 | 최신 | 새 결정 즉시 |
+| `docs/wbs/reference/BE/backend-stack.md` | Backend 기술 선택·버전·실행법 | FastAPI·MySQL·HTTP 기초 합의 반영 | 세부 라이브러리·버전 선정 시 |
+| `docs/wbs/reference/DM/model-stack.md` | 데이터·모델 기술 선택·실행법 | 구현·평가 결과 반영 | v2 결과와 i7-4790 수용시험 완료 시 |
+| `docs/wbs/reference/FE/frontend-stack.md` | Frontend 기술 선택·실행법 | 담당자 작성 대기 | 담당자 기술 선정 시 |
+| `docs/wbs/reference/MO/mlops-stack.md` | MLOps 기술 선택·실행법 | MO-01~05와 현재 통합 기반 반영 | QC 5개와 물류 3개 서비스 통합 시 |
 
 ## 확정 사항
 
@@ -79,10 +88,10 @@
 
 | 문서 | 담당자 | 작성할 핵심 내용 |
 |---|---|---|
-| `model-stack.md` | 조현재 | 프레임워크, 그룹 모델, 전처리, CPU 최적화, 실행법 |
-| `backend-stack.md` | 홍준희 | FastAPI 세부 라이브러리·버전, OpenAPI, 오류 코드, MySQL 물리 설계, 마이그레이션 |
-| `frontend-stack.md` | 강성민 | 프레임워크, 차트, 화면 상태, 빌드·테스트 |
-| `mlops-stack.md` | 홍유나 | Compose, dev CI/CD, healthcheck, 볼륨·로그·복구 |
+| `docs/wbs/reference/DM/model-stack.md` | 조현재 | 프레임워크, 그룹 모델, 전처리, CPU 최적화, 실행법 |
+| `docs/wbs/reference/BE/backend-stack.md` | 홍준희 | FastAPI 세부 라이브러리·버전, OpenAPI, 오류 코드, MySQL 물리 설계, 마이그레이션 |
+| `docs/wbs/reference/FE/frontend-stack.md` | 강성민 | 프레임워크, 차트, 화면 상태, 빌드·테스트 |
+| `docs/wbs/reference/MO/mlops-stack.md` | 홍유나 | Compose, dev CI/CD, healthcheck, 볼륨·로그·복구 |
 
 ## 남은 결정
 

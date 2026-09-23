@@ -30,7 +30,7 @@
 - `scripts/verify_inference_http.py`가 임시 loopback Uvicorn 서버를 실행하고 종료 시 해당 자식 프로세스만 정리한다.
 - 합성 PNG 12장 정상 200, 누락 대응 8장 200, 13장 413, metadata 개수 불일치 422, 잘못된 MIME 415, 손상 이미지 422를 실제 HTTP로 확인했다.
 - `origin/dev`의 `2490cfe7f9a75fcbd75acb36ccf99aad758e45d9`에서 추출한 변경 없는 Backend `InferenceResponse`로 정상 응답 검증을 통과했다. 백엔드 소스는 수정하지 않았다.
-- 증거: `docs/results/candidate-v2-http.json`. 합성 입력·노트북 단발 측정이며 실사과 정확도나 i7-4790 성능 승인 근거가 아니다. 손상 이미지 첫 호출은 약 2.6초로 500ms를 초과했다. 정상 요청만으로 오류 경로 지연을 보장하면 안 된다.
+- 증거: `docs/wbs/results/candidate-v2-http.json`. 합성 입력·노트북 단발 측정이며 실사과 정확도나 i7-4790 성능 승인 근거가 아니다. 손상 이미지 첫 호출은 약 2.6초로 500ms를 초과했다. 정상 요청만으로 오류 경로 지연을 보장하면 안 된다.
 - 실제 Backend Client는 Mock 상태이므로 Backend 검사→Inference→제어·저장 전체 통합과 transport timeout 검증은 남아 있다.
 
 ### 독립 배포 슬롯
