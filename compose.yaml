@@ -274,5 +274,68 @@ services:
         echo "[MO-04 placeholder] simulator"
         tail -f /dev/null
 
+  # CQC 판정 결과를 경매·배차·배송 관제로 연결하는 물류 확장 서비스다.
+  # GPU를 사용하지 않으며 Jenkins가 다른 CQC 서비스와 함께 배포한다.
+  logistics-mongodb:
+    image: mongo:8
+    restart: unless-stopped
+    volumes:
+      - logistics_mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ ping: 1 }).ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  logistics-api:
+    build:
+      context: ./cqc-logistics-platform/apps/api
+    restart: unless-stopped
+    environment:
+      MONGODB_URL: mongodb://logistics-mongodb:27017
+      MONGODB_DATABASE: ${LOGISTICS_MONGODB_DATABASE:-cqc_logistics}
+      STORE_MODE: mongo
+      CORS_ORIGINS: ${LOGISTICS_PUBLIC_WEB_ORIGIN:-http://localhost:3100}
+    ports:
+      - "${LOGISTICS_API_PORT:-8100}:8000"
+    depends_on:
+      logistics-mongodb:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  logistics-web:
+    build:
+      context: ./cqc-logistics-platform/apps/web
+      args:
+        NEXT_PUBLIC_API_URL: ${LOGISTICS_PUBLIC_API_URL:-http://localhost:8100/api/v1}
+        NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-}
+    restart: unless-stopped
+    ports:
+      - "${LOGISTICS_WEB_PORT:-3100}:3000"
+    depends_on:
+      logistics-api:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://localhost:3000').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
 volumes:
   mysql_data:
+  logistics_mongodb_data:
