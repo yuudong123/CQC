@@ -21,8 +21,8 @@ def percentile(values, fraction):
 
 def multipart_payload():
     boundary = "cqc-benchmark-boundary"
-    metadata = [dict(view_index=i, angle_direction="top" if i < 6 else "bottom",
-                     verticality_angle=0, horizontality_angle=i * 30) for i in range(12)]
+    metadata = [{"view_index": i, "angle_direction": "top" if i < 6 else "bottom",
+                 "verticality_angle": 0, "horizontality_angle": i * 30} for i in range(12)]
     image = Image.new("RGB", (224, 224))
     image.putdata([((x * 7 + y * 3) % 256, (x * 2 + y * 11) % 256,
                     (x * 13 + y * 5) % 256) for y in range(224) for x in range(224)])
@@ -59,13 +59,16 @@ def main():
         duration = (time.perf_counter() - start) * 1000
         if result["used_frame_count"] != 12:
             raise RuntimeError("Unexpected frame count")
+        if result.get("model_version") is None or result.get("inference_time_ms") is None:
+            raise RuntimeError("Inference result missing; possible deadline exceeded")
         if index == args.warmup:
             started = start
         if index >= args.warmup:
             elapsed.append(duration)
             model.append(result["inference_time_ms"])
     report = {
-        "scope": "Windows host to standalone Docker Inference HTTP API; includes multipart upload, JPEG decoding, preprocessing, model forward and response",
+        "scope": "Windows host to configured HTTP endpoint; includes multipart upload and response; Backend endpoint also includes Backend to Inference call",
+        "url": args.url,
         "input": "12 repeated deterministic synthetic 224x224 JPEG images; no validation or production images",
         "model_version": result["model_version"],
         "request_bytes": len(body),

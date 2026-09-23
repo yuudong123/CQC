@@ -91,7 +91,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File src\training\run_i7_4790_acc
 | Windows 호스트→Inference HTTP 왕복 | 161.90ms | 293.11ms | 198.76ms | 6.18건/초 |
 | 응답에 기록된 모델 forward | 128.26ms | 227.76ms | 156.95ms | — |
 
-이 HTTP 값에는 multipart 전송, JPEG 디코딩, 전처리, 모델 실행과 응답이 포함된다. 같은 합성 이미지를 반복했으므로 실제 촬영 데이터의 크기와 내용에 따른 성능은 아직 확인하지 않았다. 공용 Compose의 Inference와 Backend가 현재 placeholder이고 Backend 코드는 `MockInferenceClient`를 사용하므로 **Backend→Inference 통합 수용시험은 미완료**다. 이 측정값을 전체 경로의 500ms 승인 근거로 사용하지 않는다.
+이 HTTP 값에는 multipart 전송, JPEG 디코딩, 전처리, 모델 실행과 응답이 포함된다. 같은 합성 이미지를 반복했으므로 실제 촬영 데이터의 크기와 내용에 따른 성능은 아직 확인하지 않았다. 공용 Compose의 Inference와 Backend가 현재 placeholder이므로 이 측정값을 전체 배포 경로의 500ms 승인 근거로 사용하지 않는다.
 
 같은 시험을 다시 실행하려면 프로젝트 루트의 Windows PowerShell에서 아래 명령을 사용한다. `scripts/benchmark_inference_http.py` 실행 환경에는 Pillow가 필요하다. 출력 파일명은 실행마다 새로 지정한다.
 
@@ -100,4 +100,28 @@ docker run -d --name cqc-inference-http-benchmark -p 127.0.0.1:18001:8001 -e OMP
 Invoke-RestMethod http://127.0.0.1:18001/health
 .\.venv\Scripts\python.exe scripts\benchmark_inference_http.py --output outputs\i7-4790-acceptance\new-run\inference-http.json
 docker rm -f cqc-inference-http-benchmark
+```
+
+### Backend→Inference 실제 HTTP 연결 예비 측정
+
+Backend에 선택형 `HttpInferenceClient`를 추가했다. 기본값은 기존 Mock이며, `INFERENCE_CLIENT_MODE=http`와 `INFERENCE_URL`을 설정했을 때 실제 `/v1/predict`에 multipart 요청을 보낸다. 같은 i7-4790 장비에서 Backend를 Windows 프로세스(포트 18000), Inference를 별도 Docker 컨테이너(포트 18001)로 실행하고 호스트→Backend→Inference→Backend 응답을 측정했다. [결과 JSON](results/i7-4790-backend-inference-http-20260923.json)은 준비 실행 10회 뒤 순차 요청 100회다.
+
+| 측정 범위 | 평균 | 최대 | p95 | 처리량 |
+|---|---:|---:|---:|---:|
+| 호스트→Backend→Inference→Backend 응답 | 182.85ms | 291.96ms | 244.07ms | 5.47건/초 |
+| 응답에 기록된 모델 forward | 134.76ms | 230.64ms | 180.95ms | — |
+
+이 예비 결과는 12장의 동일 합성 JPEG와 Mock Virtual Control을 사용한다. Backend가 Windows 프로세스이므로 공용 Compose의 컨테이너 간 네트워크, DB 저장, simulator 입력, 실제 촬영 파일 및 동시 요청은 포함하지 않는다. 따라서 전체 운영 수용시험은 여전히 남아 있다.
+
+재현 시 Inference 컨테이너를 위 명령으로 기동한 뒤 다른 PowerShell에서 아래 명령을 실행한다. Backend가 준비되면 별도 PowerShell에서 벤치마크를 실행한다.
+
+```powershell
+$env:INFERENCE_CLIENT_MODE='http'
+$env:INFERENCE_URL='http://127.0.0.1:18001/v1/predict'
+$env:APP_PORT='18000'
+.\.venv\Scripts\python.exe -m src.api.main
+```
+
+```powershell
+.\.venv\Scripts\python.exe scripts\benchmark_inference_http.py --url http://127.0.0.1:18000/v1/inspections --output outputs\i7-4790-acceptance\new-run\backend-inference-http.json
 ```

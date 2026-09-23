@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 import asyncio
+import json
+
+import httpx
 
 from ..schemas.inference import (
     CultivarProbabilities,
@@ -49,3 +52,35 @@ class MockInferenceClient:
             preprocessing_version="mock-v1",
             used_frame_count=len(request.images),
         )
+
+
+class HttpInferenceClient:
+    """Send the existing multipart contract to the real Inference API."""
+
+    def __init__(self, url: str, *, timeout_ms: int = 2000, client: httpx.AsyncClient | None = None) -> None:
+        if not url.startswith(("http://", "https://")):
+            raise ValueError("Inference URL must be HTTP or HTTPS")
+        self._url = url
+        self._client = client or httpx.AsyncClient(timeout=timeout_ms / 1000)
+        self._owns_client = client is None
+
+    async def predict(self, request: InferenceRequest) -> InferenceResponse:
+        files = []
+        for index, content in enumerate(request.images):
+            is_png = content.startswith(b"\x89PNG\r\n\x1a\n")
+            extension, media_type = ("png", "image/png") if is_png else ("jpg", "image/jpeg")
+            files.append(("images", (f"view-{index}.{extension}", content, media_type)))
+        response = await self._client.post(
+            self._url,
+            data={
+                "inspection_id": request.inspection_id,
+                "metadata": json.dumps([item.model_dump() for item in request.metadata]),
+            },
+            files=files,
+        )
+        response.raise_for_status()
+        return InferenceResponse.model_validate(response.json())
+
+    async def close(self) -> None:
+        if self._owns_client:
+            await self._client.aclose()

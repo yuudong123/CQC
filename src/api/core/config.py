@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from typing import Literal
 
 from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -22,6 +23,8 @@ class Settings(BaseSettings):
     app_host: str = "0.0.0.0"
     app_port: int = Field(default=8000, ge=1, le=65535)
     database_url: str | None = None
+    inference_client_mode: Literal["mock", "http"] = "mock"
+    inference_url: str = "http://inference:8001/v1/predict"
     inference_max_files: int = Field(default=12, ge=1)
     inference_max_request_bytes: int = Field(default=24 * 1024 * 1024, ge=1)
     cultivar_confidence_threshold: float = Field(default=0.50, ge=0, le=1)
