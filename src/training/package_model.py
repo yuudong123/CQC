@@ -1,4 +1,4 @@
-"""Package an approved checkpoint with immutable inference metadata."""
+"""Package a checkpoint; packaging does not grant production approval."""
 
 from __future__ import annotations
 
@@ -35,16 +35,16 @@ def load_threshold_selection(path: Path) -> dict[str, float]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="승인 모델 패키지 생성")
+    parser = argparse.ArgumentParser(description="미승인 후보 모델 패키지 생성")
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--version", required=True)
     parser.add_argument("--model-kind", choices=("joint", "separate"), required=True)
     parser.add_argument("--views", type=int, choices=(4, 8, 12, 16, 40), required=True)
     parser.add_argument("--image-size", type=int, default=224)
-    parser.add_argument("--thresholds", type=Path, required=True)
+    parser.add_argument("--thresholds", type=Path)
     parser.add_argument("--output-root", type=Path, default=Path("models"))
     args = parser.parse_args(argv)
-    thresholds = load_threshold_selection(args.thresholds)
+    thresholds = load_threshold_selection(args.thresholds) if args.thresholds else {}
     destination = args.output_root / args.version
     if destination.exists():
         parser.error(f"이미 존재하는 모델 버전입니다: {destination}")
@@ -54,6 +54,8 @@ def main(argv: list[str] | None = None) -> int:
     manifest = {
         "model_name": "mobilenet_v3_small_multiview",
         "model_version": args.version,
+        "approval_status": "unverified_candidate",
+        "threshold_status": "provided_not_verified" if args.thresholds else "not_calibrated",
         "model_kind": args.model_kind,
         "views": args.views,
         "image_size": args.image_size,

@@ -10,10 +10,27 @@ import torch
 
 from src.inference.predictor import Predictor
 from src.training.models import build_model
-from src.training.package_model import load_threshold_selection
+from src.training.package_model import load_threshold_selection, main
 
 
 class ModelPackageTest(unittest.TestCase):
+    def test_candidate_without_calibrated_thresholds(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            checkpoint = root / "checkpoint.pt"
+            checkpoint.write_bytes(b"test checkpoint")
+            args = ["--checkpoint", str(checkpoint), "--version", "candidate-test",
+                    "--model-kind", "separate", "--views", "12",
+                    "--output-root", str(root / "packages")]
+            self.assertEqual(main(args), 0)
+            manifest = json.loads((root / "packages/candidate-test/model.json").read_text())
+            self.assertEqual(manifest["approval_status"], "unverified_candidate")
+            self.assertEqual(manifest["threshold_status"], "not_calibrated")
+            self.assertNotIn("quality_threshold", manifest)
+            self.assertEqual(manifest["checkpoint_sha256"], hashlib.sha256(checkpoint.read_bytes()).hexdigest())
+            with self.assertRaises(SystemExit):
+                main(args)
+
     def _package(self, root: Path) -> Path:
         model = build_model("joint", pretrained=False)
         model_path = root / "model.pt"
