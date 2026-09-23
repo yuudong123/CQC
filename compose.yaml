@@ -9,8 +9,8 @@
 #
 # 현재 MO-04 반영 범위:
 # - mysql healthcheck 적용
-# - inference placeholder healthcheck 적용
-# - backend healthcheck 적용
+# - 실제 inference / backend healthcheck 적용
+# - inference → backend 기동 의존성 적용
 # - backend는 mysql / inference가 healthy 상태 이후 기동
 # - frontend / simulator는 backend가 healthy 상태 이후 기동
 # - 모든 서비스에 restart: unless-stopped 유지
@@ -21,10 +21,8 @@
 #   Inference ─┘          └→ Frontend
 #
 # 이후 작업:
-# - inference 실제 API 구현 시 placeholder healthcheck를 실제 /health 검사로 교체
-# - backend 실제 FastAPI 구현 시 placeholder healthcheck를 실제 /health 검사로 교체
 # - 실제 Frontend / Simulator 실행 파일 준비 시 placeholder command 교체
-# - Volume / 비밀값 관리 → MO-05
+# - Backend의 MySQL 저장·조회 연결 → BE 작업
 # ============================================================
 
 services:
@@ -96,42 +94,55 @@ services:
   # Backend가 HTTP 요청으로 이미지를 전달하면
   # 품종 / 품질 예측 결과와 신뢰도 등을 반환하는 역할이다.
   #
-  # 현재 실제 inference Dockerfile 및 실행 명령이 아직 연결되지 않아
-  # Alpine Linux 이미지를 이용한 placeholder 상태로 구성한다.
-  #
-  # MO-04에서는 placeholder 컨테이너가 정상 기동했는지 healthcheck로 확인한다.
-  # 실제 inference API가 구현되면 image / command와 healthcheck를 함께 교체한다.
+  # 모델 담당자가 제공한 실제 Inference API 이미지와 모델 패키지를 사용한다.
   # ==========================================================
   inference:
-    # 실제 추론 이미지가 준비되기 전 임시 컨테이너
-    image: alpine:3.20
+    build:
+      context: .
+      dockerfile: Dockerfile.inference
 
     # Docker 또는 컨테이너 재시작 시 자동 복구
     restart: unless-stopped
 
-    # 실제 추론 서버가 아직 연결되지 않았기 때문에
-    # placeholder 정상 기동 표시 파일을 생성한 뒤 컨테이너를 유지한다.
     command:
-      - sh
-      - -c
-      - |
-        echo "[MO-04 placeholder] inference"
-        touch /tmp/inference-healthy
-        tail -f /dev/null
+      - python
+      - -m
+      - src.inference.api
+      - --model-dir
+      - /app/models/approved
+      - --device
+      - cpu
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8001"
+
+    environment:
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+
+    ports:
+      - "${INFERENCE_PORT:-8001}:8001"
+
+    volumes:
+      - type: bind
+        source: ${INFERENCE_MODEL_DIR:?Set INFERENCE_MODEL_DIR to a model package directory}
+        target: /app/models/approved
+        read_only: true
 
     # ==========================================================
     # MO-04 Healthcheck
     # ==========================================================
-    # 현재는 실제 inference 서버가 없으므로 placeholder용 검사이다.
-    # 추후 inference API가 구현되면 /health 등의 실제 엔드포인트 검사로 교체한다.
     healthcheck:
       test:
-        - CMD-SHELL
-        - test -f /tmp/inference-healthy
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=3)"
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 5s
+      start_period: 60s
 
   # ==========================================================
   # Backend
@@ -147,13 +158,12 @@ services:
   # - MySQL 검사 이력 저장
   # - Frontend용 API 제공
   #
-  # Backend는 FastAPI 사용이 확정되어 있지만
-  # 실제 Dockerfile과 실행 명령이 아직 연결되지 않아 placeholder를 사용한다.
-  # MO-04에서는 MySQL / Inference가 healthy 상태가 된 뒤 기동되도록 구성한다.
+  # 실제 Backend FastAPI 이미지로 검사 요청을 받아 Inference에 전달한다.
   # ==========================================================
   backend:
-    # 실제 Backend Docker 이미지가 준비되기 전 임시 이미지
-    image: alpine:3.20
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
 
     # 서비스 비정상 종료 시 자동 재시작
     restart: unless-stopped
@@ -169,28 +179,27 @@ services:
       inference:
         condition: service_healthy
 
-    # 실제 FastAPI 실행 명령이 연결되면 현재 placeholder command를 교체한다.
-    command:
-      - sh
-      - -c
-      - |
-        echo "[MO-04 placeholder] backend"
-        touch /tmp/backend-healthy
-        tail -f /dev/null
+    environment:
+      INFERENCE_CLIENT_MODE: ${INFERENCE_CLIENT_MODE:-http}
+      INFERENCE_URL: ${INFERENCE_URL:-http://inference:8001/v1/predict}
+      DATABASE_URL: ${DATABASE_URL:-mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}}
+
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
 
     # ==========================================================
     # MO-04 Healthcheck
     # ==========================================================
-    # 현재는 실제 FastAPI 서버가 없으므로 placeholder용 검사이다.
-    # 추후 Backend API가 구현되면 /health 등의 실제 엔드포인트 검사로 교체한다.
     healthcheck:
       test:
-        - CMD-SHELL
-        - test -f /tmp/backend-healthy
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 5s
+      start_period: 15s
 
   # ==========================================================
   # Frontend

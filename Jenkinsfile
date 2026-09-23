@@ -16,8 +16,8 @@ pipeline {
     //
     // 현재 검증 대상:
     // - mysql
-    // - inference
-    // - backend
+    // - 실제 inference
+    // - 실제 backend
     // - frontend
     // - simulator
     //
@@ -138,7 +138,7 @@ pipeline {
         // 현재 compose.yaml 전체 설정을 검사한다.
         //
         // 실제 컨테이너를 변경하기 전에
-        // YAML 문법, healthcheck, depends_on 등
+        // YAML 문법, 필수 모델 경로, healthcheck, depends_on 등
         // Compose 설정 오류가 없는지 먼저 확인한다.
         // ====================================================
         stage('Compose Validate') {
@@ -147,6 +147,10 @@ pipeline {
 
                 sh '''
                     set -eu
+
+                    export INFERENCE_CLIENT_MODE=http
+                    export INFERENCE_URL=http://inference:8001/v1/predict
+                    export INFERENCE_MODEL_DIR="$PWD/models/cqc-apple-separate12-focal-v2-candidate"
 
                     echo "======================================"
                     echo " Compose Validate"
@@ -162,11 +166,8 @@ pipeline {
         // ====================================================
         // Compose의 build 설정이 존재하는 서비스를 빌드한다.
         //
-        // 현재 일부 서비스는 placeholder 이미지(alpine)를 사용하므로
-        // 실제 Dockerfile이 없는 서비스는 별도 build 작업이 없을 수 있다.
-        //
-        // 이후 Backend / Inference / Frontend / Simulator에
-        // Dockerfile이 연결되면 이 단계에서 실제 이미지가 빌드된다.
+        // Backend / Inference는 이 단계에서 실제 Dockerfile로 빌드된다.
+        // Frontend / Simulator는 실행 파일이 준비될 때까지 placeholder를 유지한다.
         // ====================================================
         stage('Docker Build') {
 
@@ -174,6 +175,10 @@ pipeline {
 
                 sh '''
                     set -eu
+
+                    export INFERENCE_CLIENT_MODE=http
+                    export INFERENCE_URL=http://inference:8001/v1/predict
+                    export INFERENCE_MODEL_DIR="$PWD/models/cqc-apple-separate12-focal-v2-candidate"
 
                     echo "======================================"
                     echo " Docker Build"
@@ -207,7 +212,8 @@ pipeline {
                     test -d src
                     test -d tests
                     test -d docs
-                    test -d models
+                    test -f models/cqc-apple-separate12-focal-v2-candidate/model.json
+                    test -f models/cqc-apple-separate12-focal-v2-candidate/model.pt
                     test -d scripts
                     test -d cqc-logistics-platform/apps/api
                     test -d cqc-logistics-platform/apps/web
@@ -237,6 +243,10 @@ pipeline {
                 sh '''
                     set -eu
 
+                    export INFERENCE_CLIENT_MODE=http
+                    export INFERENCE_URL=http://inference:8001/v1/predict
+                    export INFERENCE_MODEL_DIR="$PWD/models/cqc-apple-separate12-focal-v2-candidate"
+
                     echo "======================================"
                     echo " CQC Deploy"
                     echo "======================================"
@@ -265,6 +275,10 @@ pipeline {
 
                 sh '''
                     set -eu
+
+                    export INFERENCE_CLIENT_MODE=http
+                    export INFERENCE_URL=http://inference:8001/v1/predict
+                    export INFERENCE_MODEL_DIR="$PWD/models/cqc-apple-separate12-focal-v2-candidate"
 
                     echo "======================================"
                     echo " CQC Container Status"
@@ -346,7 +360,19 @@ pipeline {
                     done
 
                     echo "======================================"
-                    echo " MO-04 healthcheck verification OK"
+                    echo " API Smoke Verification"
+                    echo "======================================"
+
+                    backend_id="$(docker-compose -f compose.yaml ps -q backend)"
+                    inference_id="$(docker-compose -f compose.yaml ps -q inference)"
+
+                    docker exec "$inference_id" python -c \
+                        "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=5)"
+                    docker exec "$backend_id" python -c \
+                        "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"
+
+                    echo "======================================"
+                    echo " MO-04 healthcheck + API verification OK"
                     echo "======================================"
 
                     docker-compose -f compose.yaml ps
@@ -373,6 +399,7 @@ pipeline {
 
             // 실패 시 원인 확인을 위해 현재 Compose 상태를 출력한다.
             sh '''
+                export INFERENCE_MODEL_DIR="$PWD/models/cqc-apple-separate12-focal-v2-candidate"
                 docker-compose -f compose.yaml ps || true
             '''
         }
