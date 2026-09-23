@@ -1,0 +1,7 @@
+{
+  "checkpoint": "outputs\\final-training-brix-v1\\separate-12view-focal-e4\\final.pt",
+  "checkpoint_sha256": "b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a",
+  "epochs_completed": 4,
+  "train_groups": 152,
+  "test_used": false
+}

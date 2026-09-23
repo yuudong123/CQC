@@ -42,6 +42,21 @@ class FinalFitTest(unittest.TestCase):
         self.assertEqual(args.views, 12)
         self.assertEqual(args.output_dir, Path("outputs/final-training/separate-12view"))
 
+    def test_explicit_selected_epoch_and_focal_settings(self) -> None:
+        args = parse_args(
+            [
+                "--epochs",
+                "4",
+                "--quality-loss",
+                "focal",
+                "--dropout",
+                "0.4",
+            ]
+        )
+        self.assertEqual(args.epochs, 4)
+        self.assertEqual(args.quality_loss, "focal")
+        self.assertEqual(args.dropout, 0.4)
+
 
 if __name__ == "__main__":
     unittest.main()

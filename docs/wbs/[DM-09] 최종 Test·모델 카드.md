@@ -86,3 +86,46 @@ DM-09의 최종 학습, Test 1회, 실패 분석, 모델 카드와 패키지 기
 - `docs/results/model-manifest.json`
 
 모델 바이너리는 Git에 넣지 않고 집 PC의 `D:\Study\CQC\models\cqc-apple-separate12-v1.0.0`에 보관한다.
+
+
+## 2026-09-23: 후속 최종 학습 준비·실행 기록
+
+- DM-06 개발 비교에서 정한 separate·12장·focal·4 epoch를 사용한다.
+- dropout 0.4, learning rate 0.0003, weight decay 0.0005, 개발 152그룹이다.
+- `final_fit.py`에 명시적 epoch·품질 손실·dropout 전달을 추가했고 관련 테스트 20개 통과를 확인했다.
+- 원격 `outputs/final-training-brix-v1/separate-12view-focal-e4` 학습은 2026-09-23 08:53에 4/4 epoch 완료했다. 로그·summary·체크포인트 존재를 확인했다.
+- 완료 산출물 요약·패키지 manifest·동작 검증 결과를 `docs/results/candidate-v2-*.json`으로 수집했다.
+- 남은 승인 조건: 신규 독립 holdout, 새 모델 신뢰도 기준 검증, i7-4790 성능시험. 기존 27그룹 평가를 새 독립 Test로 표시하지 않는다.
+
+## 후속 후보 모델 카드 및 인계 정보
+
+| 항목 | 확인 결과 |
+|---|---|
+| 버전 | `cqc-apple-separate12-focal-v2-candidate` |
+| 상태 | 미승인 후보, 운영 배포 금지 |
+| 구조 | separate MobileNetV3 Small, 12장, 224×224 RGB |
+| 학습 | 개발 152그룹, focal, 4 epoch, dropout 0.4 |
+| 당도 입력 | 사용하지 않음. 가상 당도는 실측 당도가 아님 |
+| SHA-256 | `b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a` |
+| 독립 Test F1 | 미측정. 학습 종료나 API 성공으로 추정하지 않음 |
+| 신뢰도 기준 | 미보정. 이전 모델 임계값을 새 검증값으로 재사용하지 않음 |
+| 패키지 | 집 PC `D:\Study\CQC\models\cqc-apple-separate12-focal-v2-candidate` |
+
+기존 v1 모델 카드와 패키지는 보존한다. 개발 비교 결과는 DM-06에 기록되어 있으며 새 최종 체크포인트의 독립 평가 결과가 아니다.
+
+### 기능 검증
+
+- SHA-256 검증 후 CPU 모델 로딩 성공.
+- 합성 PNG 12장으로 FastAPI TestClient의 `/health`, `/v1/predict` 성공.
+- `inspection_id` 왕복, `used_frame_count=12`, 품종·품질 확률 응답 확인.
+- 집 PC의 구버전 `api.py`, `schemas.py`, `predictor.py`를 로컬의 기존 최신 계약 코드로 동기화했다. 최초 실패는 구버전 응답 필드 누락이었으며 동기화 후 통과했다.
+- 이 검증은 프로세스 내부 API 시험이다. 실제 네트워크·Backend 통합·실사과 정확도·목표 CPU 성능을 검증한 것이 아니다.
+- 로컬 패키징·최종 학습 설정·추론 API·predictor 관련 테스트 16개 통과.
+
+재현 명령(프로젝트 루트, 검증 보고서는 새 경로 사용):
+
+```powershell
+python -m scripts.verify_candidate_package --package models/cqc-apple-separate12-focal-v2-candidate --output outputs/candidate-v2-smoke.json
+```
+
+백엔드 담당자는 후보 버전을 명시해 연동 시험에 사용할 수 있다. 입력 계약은 기존 대표 12장·inspection_id·metadata를 유지한다. 서버 상시 실행·운영 모델 교체는 이번 작업에서 하지 않았다.

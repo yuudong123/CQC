@@ -15,7 +15,7 @@ from torch.utils.data import DataLoader
 from src.data.multiview import GroupRecord, MultiViewDataset, SUPPORTED_VIEW_COUNTS, load_groups
 from src.data.torch_dataset import TorchMultiViewDataset
 
-from .engine import run_epoch, save_checkpoint
+from .engine import QUALITY_LOSS_KINDS, run_epoch, save_checkpoint
 from .models import MODEL_KINDS, build_model
 from .train import checkpoint_sha256, resolve_device, write_json
 
@@ -89,9 +89,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--model-kind", choices=MODEL_KINDS, default="separate")
     parser.add_argument("--views", type=int, choices=SUPPORTED_VIEW_COUNTS, default=12)
+    parser.add_argument("--epochs", type=int)
     parser.add_argument("--batch-size", type=int, default=2)
     parser.add_argument("--learning-rate", type=float, default=1e-3)
     parser.add_argument("--weight-decay", type=float, default=1e-4)
+    parser.add_argument("--dropout", type=float, default=0.2)
+    parser.add_argument("--quality-loss", choices=QUALITY_LOSS_KINDS, default="cross_entropy")
+    parser.add_argument("--focal-gamma", type=float, default=2.0)
+    parser.add_argument("--ordinal-weight", type=float, default=0.25)
     parser.add_argument("--image-size", type=int, default=224)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--workers", type=int, default=0)
@@ -108,8 +113,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="명시한 경우에만 Test 제외 전체 개발 데이터 학습을 실행합니다",
     )
     args = parser.parse_args(argv)
-    if args.batch_size <= 0 or args.image_size <= 0:
-        parser.error("batch-size와 image-size는 1 이상이어야 합니다")
+    if args.batch_size <= 0 or args.image_size <= 0 or (args.epochs is not None and args.epochs <= 0):
+        parser.error("batch-size, image-size와 명시한 epochs는 1 이상이어야 합니다")
+    if not 0 <= args.dropout < 1 or args.focal_gamma < 0 or args.ordinal_weight < 0:
+        parser.error("dropout은 0~1 미만, focal-gamma와 ordinal-weight는 0 이상이어야 합니다")
     if args.workers != 0:
         parser.error("ZIP 핸들 안전성을 위해 현재 workers는 0만 지원합니다")
     if args.output_dir is None:
@@ -119,15 +126,24 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
-    epochs, fold_best_epochs = select_final_epochs(
-        args.training_root, args.model_kind, args.views
-    )
+    if args.epochs is None:
+        epochs, fold_best_epochs = select_final_epochs(
+            args.training_root, args.model_kind, args.views
+        )
+        epoch_selection = "best_mean_validation_score_at_common_epoch"
+    else:
+        epochs, fold_best_epochs = args.epochs, []
+        epoch_selection = "explicit_development_selection"
     plan = {
         "model_kind": args.model_kind,
         "views": args.views,
-        "epoch_selection": "best_mean_validation_score_at_common_epoch",
+        "epoch_selection": epoch_selection,
         "fold_best_epochs": fold_best_epochs,
         "epochs": epochs,
+        "quality_loss": args.quality_loss,
+        "dropout": args.dropout,
+        "focal_gamma": args.focal_gamma,
+        "ordinal_weight": args.ordinal_weight,
         "data_scope": "all_non_test_groups",
         "test_used": False,
         "output_dir": str(args.output_dir),
@@ -163,6 +179,10 @@ def main(argv: list[str] | None = None) -> int:
         "batch_size": args.batch_size,
         "learning_rate": args.learning_rate,
         "weight_decay": args.weight_decay,
+        "dropout": args.dropout,
+        "quality_loss": args.quality_loss,
+        "focal_gamma": args.focal_gamma,
+        "ordinal_weight": args.ordinal_weight,
         "image_size": args.image_size,
         "seed": args.seed,
         "workers": args.workers,
@@ -182,7 +202,11 @@ def main(argv: list[str] | None = None) -> int:
         pin_memory=device.type == "cuda",
         generator=generator,
     )
-    model = build_model(args.model_kind, pretrained=not args.no_pretrained).to(device)
+    model = build_model(
+        args.model_kind,
+        pretrained=not args.no_pretrained,
+        dropout=args.dropout,
+    ).to(device)
     optimizer = torch.optim.AdamW(
         model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay
     )
@@ -191,7 +215,15 @@ def main(argv: list[str] | None = None) -> int:
     try:
         for epoch in range(1, epochs + 1):
             source.set_epoch(epoch)
-            train_metrics = run_epoch(model, loader, device, optimizer=optimizer)
+            train_metrics = run_epoch(
+                model,
+                loader,
+                device,
+                optimizer=optimizer,
+                quality_loss_kind=args.quality_loss,
+                focal_gamma=args.focal_gamma,
+                ordinal_weight=args.ordinal_weight,
+            )
             history.append({"epoch": epoch, "train": train_metrics})
             write_json(args.output_dir / "history.json", history)
             print(
