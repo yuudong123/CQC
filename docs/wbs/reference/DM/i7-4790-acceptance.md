@@ -125,3 +125,24 @@ $env:APP_PORT='18000'
 ```powershell
 .\.venv\Scripts\python.exe scripts\benchmark_inference_http.py --url http://127.0.0.1:18000/v1/inspections --output outputs\i7-4790-acceptance\new-run\backend-inference-http.json
 ```
+
+### 별도 Compose의 컨테이너 간 HTTP 측정
+
+`Dockerfile.backend`와 `compose.integration.yaml`로 실제 Backend와 Inference를 같은 Docker 네트워크에서 실행했다. 모델 패키지를 읽기 전용으로 마운트했고 두 서비스의 healthcheck가 통과한 상태에서 호스트→Backend 컨테이너→Inference 컨테이너→Backend 응답을 100회 측정했다. [결과 JSON](results/i7-4790-compose-backend-inference-http-20260923.json)은 준비 실행 10회를 제외한 값이다.
+
+| 측정 범위 | 평균 | 최대 | p95 | 처리량 |
+|---|---:|---:|---:|---:|
+| 별도 Compose의 Backend→Inference 경로 | 166.61ms | 235.42ms | 205.76ms | 6.00건/초 |
+| 응답에 기록된 모델 forward | 128.34ms | 195.51ms | 166.85ms | — |
+
+재현하려면 모델 패키지 경로를 지정하고 이미지가 없으면 `Dockerfile.inference`로 `cqc-inference-acceptance:latest`를 먼저 빌드한다. 아래 PowerShell 명령은 공용 `compose.yaml`을 변경하지 않는다.
+
+```powershell
+docker build -f Dockerfile.inference -t cqc-inference-acceptance .
+$env:INFERENCE_MODEL_DIR='C:\CQC\models\cqc-apple-separate12-focal-v2-candidate'
+docker compose -p cqc-integration -f compose.integration.yaml up -d --build
+.\.venv\Scripts\python.exe scripts\benchmark_inference_http.py --url http://127.0.0.1:18000/v1/inspections --output outputs\i7-4790-acceptance\new-run\compose-backend-inference-http.json
+docker compose -p cqc-integration -f compose.integration.yaml down
+```
+
+이는 고정 합성 JPEG, Mock Virtual Control, 순차 요청의 예비 통합 측정이다. 공용 Compose 배포, DB 저장, simulator, 실제 촬영 이미지와 동시 요청의 운영 수용시험은 별도로 진행한다.
