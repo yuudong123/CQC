@@ -5,15 +5,15 @@
 | 문서 | 목적 | 현재 상태 | 다음 갱신 조건 |
 |---|---|---|---|
 | `project-plan.md` | 프로젝트 배경, 데이터 조사, 범위와 실행 원칙 | 고도화 합의 반영 | 범위·성능 정책 변경 시 |
-| `requirements.md` | 기능·비기능 요구와 수용 기준 | 고도화 합의 반영 | API·화면 계약 변경 시 |
-| `data-spec.md` | 원본 데이터, 그룹 분할, 모델·MySQL 논리 명세 | 로컬 데이터 확인 결과 반영 | 백엔드 물리 DB 설계 완료 시 |
-| `architecture.md` | HTTP 서비스, 상태, 저장·배포 구조 | 고도화 합의 반영 | 파트별 기술 스택 확정 시 |
+| `docs/planning/requirements.md` | 기능·비기능 요구와 수용 기준 | 고도화 합의 반영 | API·화면 계약 변경 시 |
+| `docs/wbs/reference/DM/data-spec.md` | 원본 데이터, 그룹 분할, 모델·MySQL 논리 명세 | 로컬 데이터 확인 결과 반영 | 백엔드 물리 DB 설계 완료 시 |
+| `docs/planning/architecture.md` | HTTP 서비스, 상태, 저장·배포 구조 | 고도화 합의 반영 | 파트별 기술 스택 확정 시 |
 | `wbs.md` | 09-16~10-16 역할별 일정·의존성·완료 조건 | 전면 개정 완료 | 실제 진행 지연·범위 변경 시 |
-| `decision-log.md` | 기획 인터뷰 확정 사항 | 최신 | 새 결정 즉시 |
-| `backend-stack.md` | Backend 기술 선택·버전·실행법 | FastAPI·MySQL·HTTP 기초 합의 반영 | 세부 라이브러리·버전 선정 시 |
-| `model-stack.md` | 데이터·모델 기술 선택·실행법 | 구현·평가 결과 반영 | v2 결과와 i7-4790 수용시험 완료 시 |
-| `frontend-stack.md` | Frontend 기술 선택·실행법 | 담당자 작성 대기 | 담당자 기술 선정 시 |
-| `mlops-stack.md` | MLOps 기술 선택·실행법 | MO-01~05와 현재 통합 기반 반영 | 실제 5개 서비스 통합 시 |
+| `docs/planning/decision-log.md` | 기획 인터뷰 확정 사항 | 최신 | 새 결정 즉시 |
+| `docs/wbs/reference/BE/backend-stack.md` | Backend 기술 선택·버전·실행법 | FastAPI·MySQL·HTTP 기초 합의 반영 | 세부 라이브러리·버전 선정 시 |
+| `docs/wbs/reference/DM/model-stack.md` | 데이터·모델 기술 선택·실행법 | 구현·평가 결과 반영 | v2 결과와 i7-4790 수용시험 완료 시 |
+| `docs/wbs/reference/FE/frontend-stack.md` | Frontend 기술 선택·실행법 | 담당자 작성 대기 | 담당자 기술 선정 시 |
+| `docs/wbs/reference/MO/mlops-stack.md` | MLOps 기술 선택·실행법 | MO-01~05와 현재 통합 기반 반영 | 실제 5개 서비스 통합 시 |
 
 ## 확정 사항
 
@@ -34,10 +34,10 @@
 
 | 문서 | 담당자 | 작성할 핵심 내용 |
 |---|---|---|
-| `model-stack.md` | 조현재 | 프레임워크, 그룹 모델, 전처리, CPU 최적화, 실행법 |
-| `backend-stack.md` | 홍준희 | FastAPI 세부 라이브러리·버전, OpenAPI, 오류 코드, MySQL 물리 설계, 마이그레이션 |
-| `frontend-stack.md` | 강성민 | 프레임워크, 차트, 화면 상태, 빌드·테스트 |
-| `mlops-stack.md` | 홍유나 | Compose, dev CI/CD, healthcheck, 볼륨·로그·복구 |
+| `docs/wbs/reference/DM/model-stack.md` | 조현재 | 프레임워크, 그룹 모델, 전처리, CPU 최적화, 실행법 |
+| `docs/wbs/reference/BE/backend-stack.md` | 홍준희 | FastAPI 세부 라이브러리·버전, OpenAPI, 오류 코드, MySQL 물리 설계, 마이그레이션 |
+| `docs/wbs/reference/FE/frontend-stack.md` | 강성민 | 프레임워크, 차트, 화면 상태, 빌드·테스트 |
+| `docs/wbs/reference/MO/mlops-stack.md` | 홍유나 | Compose, dev CI/CD, healthcheck, 볼륨·로그·복구 |
 
 ## 남은 결정
 

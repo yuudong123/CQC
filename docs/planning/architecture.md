@@ -8,7 +8,7 @@ CQC는 농산물 이미지를 받아 품질 등급을 예측하고, 저신뢰 �
 
 ## 2. 아키텍처 원칙
 
-QC 이후 판매·물류는 별도 FastAPI·MongoDB·Next.js 서비스로 연결한다. MySQL은 QC 이력, MongoDB는 거래·배송 상태를 소유한다. 전체 범위와 단순 배차 원칙은 [project-plan 3.7절](./project-plan.md)을 따른다. 통합 목표는 기존 5개와 물류 3개 서비스이며 placeholder 기동은 실제 QC 통합 완료로 간주하지 않는다.
+QC 이후 판매·물류는 별도 FastAPI·MongoDB·Next.js 서비스로 연결한다. MySQL은 QC 이력, MongoDB는 거래·배송 상태를 소유한다. 전체 범위와 단순 배차 원칙은 [project-plan 3.7절](<../project-plan.md>)을 따른다. 통합 목표는 기존 5개와 물류 3개 서비스이며 placeholder 기동은 실제 QC 통합 완료로 간주하지 않는다.
 
 1. 학습과 서비스 추론은 같은 전처리 모듈을 사용한다.
 2. 프론트엔드는 모델을 직접 호출하지 않고 백엔드 API를 사용한다.
@@ -259,7 +259,7 @@ Compose 실행 단위는 simulator, inference, backend, frontend, mysql이다. �
 |---|---|---|
 | 모델·이미지 프레임워크 | 조현재 | PyTorch·torchvision, Pillow, RGB 224×224 확정 |
 | 프론트엔드 프레임워크 | 강성민 | 1개월 구현성과 시각화 요구 |
-| Backend 세부 라이브러리·버전 | 홍준희 | FastAPI 확정, 상세 기술은 `backend-stack.md`에서 결정 |
+| Backend 세부 라이브러리·버전 | 홍준희 | FastAPI 확정, 상세 기술은 `docs/wbs/reference/BE/backend-stack.md`에서 결정 |
 | MySQL 물리 스키마 | 홍준희 | 이력·통계 쿼리와 무결성 요구 |
 | 마이그레이션 도구 | 홍준희·홍유나 | 재현성과 배포 환경 |
 | CI/CD·컨테이너 도구 | 홍유나 | Jenkins·Docker Compose 기준 확정, 실제 통합 배포 검증 필요 |

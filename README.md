@@ -49,4 +49,4 @@ simulator → FastAPI backend → inference HTTP API
 
 기획과 역할별 WBS를 기준으로 파트별 구현과 통합을 진행 중입니다. 데이터·모델 파트는 `separate`·12장 구조와 HTTP 계약을 구현했으나 v1의 품질 Macro F1이 승인 기준에 미달하여 v2 개선 학습을 진행 중입니다. 프로젝트 기간은 2026-09-16부터 2026-10-16까지이며, 2026-10-13에 기능을 동결합니다.
 
-최상위 기획 기준은 [`docs/project-plan.md`](docs/project-plan.md)입니다. 세부 확정 기록은 [`docs/decision-log.md`](docs/decision-log.md), 역할별 일정은 [`docs/wbs.md`](docs/wbs.md)에서 관리합니다.
+최상위 기획 기준은 [`docs/project-plan.md`](docs/project-plan.md)입니다. 세부 확정 기록은 [`docs/decision-log.md`](<docs/planning/decision-log.md>), 역할별 일정은 [`docs/wbs.md`](docs/wbs.md)에서 관리합니다.

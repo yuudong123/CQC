@@ -1,6 +1,6 @@
 # CQC 의사결정 기록
 
-> 세부 결정과 변경 이력을 기록하는 문서다. 문서가 충돌하면 최신 팀 합의, 이 문서의 확정 결정, `requirements.md`, `architecture.md`, `data-spec.md`, `project-plan.md`, `wbs.md`, `README.md` 순으로 확인한다. 충돌이나 미정 사항을 임의로 해석하지 않고 팀에 확인한다.
+> 세부 결정과 변경 이력을 기록하는 문서다. 문서가 충돌하면 최신 팀 합의, 이 문서의 확정 결정, `docs/planning/requirements.md`, `docs/planning/architecture.md`, `docs/wbs/reference/DM/data-spec.md`, `project-plan.md`, `wbs.md`, `README.md` 순으로 확인한다. 충돌이나 미정 사항을 임의로 해석하지 않고 팀에 확인한다.
 
 ## 2026-09-16 기획 인터뷰
 
@@ -202,13 +202,13 @@
 
 #### Docker·기술 문서
 
-- Backend는 Python + FastAPI, Database는 MySQL, Backend와 Inference 간 통신은 HTTP를 사용한다. 구체적인 라이브러리와 버전은 `backend-stack.md`에서 확정한다.
+- Backend는 Python + FastAPI, Database는 MySQL, Backend와 Inference 간 통신은 HTTP를 사용한다. 구체적인 라이브러리와 버전은 `docs/wbs/reference/BE/backend-stack.md`에서 확정한다.
 - Compose 서비스는 `simulator`, `inference`, `backend`, `frontend`, `mysql`로 구성한다.
 - 컨테이너 재시작 정책은 `unless-stopped`다.
 - MySQL·inference 상태 확인 후 backend, backend 상태 확인 후 simulator·frontend를 시작한다.
 - inference가 준비되지 않아도 simulator 입력은 유지하며 시스템 오류·재검사로 처리한다.
 - Docker 볼륨에는 MySQL, 장애 이미지, 마지막 시뮬레이터 위치와 순환 로그를 보존한다.
-- 파트별 기술 스택은 `model-stack.md`, `backend-stack.md`, `frontend-stack.md`, `mlops-stack.md`에 담당자가 작성한다.
+- 파트별 기술 스택은 `docs/wbs/reference/DM/model-stack.md`, `docs/wbs/reference/BE/backend-stack.md`, `docs/wbs/reference/FE/frontend-stack.md`, `docs/wbs/reference/MO/mlops-stack.md`에 담당자가 작성한다.
 
 #### Git·CI/CD·완료 조건
 

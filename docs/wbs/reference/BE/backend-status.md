@@ -368,7 +368,7 @@ timeout 응답에서는 유효한 Inference 응답이 없으므로 예측·confi
 ### 우선순위 1 — 복귀 직후 변경사항과 계약 재확인
 
 - `dev` 최신 변경 반영 전 작업 트리와 충돌 확인
-- `decision-log.md`, `backend-stack.md`, `wbs.md` 변경 확인
+- `docs/planning/decision-log.md`, `docs/wbs/reference/BE/backend-stack.md`, `wbs.md` 변경 확인
 - 실제 `src/inference`와 생성 OpenAPI 재확인
 - 최대 12장 계약과 상위 문서의 최대 40장 표현 정리 여부 확인
 
@@ -422,7 +422,7 @@ Inference 담당자가 확정 계약을 반영한 뒤 실제 `httpx.AsyncClient`
 
 결정이 필요한 이유: 실제 연동 시 `inspection_id`, metadata와 `used_frame_count`가 없으면 요청 추적과 정합성 검증이 불가능하다. metadata의 multipart 직렬화가 실제 Inference endpoint에도 일치해야 한다.
 
-영향받는 코드/문서: `src/api/clients/`, `src/api/schemas/inference.py`, `src/inference/api.py`, `src/inference/schemas.py`, Inference OpenAPI, `docs/backend-stack.md`.
+영향받는 코드/문서: `src/api/clients/`, `src/api/schemas/inference.py`, `src/inference/api.py`, `src/inference/schemas.py`, Inference OpenAPI, `docs/wbs/reference/BE/backend-stack.md`.
 
 ### 7.2 최종 상태 문자열과 상태 전이
 
@@ -638,25 +638,25 @@ Inference 담당자가 확정 계약을 반영한 뒤 실제 `httpx.AsyncClient`
 
 ### 10.1 최대 40장과 최대 12장 표현 혼재
 
-최신 `decision-log.md` 후반과 `backend-stack.md`, 실제 Backend 코드는 최대 12장으로 확정·구현되어 있다. 그러나 다음 문서 일부에는 과거 최대 40장 표현이 남아 있다.
+최신 `docs/planning/decision-log.md` 후반과 `docs/wbs/reference/BE/backend-stack.md`, 실제 Backend 코드는 최대 12장으로 확정·구현되어 있다. 그러나 다음 문서 일부에는 과거 최대 40장 표현이 남아 있다.
 
-- `requirements.md` 일부 항목
-- `architecture.md` 일부 설명
+- `docs/planning/requirements.md` 일부 항목
+- `docs/planning/architecture.md` 일부 설명
 - `wbs.md`의 Simulator 관련 완료 기준
 - `template-status.md`
-- `decision-log.md`의 과거 결정 구간
+- `docs/planning/decision-log.md`의 과거 결정 구간
 
 과거 결정 이력 자체는 보존할 수 있지만, 현재 요구사항·WBS 완료 기준과 충돌하는 부분은 팀 합의 후 최신 계약으로 동기화해야 한다.
 
 ### 10.2 UTC/KST 미정 표현
 
-최신 `decision-log.md`는 모든 업무 시각을 `Asia/Seoul` 기준 밀리초로 확정했다. 반면 BE-02 문서와 ORM TODO에는 UTC/KST 미정 표현이 남아 있다.
+최신 `docs/planning/decision-log.md`는 모든 업무 시각을 `Asia/Seoul` 기준 밀리초로 확정했다. 반면 BE-02 문서와 ORM TODO에는 UTC/KST 미정 표현이 남아 있다.
 
 정책은 KST로 확정된 것으로 보고, Repository 구현 전에 저장·API 직렬화 규칙을 구체화하고 오래된 TODO를 동기화해야 한다.
 
-### 10.3 `backend-stack.md`의 구현 전 표현
+### 10.3 `docs/wbs/reference/BE/backend-stack.md`의 구현 전 표현
 
-`backend-stack.md` 일부에는 Backend 구현 전, DB 물리 Schema 미정, endpoint 미정 같은 과거 표현이 남아 있다. 실제로는 BE-01~04와 BE-02 migration이 완료되어 있으므로 복귀 후 문서 갱신 범위를 별도로 정하는 편이 안전하다.
+`docs/wbs/reference/BE/backend-stack.md` 일부에는 Backend 구현 전, DB 물리 Schema 미정, endpoint 미정 같은 과거 표현이 남아 있다. 실제로는 BE-01~04와 BE-02 migration이 완료되어 있으므로 복귀 후 문서 갱신 범위를 별도로 정하는 편이 안전하다.
 
 ## 11. 복귀 후 첫 작업 체크리스트
 
@@ -745,10 +745,10 @@ Mock 검사 1건
 
 주요 기준 문서:
 
-- `docs/backend-stack.md`
-- `docs/decision-log.md`
-- `docs/requirements.md`
-- `docs/architecture.md`
+- `docs/wbs/reference/BE/backend-stack.md`
+- `docs/planning/decision-log.md`
+- `docs/planning/requirements.md`
+- `docs/planning/architecture.md`
 - `docs/wbs.md`
 
 주요 코드:

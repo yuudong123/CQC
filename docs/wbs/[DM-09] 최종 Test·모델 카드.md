@@ -78,11 +78,11 @@ DM-09의 최종 학습, Test 1회, 실패 분석, 모델 카드와 패키지 기
 
 ## 산출물
 
-- `docs/model-card.md`
-- `docs/results/final-test-result.json`
-- `docs/results/final-concurrency-i7-14700F.json`
-- `docs/results/thresholds-separate-12view.json`
-- `docs/results/model-comparison.json`
-- `docs/results/model-manifest.json`
+- `docs/wbs/reference/DM/model-card.md`
+- `docs/wbs/results/final-test-result.json`
+- `docs/wbs/results/final-concurrency-i7-14700F.json`
+- `docs/wbs/results/thresholds-separate-12view.json`
+- `docs/wbs/results/model-comparison.json`
+- `docs/wbs/results/model-manifest.json`
 
 모델 바이너리는 Git에 넣지 않고 집 PC의 `D:\Study\CQC\models\cqc-apple-separate12-v1.0.0`에 보관한다.

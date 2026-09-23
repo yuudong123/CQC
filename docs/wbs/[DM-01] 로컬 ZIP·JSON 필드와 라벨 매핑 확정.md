@@ -84,8 +84,8 @@ Backend가 모델 클래스 순서를 추정하지 않도록 이후 모델 산�
 
 - `src/data/manifest.py`: ZIP 탐색, JSON 검증과 매니페스트 생성
 - `tests/test_manifest.py`: ZIP 조합·라벨·파일 짝·해상도 오류 테스트
-- `docs/data-spec.md`: 실제 필드와 라벨 매핑 반영
-- `docs/model-stack.md`: 데이터 생성 명령과 현재 상태
+- `docs/wbs/reference/DM/data-spec.md`: 실제 필드와 라벨 매핑 반영
+- `docs/wbs/reference/DM/model-stack.md`: 데이터 생성 명령과 현재 상태
 
 관련 커밋:
 

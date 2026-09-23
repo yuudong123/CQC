@@ -148,7 +148,7 @@ JSON 스키마는 두 종류다. 18,156개는 기본 촬영 필드만 있고, 6,
 | `brix_generator_version` | 생성 규칙·계수 버전 |
 | `feature_version` | 색상·균일도 특징 버전 |
 
-생성기는 정답 품종·품질 라벨을 입력으로 사용하지 않는다. `group_no`는 조인과 고정 난수 시드에만 사용하며, 학습 입력에는 포함하지 않는다. 생성식과 민감도 분석은 [`virtual-brix-plan.md`](./virtual-brix-plan.md)를 따른다.
+생성기는 정답 품종·품질 라벨을 입력으로 사용하지 않는다. `group_no`는 조인과 고정 난수 시드에만 사용하며, 학습 입력에는 포함하지 않는다. 생성식과 민감도 분석은 [`virtual-brix-plan.md`](<virtual-brix-plan.md>)를 따른다.
 
 ## 8. 데이터 품질 검사
 
