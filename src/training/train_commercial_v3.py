@@ -21,6 +21,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output-dir', type=Path, default=Path('outputs/training-commercial-v3'))
     parser.add_argument('--epochs', type=int, default=25)
+    parser.add_argument('--validation-scheme', choices=('source', 'cv'), default='source')
+    parser.add_argument('--cv-fold', type=int, choices=range(5), default=0)
     parser.add_argument('--execute', action='store_true')
     args = parser.parse_args()
     if args.epochs < 1 or args.output_dir.exists():
@@ -42,8 +44,12 @@ def main():
         labels.append(dict(group_no=group.group_no, original_split=group.original_split,
                            appearance_grade=group.quality_grade, virtual_brix=value,
                            commercial_grade=grade, score=result['score']))
-    train = [g for g in groups if g.original_split == 'train']
-    validation = [g for g in groups if g.original_split == 'validation']
+    if args.validation_scheme == 'source':
+        train = [g for g in groups if g.original_split == 'train']
+        validation = [g for g in groups if g.original_split == 'validation']
+    else:
+        train = [g for g in groups if g.cv_fold != args.cv_fold]
+        validation = [g for g in groups if g.cv_fold == args.cv_fold]
     counts = {name: dict(Counter(g.quality_grade for g in data))
               for name, data in [('train', train), ('validation', validation)]}
     if any(set(count) != {'L', 'M', 'S'} for count in counts.values()):
@@ -54,7 +60,8 @@ def main():
                   epochs=args.epochs, batch_size=2, workers=0, dropout=0.4,
                   learning_rate=0.0003, weight_decay=0.0005, quality_loss='focal',
                   focal_gamma=2.0, train_groups=len(train), validation_groups=len(validation),
-                  validation_scheme='source', view_sampling='fixed', test_used=False,
+                  validation_scheme=args.validation_scheme, cv_fold=args.cv_fold if args.validation_scheme == 'cv' else None,
+                  view_sampling='fixed', test_used=False,
                   class_counts=counts, virtual_brix=str(brix_path),
                   source_hashes={str(p): hashlib.sha256(p.read_bytes()).hexdigest()
                                  for p in (manifest, splits, brix_path)},
