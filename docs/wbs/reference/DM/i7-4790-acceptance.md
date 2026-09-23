@@ -92,3 +92,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File src\training\run_i7_4790_acc
 | 응답에 기록된 모델 forward | 128.26ms | 227.76ms | 156.95ms | — |
 
 이 HTTP 값에는 multipart 전송, JPEG 디코딩, 전처리, 모델 실행과 응답이 포함된다. 같은 합성 이미지를 반복했으므로 실제 촬영 데이터의 크기와 내용에 따른 성능은 아직 확인하지 않았다. 공용 Compose의 Inference와 Backend가 현재 placeholder이고 Backend 코드는 `MockInferenceClient`를 사용하므로 **Backend→Inference 통합 수용시험은 미완료**다. 이 측정값을 전체 경로의 500ms 승인 근거로 사용하지 않는다.
+
+같은 시험을 다시 실행하려면 프로젝트 루트의 Windows PowerShell에서 아래 명령을 사용한다. `scripts/benchmark_inference_http.py` 실행 환경에는 Pillow가 필요하다. 출력 파일명은 실행마다 새로 지정한다.
+
+```powershell
+docker run -d --name cqc-inference-http-benchmark -p 127.0.0.1:18001:8001 -e OMP_NUM_THREADS=1 -e MKL_NUM_THREADS=1 --mount 'type=volume,source=jenkins_home,target=/jenkins,readonly' cqc-inference-acceptance python -m src.inference.api --model-dir /jenkins/workspace/CQC-CICD/models/cqc-apple-separate12-focal-v2-candidate --device cpu --host 0.0.0.0 --port 8001
+Invoke-RestMethod http://127.0.0.1:18001/health
+.\.venv\Scripts\python.exe scripts\benchmark_inference_http.py --output outputs\i7-4790-acceptance\new-run\inference-http.json
+docker rm -f cqc-inference-http-benchmark
+```
