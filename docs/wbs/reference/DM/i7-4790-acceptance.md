@@ -71,4 +71,24 @@ powershell -NoProfile -ExecutionPolicy Bypass -File src\training\run_i7_4790_acc
 
 ## 현재 상태
 
-학원 서버 주소와 CPU 사양은 사용자에게 확인받았다. Linux/Jenkins에서 실행 가능한 모델 단독 시험 코드와 모델 패키지 체크섬·전달 절차를 준비했다. 집 PC의 기존 inference Docker 이미지에서 새 코드를 읽기 전용으로 마운트하여 `--smoke --warmup 1 --repeats 2` 실행을 확인했다. 컨테이너가 i7-14700F와 모델 해시를 식별했고 `accepted=false`를 기록했다. 현재 PR의 **학원 i7-4790 실측 결과는 아직 없으며**, 모델 바이너리 전달과 Jenkins 단계 연결은 MLOps 담당 작업이다.
+2026-09-23 학원 i7-4790 Docker 환경에서 Jenkins 저장 볼륨 `jenkins_home`의 모델 패키지를 읽기 전용으로 연결해 모델 단독 수용시험을 완료했다. `model.pt` SHA-256은 위 패키지 식별값과 일치했고, 결과는 [`results/i7-4790-model-only-20260923.json`](results/i7-4790-model-only-20260923.json)에 보존했다. 컨테이너가 i7-4790과 RAM 15.5GiB를 확인했으며 `smoke=false`, `accepted=true`였다.
+
+| 측정 | 평균 | 최대 | p95 | 처리량 |
+|---|---:|---:|---:|---:|
+| 순차 추론 100회 | 122.85ms | 201.43ms | 138.50ms | — |
+| 동시 처리 1, 100회 | 135.99ms | 234.29ms | 178.01ms | 7.35건/초 |
+| 동시 처리 2, 100회 | 212.42ms | 301.40ms | 254.15ms | 9.36건/초 |
+| 동시 처리 4, 100회 | 349.54ms | 408.93ms | 397.14ms | 11.28건/초 |
+
+이는 전처리 후 합성 입력의 **모델 forward만** 측정한 결과다. 이미지 디코딩, HTTP 왕복, Docker 대기, Backend 시간을 포함한 통합 지연과 운영 동시 처리 수는 별도 검증이 필요하다. 시험 직후 Jenkins는 WSL Docker 소켓 마운트 오류로 재시작에 실패했지만, Docker Desktop의 Ubuntu WSL 연결을 활성화하고 소켓이 생성된 뒤 재시작했다. Jenkins 로그인 응답 HTTP 200과 컨테이너 내부 Docker 클라이언트의 엔진 연결을 확인했다.
+
+### 별도 Inference HTTP 측정
+
+같은 i7-4790 환경에서 실제 모델 API를 별도 Docker 컨테이너로 실행했다. 고정된 224×224 JPEG 12장을 multipart로 전송해 10회 준비 실행 뒤 순차 100회를 측정했다. 요청 크기는 약 303KB이고 결과는 [`results/i7-4790-inference-http-20260923.json`](results/i7-4790-inference-http-20260923.json)에 보존했다.
+
+| 측정 범위 | 평균 | 최대 | p95 | 처리량 |
+|---|---:|---:|---:|---:|
+| Windows 호스트→Inference HTTP 왕복 | 161.90ms | 293.11ms | 198.76ms | 6.18건/초 |
+| 응답에 기록된 모델 forward | 128.26ms | 227.76ms | 156.95ms | — |
+
+이 HTTP 값에는 multipart 전송, JPEG 디코딩, 전처리, 모델 실행과 응답이 포함된다. 같은 합성 이미지를 반복했으므로 실제 촬영 데이터의 크기와 내용에 따른 성능은 아직 확인하지 않았다. 공용 Compose의 Inference와 Backend가 현재 placeholder이고 Backend 코드는 `MockInferenceClient`를 사용하므로 **Backend→Inference 통합 수용시험은 미완료**다. 이 측정값을 전체 경로의 500ms 승인 근거로 사용하지 않는다.

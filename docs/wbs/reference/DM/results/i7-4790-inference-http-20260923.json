@@ -1,0 +1,19 @@
+{
+  "scope": "Windows host to standalone Docker Inference HTTP API; includes multipart upload, JPEG decoding, preprocessing, model forward and response",
+  "input": "12 repeated deterministic synthetic 224x224 JPEG images; no validation or production images",
+  "model_version": "cqc-apple-separate12-focal-v2-candidate",
+  "request_bytes": 302683,
+  "warmup": 10,
+  "requests": 100,
+  "http_ms": {
+    "mean": 161.90296900225803,
+    "max": 293.10979996807873,
+    "p95": 198.76189481001347
+  },
+  "server_model_forward_ms": {
+    "mean": 128.2580672300037,
+    "max": 227.76304900003197,
+    "p95": 156.95402385006219
+  },
+  "total_throughput_per_second": 6.176538986051906
+}
