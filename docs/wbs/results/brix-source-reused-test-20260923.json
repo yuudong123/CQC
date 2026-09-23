@@ -1,0 +1,538 @@
+{
+  "evaluation_role": "reused_test_regression_diagnostic",
+  "independent_final_approval": false,
+  "may_select_model_or_epoch": false,
+  "prior_test_usage": "v1 final evaluation and failure analysis",
+  "checkpoint": "outputs\\training-brix-v1\\separate_brix\\focal_ordinal_regularized-source\\best.pt",
+  "checkpoint_epoch": 8,
+  "virtual_brix": "data\\processed\\virtual-brix.csv",
+  "brix_is_measured": false,
+  "config": {
+    "manifest": "data\\processed\\manifest.csv",
+    "splits": "configs\\splits\\seed-42.csv",
+    "raw_root": "data\\raw",
+    "virtual_brix": "data\\processed\\virtual-brix.csv",
+    "brix_is_measured": false,
+    "views": 12,
+    "model_kind": "separate_brix",
+    "cv_fold": 0,
+    "epochs": 25,
+    "batch_size": 2,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0005,
+    "dropout": 0.4,
+    "quality_loss": "focal_ordinal",
+    "focal_gamma": 2.0,
+    "ordinal_weight": 0.25,
+    "validation_scheme": "source",
+    "view_sampling": "fixed",
+    "image_size": 224,
+    "seed": 42,
+    "workers": 0,
+    "device": "cuda",
+    "pretrained": true,
+    "train_groups": 118,
+    "validation_groups": 34,
+    "test_used": false
+  },
+  "test": {
+    "loss": 0.3044460912545522,
+    "samples": 27,
+    "cultivar": {
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "precision": [
+        1.0,
+        1.0
+      ],
+      "recall": [
+        1.0,
+        1.0
+      ],
+      "f1": [
+        1.0,
+        1.0
+      ],
+      "confusion_matrix": [
+        [
+          10,
+          0
+        ],
+        [
+          0,
+          17
+        ]
+      ]
+    },
+    "quality": {
+      "accuracy": 0.9259259259259259,
+      "macro_f1": 0.9267399267399267,
+      "precision": [
+        1.0,
+        0.8571428571428571,
+        1.0
+      ],
+      "recall": [
+        1.0,
+        1.0,
+        0.75
+      ],
+      "f1": [
+        1.0,
+        0.923076923076923,
+        0.8571428571428571
+      ],
+      "confusion_matrix": [
+        [
+          7,
+          0,
+          0
+        ],
+        [
+          0,
+          12,
+          0
+        ],
+        [
+          0,
+          2,
+          6
+        ]
+      ]
+    },
+    "predictions": [
+      {
+        "group_no": "601031011000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9779399037361145,
+          0.02206011675298214
+        ],
+        "quality_target_index": 0,
+        "quality_prediction_index": 0,
+        "quality_probabilities": [
+          0.8814232349395752,
+          0.05298107862472534,
+          0.06559567153453827
+        ]
+      },
+      {
+        "group_no": "601031015000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9316375255584717,
+          0.06836242228746414
+        ],
+        "quality_target_index": 0,
+        "quality_prediction_index": 0,
+        "quality_probabilities": [
+          0.8750227689743042,
+          0.08507385104894638,
+          0.039903391152620316
+        ]
+      },
+      {
+        "group_no": "601031016000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9825249910354614,
+          0.017474966123700142
+        ],
+        "quality_target_index": 0,
+        "quality_prediction_index": 0,
+        "quality_probabilities": [
+          0.8581312298774719,
+          0.0651581808924675,
+          0.0767105296254158
+        ]
+      },
+      {
+        "group_no": "601032003000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9996663331985474,
+          0.00033369939774274826
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.017193587496876717,
+          0.7914168834686279,
+          0.1913895606994629
+        ]
+      },
+      {
+        "group_no": "601032015000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9997256398200989,
+          0.00027438640245236456
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.005944076459854841,
+          0.9769648313522339,
+          0.017091110348701477
+        ]
+      },
+      {
+        "group_no": "601032016000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9997585415840149,
+          0.00024151333491317928
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.021198689937591553,
+          0.9349856376647949,
+          0.04381561651825905
+        ]
+      },
+      {
+        "group_no": "601032028000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9999178647994995,
+          8.211054955609143e-05
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.037808410823345184,
+          0.896900475025177,
+          0.06529107689857483
+        ]
+      },
+      {
+        "group_no": "601033003000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9991469383239746,
+          0.000853095727507025
+        ],
+        "quality_target_index": 2,
+        "quality_prediction_index": 2,
+        "quality_probabilities": [
+          0.01457987166941166,
+          0.3339773416519165,
+          0.6514427661895752
+        ]
+      },
+      {
+        "group_no": "601033013000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9997109770774841,
+          0.00028897623997181654
+        ],
+        "quality_target_index": 2,
+        "quality_prediction_index": 2,
+        "quality_probabilities": [
+          0.07561416923999786,
+          0.29675424098968506,
+          0.6276316046714783
+        ]
+      },
+      {
+        "group_no": "601033026000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9934484362602234,
+          0.006551571190357208
+        ],
+        "quality_target_index": 2,
+        "quality_prediction_index": 2,
+        "quality_probabilities": [
+          0.0496852844953537,
+          0.22551725804805756,
+          0.7247974872589111
+        ]
+      },
+      {
+        "group_no": "601141006000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.010335447266697884,
+          0.989664614200592
+        ],
+        "quality_target_index": 0,
+        "quality_prediction_index": 0,
+        "quality_probabilities": [
+          0.8477951884269714,
+          0.08160385489463806,
+          0.0706009641289711
+        ]
+      },
+      {
+        "group_no": "601141009000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.010352647863328457,
+          0.9896473288536072
+        ],
+        "quality_target_index": 0,
+        "quality_prediction_index": 0,
+        "quality_probabilities": [
+          0.7635087370872498,
+          0.14344929158687592,
+          0.09304194897413254
+        ]
+      },
+      {
+        "group_no": "601141013000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.01187087781727314,
+          0.988129198551178
+        ],
+        "quality_target_index": 0,
+        "quality_prediction_index": 0,
+        "quality_probabilities": [
+          0.7365750074386597,
+          0.1342046707868576,
+          0.12922030687332153
+        ]
+      },
+      {
+        "group_no": "601141014000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.046221692115068436,
+          0.9537783265113831
+        ],
+        "quality_target_index": 0,
+        "quality_prediction_index": 0,
+        "quality_probabilities": [
+          0.8753278255462646,
+          0.08398719877004623,
+          0.040684983134269714
+        ]
+      },
+      {
+        "group_no": "601142004000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.014603614807128906,
+          0.9853963255882263
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.08020458370447159,
+          0.8280783295631409,
+          0.09171713888645172
+        ]
+      },
+      {
+        "group_no": "601142010000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.0023435805924236774,
+          0.9976563453674316
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.06611690670251846,
+          0.8386716842651367,
+          0.09521138668060303
+        ]
+      },
+      {
+        "group_no": "601142014000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.009907891042530537,
+          0.9900920987129211
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.0606573261320591,
+          0.850652277469635,
+          0.08869034796953201
+        ]
+      },
+      {
+        "group_no": "601142015000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.010408875532448292,
+          0.9895911812782288
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          9.839293488766998e-05,
+          0.9997672438621521,
+          0.0001343156909570098
+        ]
+      },
+      {
+        "group_no": "601142028000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.04550377279520035,
+          0.9544962048530579
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.0013447119854390621,
+          0.9810265302658081,
+          0.017628712579607964
+        ]
+      },
+      {
+        "group_no": "601142029000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.0056036715395748615,
+          0.9943963289260864
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.0011874770279973745,
+          0.9851946234703064,
+          0.013617880642414093
+        ]
+      },
+      {
+        "group_no": "601142064000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.1491081565618515,
+          0.8508918881416321
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.02129136398434639,
+          0.7488071322441101,
+          0.2299015074968338
+        ]
+      },
+      {
+        "group_no": "601142075000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.021552154794335365,
+          0.9784478545188904
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.003729308722540736,
+          0.9461800456047058,
+          0.05009065568447113
+        ]
+      },
+      {
+        "group_no": "601143008000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.0029897273052483797,
+          0.9970102310180664
+        ],
+        "quality_target_index": 2,
+        "quality_prediction_index": 2,
+        "quality_probabilities": [
+          0.16974562406539917,
+          0.34214797616004944,
+          0.488106369972229
+        ]
+      },
+      {
+        "group_no": "601143013000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.044940464198589325,
+          0.9550595283508301
+        ],
+        "quality_target_index": 2,
+        "quality_prediction_index": 2,
+        "quality_probabilities": [
+          0.0990249291062355,
+          0.349025160074234,
+          0.5519499182701111
+        ]
+      },
+      {
+        "group_no": "601143015000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.01397659257054329,
+          0.9860234260559082
+        ],
+        "quality_target_index": 2,
+        "quality_prediction_index": 2,
+        "quality_probabilities": [
+          0.038164135068655014,
+          0.36083340644836426,
+          0.6010025143623352
+        ]
+      },
+      {
+        "group_no": "601143028000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.04530142992734909,
+          0.9546985626220703
+        ],
+        "quality_target_index": 2,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.06428114324808121,
+          0.5917381048202515,
+          0.34398072957992554
+        ]
+      },
+      {
+        "group_no": "601143034000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.0089098596945405,
+          0.9910901784896851
+        ],
+        "quality_target_index": 2,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.00014577248657587916,
+          0.593345046043396,
+          0.4065091907978058
+        ]
+      }
+    ]
+  }
+}

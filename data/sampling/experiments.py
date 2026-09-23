@@ -114,9 +114,17 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--batch-size", type=int, default=2)
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")
+    parser.add_argument("--variant", choices=tuple(VARIANTS))
+    parser.add_argument("--epoch", type=int)
     parser.add_argument("--execute", action="store_true")
     args = parser.parse_args(argv)
-    plan = plan_from_v2_report(args.v2_report, batch_size=args.batch_size)
+    if (args.variant is None) != (args.epoch is None):
+        parser.error("--variant와 --epoch는 함께 지정해야 합니다")
+    plan = (
+        build_plan(args.variant, args.epoch, batch_size=args.batch_size)
+        if args.variant is not None else
+        plan_from_v2_report(args.v2_report, batch_size=args.batch_size)
+    )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(plan, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"plan={args.output} runs={len(plan)} execute={args.execute}")
