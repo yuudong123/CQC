@@ -2,6 +2,40 @@
 
 ## 1. 결론
 
+### 2026-09-23 확정: v2 + 시연용 종합 판정
+
+이미지 전용 v2는 유지하고 재학습하지 않는다. `src/inference/commercial_policy.py`에서 외관과 가상 당도를 합산한다. 기존 `predicted_grade`는 보존하고 종합 결과를 `commercial_grade`로 분리한다.
+
+- 외관 점수: L(특)=100, M(상)=70, S(보통)=40.
+- 당도 점수: 14 이상=100, 12 이상 14 미만=70, 10 이상 12 미만=40, 10 미만=0.
+- 종합 점수 = 외관 60% + 가상 당도 40%. 비율은 업계 통계가 아닌 사용자 승인 시연 정책이다.
+- 특: 90점 이상 AND 외관 특 AND 당도 14 이상.
+- 상: 특이 아니면서 65점 이상 AND 외관 상 이상 AND 당도 12 이상.
+- 보통: 나머지. 10 미만은 저당도 표시를 추가한다.
+
+| 외관 / 가상 당도 | 14 이상 | 12 이상 14 미만 | 10 이상 12 미만 | 10 미만 |
+|---|---|---|---|---|
+| 특 | 특 | 상 | 보통 | 보통·저당도 |
+| 상 | 상 | 상 | 보통 | 보통·저당도 |
+| 보통 | 보통 | 보통 | 보통 | 보통·저당도 |
+
+외부에서 심각한 결점 또는 재검사 필요가 전달되면 등급을 보류한다. 현재 v2가 부패 등을 별도로 검출한다는 뜻이 아니다. 당도 누락도 보류하며 임의 값으로 채우지 않는다. 가상 값은 기존 생성 범위 9~18의 유한 숫자만 허용한다. 보통 등급은 실제 판매 가능 보장이 아니다.
+
+코드는 L/M/S로 유지하고 이름은 `labels` 인자로 교체 가능하다. 결과에 `policy_version=demo-commercial-v1`, `brix_is_measured=false`, `grade_basis=simulated_commercial_grade_not_official`을 기록한다.
+
+```powershell
+python -m src.inference.commercial_policy --appearance-grade L --virtual-brix 12.5
+python -m unittest discover -s tests -p test_commercial_policy.py
+```
+
+연동 함수는 `assess_prediction(v2_response, virtual_brix, review_required=...)`다. 기존 응답을 보존한 `inference`와 `commercial_assessment`를 반환한다. 호출자는 Backend 재검사 상태를 반드시 전달한다. **로컬 시연용 어댑터만 구현했으며 HTTP 계약·DB·Frontend·Simulator 연결은 미적용**이다. 자동 전송·가상 당도 일괄 생성·학습은 실행하지 않는다.
+
+근거와 한계:
+
+- [표준규격 별표 4](https://www.law.go.kr/LSW/flDownload.do?bylClsCd=200201&flSeq=155174531): 후지·화홍·감홍·홍로 당도 표시 기준은 특 14, 상 12°Bx 이상이며 품종별로 다르다. 양광을 포함한 모든 품종의 공식 기준이라고 주장하지 않는다.
+- [유통 사례](https://www.edaily.co.kr/News/Read?mediaCodeNo=257&newsId=01462886638889904): 고당도라도 외관 흠이 있으면 별도 상품으로 구분한다. 가중치 60:40의 근거는 아니다.
+- 현재 결과는 공식 상품 등급이 아닌 **시뮬레이션 종합등급**이다. 원본 외관 정답과 기존 모델 F1을 종합등급 성능으로 재해석하지 않는다.
+
 현재 AI Hub 데이터에는 사과별 실측 당도 정답이 없다. 따라서 RGB 이미지에서 만든 값은 **실측 당도**나 **당도 예측값**이 아니라 발표용 **가상 당도(`virtual_brix`)**로 명시한다.
 
 가상 값을 데이터셋에 한 번 생성해 고정하고 품질 분류 실험에 추가하는 것은 가능하다. 다만 가상 당도 역시 같은 이미지에서 계산되므로 새로운 센서 정보가 생기는 것은 아니다. 이 값을 사용해 품질 성능이 올라도 실제 당도 측정 능력이 검증된 것으로 해석하지 않는다.
