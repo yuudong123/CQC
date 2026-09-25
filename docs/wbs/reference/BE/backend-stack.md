@@ -117,7 +117,7 @@ Router
 - Repository: MySQL 저장·조회·수정·삭제와 통계·집계
 - Inference Client: multipart 호출, transport 처리와 응답 검증
 - Virtual Control: bin 명령과 성공·실패·거부·무응답 처리
-- Simulator: Test 그룹 순회, 각도 기준 대표 이미지 최대 12장 선택, 500ms 간격 전송, 시작·정지·반복과 position 복구
+- Simulator: 시연 전용 `data/processed/realtime-apple-arrival-demo/index.json` 기본 12장 묶음 순회, `request.json` 순서·metadata 전송, 500ms 간격, 시작·정지·반복과 position 복구. 묶음 안에서 대표 이미지를 다시 고르지 않음
 
 Router의 직접 SQL/httpx 호출, Repository의 Inference 호출, Inference Client의 bin 결정, Simulator의 DB 수정을 금지한다. Service·Repository·Client처럼 의존성·상태가 있는 곳에는 클래스를 사용할 수 있고 단순 계산·변환·CSV formatting은 함수로 작성할 수 있다.
 
@@ -167,12 +167,12 @@ Backend는 모델을 로드하거나 전처리를 중복 구현하지 않는다.
 전체 처리 흐름은 다음으로 확정한다.
 
 ```text
-Simulator가 각도 기준 대표 이미지 최대 12장 선택
+Simulator가 시연 전용 목록의 사전 구성 12장 묶음을 로드
   → Backend가 이미지와 metadata를 변경 없이 중계
   → Inference가 최대 12장으로 추론
 ```
 
-대표 이미지 선택은 Simulator 책임이다. Backend는 선택 결과를 재정렬·교체·축소하지 않고, 이미지 수와 metadata 대응 관계 등 계약 유효성만 검사한 뒤 Inference에 전달한다. Backend↔Inference 입력 인터페이스는 1장 이상 최대 12장과 multipart 전체 24MiB로 고정한다.
+기본 시연의 대표 이미지 선택은 데이터 묶음 생성 단계에서 완료된다. Simulator는 `request.json`의 이미지 순서와 metadata를 유지하고 Backend는 이를 재정렬·교체·축소하지 않는다. Backend는 이미지 수와 metadata 대응 관계 등 계약 유효성만 검사한 뒤 Inference에 전달한다. Backend↔Inference 입력 인터페이스는 1장 이상 최대 12장과 multipart 전체 24MiB로 고정한다.
 
 ### Backend → Inference 요청
 
@@ -333,7 +333,7 @@ alembic upgrade head
 
 Backend는 FastAPI, API 계약, Inference Client, timeout·confidence·bin 정책, MySQL·migration·조회·통계·CSV, Virtual Control과 Simulator 애플리케이션 로직을 담당한다. Simulator 애플리케이션 로직에는 각도 기준 대표 이미지 최대 12장 선택이 포함된다.
 
-데이터·모델 담당은 모델 학습·평가, 모델 로딩·전처리·masking과 Inference HTTP API를 담당한다. Inference는 Simulator가 선택한 최대 12장을 입력으로 받고 부족한 입력의 padding을 처리한다. MLOps는 Docker·Compose·Volume·healthcheck·재시작, CI/CD·배포·로그 운영 환경을 담당한다.
+데이터·모델 담당은 모델 학습·평가, 시연용 12장 묶음 생성·검증, 모델 로딩·전처리·masking과 Inference HTTP API를 담당한다. Inference는 Simulator가 전달한 최대 12장을 입력으로 받고 부족한 입력의 padding을 처리한다. MLOps는 Docker·Compose·Volume·healthcheck·재시작, CI/CD·배포·로그 운영 환경을 담당한다.
 
 Backend는 실행 명령, 환경변수, health endpoint, migration과 Volume 요구사항을 제공한다. Frontend·Simulator·Inference와 공유하는 endpoint·Schema·Enum·Error를 계약 확인 없이 변경하지 않는다.
 
