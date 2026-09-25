@@ -180,11 +180,10 @@ JSON 스키마는 두 종류다. 18,156개는 기본 촬영 필드만 있고, 6,
 ### 9.1 입력
 
 - 검사 단위: `1 inspection = 사과 1개 = group_no 1개`
-- Simulator 전송: 해당 그룹에서 각도 기준으로 선택한 대표 12장. 12장 미만 그룹은 보유 이미지 전체를 전송
+- Simulator 기본 시연 전송: `data/processed/realtime-apple-arrival-demo/index.json`의 `default_playback=true`인 사전 구성 12장 묶음. `partial_groups`는 누락 뷰 시연 전용
 - 전송 형식: Base64가 아닌 `multipart/form-data`
 - 지원 입력 장수 실험: 4·8·12·16·40장
-- 정렬: `angle_direction → horizontality_angle → verticality_angle → sample_id`
-- 선택: 정렬된 전체 범위에서 첫·마지막 프레임을 포함하는 균등 인덱스
+- 대표 프레임 선정 기준(자료 생성 단계): `angle_direction → horizontality_angle → verticality_angle → sample_id` 순 정렬 후 전체 범위에서 첫·마지막 프레임을 포함하는 균등 인덱스. 기본 시연 실행 중에는 이미 구성된 묶음을 재선택하지 않음
 - 부족 뷰: 보유 프레임 뒤를 패딩하고 `view_mask=False` 적용
 - 지원 이미지 형식: PNG, JPEG
 - 최대 요청 크기: multipart 이미지 합계 24MiB

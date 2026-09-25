@@ -61,7 +61,7 @@ pytest는 이 문서 작성 시 다시 실행하여 `79 passed, 2 warnings`를 �
 - `POST /v1/inspections`
 - `multipart/form-data` 파싱
 - `inspection_id`, 반복 `images`, JSON text `metadata`
-- Simulator가 선택한 이미지와 metadata 순서 유지
+- Simulator가 시연용 `request.json`에서 읽어 보낸 이미지와 metadata 순서 유지
 
 현재 검사 요청 validation:
 
@@ -348,7 +348,7 @@ timeout 응답에서는 유효한 Inference 응답이 없으므로 예측·confi
 
 ### 5.7 BE-07 — Simulator와 장애 시연
 
-- Test 그룹 순회
+- 시연 전용 `realtime-apple-arrival-demo/index.json` 기본 12장 묶음 순회
 - 각도 기준 대표 이미지 최대 12장 선택
 - Backend 검사 API 호출
 - 500ms 간격 전송
