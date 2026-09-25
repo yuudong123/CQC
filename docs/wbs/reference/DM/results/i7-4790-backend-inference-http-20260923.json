@@ -1,0 +1,20 @@
+{
+  "scope": "Windows host to configured HTTP endpoint; includes multipart upload and response; Backend endpoint also includes Backend to Inference call",
+  "url": "http://127.0.0.1:18000/v1/inspections",
+  "input": "12 repeated deterministic synthetic 224x224 JPEG images; no validation or production images",
+  "model_version": "cqc-apple-separate12-focal-v2-candidate",
+  "request_bytes": 302683,
+  "warmup": 10,
+  "requests": 100,
+  "http_ms": {
+    "mean": 182.84514499362558,
+    "max": 291.9648999813944,
+    "p95": 244.0652800607495
+  },
+  "server_model_forward_ms": {
+    "mean": 134.76438618000884,
+    "max": 230.63948899994102,
+    "p95": 180.95092529997598
+  },
+  "total_throughput_per_second": 5.468846926808409
+}

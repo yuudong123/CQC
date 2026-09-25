@@ -20,6 +20,32 @@ https://docs.google.com/spreadsheets/d/1E4s9fRkWV9CWqBU_eaYLZt1W7aAxbuuUmLPl04V0
 | BE | 백엔드·DB | 홍준희 | `docs/wbs/reference/BE/backend-stack.md`, OpenAPI, DB 설계 |
 | MO | MLOps·CI/CD | 홍유나 | `docs/wbs/reference/MO/mlops-stack.md`, Compose, CI/CD·운영 문서 |
 
+## 현재 작업 상태 (2026-09-23)
+
+이번 작업은 문서에 적힌 순서를 기준으로 진행한다. 구현을 먼저 진행하지 않고, 완료된 범위와 남은 범위를 아래처럼 고정한다.
+
+| 작업 | 상태 | 이번에 확인한 범위 | 다음 확인 항목 |
+|---|---|---|---|
+| MO-01~MO-03 | 완료 | MLOps 규칙, Compose 골격, Jenkins 기본 파이프라인 | 브랜치·Jenkins 운영 설정은 배포 전 재확인 |
+| MO-04 | 완료 | 실제 Inference·Backend Dockerfile, 모델 read-only mount, `/health`, `service_healthy`, 기동 순서 | Jenkins Poll SCM에서 새 Jenkinsfile 실행 확인 |
+| MO-05 | 부분 완료 | MySQL Named Volume, `.env`/Credentials, 모델 경로·버전 연결 | 장애·위치·로그 보존 Volume과 운영 Secret 절차 확정 |
+| MO-06 | 부분 완료 | i7-4790에서 Inference 및 Backend→Inference HTTP 기준 측정 | 입력 장수·병렬 수 비교표 확정 |
+| MO-07 이후 | 미착수 | 현재 배포 스택은 수동으로 새 이미지 교체 가능 | 실패 시 기존 버전 유지·자동 복구 절차 구현 |
+
+### 현재 기준과 증거 문서
+
+- Compose 통합 문서: [`docs/wbs/MO-04.md`](wbs/MO-04.md)
+- Volume·Secret 기준: [`docs/wbs/MO-05.md`](wbs/MO-05.md)
+- CPU 수용 기준: [`docs/wbs/reference/DM/i7-4790-acceptance.md`](wbs/reference/DM/i7-4790-acceptance.md)
+- Compose Backend→Inference 결과: [`docs/wbs/reference/DM/results/i7-4790-compose-backend-inference-http-20260923.json`](wbs/reference/DM/results/i7-4790-compose-backend-inference-http-20260923.json)
+
+### 다음 작업 순서
+
+1. **MO-05 잔여 정리:** 장애 이미지·Simulator 위치·로그 보존 영역과 운영 Secret 절차를 Compose/Jenkins 문서에 반영한다.
+2. **MO-06 잔여 정리:** 동일 Compose에서 입력 장수와 병렬 수를 비교하고 기준값을 고정한다.
+3. **MO-07 착수:** 배포 전 검증, 실패 시 기존 컨테이너 유지, 복구 명령을 Pipeline에 연결한다.
+4. **BE-05 연계:** Backend 검사 결과 저장·조회가 연결되면 MO-07 통합 범위를 확장한다.
+
 ## 3. 마일스톤
 
 | ID | 기간 | 마일스톤 | 선행 | 완료 기준 |

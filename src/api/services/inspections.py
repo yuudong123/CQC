@@ -6,7 +6,7 @@ import asyncio
 
 from fastapi import UploadFile
 
-from ..clients.inference import MockInferenceClient
+from ..clients.inference import HttpInferenceClient, MockInferenceClient
 from ..control.virtual_control import MockVirtualControl
 from ..schemas.inference import InferenceRequest
 from ..schemas.inspection_results import InspectionResponse
@@ -26,7 +26,7 @@ class InspectionService:
 
     def __init__(
         self,
-        inference_client: MockInferenceClient,
+        inference_client: MockInferenceClient | HttpInferenceClient,
         virtual_control: MockVirtualControl,
         *,
         cultivar_confidence_threshold: float,

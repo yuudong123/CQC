@@ -8,7 +8,7 @@ from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI
 
-from .clients.inference import MockInferenceClient
+from .clients.inference import HttpInferenceClient, MockInferenceClient
 from .control.virtual_control import MockVirtualControl
 from .core.config import Settings, get_settings
 from .routers.inspections import router as inspections_router
@@ -27,8 +27,13 @@ def create_app(
         hard_timeout_ms=runtime_settings.inference_hard_timeout_ms,
         max_tasks=runtime_settings.max_late_tasks,
     )
+    inference_client = (
+        HttpInferenceClient(runtime_settings.inference_url, timeout_ms=runtime_settings.inference_hard_timeout_ms)
+        if runtime_settings.inference_client_mode == "http"
+        else MockInferenceClient()
+    ) if inspection_service is None else None
     runtime_inspection_service = inspection_service or InspectionService(
-        MockInferenceClient(),
+        inference_client,
         MockVirtualControl(),
         cultivar_confidence_threshold=(runtime_settings.cultivar_confidence_threshold),
         quality_confidence_threshold=runtime_settings.quality_confidence_threshold,
@@ -44,6 +49,8 @@ def create_app(
             yield
         finally:
             await runtime_inspection_service.shutdown()
+            if isinstance(inference_client, HttpInferenceClient):
+                await inference_client.close()
 
     application = FastAPI(title=runtime_settings.app_name, lifespan=lifespan)
     application.state.settings = runtime_settings

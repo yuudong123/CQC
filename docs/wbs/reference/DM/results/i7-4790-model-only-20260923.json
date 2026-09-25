@@ -1,0 +1,62 @@
+{
+  "evaluation_role": "model_only_cpu_acceptance",
+  "target_cpu": "Intel Core i7-4790",
+  "detected_cpu": "Intel(R) Core(TM) i7-4790 CPU @ 3.60GHz",
+  "physical_memory_gib": 15.5,
+  "cpu_verified": true,
+  "memory_verified": true,
+  "smoke": false,
+  "model_version": "cqc-apple-separate12-focal-v2-candidate",
+  "checkpoint_sha256": "b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a",
+  "package_status": "unverified_candidate",
+  "input": "deterministic_synthetic_tensor_after_preprocessing",
+  "input_shape": [
+    1,
+    12,
+    3,
+    224,
+    224
+  ],
+  "test_used": false,
+  "torch_threads": 1,
+  "warmup": 10,
+  "repeats": 100,
+  "latency": {
+    "mean_ms": 122.85432838000588,
+    "max_ms": 201.43335299997034,
+    "p95_ms": 138.50083799991353
+  },
+  "concurrency": [
+    {
+      "workers": 1,
+      "requests": 100,
+      "throughput_per_second": 7.349207530468999,
+      "mean_ms": 135.99039666999488,
+      "max_ms": 234.29275099999813,
+      "p95_ms": 178.0124719999776
+    },
+    {
+      "workers": 2,
+      "requests": 100,
+      "throughput_per_second": 9.355290148418934,
+      "mean_ms": 212.42310757000382,
+      "max_ms": 301.3965930000495,
+      "p95_ms": 254.1497930000105
+    },
+    {
+      "workers": 4,
+      "requests": 100,
+      "throughput_per_second": 11.279519589830308,
+      "mean_ms": 349.53983803999336,
+      "max_ms": 408.92509699995117,
+      "p95_ms": 397.13621499993224
+    }
+  ],
+  "criteria": {
+    "p95_ms_max": 500,
+    "throughput_per_second_min": 2
+  },
+  "performance_passed": true,
+  "accepted": true,
+  "limitation": "Model forward only; excludes image decoding, HTTP transfer, Docker queueing and Backend time"
+}
