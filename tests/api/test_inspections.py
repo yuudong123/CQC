@@ -98,9 +98,54 @@ def test_inspection_accepts_valid_multipart_contract() -> None:
         "review_required": False,
         "exclude_from_normal_stats": False,
         "decision_reason": "NORMAL",
+        "virtual_brix": None,
+        "brix_is_measured": None,
+        "sweetness_band": None,
         "target_bin_code": "TEST_NORMAL_BIN_1",
         "control_status": "SUCCEEDED",
     }
+
+
+@pytest.mark.parametrize(
+    ("virtual_brix", "target_bin", "sweetness_band"),
+    [("11.9", "DEMO_BIN_01", "less_sweet"), ("12.0", "DEMO_BIN_02", "sweet")],
+)
+def test_inspection_routes_demo_brix_to_twelve_bins(
+    virtual_brix: str,
+    target_bin: str,
+    sweetness_band: str,
+) -> None:
+    with TestClient(create_app(Settings())) as client:
+        response = client.post(
+            "/v1/inspections",
+            data={
+                "inspection_id": "demo-001",
+                "metadata": _metadata([0]),
+                "virtual_brix": virtual_brix,
+            },
+            files=_images(1),
+        )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["target_bin_code"] == target_bin
+    assert body["virtual_brix"] == float(virtual_brix)
+    assert body["sweetness_band"] == sweetness_band
+    assert body["brix_is_measured"] is False
+
+
+@pytest.mark.parametrize("virtual_brix", ["8.9", "18.1", "nan", "inf"])
+def test_inspection_rejects_invalid_demo_brix(virtual_brix: str) -> None:
+    with TestClient(create_app(Settings())) as client:
+        response = client.post(
+            "/v1/inspections",
+            data={
+                "inspection_id": "demo-invalid",
+                "metadata": _metadata([0]),
+                "virtual_brix": virtual_brix,
+            },
+            files=_images(1),
+        )
+    assert response.status_code == 422
 
 
 def test_inspection_accepts_jpeg_content_type() -> None:

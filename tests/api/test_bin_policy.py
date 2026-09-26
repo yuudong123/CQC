@@ -13,7 +13,10 @@ from src.api.schemas.inspection_results import (
     InspectionStatus,
 )
 from src.api.services.bin_policy import (
+    DEMO_NORMAL_BIN_MAPPING,
+    DEMO_SWEETNESS_THRESHOLD_BRIX,
     TEMPORARY_REINSPECTION_BIN_CODE,
+    determine_demo_target_bin,
     determine_target_bin,
 )
 
@@ -83,3 +86,44 @@ def test_low_confidence_uses_reinspection_bin_without_normal_mapping() -> None:
     )
 
     assert target_bin == TEMPORARY_REINSPECTION_BIN_CODE
+
+
+@pytest.mark.parametrize("cultivar", ["fuji", "yanggwang"])
+@pytest.mark.parametrize("grade", ["L", "M", "S"])
+def test_demo_bin_has_two_sweetness_destinations(cultivar: str, grade: str) -> None:
+    response = _inference_response(cultivar, grade)
+    decision = _decision(InspectionStatus.COMPLETED)
+    lower = determine_demo_target_bin(response, decision, 11.9)
+    upper = determine_demo_target_bin(response, decision, DEMO_SWEETNESS_THRESHOLD_BRIX)
+    assert lower != upper
+    assert lower == DEMO_NORMAL_BIN_MAPPING[(cultivar, grade, "less_sweet")]
+    assert upper == DEMO_NORMAL_BIN_MAPPING[(cultivar, grade, "sweet")]
+
+
+def test_demo_mapping_has_twelve_distinct_normal_bins() -> None:
+    assert len(DEMO_NORMAL_BIN_MAPPING) == 12
+    assert len(set(DEMO_NORMAL_BIN_MAPPING.values())) == 12
+
+
+def test_demo_missing_brix_or_review_uses_reinspection() -> None:
+    response = _inference_response("fuji", "L")
+    assert (
+        determine_demo_target_bin(response, _decision(InspectionStatus.COMPLETED), None)
+        == TEMPORARY_REINSPECTION_BIN_CODE
+    )
+    assert (
+        determine_demo_target_bin(
+            response, _decision(InspectionStatus.REINSPECTION_REQUIRED), 14.0
+        )
+        == TEMPORARY_REINSPECTION_BIN_CODE
+    )
+
+
+@pytest.mark.parametrize("invalid", [float("nan"), float("inf"), 8.9, 18.1, True])
+def test_demo_rejects_invalid_brix(invalid: float) -> None:
+    with pytest.raises(ValueError):
+        determine_demo_target_bin(
+            _inference_response("fuji", "L"),
+            _decision(InspectionStatus.COMPLETED),
+            invalid,
+        )

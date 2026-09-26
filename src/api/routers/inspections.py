@@ -71,6 +71,9 @@ async def validate_inspection_request(
     inspection_id: Annotated[str, Form(min_length=1)],
     images: Annotated[list[UploadFile], File()],
     metadata: Annotated[str, Form(min_length=1)],
+    virtual_brix: Annotated[
+        float | None, Form(ge=9, le=18, allow_inf_nan=False)
+    ] = None,
 ) -> InspectionResponse:
     """검사 요청을 검증하고 Service의 Mock 추론 결과를 반환한다."""
 
@@ -125,6 +128,7 @@ async def validate_inspection_request(
             inspection_id=inspection_id,
             images=images,
             metadata=metadata_items,
+            virtual_brix=virtual_brix,
         )
     except InferenceResponseMismatchError as exc:
         # 최종 공통 error code 계약 전까지 정합성 오류를 단순 내부 오류로 응답한다.

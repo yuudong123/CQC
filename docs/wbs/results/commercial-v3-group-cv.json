@@ -1,0 +1,41 @@
+{
+  "evaluation_role": "development_group_cv",
+  "fixed_epoch": 17,
+  "epoch_source": "source_validation_preselected_before_cv",
+  "test_used": false,
+  "target_semantics": "simulated_commercial_grade",
+  "folds": [
+    {
+      "fold": 0,
+      "groups": 31,
+      "quality_macro_f1": 0.7335780161867117,
+      "cultivar_macro_f1": 1.0
+    },
+    {
+      "fold": 1,
+      "groups": 31,
+      "quality_macro_f1": 0.7342995169082126,
+      "cultivar_macro_f1": 0.9671957671957672
+    },
+    {
+      "fold": 2,
+      "groups": 30,
+      "quality_macro_f1": 0.702950558213716,
+      "cultivar_macro_f1": 1.0
+    },
+    {
+      "fold": 3,
+      "groups": 30,
+      "quality_macro_f1": 0.3591731266149871,
+      "cultivar_macro_f1": 1.0
+    },
+    {
+      "fold": 4,
+      "groups": 30,
+      "quality_macro_f1": 0.6113624937154348,
+      "cultivar_macro_f1": 1.0
+    }
+  ],
+  "mean_quality_macro_f1": 0.6282727423278125,
+  "mean_cultivar_macro_f1": 0.9934391534391535
+}

@@ -11,7 +11,12 @@ from ..control.virtual_control import MockVirtualControl
 from ..schemas.inference import InferenceRequest
 from ..schemas.inspection_results import InspectionResponse
 from ..schemas.inspections import InspectionImageMetadata
-from .bin_policy import TEMPORARY_REINSPECTION_BIN_CODE, determine_target_bin
+from .bin_policy import (
+    DEMO_SWEETNESS_THRESHOLD_BRIX,
+    TEMPORARY_REINSPECTION_BIN_CODE,
+    determine_demo_target_bin,
+    determine_target_bin,
+)
 from .control_policy import execute_virtual_control
 from .inspection_policy import decide_inference_timeout, decide_inspection
 from .late_results import LateResultManager
@@ -52,6 +57,7 @@ class InspectionService:
         inspection_id: str,
         images: list[UploadFile],
         metadata: list[InspectionImageMetadata],
+        virtual_brix: float | None = None,
     ) -> InspectionResponse:
         """Mock Inference 결과를 검증하고 confidence 정책을 적용한다."""
 
@@ -102,7 +108,13 @@ class InspectionService:
                 cultivar_confidence_threshold=self._cultivar_confidence_threshold,
                 quality_confidence_threshold=self._quality_confidence_threshold,
             )
-        target_bin_code = determine_target_bin(inference_response, decision)
+        # brix 없는 이전 Mock 요청은 BE-04의 6-bin 계약을 유지한다.
+        # 시연용 값이 전달된 요청은 품종×외관×가상 당도 12-bin을 적용한다.
+        target_bin_code = (
+            determine_target_bin(inference_response, decision)
+            if virtual_brix is None
+            else determine_demo_target_bin(inference_response, decision, virtual_brix)
+        )
         control_result = await execute_virtual_control(
             self._virtual_control,
             inspection_id=inspection_id,
@@ -122,6 +134,15 @@ class InspectionService:
             review_required=decision.review_required,
             exclude_from_normal_stats=decision.exclude_from_normal_stats,
             decision_reason=decision.reason,
+            virtual_brix=virtual_brix,
+            brix_is_measured=False if virtual_brix is not None else None,
+            sweetness_band=(
+                "sweet"
+                if virtual_brix >= DEMO_SWEETNESS_THRESHOLD_BRIX
+                else "less_sweet"
+            )
+            if virtual_brix is not None
+            else None,
             target_bin_code=final_control_response.target_bin_code,
             control_status=final_control_response.control_status,
         )
