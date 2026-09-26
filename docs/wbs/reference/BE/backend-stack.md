@@ -162,6 +162,8 @@ SQLAlchemy URL은 `mysql+pymysql://...` 형식을 사용하고 실제 접속 정
 
 ## 9. Inference HTTP와 late result
 
+> 2026-09-26 시연 배차 변경: Backend 검사 요청에 선택적 `virtual_brix` multipart form 필드(9~18)를 전달하면 현재 코드가 정상 12-bin 경로를 사용한다. Inference HTTP 요청에는 이 값을 보내지 않는다. 필드가 없는 기존 Mock 요청은 기존 6-bin 경로로 남겨 호환한다. Simulator의 시연 자료 연결, 가상 당도 누락 시 재검사 처리, DB 12-bin 매핑 마이그레이션은 [12-bin 인계](../../협업공지/12-bin-가상당도-배차-인계.md)에 기록한 미완료 통합 작업이다.
+
 Backend는 모델을 로드하거나 전처리를 중복 구현하지 않는다. Mock과 실제 Inference는 같은 논리 계약을 사용한다.
 
 전체 처리 흐름은 다음으로 확정한다.

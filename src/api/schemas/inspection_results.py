@@ -85,5 +85,8 @@ class InspectionResponse(BaseModel):
     review_required: bool
     exclude_from_normal_stats: bool
     decision_reason: InspectionDecisionReason
+    virtual_brix: float | None = Field(default=None, ge=9, le=18, allow_inf_nan=False)
+    brix_is_measured: Literal[False] | None = None
+    sweetness_band: Literal["less_sweet", "sweet"] | None = None
     target_bin_code: str = Field(min_length=1)
     control_status: ControlStatus
