@@ -1,131 +1,596 @@
 "use client";
 
-import Link from "next/link";
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
+import { FormEvent, useCallback, useEffect, useState } from "react";
+import { Badge, Empty, Icon, Panel, Stats } from "@/components/Dashboard";
+import { sampleApples } from "@/lib/sample-apples";
 
-type Role = "buyer" | "admin";
-type Lot = { lotId: string; crop: string; variety: string; qualityGrade: string; quantityKg: number; reservePriceWon: number; suggestedPriceWon: number | null; auctionStatus: string; closesAt: string };
-type Bid = { bidId: string; buyerId: string; priceWon: number; placedAt: string };
-type BidEvent = { type: string; bid?: Bid };
-
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+type Lot = {
+  lotId: string;
+  sellerId: string;
+  variety: string;
+  qualityGrade: string;
+  quantityKg: number;
+  reservePriceWon: number;
+  auctionStatus: string;
+  closesAt: string;
+  createdAt: string;
+};
+type Bid = {
+  bidId: string;
+  buyerId: string;
+  priceWon: number;
+  placedAt: string;
+};
+const apiUrl =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
 const won = (value: number) => `${value.toLocaleString("ko-KR")}원`;
+const grade = (value: string) =>
+  ({ SPECIAL: "특", PREMIUM: "상", STANDARD: "보통" })[value] ?? value;
+const variety = (value: string) =>
+  ({ fuji: "부사", yanggwang: "양광" })[value.toLowerCase()] ?? value;
+const time = (value: string) =>
+  new Date(value).toLocaleTimeString("ko-KR", { hour12: false });
+function photo(lot: Lot) {
+  return sampleApples.find(
+    (apple) =>
+      apple.variety === variety(lot.variety) &&
+      apple.grade === grade(lot.qualityGrade),
+  );
+}
+function remaining(closesAt: string, now: number) {
+  const seconds = Math.max(0, Math.floor((Date.parse(closesAt) - now) / 1000));
+  return seconds
+    ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`
+    : "마감 시각 경과";
+}
 
 export default function MarketPage() {
-  const [role, setRole] = useState<Role>("buyer");
+  const [role, setRole] = useState<"buyer" | "admin">("buyer");
   const [lots, setLots] = useState<Lot[]>([]);
   const [selectedId, setSelectedId] = useState<string>();
-  const [bids, setBids] = useState<Bid[]>([]);
+  const [bidData, setBidData] = useState<{ lotId: string; bids: Bid[] }>();
   const [buyerId, setBuyerId] = useState("buyer-demo");
-  const [price, setPrice] = useState(0);
-  const [status, setStatus] = useState("공개 경매를 불러오는 중...");
+  const [price, setPrice] = useState("");
+  const [message, setMessage] = useState("");
+  const [connected, setConnected] = useState(false);
+  const [bidConnected, setBidConnected] = useState(false);
   const [busy, setBusy] = useState(false);
-
-  const selected = useMemo(() => lots.find((lot) => lot.lotId === selectedId), [lots, selectedId]);
+  const [now, setNow] = useState(0);
+  const [updatedAt, setUpdatedAt] = useState("");
+  const [revision, setRevision] = useState(0);
+  const [allBids, setAllBids] = useState(false);
+  const selected = lots.find((lot) => lot.lotId === selectedId);
+  const bids = bidData && bidData.lotId === selectedId ? bidData.bids : [];
   const highestBid = bids[0];
-  const bidPrice = price || Math.max(selected?.reservePriceWon ?? 0, (highestBid?.priceWon ?? 0) + 10_000);
-
-  const loadLots = useCallback(async () => {
-    const response = await fetch(`${apiUrl}/lots?auction_status=OPEN`, { cache: "no-store" });
-    if (!response.ok) throw new Error("market fetch failed");
-    const data = (await response.json()) as Lot[];
-    setLots(data);
-    setSelectedId((current) => data.some((lot) => lot.lotId === current) ? current : data[0]?.lotId);
-    setStatus(data.length ? "진행 중인 경매" : "진행 중인 공개 경매가 없습니다.");
-  }, []);
-
-  const loadBids = useCallback(async (lotId: string) => {
-    const response = await fetch(`${apiUrl}/lots/${lotId}/bids`, { cache: "no-store" });
-    if (response.ok) setBids((await response.json()) as Bid[]);
-  }, []);
+  const minimum = Math.max(
+    selected?.reservePriceWon ?? 1,
+    (highestBid?.priceWon ?? 0) + 1,
+  );
+  const bidPrice = price === "" ? minimum : Number(price);
+  const selectedPhoto = selected && photo(selected);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      void loadLots().catch(() => setStatus("API에 연결할 수 없습니다. 관제 서버 상태를 확인해 주세요."));
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, [loadLots]);
+    const controller = new AbortController();
+    async function refresh() {
+      try {
+        const response = await fetch(`${apiUrl}/lots?auction_status=OPEN`, {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        if (!response.ok) throw new Error();
+        const data = (await response.json()) as Lot[];
+        setLots(data);
+        setConnected(true);
+        setUpdatedAt(new Date().toLocaleTimeString("ko-KR", { hour12: false }));
+        setSelectedId((current) =>
+          data.some((lot) => lot.lotId === current) ? current : data[0]?.lotId,
+        );
+      } catch {
+        if (!controller.signal.aborted) setConnected(false);
+      }
+    }
+    void refresh();
+    const timer = window.setInterval(refresh, 2000);
+    return () => {
+      controller.abort();
+      clearInterval(timer);
+    };
+  }, [revision]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (!selectedId) return;
-    const timer = window.setTimeout(() => void loadBids(selectedId), 0);
-    const socket = new WebSocket(`${apiUrl.replace(/^http/, "ws")}/ws/auctions/${selectedId}`);
-    socket.onmessage = (event) => {
-      const message = JSON.parse(event.data) as BidEvent;
-      if (message.type === "BID_PLACED" && message.bid) {
-        setBids((current) => [message.bid as Bid, ...current]);
-        setPrice(message.bid.priceWon + 10_000);
+    const controller = new AbortController();
+    async function refreshBids() {
+      try {
+        const response = await fetch(`${apiUrl}/lots/${selectedId}/bids`, {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        if (!response.ok) throw new Error();
+        const data = (await response.json()) as Bid[];
+        setBidData({ lotId: selectedId!, bids: data });
+        setBidConnected(true);
+      } catch {
+        if (!controller.signal.aborted) setBidConnected(false);
       }
-      if (message.type === "AUCTION_CLOSED") void loadLots();
+    }
+    void refreshBids();
+    const timer = window.setInterval(refreshBids, 2000);
+    const socket = new WebSocket(
+      `${apiUrl.replace(/^http/, "ws")}/ws/auctions/${selectedId}`,
+    );
+    socket.onmessage = () => {
+      void refreshBids();
+      setRevision((value) => value + 1);
     };
-    return () => { window.clearTimeout(timer); socket.close(); };
-  }, [loadBids, loadLots, selectedId]);
+    return () => {
+      controller.abort();
+      clearInterval(timer);
+      socket.close();
+    };
+  }, [selectedId]);
+
+  const selectLot = useCallback((lot: Lot) => {
+    setSelectedId(lot.lotId);
+    setPrice("");
+    setBidConnected(false);
+    setMessage("");
+  }, []);
 
   async function submitBid(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!selected) return;
+    if (!selected || !connected || !bidConnected || role !== "buyer") return;
     setBusy(true);
-    const response = await fetch(`${apiUrl}/lots/${selected.lotId}/bids`, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ buyerId, priceWon: bidPrice, destination: { type: "Point", coordinates: [127.028, 37.498] } }),
-    });
-    if (response.ok) setStatus("입찰이 접수됐습니다.");
-    else {
-      const error = (await response.json().catch(() => null)) as { detail?: string } | null;
-      setStatus(error?.detail ?? "입찰에 실패했습니다.");
+    try {
+      const response = await fetch(`${apiUrl}/lots/${selected.lotId}/bids`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          buyerId: buyerId.trim(),
+          priceWon: bidPrice,
+          destination: { type: "Point", coordinates: [127.028, 37.498] },
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok)
+        throw new Error(
+          typeof result.detail === "string"
+            ? result.detail
+            : "입찰에 실패했습니다.",
+        );
+      setBidData((current) => ({
+        lotId: selected.lotId,
+        bids: [
+          result as Bid,
+          ...(current?.lotId === selected.lotId
+            ? current.bids.filter((bid) => bid.bidId !== result.bidId)
+            : []),
+        ].sort((a, b) => b.priceWon - a.priceWon),
+      }));
+      setPrice("");
+      setMessage("입찰이 접수됐습니다.");
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "서버에 연결할 수 없습니다.",
+      );
+    } finally {
+      setBusy(false);
     }
-    setBusy(false);
   }
 
   async function closeAuction() {
-    if (!selected) return;
+    if (!selected || role !== "admin" || !connected) return;
     setBusy(true);
-    const response = await fetch(`${apiUrl}/lots/${selected.lotId}/close`, { method: "POST" });
-    if (response.ok) {
-      const result = (await response.json()) as { winningBid?: Bid | null };
-      setStatus(result.winningBid ? `${result.winningBid.buyerId} 낙찰로 경매를 마감했습니다.` : "입찰 없이 경매를 마감했습니다.");
-      await loadLots();
-    } else setStatus("경매 마감에 실패했습니다.");
-    setBusy(false);
+    try {
+      const response = await fetch(`${apiUrl}/lots/${selected.lotId}/close`, {
+        method: "POST",
+      });
+      if (!response.ok) throw new Error("경매 마감에 실패했습니다.");
+      const result = (await response.json()) as { winningBid?: Bid };
+      setMessage(
+        result.winningBid
+          ? `${result.winningBid.buyerId} 낙찰로 경매를 마감했습니다.`
+          : "입찰 없이 경매를 마감했습니다.",
+      );
+      setPrice("");
+      setRevision((value) => value + 1);
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "서버에 연결할 수 없습니다.",
+      );
+    } finally {
+      setBusy(false);
+    }
   }
 
-  function selectLot(lot: Lot) { setSelectedId(lot.lotId); setPrice(lot.reservePriceWon + 10_000); }
-
   return (
-    <main className={`market-page ${role === "admin" ? "admin-market" : ""}`}>
-      <header className="topbar market-topbar">
-        <div><p className="eyebrow">B2B CROP MARKET</p><h1>{role === "buyer" ? "농산물 입찰 시장" : "경매 운영 관리"}</h1></div>
-        <div className="market-header-actions">
-          <div className="role-switch" aria-label="데모 화면 전환">
-            <button className={role === "buyer" ? "active" : ""} onClick={() => setRole("buyer")} type="button">입찰자</button>
-            <button className={role === "admin" ? "active" : ""} onClick={() => setRole("admin")} type="button">관리자</button>
+    <main className="dashboard market-page">
+      <Stats
+        items={[
+          {
+            label: "공개 경매",
+            value: connected ? `${lots.length}건` : "—",
+            icon: "market",
+          },
+          {
+            label: "선택 출품 입찰",
+            value: bidConnected ? `${bids.length}건` : "—",
+            icon: "document",
+          },
+          {
+            label: "선택 출품 물량",
+            value: selected ? `${selected.quantityKg.toLocaleString()}kg` : "—",
+            icon: "box",
+          },
+          {
+            label: "현재 최고 입찰가",
+            value: highestBid ? won(highestBid.priceWon) : "—",
+            icon: "market",
+          },
+        ]}
+      />
+      <section className="page-toolbar">
+        <h1>
+          <Icon name="market" /> B2B 사과 입찰 시장
+        </h1>
+        <Badge tone={connected ? "success" : "warning"}>
+          {connected ? "● 서버 연결됨" : "서버 연결 대기"}
+        </Badge>
+        <span className="muted toolbar-update">
+          최종 업데이트 {updatedAt || "—"}
+        </span>
+        <div className="role-switch" aria-label="시뮬레이션 역할 전환">
+          <button
+            type="button"
+            className={role === "buyer" ? "active" : ""}
+            onClick={() => setRole("buyer")}
+            aria-pressed={role === "buyer"}
+          >
+            구매자 모드
+          </button>
+          <button
+            type="button"
+            className={role === "admin" ? "active" : ""}
+            onClick={() => setRole("admin")}
+            aria-pressed={role === "admin"}
+          >
+            관리자 모드
+          </button>
+        </div>
+      </section>
+      {!connected && (
+        <div className="page-notice">
+          <Badge tone="warning">연결 대기</Badge>입찰 서버에 연결할 수 없습니다.
+          자동으로 다시 연결합니다.
+        </div>
+      )}
+      {message && (
+        <div className="page-notice" role="status">
+          {message}
+        </div>
+      )}
+      <div className="market-workspace">
+        <Panel
+          title="공개 출품 목록"
+          icon="camera"
+          action={<small>총 {lots.length}건</small>}
+        >
+          <div className="lot-list">
+            {lots.map((lot) => (
+              <button
+                className={`lot-card ${selectedId === lot.lotId ? "selected" : ""}`}
+                key={lot.lotId}
+                onClick={() => selectLot(lot)}
+                type="button"
+                aria-pressed={selectedId === lot.lotId}
+                disabled={busy}
+              >
+                {photo(lot) ? (
+                  <Image
+                    src={photo(lot)!.images[0]}
+                    alt={`${variety(lot.variety)} 참고 이미지`}
+                    width={160}
+                    height={160}
+                  />
+                ) : (
+                  <span className="photo-placeholder">
+                    <Icon name="apple" />
+                  </span>
+                )}
+                <div>
+                  <div className="lot-card-title">
+                    <strong>{lot.lotId}</strong>
+                    <Badge tone="success">진행 중</Badge>
+                  </div>
+                  <p>
+                    {variety(lot.variety)}{" "}
+                    <Badge tone="purple">{grade(lot.qualityGrade)}</Badge>{" "}
+                    <span>{lot.quantityKg.toLocaleString()}kg</span>
+                  </p>
+                  <p>
+                    최저가 <b className="price">{won(lot.reservePriceWon)}</b>
+                  </p>
+                  <small>
+                    <Icon name="clock" />{" "}
+                    {now ? remaining(lot.closesAt, now) : "—"}
+                  </small>
+                </div>
+                <span className="chevron">›</span>
+              </button>
+            ))}
           </div>
-          <Link className="back-link" href="/">홈</Link>
+          {!lots.length && (
+            <Empty>
+              {connected
+                ? "진행 중인 공개 경매가 없습니다."
+                : "출품 데이터를 기다리고 있습니다."}
+            </Empty>
+          )}
+        </Panel>
+        <Panel
+          title="선택 출품 상세"
+          icon="apple"
+          action={<small>{selected?.lotId}</small>}
+        >
+          {selected ? (
+            <>
+              <div className="lot-detail-top">
+                {selectedPhoto ? (
+                  <div className="apple-gallery">
+                    <Image
+                      className="apple-main"
+                      src={selectedPhoto.images[0]}
+                      alt="동일 품종·등급의 참고 사과"
+                      width={640}
+                      height={640}
+                    />
+                    <div className="apple-thumbs">
+                      {selectedPhoto.images.slice(1).map((src) => (
+                        <Image
+                          key={src}
+                          src={src}
+                          alt="참고 사과의 다른 촬영 각도"
+                          width={240}
+                          height={240}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <Empty>출품 사진이 아직 등록되지 않았습니다.</Empty>
+                )}
+                <dl className="detail-table">
+                  <dt>품종</dt>
+                  <dd>{variety(selected.variety)}</dd>
+                  <dt>등급</dt>
+                  <dd>
+                    <Badge tone="purple">{grade(selected.qualityGrade)}</Badge>
+                  </dd>
+                  <dt>수량</dt>
+                  <dd>{selected.quantityKg.toLocaleString()}kg</dd>
+                  <dt>출품자</dt>
+                  <dd>{selected.sellerId}</dd>
+                  <dt>최저 낙찰가</dt>
+                  <dd>{won(selected.reservePriceWon)}</dd>
+                  <dt>마감</dt>
+                  <dd className="price">{time(selected.closesAt)}</dd>
+                </dl>
+              </div>
+              <p className="footnote muted">
+                사진은 같은 품종·등급의 참고 이미지이며 해당 출품의 실물 사진이
+                아닙니다.
+              </p>
+              <div className="history-strip">
+                <h3>출품 진행 이력</h3>
+                <div>
+                  <span>
+                    <Icon name="check" />
+                    <b>CQC 결과 등록</b>
+                  </span>
+                  <Icon name="arrow" />
+                  <span>
+                    <Icon name="check" />
+                    <b>출품 등록</b>
+                    <small>{time(selected.createdAt)}</small>
+                  </span>
+                  <Icon name="arrow" />
+                  <span>
+                    <Icon name="market" />
+                    <b>경매 진행 중</b>
+                  </span>
+                </div>
+              </div>
+            </>
+          ) : (
+            <Empty>왼쪽에서 출품을 선택해 주세요.</Empty>
+          )}
+        </Panel>
+        <div className="market-side">
+          <Panel
+            title="실시간 입찰 현황"
+            icon="market"
+            action={
+              <Badge tone={bidConnected ? "success" : "neutral"}>
+                {bidConnected ? "● 업데이트 중" : "대기"}
+              </Badge>
+            }
+          >
+            <div className="bid-summary">
+              <div>
+                <small>현재 최고가</small>
+                <strong>
+                  {highestBid ? won(highestBid.priceWon) : "입찰 대기"}
+                </strong>
+              </div>
+              <div>
+                <small>최고가 입찰자</small>
+                <b>{highestBid?.buyerId ?? "—"}</b>
+              </div>
+              <div>
+                <small>총 입찰 수</small>
+                <b>{bids.length}건</b>
+              </div>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>순위</th>
+                  <th>입찰자</th>
+                  <th>입찰 금액(원)</th>
+                  <th>입찰 시간</th>
+                </tr>
+              </thead>
+              <tbody>
+                {bids.slice(0, 5).map((bid, index) => (
+                  <tr
+                    key={bid.bidId}
+                    className={index === 0 ? "leading-bid" : ""}
+                  >
+                    <td>{index + 1}</td>
+                    <td>{bid.buyerId}</td>
+                    <td>{bid.priceWon.toLocaleString()}</td>
+                    <td>{time(bid.placedAt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {!bids.length && <Empty>첫 입찰을 기다리고 있습니다.</Empty>}
+          </Panel>
+          <Panel title="입찰 제출" icon="document">
+            <form onSubmit={submitBid} className="bid-form">
+              <label htmlFor="buyer">구매자 ID</label>
+              <input
+                id="buyer"
+                value={buyerId}
+                onChange={(event) => setBuyerId(event.target.value)}
+                required
+                maxLength={100}
+                disabled={role === "admin" || busy}
+              />
+              <label htmlFor="bid-price">입찰 금액</label>
+              <div className="input-unit">
+                <input
+                  id="bid-price"
+                  type="number"
+                  min={minimum}
+                  step={1}
+                  value={bidPrice}
+                  onChange={(event) => setPrice(event.target.value)}
+                  required
+                  disabled={role === "admin" || busy}
+                />
+                <span>원</span>
+              </div>
+              <button
+                className="primary-button"
+                disabled={
+                  busy ||
+                  !selected ||
+                  !connected ||
+                  !bidConnected ||
+                  role !== "buyer" ||
+                  !buyerId.trim()
+                }
+                type="submit"
+              >
+                <Icon name="arrow" />
+                {busy ? "처리 중…" : "입찰 제출"}
+              </button>
+            </form>
+            <p className="footnote muted">
+              현재 최고가보다 높은 금액을 입력해 주세요.
+            </p>
+            <div className="notice-box">
+              시뮬레이션에서는 실제 결제가 발생하지 않습니다.
+            </div>
+          </Panel>
         </div>
-      </header>
-      <section className="market-intro">
-        <div><p className="eyebrow">{role === "buyer" ? "BUYER · LIVE AUCTION" : "ADMIN · AUCTION DESK"}</p><h2>{role === "buyer" ? <>검증된 사과를<br />실시간으로 입찰하세요.</> : <>입찰 흐름을 보고<br />낙찰을 확정하세요.</>}</h2><p>{status}</p></div>
-        <div className="live-chip"><span /> 실시간 경매 연결</div>
-      </section>
-      {role === "admin" && <section className="auction-summary" aria-label="경매 운영 요약"><div><span>진행 중</span><strong>{lots.length}</strong></div><div><span>선택 경매 입찰</span><strong>{bids.length}</strong></div><div><span>현재 최고가</span><strong>{highestBid ? won(highestBid.priceWon) : "대기"}</strong></div></section>}
-      <section className="market-grid">
-        <div className="lot-list">
-          {lots.map((lot) => <button className={`lot-card ${selectedId === lot.lotId ? "selected" : ""}`} key={lot.lotId} onClick={() => selectLot(lot)} type="button"><span className="lot-status">OPEN</span><strong>{lot.variety} · {lot.qualityGrade}</strong><p>{lot.crop} · {lot.quantityKg.toLocaleString()}kg</p><small>{role === "buyer" ? "최저 낙찰가" : "설정 하한가"} {won(lot.reservePriceWon)}</small></button>)}
-          {!lots.length && <div className="empty-market">현재 공개된 경매가 없어. 발표 상태 초기화 후 다시 확인해줘.</div>}
-        </div>
-        <article className="bid-panel">
-          {selected ? role === "buyer" ? <>
-            <p className="eyebrow">SELECTED LOT</p><h3>{selected.variety} · {selected.qualityGrade}</h3><p className="lot-detail">{selected.quantityKg.toLocaleString()}kg · 최저 낙찰가 {won(selected.reservePriceWon)}</p>
-            <div className="latest-bid">현재 최고 입찰<strong>{highestBid ? `${highestBid.buyerId} · ${won(highestBid.priceWon)}` : "첫 입찰을 기다리는 중"}</strong></div>
-            <form onSubmit={submitBid}><label>구매자 ID<input value={buyerId} onChange={(event) => setBuyerId(event.target.value)} required /></label><label>입찰 금액(원)<input type="number" min={selected.reservePriceWon} step={10000} value={bidPrice} onChange={(event) => setPrice(Number(event.target.value))} required /></label><button className="bid-button" disabled={busy} type="submit">{won(bidPrice)} 입찰하기</button></form>
-          </> : <>
-            <p className="eyebrow">AUCTION CONTROL</p><h3>{selected.variety} · {selected.qualityGrade}</h3>
-            <div className="admin-lot-meta"><span>출품량<strong>{selected.quantityKg.toLocaleString()}kg</strong></span><span>하한가<strong>{won(selected.reservePriceWon)}</strong></span></div>
-            <div className="admin-bid-list"><div className="admin-bid-head"><strong>실시간 입찰 현황</strong><span>{bids.length}건</span></div>{bids.slice(0, 4).map((bid, index) => <div className="admin-bid-row" key={bid.bidId}><span>{index + 1}</span><strong>{bid.buyerId}</strong><b>{won(bid.priceWon)}</b></div>)}{!bids.length && <p className="admin-empty">아직 접수된 입찰이 없습니다.</p>}</div>
-            <button className="close-auction-button" disabled={busy} onClick={() => void closeAuction()} type="button">최고가 낙찰 · 경매 마감</button><p className="admin-note">마감 즉시 주문 생성과 자동배차가 이어집니다.</p>
-          </> : <div className="empty-detail">왼쪽 경매를 선택해 주세요.</div>}
-        </article>
-      </section>
+      </div>
+      <div className="market-bottom">
+        <Panel
+          title="최근 입찰 이벤트"
+          icon="clock"
+          action={
+            <button
+              className="text-button"
+              type="button"
+              onClick={() => setAllBids(!allBids)}
+            >
+              {allBids ? "접기" : "전체 보기"} ›
+            </button>
+          }
+        >
+          <div className="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>시간</th>
+                  <th>이벤트 유형</th>
+                  <th>LOT 번호</th>
+                  <th>내용</th>
+                  <th>관련 정보</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...bids]
+                  .sort(
+                    (a, b) => Date.parse(b.placedAt) - Date.parse(a.placedAt),
+                  )
+                  .slice(0, allBids ? undefined : 4)
+                  .map((bid) => (
+                    <tr key={bid.bidId}>
+                      <td>{time(bid.placedAt)}</td>
+                      <td>
+                        <Badge
+                          tone={
+                            bid.bidId === highestBid?.bidId
+                              ? "success"
+                              : "neutral"
+                          }
+                        >
+                          {bid.bidId === highestBid?.bidId
+                            ? "최고가 입찰"
+                            : "입찰 접수"}
+                        </Badge>
+                      </td>
+                      <td>{selectedId}</td>
+                      <td>{bid.buyerId} 입찰이 접수됐습니다.</td>
+                      <td>{won(bid.priceWon)}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+          {!bids.length && <Empty>선택한 출품의 입찰 이벤트가 없습니다.</Empty>}
+        </Panel>
+        <Panel
+          title="최고가 낙찰 · 경매 마감"
+          icon="check"
+          className="auction-close"
+          action={<Badge tone="rose">관리자 모드 전용</Badge>}
+        >
+          <p>선택한 출품의 최고가 입찰을 확정하고 경매를 마감합니다.</p>
+          <button
+            className="outline-button"
+            type="button"
+            disabled={role !== "admin" || !selected || busy || !connected}
+            onClick={() => void closeAuction()}
+          >
+            {busy ? "처리 중…" : "낙찰 처리하기"}
+          </button>
+          <div className="notice-box">
+            {role === "buyer"
+              ? "현재 구매자 모드입니다. 관리자 모드에서 마감할 수 있습니다."
+              : "시연용 관리자 화면입니다. 마감 후 되돌릴 수 없습니다."}
+          </div>
+        </Panel>
+      </div>
     </main>
   );
 }
