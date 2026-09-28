@@ -11,6 +11,9 @@ RUN pip install --no-cache-dir torch==2.11.0 torchvision==0.26.0 --index-url htt
 
 COPY src ./src
 
+# 승인된 추론 모델 패키지를 이미지 내부에 포함
+COPY models/cqc-apple-separate12-focal-v2-candidate /app/models/approved
+
 EXPOSE 8001
 
 CMD ["python", "-m", "src.inference.api", "--model-dir", "/app/models/approved", "--device", "cpu", "--host", "0.0.0.0", "--port", "8001"]

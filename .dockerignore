@@ -2,7 +2,11 @@
 .venv
 __pycache__
 data
-models
+
+models/*
+!models/cqc-apple-separate12-focal-v2-candidate/
+!models/cqc-apple-separate12-focal-v2-candidate/**
+
 outputs
 notebooks
 tests
