@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
 from pydantic import Field, model_validator
@@ -32,6 +33,8 @@ class Settings(BaseSettings):
     inference_business_deadline_ms: int = Field(default=500, ge=1)
     inference_hard_timeout_ms: int = Field(default=2000, ge=1)
     max_late_tasks: int = Field(default=4, ge=0)
+    fault_image_storage_root: Path | None = None
+    fault_image_limit: int = Field(default=100, ge=1)
 
     @model_validator(mode="after")
     def validate_inference_deadlines(self) -> Settings:
