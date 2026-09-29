@@ -107,6 +107,7 @@ export function AppHeader() {
   const pathname = usePathname();
   const [now, setNow] = useState<Date>();
   useEffect(() => {
+    if (pathname === "/") return;
     const tick = () => setNow(new Date());
     const start = window.setTimeout(tick, 0);
     const timer = window.setInterval(tick, 1000);
@@ -115,6 +116,7 @@ export function AppHeader() {
       clearInterval(timer);
     };
   }, [pathname]);
+  if (pathname === "/") return null;
   return (
     <header className="app-header">
       <div className="brand">
@@ -127,7 +129,6 @@ export function AppHeader() {
       <nav aria-label="주요 메뉴">
         {(
           [
-            { href: "/", label: "품질 검사", icon: "camera" },
             { href: "/market", label: "입찰 시장", icon: "market" },
             { href: "/control", label: "차량 관제", icon: "truck" },
           ] as const

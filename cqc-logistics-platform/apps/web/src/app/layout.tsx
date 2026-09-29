@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./quality-console.css";
 import { AppHeader } from "@/components/Dashboard";
 import QualityViewport from "@/components/QualityViewport";
 
