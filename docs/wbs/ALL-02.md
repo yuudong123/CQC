@@ -1,6 +1,6 @@
 # ALL-02 독립 실행 점검 및 통합 기록
 
-- 기준일: 2026-09-23
+- 기준일: 2026-09-23 (2026-09-29 dev `1958fa5` 기준 갱신 절 추가)
 - 상태: 점검 기록 작성, 독립 실행 전체 완료 미확인
 - WBS의 ID·담당·일정은 변경하지 않는다.
 
@@ -13,7 +13,7 @@
 - 발표 자료와 API 계약은 용도가 달라 기존 전용 폴더를 유지했다.
 - 다른 브랜치의 문서를 이 브랜치에 복제하거나 기존 WBS ID·담당·일정을 변경하지 않았다.
 
-## 코드별 문서 작성 현황
+## 코드별 문서 작성 현황 (2026-09-23 기록)
 
 | 파트 | 확인된 명세 | 비고 |
 |---|---|---|
@@ -35,7 +35,29 @@
 - 기존 27개 Test 재평가는 회귀 비교이며 독립적인 최종 승인에는 신규 holdout이 필요하다.
 - 가상 당도 결합보다 이미지 단독의 개발 강건 점수가 높아 이미지 단독을 최종 학습 후보로 기록했다.
 
-## 통합 잔여 작업
+## 2026-09-29 갱신: 코드별 문서와 통합 잔여
+
+아래 09-23 기록은 보존하고, 현재 상태는 이 절을 따른다.
+
+| 파트 | dev의 작업 문서 | 비고 |
+|---|---|---|
+| DM | DM-01~09 | v2 후보는 미승인·신뢰도 미보정 |
+| MO | MO-01~06 | MO-07 이후 작업 기록은 없음 |
+| BE | BE-01~05 | BE-06 코드는 병합됐고 문서는 없음 |
+| FE | FE-01~10, Frontend 작업 종합 정리 | PR #18·#21 병합 |
+
+| 항목 | 현재 상태 | 완료 조건 |
+|---|---|---|
+| 실제 QC → 물류 | 브라우저 탭이 정상 선별 결과를 물류 API로 출품·입찰·배차하는 시연(FE-10) | Backend 기반 출품·중복 방지, 통합 시연 시험 |
+| 가상 당도 표시 | Backend 응답 `brix_is_measured=false`, FE 이력 화면 "가상 °Brix (비실측)" 표시, 14°Brix 구간 | 실제 Simulator 입력으로 확인 |
+| QC Compose | mysql·inference·backend는 실제 설정, frontend·simulator는 placeholder | FE Dockerfile 연결, Simulator 구현 |
+| CI | Jenkins는 Compose 검사·빌드·기동·health 확인. pytest·웹 테스트 단계 없음 | 파트 테스트 단계와 실패 시 이전 버전 유지 |
+| QC 프론트 | FE-01~10 구현, 자동 시험 31개 통과 | 실제 Backend 연결과 장시간 시험 |
+| QC Backend | 저장·이력·통계·CSV와 관제 조회 API 5개, 장애 이미지 저장 계층 | 관제 제어·검수·이미지 API, Simulator, 배포 시 migration 적용 |
+| CPU 성능 | i7-4790 합성 입력 모델 단독·Compose HTTP 측정 | 실제 시연 사진·Simulator·DB 포함 측정 |
+| 최종 모델 | v2 후보 패키지·체크섬·HTTP 계약 | v2 신뢰도 보정·임계값 재결정, 독립 holdout 부재를 한계로 명시 |
+
+## 통합 잔여 작업 (2026-09-23 기록)
 
 | 항목 | 현재 확인 상태 | 완료 조건 |
 |---|---|---|
@@ -66,7 +88,7 @@
 | `docs/planning/decision-log.md` | 기획 인터뷰 확정 사항 | 최신 | 새 결정 즉시 |
 | `docs/wbs/reference/BE/backend-stack.md` | Backend 기술 선택·버전·실행법 | FastAPI·MySQL·HTTP 기초 합의 반영 | 세부 라이브러리·버전 선정 시 |
 | `docs/wbs/reference/DM/model-stack.md` | 데이터·모델 기술 선택·실행법 | 구현·평가 결과 반영 | v2 결과와 i7-4790 수용시험 완료 시 |
-| `docs/wbs/reference/FE/frontend-stack.md` | Frontend 기술 선택·실행법 | 담당자 작성 대기 | 담당자 기술 선정 시 |
+| `docs/wbs/reference/FE/frontend-stack.md` | Frontend 기술 선택·실행법 | 작성됨(2026-09-29) | 실제 Backend 연결 시 |
 | `docs/wbs/reference/MO/mlops-stack.md` | MLOps 기술 선택·실행법 | MO-01~05와 현재 통합 기반 반영 | QC 5개와 물류 3개 서비스 통합 시 |
 
 ## 확정 사항

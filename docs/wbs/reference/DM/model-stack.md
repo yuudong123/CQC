@@ -2,7 +2,7 @@
 
 - 담당자: 조현재
 - 작성 기한: 2026-09-17
-- 상태: DM-01~DM-09 완료, 최종 Test 품질 승인 실패·i7-4790 수용시험 미완료
+- 상태: DM-01~DM-09 완료. v1은 최초 Test 품질 승인 실패, 서비스 모델은 v2 후보(미승인·신뢰도 미보정). i7-4790은 합성 입력 측정만 완료
 
 ## 현재 확정
 
@@ -26,6 +26,15 @@
 - 생성 위치: `data/processed/manifest.csv`, `data/processed/manifest-summary.json`
 - 무결성 결과: `data/processed/image-quality-report.json`
 - 모델 파일·체크포인트·생성 매니페스트는 Git에서 제외
+
+## v2 후보 (현재 서비스 모델)
+
+- 패키지: `cqc-apple-separate12-focal-v2-candidate`, 체크포인트 SHA-256 `b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a`
+- 구조·입력: v1과 같은 `separate`·대표 12장·224×224 RGB
+- 학습: 품질 Focal loss(gamma 2), learning rate 3e-4, dropout 0.4, weight decay 5e-4, Test 제외 152그룹, 4 epoch
+- 개발 검증 품질 Macro F1: 5-fold 평균 0.8844, source 0.7932. 기존 Test 27개는 회귀 진단 1.0000으로 독립 승인 근거가 아님
+- 상태: `approval_status=unverified_candidate`, `threshold_status=not_calibrated`. 서비스 임계값 0.50은 v1 검증 예측 기준이므로 v2 기준 재결정이 필요
+- 근거: [DM-06](<../../[DM-06] 모델·입력 장수 비교.md>), [DM-09](<../../[DM-09] 최종 Test·모델 카드.md>)
 
 ## v1 선택 설정
 

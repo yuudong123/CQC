@@ -4,7 +4,7 @@
 
 ## 기준 문서
 
-- [전체 작업 요약](../../Frontend-작업-종합정리.md): 화면 변경, FE-01~09, 검증·잔여·코드 위치.
+- [전체 작업 요약](../../Frontend-작업-종합정리.md): 화면 변경, FE-01~10, 검증·잔여·코드 위치.
 - [관제 API 인계](../../협업공지/Frontend-관제-API-계약-인계.md): 실행법·API·협업 요청.
 - [OpenAPI](../../../contracts/quality-operations.openapi.json): 상세 요청·응답 schema.
 
@@ -18,4 +18,4 @@ Next.js 16.3.5, React 19.2.8, TypeScript 5, CSS Grid, native dialog. 품질 페�
 
 ## 완료 판정
 
-FE-01~07 클라이언트와 참조 API를 구현했다. 자동 시험 20개와 lint/build 통과 기록이 있다. 실제 Backend/Simulator/DB 통합, 실제 장시간 브라우저 검증, 공동 수용시험·동결은 남아 있다. 상세 상태는 전체 작업 요약을 따른다.
+FE-01~07 클라이언트와 참조 API, FE-10 자동 경매 시연을 구현했다. 2026-09-29 dev 기준 자동 시험 31개, ESLint 오류 0, build 통과를 확인했다. 실제 Backend/Simulator/DB 통합, 실제 장시간 브라우저 검증, 공동 수용시험·동결은 남아 있다. 상세 상태는 전체 작업 요약을 따른다.

@@ -2,6 +2,8 @@
 
 2026-09-26 사용자 결정. WBS 작업명·기간은 바꾸지 않고 시연 정책만 6개 정상 bin에서 12개로 확장한다. 실제 당도 측정·새 모델 학습은 하지 않는다.
 
+> **2026-09-29 dev `1958fa5` 반영:** 아래 Backend 작업 1~4 중 당도 누락 재검사, 구간 키 migration과 13개 seed, 12조합·13.9/14.0 경계 테스트는 BE-05로 구현됐다. 배차는 코드 상수 대신 DB `bin_mappings`를 조회하며, 구간 판정은 `src/api/services/inspections.py`의 `_classify_sweetness`, 상수는 `bin_policy.py`의 `DEMO_SWEETNESS_THRESHOLD_BRIX=14.0`이다(`determine_demo_target_bin` 함수는 제거됨). Simulator 연결과 migration 배포는 남아 있다. 본문의 "6-bin 경로가 남아 있다"는 설명은 09-26~29 당시 기록이다.
+
 ## 결정된 정책
 
 - v2는 **품종(fuji/yanggwang)과 외관 등급(L/M/S)**을 예측한다. 가상 당도는 별도 시연 생성값(`virtual_brix`, `brix_is_measured=false`)이다.

@@ -1,7 +1,7 @@
 # 프로젝트 기획 및 조사
 
 - 작성일: 2026-09-16
-- 최신 검토일: 2026-09-29
+- 최신 검토일: 2026-09-29 (dev `1958fa5` 반영)
 - 프로젝트명: **CQC**
 - 현재 확보 품목: **사과**
 - 사과 범위: **품종 2종**
@@ -9,7 +9,7 @@
 - 데이터: [AI Hub 농산물 품질(QC) 이미지](https://aihub.or.kr/aihubdata/data/view.do?aihubDataSe=data&dataSetSn=149&topMenu=103)
 - 프로젝트 기간: 1개월
 - 문서 상태: QC 검사·선별과 판매·물류 시연의 실행 기준. 현재 구현, 남은 통합 요구사항과 농가별·클라우드 확장 후보를 구분한다.
-- 확인 기준: 최신 `origin/dev`의 `85c8b8e`를 포함하는 `feat/data`의 `68c409d`, 현재 코드·Compose·저장된 평가 결과. 다른 기능 브랜치의 미병합 작업이나 서버의 현재 실행 상태는 완료 근거로 사용하지 않는다.
+- 확인 기준: `origin/dev` `1958fa5`(PR #21 FE-10, PR #22 BE-05·BE-06 포함), 현재 코드·Compose·저장된 평가 결과, 같은 날 재실행한 자동 시험(Python 218개 통과·MySQL 통합 5개 통과, 웹 31개 통과). 다른 기능 브랜치의 미병합 작업이나 서버의 현재 실행 상태는 완료 근거로 사용하지 않는다.
 
 > 이 문서를 프로젝트의 최상위 기획 기준으로 사용한다. [의사결정 기록](<planning/decision-log.md>)은 세부 결정 근거를 보존하며, 두 문서가 충돌하면 이 문서를 우선한다.
 
@@ -24,12 +24,12 @@
 | 영역 | 확인한 구현·결과 | 남은 확인·작업 |
 |---|---|---|
 | 데이터·모델 | 25,024장·179개 사과, 사과 단위 분할, 다각도 로더·학습·추론 코드, 과정별 노트북 | 현장 데이터 일반화와 신규 독립 시험 데이터 확보 |
-| 모델 품질 | v1 최초 Test 품질 Macro F1 0.7778; v2 후보의 재사용 Test 진단 1.0000 | v2의 독립 품질 승인과 신뢰도 재보정. 재사용 Test 점수로 승인하지 않음 |
+| 모델 품질 | v1 최초 Test 품질 Macro F1 0.7778; v2 후보 개발 검증 품질 F1 5-fold 0.8844·source 0.7932, 재사용 Test 진단 1.0000 | v2의 독립 품질 승인과 신뢰도 재보정(현재 임계값 0.50은 v1 검증 예측 기준). 재사용 Test 점수로 승인하지 않음 |
 | 목표 CPU | i7-4790 합성 입력 모델 단독 및 별도 Compose HTTP 측정 기록 존재 | 실제 사진·동시 요청·DB·Simulator를 포함한 운영 수용시험 |
-| Backend | 검사 API·실제 Inference HTTP 호출·시간초과/지연 결과 관리·가상 제어·ORM·초기 마이그레이션 | 실제 저장·조회, FE 관제 API 연결, 13개 bin seed와 당도 저장 계약 |
-| Frontend | Next.js 품질 관제·이력·통계·장애 관리 화면, API 클라이언트·proxy·참조 서버 | 실제 Backend·DB·Simulator 연결과 장시간 검증. 현재 화면 구성으로 마무리 |
+| Backend | 검사 API·실제 Inference HTTP 호출·시간초과/지연 결과 관리·가상 제어, 12-bin migration·13개 bin seed, MySQL 저장·이력·통계·CSV와 관제 조회 API 5개(BE-05), 장애 이미지 저장 계층(BE-06) | 관제 제어·검수·장애 이미지·미리보기 API, 장애 이미지 저장 트리거, 지연 결과 DB 저장, 보존 삭제, 배포 시 migration 적용 |
+| Frontend | Next.js 품질 관제·이력·통계·장애 관리 화면, API 클라이언트·proxy·참조 서버, 12장 그룹 관제와 브라우저 자동 경매·배차 시연(FE-10) | 실제 Backend·DB·Simulator 연결과 장시간 검증. 현재 화면 구성으로 마무리 |
 | Simulator | 시연 사진 묶음·당도 CSV와 입력 계약 준비 | 실제 입력·시작/정지·위치 저장·복구 구현 및 루트 배포 연결 |
-| 물류 | 출품·입찰·배차·배송 상태 코드와 역할별 화면, Compose 구성 | QC 결과의 실제 출품 연결과 통합 시연 검증 |
+| 물류 | 출품·입찰·배차·배송 상태 코드와 역할별 화면, Compose 구성. 정상 선별 결과를 브라우저에서 출품·입찰·배차까지 보내는 시연(FE-10) | Backend 기반 출품 연결·중복 방지와 통합 시연 검증 |
 | 통합 배포 | QC 5개·물류 3개 서비스 구성. Backend·Inference는 실제 실행 설정 | 루트 `frontend`·`simulator`는 placeholder; Jenkins 운영 트리거 확인 및 전체 흐름 시험 |
 
 이 표는 저장소와 보존된 증거의 상태다. 이번 검토에서 서버에 접속해 재배포하거나 현재 운영 상태를 재측정하지 않았다.
@@ -132,7 +132,7 @@
 | 보조 정보 | 촬영면·수직·수평 각도 메타데이터 | Simulator의 대표 프레임 선택과 Inference 입력 검증·추적에 사용 |
 | 정답 | 부사·양광 품종과 특·상·보통 품질 등급 | 학습·평가에 사용하고 서비스 모델 입력에서는 제외 |
 | 출력 | 예측 품종·품질등급, 각 확률·신뢰도, 시연용 가상 당도와 출처 | 기획 확정 |
-| 자동화 출력 | 품종 2종 × 외관 3단계 × 가상 당도 2단계의 정상 12 bin 또는 재검사 bin | 시연용 분기 코드 존재; DB seed·Simulator·저장 연동 대기 |
+| 자동화 출력 | 품종 2종 × 외관 3단계 × 가상 당도 2단계의 정상 12 bin 또는 재검사 bin | 분기·DB seed·저장 구현; Simulator 연동 대기 |
 | 설명 정보 | 모델 주목 영역 시각화 | 구현 여유에 따른 확장 |
 
 첫 기준선은 부사와 양광 이미지를 입력으로 사용하여 품종 라벨과 품질 라벨을 각각 예측한다. 서비스 추론에는 정답 품종·품질과 `group_no`를 모델 입력으로 전달하지 않는다. 당도는 실측값이 없는 현재 데이터에서 판정하지 않으며, 별도 가상 센서가 만든 `virtual_brix`를 `brix_is_measured=false`와 함께 시연한다. 이미지 단독 기준선과 가상 당도를 결합한 late-fusion 실험은 분리 평가한다.
@@ -236,7 +236,7 @@ AI Hub 원본 이미지·라벨
   → 웹 화면에 결과 표시
 ```
 
-위 흐름은 통합 완료 기준이다. 현재 저장·조회와 Simulator·관제 API 연결은 남아 있다. 검사 API의 당도 입력은 현재 선택형이며 누락 시 기존 6-bin 호환 경로가 남아 있으므로, 최종 12-bin 시연에서는 필수 당도 누락 처리까지 Backend 계약을 맞춰야 한다. 정상 QC 결과를 출품 데이터로 전달한 뒤 물류 서비스의 입찰·낙찰·배차 흐름을 연결한다.
+위 흐름은 통합 완료 기준이다. 검사 결과 저장·조회는 BE-05로 구현됐고, Simulator와 관제 제어 API 연결은 남아 있다. 검사 API의 `virtual_brix`는 형식상 선택 입력이지만 누락되면 `VIRTUAL_BRIX_MISSING` 재검사로 분기하며 6-bin 경로는 사용하지 않는다. 정상 QC 결과를 출품 데이터로 전달한 뒤 물류 서비스의 입찰·낙찰·배차 흐름을 연결한다.
 
 ### 3.2 MVP 기능 범위
 
@@ -293,7 +293,7 @@ AI Hub 원본 이미지·라벨
 | Next.js 웹 | 품질 관제·이력·통계·장애 관리와 물류 화면 | 백엔드 조회·제어 API | 품종, 등급, 신뢰도, 처리 결과와 거래·배송 상태 |
 | MySQL | 순환 보존 검사 이력과 통계·분석 조회 지원 | 판정 이벤트와 검사 결과 | 웹 조회용 이력·집계 데이터 |
 
-Backend는 **Python + FastAPI**, QC 이력은 **MySQL**, 판매·물류 데이터는 **MongoDB**, 공통 웹 구현은 **Next.js·React·TypeScript**를 사용한다. QC의 ORM·초기 마이그레이션은 `src/api/db/`에 있고 실제 저장·조회 연결은 남아 있다.
+Backend는 **Python + FastAPI**, QC 이력은 **MySQL**, 판매·물류 데이터는 **MongoDB**, 공통 웹 구현은 **Next.js·React·TypeScript**를 사용한다. QC의 ORM·마이그레이션(초기 스키마, 12-bin seed)은 `src/api/db/`에 있고 검사 결과 저장·이력·통계 조회는 연결됐다.
 
 QC 이력 보존 목표는 상한 86,400건 도달 시 오래된 8,640건 삭제다. 초당 2그룹이면 약 10.8~12시간을 보존한다. DB 장애에도 유효한 선별 명령은 계속 처리하고 저장 실패를 별도 상태로 표시하는 것이 목표다. 보존·삭제·장애 요구사항을 구현 완료로 표시하지 않는다.
 
@@ -308,7 +308,7 @@ QC 이력 보존 목표는 상한 86,400건 도달 시 오래된 8,640건 삭제
 | inspection_id | 전체 처리 흐름에서 공유할 검사 ID | 현재 검사 API 필수 |
 | images | 같은 사과의 다각도 이미지 파일, 기본 시연은 사전 구성 12장 | 현재 검사 API 필수 |
 | metadata | 이미지별 `view_index`, `angle_direction`, `verticality_angle`, `horizontality_angle`의 JSON 배열 | 현재 검사 API 필수 |
-| virtual_brix | 사과 묶음의 고정 가상 당도, 9~18°Brix | 현재 API 선택형; 최종 12-bin 시연 연결 필요 |
+| virtual_brix | 사과 묶음의 고정 가상 당도, 9~18°Brix | 형식상 선택 입력, 누락 시 재검사 분기; Simulator 전송 연결 필요 |
 | captured_at·sequence_no | 촬영·입력 시각과 Simulator 위치 관리 정보 | 현재 검사 API 필드가 아님; Simulator·저장 계약에서 필요 여부 확정 |
 
 `1 inspection = 사과 1개 = group_no 1개`로 처리한다. 전송 형식은 Base64 JSON이 아닌 `multipart/form-data`를 사용하며 스마트폰 카메라, 사용자 이미지 파일 업로드와 실제 산업용 카메라 입력은 제공하지 않는다. `group_no`와 정답 품종·품질은 모델 입력으로 전달하지 않는다.
@@ -326,7 +326,7 @@ QC 이력 보존 목표는 상한 86,400건 도달 시 오래된 8,640건 삭제
 
 품질 코드는 `L=특`, `M=상`, `S=보통`이다. Backend는 클래스 인덱스를 추측하지 않고 응답의 라벨별 확률을 사용한다. Inference는 예측·진단을 반환하고 저신뢰·시간초과·bin·DB·제어 정책은 Backend가 적용한다. 검사·제어·저장 상태는 각각 구분한다. 지연 결과는 현재 메모리에서 관리하며, 확정된 제어 명령을 바꾸지 않고 DB 진단으로 저장하는 연결은 남아 있다.
 
-FE 관제용 조회·통계·CSV·시연 제어·이미지 관리 계약은 [관제 API 인계](wbs/협업공지/Frontend-관제-API-계약-인계.md)와 [관제 OpenAPI](contracts/quality-operations.openapi.json)를 따른다. 기존 검사 API와 별도이며 실제 Backend adapter 구현·대조가 필요하다.
+FE 관제용 조회·통계·CSV·시연 제어·이미지 관리 계약은 [관제 API 인계](wbs/협업공지/Frontend-관제-API-계약-인계.md)와 [관제 OpenAPI](contracts/quality-operations.openapi.json)를 따른다. 기존 검사 API와 별도다. Backend에는 조회 5개(`snapshot`, `inspections`, `inspections.csv`, `statistics`, `statistics.csv`)가 구현됐고 제어·검수·장애 이미지·미리보기 4개는 남아 있다.
 
 ### 3.7 판매·물류 통합 범위와 구현 원칙
 
@@ -352,8 +352,8 @@ FE 관제용 조회·통계·CSV·시연 제어·이미지 관리 계약은 [관
 | 이미지 처리 | 로딩, 리사이즈, 증강 | 학습·추론 동일 처리 가능 | Pillow·torchvision v2, RGB 224×224·ImageNet 정규화 확정 |
 | 모델 학습 | 전이학습과 평가 | 시연 장비, GPU 유무, 재현성 | PyTorch·torchvision, MobileNetV3 Small 전이학습 확정 |
 | Backend API | 검사 요청·Inference 호출·조회 | 단순성, 자동 문서화 | FastAPI·Pydantic·SQLAlchemy·Alembic. 버전 범위는 requirements 파일 기준 |
-| 웹 | QC 관제·관리와 물류 화면 | 현재 화면 재사용·통합 | Next.js·React·TypeScript·Tailwind CSS, 물류 지도는 Google Maps |
-| 데이터베이스 | QC 이력과 거래·배차 기록 | 영역별 저장·조회 요구 | QC MySQL·ORM·초기 migration; 물류 MongoDB |
+| 웹 | QC 관제·관리와 물류 화면 | 현재 화면 재사용·통합 | Next.js·React·TypeScript·Tailwind CSS, 물류 지도는 Google Maps(키는 Jenkins Credentials) |
+| 데이터베이스 | QC 이력과 거래·배차 기록 | 영역별 저장·조회 요구 | QC MySQL·ORM·migration 2개·저장·조회; 물류 MongoDB |
 | 테스트 | 데이터·추론·API·FE 검증 | 핵심 실패 재현 | Python unittest·pytest, 웹 Node 테스트와 공동 수용시험 |
 | 실행 | 팀 PC에서 동일 실행 | 설치 재현성과 시연 안정성 | Docker Compose 통합, 학습은 원격 Windows CUDA 환경 사용 |
 
@@ -599,12 +599,12 @@ MLOps·CI/CD: 기본 실행 환경 → 영역별 자동 검사 → 통합 배포
 | 모델 프레임워크 | PyTorch·torchvision 확정 | Python 3.11, 원격 CUDA 학습과 CPU 추론 |
 | Backend 기술 | FastAPI·Pydantic·SQLAlchemy·Alembic 확정 | 실제 의존성 파일과 Backend 코드 기준 |
 | 웹 기술·화면 | Next.js·React·TypeScript 확정, 현재 화면으로 마무리 | 실제 관제 API 연결과 배포·장시간 시험 |
-| 데이터베이스 | QC MySQL·물류 MongoDB 확정 | QC ORM·초기 migration 존재; 저장·조회·보존·당도 연결 필요 |
-| 저신뢰 임계값 | 기본값 품종·품질 0.50; v2 신규 보정 미완료 | 기존 검증 근거와 v2 후보 상태를 구분하고 신규 검증 |
-| bin 코드·매핑 구조 | 임시 6-bin·시연 12-bin·재검사 코드 존재 | 최종 13개 bin seed·저장·FE 매핑 합의 |
+| 데이터베이스 | QC MySQL·물류 MongoDB 확정 | 저장·조회·당도 컬럼 구현; 보존 삭제(86,400/8,640)와 배포 시 migration 적용 필요 |
+| 저신뢰 임계값 | 기본값 품종·품질 0.50(v1 검증 예측 기준); v2 신규 보정 미완료 | v2 설정의 5-fold OOF 예측으로 보정·임계값 재결정 |
+| bin 코드·매핑 구조 | 12-bin·재검사 1개 seed(`DEMO_BIN_01~12`, 재검사 bin) migration 구현 | FE 표시 매핑 대조 |
 | 모델 성능 승인값 | 확정 | 품종·품질 Macro F1 각각 0.90 이상 |
 | 이미지 형식·파일/요청 크기·허용 프레임 수 | 확정 | PNG/JPEG, 1~12장, multipart 합계 24MiB |
-| 상태·오류·OpenAPI | 검사 계약·상태 Enum과 FE 관제 계약 존재 | 실제 저장·관제 응답 매핑과 공동 검증 |
+| 상태·오류·OpenAPI | 검사 계약·상태 Enum과 FE 관제 계약, Backend 조회 API 5개 구현 | 제어·검수·이미지 API 구현과 공동 검증 |
 | late result 처리 | 제한된 메모리 추적·hard timeout 구현 | 확정 제어 유지, 진단 DB 저장 연결 |
 | Simulator·FE 통합 배포 | 루트 Compose에서 두 서비스 placeholder | Simulator 구현·볼륨과 기존 웹 컨테이너의 역할 연결 |
 | Jenkins 운영 트리거 | 사용자 설명 Poll SCM, 저장소는 githubPush 선언 | 실제 Job 대상 브랜치·폴링 설정 확인 후 일치시킴 |
