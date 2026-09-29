@@ -2,6 +2,19 @@
 
 기준: 2026-09-29 `dev`의 PR #18 병합 커밋 `2fa187b`에서 코드·WBS·Compose를 확인한 스냅샷. Backend 담당자가 돌아오면 **현재 브랜치·PR·파일 상태를 먼저 재확인**하고 아래 미완료 항목부터 이어간다. 이 문서는 기존 WBS 코드나 완료 기록을 고치지 않는다.
 
+## 0. 2026-09-29 dev `1958fa5` 반영 상태
+
+아래 1~5절은 `2fa187b` 시점 스냅샷이다. 이후 PR #20·#22로 다음이 반영됐다.
+
+| 인계 항목 | 현재 상태 |
+|---|---|
+| 당도 누락 시 6-bin 경로 | 제거됨. `virtual_brix`가 없으면 `VIRTUAL_BRIX_MISSING` 재검사로 분기 |
+| 당도 구간 bin 키·13개 seed | migration `20260929_02`로 구현 (`DEMO_BIN_01~12`, 재검사 bin) |
+| 저장 Repository·이력·통계·CSV | BE-05로 구현. 관제 조회 API 5개(`/v1/quality/snapshot`, `inspections`, `inspections.csv`, `statistics`, `statistics.csv`) |
+| 장애 이미지 | BE-06으로 저장 계층 구현. 저장 트리거와 조회·삭제 API는 미연결 |
+| 테스트 | Python 218개 통과, MySQL 통합 5개 통과(`alembic upgrade head` 후) |
+| 남은 것 | BE-07 Simulator, 관제 제어·검수·장애 이미지·미리보기 API, 지연 결과 DB 저장, 보존 삭제, 배포 시 migration 적용(MLOps와 협의) |
+
 ## 1. 지금 구현된 것과 구현되지 않은 것
 
 - `src/api/`에는 BE-01~BE-04 범위의 FastAPI `POST /v1/inspections`, `/health`, 실제 HTTP 및 Mock Inference client/Virtual Control, 신뢰도·500ms timeout·late-result 정책이 있다. `src/api/db/`에는 ORM과 **초기** Alembic migration이 있지만 검사 결과를 실제 MySQL에 저장하는 Repository는 없다.

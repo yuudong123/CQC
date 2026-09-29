@@ -12,7 +12,7 @@
 | 결정 근거·변경 이력 | [의사결정 기록](planning/decision-log.md) |
 | 담당·일정·선행 작업 | [WBS 원본](wbs.md) |
 | 파트별 통합 현황·잔여 작업 | [ALL-02](wbs/ALL-02.md) |
-| 실제 API 계약 | [Inference OpenAPI](contracts/inference-openapi.json) |
+| 실제 API 계약 | [Inference OpenAPI](contracts/inference-openapi.json), [관제 OpenAPI](contracts/quality-operations.openapi.json) |
 
 ## 작업 기록과 부속 명세
 
@@ -23,12 +23,12 @@
 | 추론·배포 | DM-07 (`wbs/`) | [연동 공지 이력](wbs/협업공지/모델-추론-계약-공지.md) |
 | 신뢰도·성능 | DM-08 (`wbs/`) | [목표 CPU 시험 절차](wbs/reference/DM/i7-4790-acceptance.md) |
 | 최종 평가·모델 카드 | DM-09 (`wbs/`) | [v1 카드](wbs/reference/DM/model-card.md), [카드 양식](wbs/reference/DM/model-card-template.md) |
-| 백엔드 | 최신 dev의 BE 작업 문서 | [백엔드 스택](wbs/reference/BE/backend-stack.md) |
-| 프론트엔드 | 공유된 FE 작업 기록 미확인 | [프론트 스택](wbs/reference/FE/frontend-stack.md) |
+| 백엔드 | BE-01~05 (`wbs/`) | [백엔드 스택](wbs/reference/BE/backend-stack.md) |
+| 프론트엔드 | FE-01~10 (`wbs/`), [종합 정리](wbs/Frontend-작업-종합정리.md) | [프론트 스택](wbs/reference/FE/frontend-stack.md) |
 | MLOps | MO-01~06 (`wbs/`) | [MLOps 스택](wbs/reference/MO/mlops-stack.md), [CPU 성능시험](wbs/MO-06.md) |
 | 파트 간 전달 | ALL-02 (`wbs/`) | [QC·물류 연결](wbs/reference/ALL/qc-logistics-handoff.md), [협업 요청](wbs/협업공지/파트별-협업-요청.md) |
 
-최신 후보 모델 상태는 DM-09 본문을 따른다. 과거 공지·v1 카드·실험 결과를 현재 승인 상태로 해석하지 않는다. 백엔드 문서는 브랜치에 따라 차이가 있으며 이 정리는 다른 브랜치를 병합하지 않는다.
+최신 후보 모델 상태는 DM-09 본문을 따른다. 과거 공지·v1 카드·실험 결과를 현재 승인 상태로 해석하지 않는다. 각 파트 문서는 dev에 병합된 내용을 기준으로 한다.
 
 ## 폴더 규칙
 

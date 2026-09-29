@@ -20,7 +20,18 @@ https://docs.google.com/spreadsheets/d/1E4s9fRkWV9CWqBU_eaYLZt1W7aAxbuuUmLPl04V0
 | BE | 백엔드·DB | 홍준희 | `docs/wbs/reference/BE/backend-stack.md`, OpenAPI, DB 설계 |
 | MO | MLOps·CI/CD | 홍유나 | `docs/wbs/reference/MO/mlops-stack.md`, Compose, CI/CD·운영 문서 |
 
-## 현재 작업 상태 (2026-09-28)
+## 파트별 현황 (2026-09-29, dev `1958fa5`)
+
+WBS의 ID·담당·일정은 바꾸지 않고 dev에 병합된 구현만 적는다. 같은 날 자동 시험은 Python 218개(MySQL 통합 5개 포함 시 모두 통과), 웹 31개가 통과했다.
+
+| 파트 | dev에 반영된 범위 | 남은 핵심 |
+|---|---|---|
+| DM | DM-01~09 문서·코드, v2 후보 패키지(`unverified_candidate`, 신뢰도 미보정), 시연 묶음·가상 당도 14°Brix 구간 | v2 기준 신뢰도 보정·임계값 재결정, 실제 사진 기반 처리시간 측정, 독립 holdout 부재를 한계로 명시 |
+| FE | FE-01~10 (PR #18·#21): 품질 관제·이력·통계·장애 관리, 12장 그룹 관제, 브라우저 자동 경매·배차 시연 | 실제 Backend·Simulator 연결, 장시간 브라우저 시험 |
+| BE | BE-01~05 완료, BE-06 장애 이미지 저장 계층(PR #22) | 장애 이미지 트리거·관제 제어/검수/이미지 API, BE-07 Simulator, BE-08 이후 |
+| MO | 아래 표 | 아래 표 |
+
+## MLOps 작업 상태 (2026-09-28, MO 작성)
 
 최신 `origin/dev` 반영 상태와 실제 구현을 대조해 완료 범위와 남은 범위를 갱신한다. 물류 API·웹 화면은 현재 dev에 반영된 범위까지만 완료로 표시하고, 서버 운영 설정과 전체 CQC 통합은 별도 확인 대상으로 둔다.
 
@@ -45,7 +56,7 @@ https://docs.google.com/spreadsheets/d/1E4s9fRkWV9CWqBU_eaYLZt1W7aAxbuuUmLPl04V0
 1. **MO-05 잔여 정리:** 장애 이미지·Simulator 위치·로그 보존 영역과 운영 Secret 절차를 Compose/Jenkins 문서에 반영한다.
 2. **MO-06 잔여 정리:** 동일 Compose에서 입력 장수와 병렬 수를 비교하고 기준값을 고정한다.
 3. **MO-07 잔여 정리:** 배포 전 검증, 실패 시 기존 컨테이너 유지, 복구 명령을 Pipeline에 연결하고 검증한다.
-4. **BE-05 연계:** Backend 검사 결과 저장·조회가 연결되면 MO-07 통합 범위를 확장한다.
+4. **BE-05 연계:** Backend 검사 결과 저장·조회가 연결되면 MO-07 통합 범위를 확장한다. (2026-09-29 BE-05가 dev에 병합됨)
 
 ## 3. 마일스톤
 

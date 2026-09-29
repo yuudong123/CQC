@@ -7,7 +7,7 @@ AI Hub 농산물 품질(QC) 이미지를 이용해 사과의 품종과 품질 �
 - 대상: 부사(`fuji`)·양광(`yanggwang`) 2개 품종
 - 입력: Simulator가 `data/processed/realtime-apple-arrival-demo/index.json`의 시연 전용 12장 묶음을 순서대로 전송. 모델 목표는 12장이며 요청은 1~12장을 허용
 - 출력: 품종·품질(`특/상/보통`) 예측, 각각의 확률·신뢰도, 선별 목적지
-- 자동화 목표: 시뮬레이터 자동 입력, 저신뢰·오류 재검사 분기, 품종 2종 × 외관 3단계 × 가상 당도 2단계의 정상 12 bin과 재검사 bin 1개를 사용하는 가상 제어. 현재 Backend Mock 구현은 6 bin이며 12 bin 연동 전환 예정
+- 자동화 목표: 시뮬레이터 자동 입력, 저신뢰·오류 재검사 분기, 품종 2종 × 외관 3단계 × 가상 당도 2단계의 정상 12 bin과 재검사 bin 1개를 사용하는 가상 제어. 가상 당도 구간은 14°Brix 미만/이상이며, 당도가 없으면 재검사로 보낸다
 - 처리 목표: i7-4790·RAM 16GB CPU 환경에서 500ms 간격 입력과 초당 사과 그룹 2개 처리. Inference 제한시간 500ms는 Backend 요청 전송부터 응답 전체 수신까지 적용
 - 조건부 확장: 사과 MVP 완료 후 두 번째 농산물 품목 검토
 - 제외: 스마트폰 카메라 입력, 사용자 이미지 파일 업로드, 실제 산업용 카메라·PLC·선별 장비 연동, 설비 고장예지
@@ -18,12 +18,14 @@ AI Hub 농산물 품질(QC) 이미지를 이용해 사과의 품종과 품질 �
 simulator → FastAPI backend → inference HTTP API
                     ├─ MySQL
                     ├─ 내부 가상 제어 API
-                    └─ frontend
+                    └─ web (품질 관제)
+
+web (입찰·배송 관제) → logistics-api → MongoDB
 ```
 
-서비스 간 통신은 HTTP를 사용하며 Kafka는 사용하지 않습니다. Docker Compose 실행 단위는 `simulator`, `inference`, `backend`, `frontend`, `mysql`입니다.
+서비스 간 통신은 HTTP를 사용하며 Kafka는 사용하지 않습니다. Docker Compose 실행 단위는 QC 5개(`simulator`, `inference`, `backend`, `frontend`, `mysql`)와 물류 3개(`logistics-mongodb`, `logistics-api`, `logistics-web`)입니다. 품질 관제·입찰·배송 관제 화면은 모두 `cqc-logistics-platform/apps/web`에 있습니다.
 
-검사 한 건은 사과 한 개, 즉 `group_no` 한 개이며 모든 구성 요소는 동일한 `inspection_id`로 이 흐름을 추적합니다. 모델 목표 입력은 12장, 요청 제한은 1~12장·24MiB, 품종·품질 confidence threshold는 각각 0.50으로 확정했습니다.
+검사 한 건은 사과 한 개, 즉 `group_no` 한 개이며 모든 구성 요소는 동일한 `inspection_id`로 이 흐름을 추적합니다. 모델 목표 입력은 12장, 요청 제한은 1~12장·24MiB, 품종·품질 confidence threshold의 운영 기본값은 각각 0.50입니다. 이 값은 v1 검증 예측으로 정했으며 v2 후보 기준 재보정은 남아 있습니다.
 
 ## 폴더 역할
 
@@ -38,7 +40,7 @@ simulator → FastAPI backend → inference HTTP API
 | `src/training/` | 학습, 평가와 비교 실험 코드 |
 | `src/inference/` | 모델 후보의 통합 검증과 승인 모델 배포에 공통으로 사용하는 HTTP 추론 서비스 코드 |
 | `src/api/` | 검사 오케스트레이션, 정책, 이력과 가상 제어 백엔드 코드 |
-| `src/web/` | 자동 검사 상태, 이력, 통계와 관리 화면 코드 |
+| `cqc-logistics-platform/` | 웹(품질 관제·입찰·배송 관제)과 물류 API. 루트 `src/web/`은 사용하지 않음 |
 | `tests/` | 데이터·모델·API·통합 흐름 검증 코드 |
 | `configs/` | 분할, 전처리, 모델과 실행 설정 |
 | `scripts/` | 데이터 준비, 학습, 평가와 실행 보조 스크립트 |
@@ -47,6 +49,10 @@ simulator → FastAPI backend → inference HTTP API
 
 ## 현재 상태
 
-기획과 역할별 WBS를 기준으로 파트별 구현과 통합을 진행 중입니다. 데이터·모델 파트는 `separate`·12장 구조와 HTTP 계약을 구현했으나 v1의 품질 Macro F1이 승인 기준에 미달하여 v2 개선 학습을 진행 중입니다. 프로젝트 기간은 2026-09-16부터 2026-10-16까지이며, 2026-10-13에 기능을 동결합니다.
+2026-09-29 dev 기준 상태입니다. 프로젝트 기간은 2026-09-16부터 2026-10-16까지이며, 2026-10-13에 기능을 동결합니다.
 
-최상위 기획 기준은 [`docs/project-plan.md`](docs/project-plan.md)입니다. 세부 확정 기록은 [`docs/decision-log.md`](<docs/planning/decision-log.md>), 역할별 일정은 [`docs/wbs.md`](docs/wbs.md)에서 관리합니다.
+- 데이터·모델: `separate`·12장 구조와 Inference HTTP 계약 구현. 서비스 모델은 `cqc-apple-separate12-focal-v2-candidate`(미승인 후보, 신뢰도 미보정)이며, v1은 품질 Macro F1 0.7778로 승인 기준 미달입니다.
+- Backend: 검사 API, 실제 Inference 호출, 12-bin 판정, MySQL 저장·이력·통계·CSV 구현. 장애 이미지 저장 계층은 있으나 저장 트리거·조회 API는 연결 전이며, Simulator는 미구현입니다.
+- Web: 품질 관제·이력·통계·장애 관리와 입찰·배송 관제, 브라우저 자동 경매 시연 구현. 루트 Compose의 `frontend`·`simulator`는 아직 placeholder입니다.
+
+최상위 기획 기준은 [`docs/project-plan.md`](docs/project-plan.md)입니다. 세부 확정 기록은 [`docs/planning/decision-log.md`](<docs/planning/decision-log.md>), 역할별 일정은 [`docs/wbs.md`](docs/wbs.md)에서 관리합니다.
