@@ -11,6 +11,8 @@ from fastapi import FastAPI
 from .clients.inference import HttpInferenceClient, MockInferenceClient
 from .control.virtual_control import MockVirtualControl
 from .core.config import Settings, get_settings
+from .db.session import create_db_engine, create_session_factory
+from .repositories import BinMappingRepository, InspectionPersistence
 from .routers.inspections import router as inspections_router
 from .services.inspections import InspectionService
 from .services.late_results import LateResultManager
@@ -28,10 +30,25 @@ def create_app(
         max_tasks=runtime_settings.max_late_tasks,
     )
     inference_client = (
-        HttpInferenceClient(runtime_settings.inference_url, timeout_ms=runtime_settings.inference_hard_timeout_ms)
-        if runtime_settings.inference_client_mode == "http"
-        else MockInferenceClient()
-    ) if inspection_service is None else None
+        (
+            HttpInferenceClient(
+                runtime_settings.inference_url,
+                timeout_ms=runtime_settings.inference_hard_timeout_ms,
+            )
+            if runtime_settings.inference_client_mode == "http"
+            else MockInferenceClient()
+        )
+        if inspection_service is None
+        else None
+    )
+    db_engine = (
+        create_db_engine(runtime_settings)
+        if inspection_service is None and runtime_settings.database_url
+        else None
+    )
+    session_factory = (
+        create_session_factory(db_engine) if db_engine is not None else None
+    )
     runtime_inspection_service = inspection_service or InspectionService(
         inference_client,
         MockVirtualControl(),
@@ -41,6 +58,16 @@ def create_app(
             runtime_settings.inference_business_deadline_ms
         ),
         late_result_manager=late_result_manager,
+        bin_mapping_repository=(
+            BinMappingRepository(session_factory)
+            if session_factory is not None
+            else None
+        ),
+        persistence=(
+            InspectionPersistence(session_factory)
+            if session_factory is not None
+            else None
+        ),
     )
 
     @asynccontextmanager
@@ -51,6 +78,8 @@ def create_app(
             await runtime_inspection_service.shutdown()
             if isinstance(inference_client, HttpInferenceClient):
                 await inference_client.close()
+            if db_engine is not None:
+                db_engine.dispose()
 
     application = FastAPI(title=runtime_settings.app_name, lifespan=lifespan)
     application.state.settings = runtime_settings

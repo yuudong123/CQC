@@ -3,19 +3,20 @@ from __future__ import annotations
 import asyncio
 from io import BytesIO
 
+import httpx
 import pytest
 from fastapi import UploadFile
 
 from src.api.clients.inference import MockInferenceClient
 from src.api.control.virtual_control import MockVirtualControl
+from src.api.repositories import BinMappingConfigurationError
 from src.api.schemas.inference import InferenceRequest, InferenceResponse
 from src.api.schemas.inspection_results import ControlStatus
 from src.api.schemas.inspections import InspectionImageMetadata
-from src.api.services.inspections import (
-    InferenceResponseMismatchError,
-    InspectionService,
-)
+from src.api.services.inspections import InspectionService
 from src.api.services.late_results import LateResultManager
+
+from .fakes import FakeBinMappingRepository, RecordingPersistence
 
 
 class RecordingInferenceClient(MockInferenceClient):
@@ -41,6 +42,27 @@ class MismatchedResponseClient(MockInferenceClient):
         if self._mismatch_frame_count:
             response = response.model_copy(update={"used_frame_count": 12})
         return response
+
+
+class ConnectionFailureClient(MockInferenceClient):
+    async def predict(self, request: InferenceRequest) -> InferenceResponse:
+        raise httpx.ConnectError(
+            "connection failed",
+            request=httpx.Request("POST", "http://inference/v1/predict"),
+        )
+
+
+class MissingMappingRepository(FakeBinMappingRepository):
+    def find_normal_bin(
+        self,
+        *,
+        crop_type: str,
+        cultivar: str,
+        quality_grade: str,
+        sweetness_band: str,
+    ) -> str:
+        del crop_type, cultivar, quality_grade, sweetness_band
+        raise BinMappingConfigurationError("활성 정상 mapping 없음")
 
 
 def _images(count: int) -> list[UploadFile]:
@@ -76,6 +98,13 @@ def _late_result_manager(
     )
 
 
+def _repository_kwargs() -> dict[str, object]:
+    return {
+        "bin_mapping_repository": FakeBinMappingRepository(),
+        "persistence": RecordingPersistence(),
+    }
+
+
 @pytest.mark.parametrize("image_count", [1, 12])
 def test_service_preserves_request_and_returns_mock_result(image_count: int) -> None:
     async def run() -> tuple[
@@ -92,6 +121,7 @@ def test_service_preserves_request_and_returns_mock_result(image_count: int) -> 
             quality_confidence_threshold=0.50,
             inference_business_deadline_ms=500,
             late_result_manager=_late_result_manager(),
+            **_repository_kwargs(),
         )
         images = _images(image_count)
         metadata = _metadata(image_count)
@@ -99,6 +129,7 @@ def test_service_preserves_request_and_returns_mock_result(image_count: int) -> 
             inspection_id="inspection-service",
             images=images,
             metadata=metadata,
+            virtual_brix=11.9,
         )
         return response, client, images, metadata
 
@@ -112,7 +143,7 @@ def test_service_preserves_request_and_returns_mock_result(image_count: int) -> 
     assert response.review_required is False
     assert response.exclude_from_normal_stats is False
     assert response.decision_reason == "NORMAL"
-    assert response.target_bin_code == "TEST_NORMAL_BIN_1"
+    assert response.target_bin_code == "DEMO_BIN_01"
     assert response.control_status == "SUCCEEDED"
     assert client.request is not None
     assert client.request.images == [
@@ -129,22 +160,16 @@ def test_service_preserves_request_and_returns_mock_result(image_count: int) -> 
 
 
 @pytest.mark.parametrize(
-    ("client", "message"),
+    "client",
     [
-        (
-            MismatchedResponseClient(inspection_id=True),
-            "inspection_id",
-        ),
-        (
-            MismatchedResponseClient(frame_count=True),
-            "used_frame_count",
-        ),
+        MismatchedResponseClient(inspection_id=True),
+        MismatchedResponseClient(frame_count=True),
     ],
 )
 def test_service_rejects_mismatched_inference_response(
     client: MockInferenceClient,
-    message: str,
 ) -> None:
+    persistence = RecordingPersistence()
     service = InspectionService(
         client,
         MockVirtualControl(),
@@ -152,16 +177,21 @@ def test_service_rejects_mismatched_inference_response(
         quality_confidence_threshold=0.50,
         inference_business_deadline_ms=500,
         late_result_manager=_late_result_manager(),
+        bin_mapping_repository=FakeBinMappingRepository(),
+        persistence=persistence,
     )
 
-    with pytest.raises(InferenceResponseMismatchError, match=message):
-        asyncio.run(
-            service.inspect(
-                inspection_id="inspection-service",
-                images=_images(1),
-                metadata=_metadata(1),
-            )
+    response = asyncio.run(
+        service.inspect(
+            inspection_id="inspection-service",
+            images=_images(1),
+            metadata=_metadata(1),
         )
+    )
+
+    assert response.decision_reason == "INFERENCE_INVALID_RESPONSE"
+    assert response.target_bin_code == "TEST_REINSPECTION_BIN"
+    assert persistence.errors[0].error_code == "INFERENCE_INVALID_RESPONSE"
 
 
 def test_service_falls_back_once_after_normal_bin_rejection() -> None:
@@ -173,6 +203,7 @@ def test_service_falls_back_once_after_normal_bin_rejection() -> None:
         quality_confidence_threshold=0.50,
         inference_business_deadline_ms=500,
         late_result_manager=_late_result_manager(),
+        **_repository_kwargs(),
     )
 
     response = asyncio.run(
@@ -180,13 +211,14 @@ def test_service_falls_back_once_after_normal_bin_rejection() -> None:
             inspection_id="inspection-control-fallback",
             images=_images(1),
             metadata=_metadata(1),
+            virtual_brix=11.9,
         )
     )
 
     assert response.target_bin_code == "TEST_REINSPECTION_BIN"
     assert response.control_status is ControlStatus.SUCCEEDED
     assert [request.target_bin_code for request in control.requests] == [
-        "TEST_NORMAL_BIN_1",
+        "DEMO_BIN_01",
         "TEST_REINSPECTION_BIN",
     ]
 
@@ -199,6 +231,7 @@ def test_service_accepts_delayed_response_well_before_deadline() -> None:
         quality_confidence_threshold=0.50,
         inference_business_deadline_ms=100,
         late_result_manager=_late_result_manager(),
+        **_repository_kwargs(),
     )
 
     response = asyncio.run(
@@ -206,6 +239,7 @@ def test_service_accepts_delayed_response_well_before_deadline() -> None:
             inspection_id="inspection-before-deadline",
             images=_images(1),
             metadata=_metadata(1),
+            virtual_brix=11.9,
         )
     )
 
@@ -223,6 +257,7 @@ def test_service_does_not_retry_failed_direct_reinspection() -> None:
         quality_confidence_threshold=0.50,
         inference_business_deadline_ms=100,
         late_result_manager=_late_result_manager(),
+        **_repository_kwargs(),
     )
 
     response = asyncio.run(
@@ -262,6 +297,7 @@ def test_service_timeout_uses_reinspection_bin_without_retry(
         quality_confidence_threshold=0.50,
         inference_business_deadline_ms=1,
         late_result_manager=_late_result_manager(),
+        **_repository_kwargs(),
     )
 
     response = asyncio.run(
@@ -283,3 +319,206 @@ def test_service_timeout_uses_reinspection_bin_without_retry(
     assert response.target_bin_code == "TEST_REINSPECTION_BIN"
     assert response.control_status is control_outcome
     assert len(control.requests) == 1
+
+
+def test_missing_virtual_brix_uses_reinspection_mapping() -> None:
+    mappings = FakeBinMappingRepository()
+    service = InspectionService(
+        MockInferenceClient(),
+        MockVirtualControl(),
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.50,
+        inference_business_deadline_ms=500,
+        late_result_manager=_late_result_manager(),
+        bin_mapping_repository=mappings,
+        persistence=RecordingPersistence(),
+    )
+
+    response = asyncio.run(
+        service.inspect(
+            inspection_id="inspection-missing-brix",
+            images=_images(1),
+            metadata=_metadata(1),
+        )
+    )
+
+    assert response.decision_reason == "VIRTUAL_BRIX_MISSING"
+    assert response.target_bin_code == "TEST_REINSPECTION_BIN"
+    assert mappings.normal_calls == []
+    assert mappings.reinspection_calls == 1
+
+
+@pytest.mark.parametrize("invalid", [8.9, 18.1, float("nan"), float("inf")])
+def test_service_rejects_invalid_virtual_brix(invalid: float) -> None:
+    service = InspectionService(
+        MockInferenceClient(),
+        MockVirtualControl(),
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.50,
+        inference_business_deadline_ms=500,
+        late_result_manager=_late_result_manager(),
+        **_repository_kwargs(),
+    )
+
+    with pytest.raises(ValueError, match="9~18"):
+        asyncio.run(
+            service.inspect(
+                inspection_id="inspection-invalid-brix",
+                images=_images(1),
+                metadata=_metadata(1),
+                virtual_brix=invalid,
+            )
+        )
+
+
+def test_connection_error_uses_reinspection_and_records_error() -> None:
+    persistence = RecordingPersistence()
+    service = InspectionService(
+        ConnectionFailureClient(),
+        MockVirtualControl(),
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.50,
+        inference_business_deadline_ms=500,
+        late_result_manager=_late_result_manager(),
+        bin_mapping_repository=FakeBinMappingRepository(),
+        persistence=persistence,
+    )
+
+    response = asyncio.run(
+        service.inspect(
+            inspection_id="inspection-connection-error",
+            images=_images(1),
+            metadata=_metadata(1),
+            virtual_brix=11.9,
+        )
+    )
+
+    assert response.decision_reason == "INFERENCE_CONNECTION_ERROR"
+    assert response.target_bin_code == "TEST_REINSPECTION_BIN"
+    assert persistence.errors[0].error_code == "INFERENCE_CONNECTION_ERROR"
+
+
+def test_mapping_error_is_recorded_without_control_fallback() -> None:
+    persistence = RecordingPersistence()
+    control = MockVirtualControl()
+    service = InspectionService(
+        MockInferenceClient(),
+        control,
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.50,
+        inference_business_deadline_ms=500,
+        late_result_manager=_late_result_manager(),
+        bin_mapping_repository=MissingMappingRepository(),
+        persistence=persistence,
+    )
+
+    with pytest.raises(BinMappingConfigurationError):
+        asyncio.run(
+            service.inspect(
+                inspection_id="inspection-missing-mapping",
+                images=_images(1),
+                metadata=_metadata(1),
+                virtual_brix=11.9,
+            )
+        )
+
+    assert control.requests == []
+    assert persistence.errors[0].error_code == "BIN_MAPPING_CONFIGURATION_ERROR"
+
+
+def test_rejected_normal_control_saves_two_attempts_in_order() -> None:
+    persistence = RecordingPersistence()
+    service = InspectionService(
+        MockInferenceClient(),
+        MockVirtualControl([ControlStatus.REJECTED, ControlStatus.SUCCEEDED]),
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.50,
+        inference_business_deadline_ms=500,
+        late_result_manager=_late_result_manager(),
+        bin_mapping_repository=FakeBinMappingRepository(),
+        persistence=persistence,
+    )
+
+    asyncio.run(
+        service.inspect(
+            inspection_id="inspection-two-attempts",
+            images=_images(1),
+            metadata=_metadata(1),
+            virtual_brix=11.9,
+        )
+    )
+
+    assert [attempt.attempt_no for attempt in persistence.control_attempts] == [1, 2]
+    assert [attempt.requested_bin_code for attempt in persistence.control_attempts] == [
+        "DEMO_BIN_01",
+        "TEST_REINSPECTION_BIN",
+    ]
+    assert len({attempt.command_id for attempt in persistence.control_attempts}) == 2
+
+
+@pytest.mark.parametrize("outcome", [ControlStatus.NO_RESPONSE, ControlStatus.FAILED])
+def test_unsuccessful_control_saves_one_attempt_without_retry(
+    outcome: ControlStatus,
+) -> None:
+    persistence = RecordingPersistence()
+    service = InspectionService(
+        MockInferenceClient(),
+        MockVirtualControl([outcome]),
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.50,
+        inference_business_deadline_ms=500,
+        late_result_manager=_late_result_manager(),
+        bin_mapping_repository=FakeBinMappingRepository(),
+        persistence=persistence,
+    )
+
+    response = asyncio.run(
+        service.inspect(
+            inspection_id=f"inspection-{outcome.value.lower()}",
+            images=_images(1),
+            metadata=_metadata(1),
+            virtual_brix=11.9,
+        )
+    )
+
+    assert response.control_status is outcome
+    assert len(persistence.control_attempts) == 1
+    assert persistence.errors[0].error_code == f"CONTROL_{outcome.value}"
+
+
+@pytest.mark.parametrize(
+    ("fail_create", "fail_finalize"),
+    [(True, False), (False, True)],
+)
+def test_db_failure_does_not_change_decision_bin_or_control(
+    fail_create: bool,
+    fail_finalize: bool,
+) -> None:
+    persistence = RecordingPersistence(
+        fail_create=fail_create,
+        fail_finalize=fail_finalize,
+    )
+    service = InspectionService(
+        MockInferenceClient(),
+        MockVirtualControl(),
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.50,
+        inference_business_deadline_ms=500,
+        late_result_manager=_late_result_manager(),
+        bin_mapping_repository=FakeBinMappingRepository(),
+        persistence=persistence,
+    )
+
+    response = asyncio.run(
+        service.inspect(
+            inspection_id="inspection-db-failure",
+            images=_images(1),
+            metadata=_metadata(1),
+            virtual_brix=11.9,
+        )
+    )
+
+    assert response.inspection_status == "COMPLETED"
+    assert response.target_bin_code == "DEMO_BIN_01"
+    assert response.control_status == "SUCCEEDED"
+    assert response.persistence_status == "FAILED"

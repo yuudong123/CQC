@@ -67,7 +67,8 @@ class Inspection(Base):
     # 입력 원본 식별자를 저장한다. Inference에는 이 값을 전달하지 않는다.
     source_reference: Mapped[str | None] = mapped_column(String(255))
 
-    # TODO: DATETIME은 timezone 정보를 보존하지 않으므로 UTC/KST 정책을 확정해야 한다.
+    # DATETIME(3)에는 애플리케이션에서 변환한 UTC naive 값을 저장한다.
+    # API와 업무 날짜 경계에서는 timezone-aware KST로 변환한다.
     created_at: Mapped[datetime] = mapped_column(DATETIME(fsp=3))
     completed_at: Mapped[datetime | None] = mapped_column(DATETIME(fsp=3))
     updated_at: Mapped[datetime] = mapped_column(DATETIME(fsp=3))

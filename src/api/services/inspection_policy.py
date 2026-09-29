@@ -63,3 +63,22 @@ def decide_inference_timeout(
         cultivar_confidence_threshold=cultivar_confidence_threshold,
         quality_confidence_threshold=quality_confidence_threshold,
     )
+
+
+def decide_reinspection(
+    reason: InspectionDecisionReason,
+    *,
+    cultivar_confidence_threshold: float,
+    quality_confidence_threshold: float,
+    exclude_from_normal_stats: bool,
+) -> InspectionDecision:
+    """Inference 시스템 오류나 입력 누락을 재검사 판정으로 표현한다."""
+
+    return InspectionDecision(
+        inspection_status=InspectionStatus.REINSPECTION_REQUIRED,
+        review_required=True,
+        exclude_from_normal_stats=exclude_from_normal_stats,
+        reason=reason,
+        cultivar_confidence_threshold=cultivar_confidence_threshold,
+        quality_confidence_threshold=quality_confidence_threshold,
+    )

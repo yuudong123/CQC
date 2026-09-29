@@ -16,6 +16,8 @@ from src.api.schemas.inspections import InspectionImageMetadata
 from src.api.services.inspections import InspectionService
 from src.api.services.late_results import LateResultManager
 
+from .fakes import FakeBinMappingRepository, RecordingPersistence
+
 
 def _upload_files() -> list[UploadFile]:
     return [UploadFile(file=BytesIO(b"image"), filename="view-0.png")]
@@ -48,6 +50,8 @@ def _service(
             quality_confidence_threshold=0.50,
             inference_business_deadline_ms=business_deadline_ms,
             late_result_manager=manager,
+            bin_mapping_repository=FakeBinMappingRepository(),
+            persistence=RecordingPersistence(),
         ),
         control,
     )

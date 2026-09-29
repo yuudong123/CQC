@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict, Field
 
 from .inspection_results import ControlStatus
@@ -27,12 +29,24 @@ class VirtualControlResponse(BaseModel):
     reason: str | None = None
 
 
+class ControlAttemptTrace(BaseModel):
+    """Backend가 제어 호출 경계에서 생성한 저장용 추적 정보."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    command_id: str = Field(min_length=1)
+    requested_at: datetime
+    responded_at: datetime | None
+    response_time_ms: float | None = Field(default=None, ge=0)
+
+
 class ControlExecutionResult(BaseModel):
     """최초 요청과 선택적 대체 요청을 순서대로 보존한 제어 결과."""
 
     model_config = ConfigDict(extra="forbid")
 
     attempts: list[VirtualControlResponse] = Field(min_length=1, max_length=2)
+    traces: list[ControlAttemptTrace] = Field(min_length=1, max_length=2)
 
     @property
     def final_response(self) -> VirtualControlResponse:
