@@ -31,7 +31,7 @@ def _row(**overrides: object) -> Inspection:
         "target_bin_code": "DEMO_BIN_02",
         "error_code": None,
         "suspected_error_type": None,
-        "virtual_brix": Decimal("12.0"),
+        "virtual_brix": Decimal("14.0"),
         "inference_time_ms": Decimal("120.125"),
         "model_version": "demo-v1",
     }
@@ -50,7 +50,7 @@ def test_result_converts_utc_to_kst_without_fabricating_image_index() -> None:
     assert result["grade"] == "특"
     assert result["confidence"] == 80
     assert result["cultivarConfidence"] == 90
-    assert result["virtualBrix"] == 12
+    assert result["virtualBrix"] == 14
 
 
 def test_result_keeps_control_failure_and_excluded_prediction_distinct() -> None:

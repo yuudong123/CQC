@@ -119,6 +119,7 @@ def test_mysql_snapshot_statistics_and_both_csv_formats() -> None:
                 predicted_cultivar="yanggwang",
                 predicted_grade="S",
                 inference_time_ms=Decimal(300),
+                virtual_brix=Decimal("14.0"),
                 target_bin_code="DEMO_BIN_12",
                 suspected_error_type="OTHER",
             ),
