@@ -44,6 +44,41 @@ test("history pagination stays anchored while new input arrives and CSV exports 
   assert.equal(csv.split("\r\n").length, 121);
   assert.ok(!csv.includes("previewUrl")); assert.ok(!csv.includes("/apples/"));
 });
+test("backend snapshot may omit unavailable Simulator settings and history retention", async () => {
+  const f = fixture(); f.tick(1);
+  const snapshot = await (await f.request("snapshot")).json();
+  const { concurrency, sequence, tick, scope, ...state } = snapshot.state;
+  const { history, ...retention } = snapshot.retention;
+  const backend = { ...snapshot, source: "backend", state, retention };
+  schema("Snapshot", parseSnapshot(backend));
+  assert.equal(backend.state.sequence, undefined);
+  assert.equal(backend.retention.history, undefined);
+});
+test("history accepts unavailable image index and an explicit control failure", async () => {
+  const f = fixture(); f.tick(2);
+  const history = await (await f.request("inspections?pageSize=50")).json();
+  const item = {
+    ...history.items[0],
+    imageIndex: null,
+    control: "FAILED",
+    errorCode: "CONTROL_FAILED",
+    faults: ["CONTROL_FAILED"],
+    reviewRequired: true,
+    status: "REVIEW",
+  };
+  const value = parseHistory({ ...history, items: [item], total: 1 });
+  schema("HistoryPage", value);
+  assert.equal(value.items[0].imageIndex, null);
+  assert.equal(value.items[0].control, "FAILED");
+});
+test("history accepts unattempted control without treating it as failure", async () => {
+  const f = fixture(); f.tick(2);
+  const history = await (await f.request("inspections?pageSize=50")).json();
+  const item = { ...history.items[0], control: "NOT_REQUESTED", errorCode: "DB_ERROR", faults: ["DB_ERROR"] };
+  const value = parseHistory({ ...history, items: [item], total: 1 });
+  schema("HistoryPage", value);
+  assert.equal(value.items[0].control, "NOT_REQUESTED");
+});
 test("invalid query, date order, enum and request bodies are rejected", async () => {
   const f = fixture();
   for (const query of ["from=2026-09-29&to=2026-09-28", "from=2026-02-31", "page=-1", "pageSize=1000", "variety=invalid", "unexpected=true"]) assert.equal((await f.request(`inspections?${query}`)).status, 422);

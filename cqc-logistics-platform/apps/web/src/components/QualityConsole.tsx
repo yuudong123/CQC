@@ -174,7 +174,9 @@ function FaultImages({
               src={
                 remote
                   ? preview.previewUrl
-                  : sampleApples[preview.imageIndex].images[0]
+                  : preview.imageIndex === null
+                    ? undefined
+                    : sampleApples[preview.imageIndex]?.images[0]
               }
               alt={`${preview.id} 장애 이미지`}
             />
@@ -267,8 +269,10 @@ export default function QualityConsole({
     );
   };
   const disabled = pending || (remote && (stale || !snapshot));
-  const allowControl = !remote || !!snapshot?.capabilities.control;
-  const allowFaults = !remote || !!snapshot?.capabilities.faults;
+  const allowControl =
+    !remote || (!!snapshot?.capabilities.control && state.concurrency !== undefined);
+  const allowFaults =
+    !remote || (!!snapshot?.capabilities.faults && state.scope !== undefined);
   const [tab, setTab] = useState<Tab>(null);
   const [minutes, setMinutes] = useState(1);
   const [health, setHealth] = useState("확인 중");
@@ -438,7 +442,9 @@ export default function QualityConsole({
             {activeFaults.map((code) => FAULTS[code]).join(" / ")} ·{" "}
             {state.scope === "NEXT"
               ? "다음 1건 (접수 후 해제)"
-              : "전체 신규 요청"}
+              : state.scope === "ALL"
+                ? "전체 신규 요청"
+                : "적용 범위 미제공"}
           </div>
         )}
         {state.dbDown && (
@@ -450,8 +456,8 @@ export default function QualityConsole({
         )}
         {!state.running && (
           <div className="qc-warning">
-            입력 정지 · 진행 중 {state.jobs.length}건은 완료 후 종료 · 다음 순번{" "}
-            {state.sequence + 1}
+            입력 정지 · 진행 중 {state.jobs.length}건은 완료 후 종료
+            {state.sequence !== undefined && ` · 다음 순번 ${state.sequence + 1}`}
           </div>
         )}
       </div>
@@ -488,8 +494,10 @@ export default function QualityConsole({
           icon="camera"
           action={
             <Badge tone={state.running ? "success" : "warning"}>
-              {state.running ? "입력 중" : "정지"} ·{" "}
-              {state.concurrency === 1 ? "순차" : `${state.concurrency}개 병렬`}
+              {state.running ? "입력 중" : "정지"}
+              {state.concurrency !== undefined && (
+                <> · {state.concurrency === 1 ? "순차" : `${state.concurrency}개 병렬`}</>
+              )}
             </Badge>
           }
         >
@@ -589,11 +597,15 @@ export default function QualityConsole({
                   제어:{" "}
                   {row.control === "NO_RESPONSE"
                     ? "전송 실패"
+                    : row.control === "NOT_REQUESTED"
+                      ? "미요청"
                     : row.control === "FALLBACK"
                       ? "재검사 대체 1회"
                       : row.control === "REJECTED"
                         ? "거부"
-                        : "성공"}{" "}
+                        : row.control === "FAILED"
+                          ? "실패"
+                          : "성공"}{" "}
                   · 저장: {row.persistence === "SAVED" ? "완료" : "실패"}
                 </small>
               </div>
@@ -839,7 +851,7 @@ export default function QualityConsole({
                   처리 방식{" "}
                   <select
                     aria-label="동시 처리 수"
-                    value={state.concurrency}
+                    value={state.concurrency ?? ""}
                     disabled={disabled || !allowControl}
                     onChange={(event) =>
                       action(
@@ -861,7 +873,7 @@ export default function QualityConsole({
                   적용 범위{" "}
                   <select
                     aria-label="장애 적용 범위"
-                    value={state.scope}
+                    value={state.scope ?? ""}
                     disabled={disabled || !allowFaults}
                     onChange={(event) =>
                       action(

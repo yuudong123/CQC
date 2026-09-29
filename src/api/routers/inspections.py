@@ -8,9 +8,10 @@ from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile, s
 from pydantic import ValidationError
 
 from ..core.config import Settings
+from ..repositories import BinMappingConfigurationError
 from ..schemas.inspection_results import InspectionResponse
 from ..schemas.inspections import InspectionImageMetadata, InspectionMetadata
-from ..services.inspections import InferenceResponseMismatchError, InspectionService
+from ..services.inspections import InspectionService
 
 router = APIRouter(prefix="/v1", tags=["inspections"])
 
@@ -130,9 +131,8 @@ async def validate_inspection_request(
             metadata=metadata_items,
             virtual_brix=virtual_brix,
         )
-    except InferenceResponseMismatchError as exc:
-        # 최종 공통 error code 계약 전까지 정합성 오류를 단순 내부 오류로 응답한다.
+    except BinMappingConfigurationError as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Inference 응답 정합성 검증에 실패했습니다",
+            detail="활성 bin mapping 설정을 확인할 수 없습니다",
         ) from exc

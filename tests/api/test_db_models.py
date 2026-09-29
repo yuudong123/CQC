@@ -27,7 +27,16 @@ def test_inspections_columns_have_expected_nullability() -> None:
     assert table.c.cultivar_confidence.nullable is True
     assert table.c.applied_cultivar_threshold.nullable is False
     assert table.c.inspection_status.nullable is False
+    assert table.c.virtual_brix.nullable is True
+    assert table.c.virtual_brix.type.precision == 4
+    assert table.c.virtual_brix.type.scale == 1
+    assert table.c.brix_source.nullable is True
+    assert table.c.brix_is_measured.nullable is False
+    assert table.c.sweetness_band.nullable is True
     assert table.c.late_result_payload.nullable is True
+    assert "late_predicted_cultivar" not in table.c
+    assert "late_predicted_grade" not in table.c
+    assert table.c.persistence_status.nullable is False
 
 
 def test_datetime_columns_do_not_fix_a_database_timezone_default() -> None:
@@ -76,9 +85,15 @@ def test_bin_mappings_have_required_unique_keys_and_lookup_index() -> None:
     }
     indexes = {tuple(index.columns.keys()) for index in table.indexes}
 
-    assert ("mapping_key",) in column_unique_constraints
     assert ("bin_code",) in column_unique_constraints
-    assert ("crop_type", "cultivar", "quality_grade") in column_unique_constraints
+    assert (
+        "crop_type",
+        "cultivar",
+        "quality_grade",
+        "sweetness_band",
+    ) in column_unique_constraints
+    assert "mapping_key" not in table.c
+    assert table.c.sweetness_band.nullable is True
     assert ("is_active", "is_reinspection") in indexes
 
 

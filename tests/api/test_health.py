@@ -22,4 +22,12 @@ def test_openapi_exposes_current_backend_endpoints() -> None:
     with TestClient(create_app(Settings())) as client:
         paths = client.app.openapi()["paths"]
 
-    assert set(paths) == {"/health", "/v1/inspections"}
+    assert set(paths) == {
+        "/health",
+        "/v1/inspections",
+        "/v1/quality/inspections",
+        "/v1/quality/snapshot",
+        "/v1/quality/statistics",
+        "/v1/quality/inspections.csv",
+        "/v1/quality/statistics.csv",
+    }

@@ -451,11 +451,15 @@ export default function QualityHistory({
               <td>
                 {row.control === "NO_RESPONSE"
                   ? "무응답"
+                  : row.control === "NOT_REQUESTED"
+                    ? "미요청"
                   : row.control === "FALLBACK"
                     ? "재검사 대체 1회"
                     : row.control === "REJECTED"
                       ? "거부"
-                      : "성공"}
+                      : row.control === "FAILED"
+                        ? "실패"
+                        : "성공"}
               </td>
               <td>{row.persistence === "SAVED" ? "완료" : "실패"}</td>
               <td>

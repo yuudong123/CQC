@@ -48,6 +48,11 @@ class InspectionDecisionReason(str, Enum):
     LOW_QUALITY_CONFIDENCE = "LOW_QUALITY_CONFIDENCE"
     LOW_BOTH_CONFIDENCE = "LOW_BOTH_CONFIDENCE"
     INFERENCE_DEADLINE_EXCEEDED = "INFERENCE_DEADLINE_EXCEEDED"
+    INFERENCE_CONNECTION_ERROR = "INFERENCE_CONNECTION_ERROR"
+    INFERENCE_HTTP_ERROR = "INFERENCE_HTTP_ERROR"
+    INFERENCE_INVALID_RESPONSE = "INFERENCE_INVALID_RESPONSE"
+    INFERENCE_ERROR = "INFERENCE_ERROR"
+    VIRTUAL_BRIX_MISSING = "VIRTUAL_BRIX_MISSING"
 
 
 class InspectionDecision(BaseModel):
@@ -90,3 +95,4 @@ class InspectionResponse(BaseModel):
     sweetness_band: Literal["less_sweet", "sweet"] | None = None
     target_bin_code: str = Field(min_length=1)
     control_status: ControlStatus
+    persistence_status: PersistenceStatus

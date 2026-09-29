@@ -63,10 +63,12 @@ class Inspection(Base):
     )
 
     inspection_id: Mapped[str] = mapped_column(String(64), primary_key=True)
-    # TODO: 검사 API의 입력 원본 식별자 계약이 확정되면 필수 여부를 다시 정한다.
+    # 반복 검사에서도 원래 시연 묶음을 추적할 수 있도록 demo_bundle_id 같은
+    # 입력 원본 식별자를 저장한다. Inference에는 이 값을 전달하지 않는다.
     source_reference: Mapped[str | None] = mapped_column(String(255))
 
-    # TODO: DATETIME은 timezone 정보를 보존하지 않으므로 UTC/KST 정책을 확정해야 한다.
+    # DATETIME(3)에는 애플리케이션에서 변환한 UTC naive 값을 저장한다.
+    # API와 업무 날짜 경계에서는 timezone-aware KST로 변환한다.
     created_at: Mapped[datetime] = mapped_column(DATETIME(fsp=3))
     completed_at: Mapped[datetime | None] = mapped_column(DATETIME(fsp=3))
     updated_at: Mapped[datetime] = mapped_column(DATETIME(fsp=3))
@@ -83,6 +85,14 @@ class Inspection(Base):
     preprocessing_version: Mapped[str | None] = mapped_column(String(128))
     used_frame_count: Mapped[int | None] = mapped_column()
     inference_time_ms: Mapped[Decimal | None] = mapped_column(Numeric(10, 3))
+    virtual_brix: Mapped[Decimal | None] = mapped_column(Numeric(4, 1))
+    brix_source: Mapped[str | None] = mapped_column(String(64))
+    brix_is_measured: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        server_default=text("0"),
+    )
+    sweetness_band: Mapped[str | None] = mapped_column(String(32))
 
     review_required: Mapped[bool] = mapped_column(
         Boolean,
@@ -93,6 +103,8 @@ class Inspection(Base):
     # TODO: 상태 문자열과 전이가 확정되기 전까지 DB native ENUM을 사용하지 않는다.
     inspection_status: Mapped[str] = mapped_column(String(32))
     control_status: Mapped[str] = mapped_column(String(32))
+    # 행 생성 이후 저장 단계의 상태 snapshot이다. 최초 INSERT가 완전히 실패하면
+    # 행이 없으므로 FAILED는 application log와 API 상태로만 남길 수 있다.
     persistence_status: Mapped[str] = mapped_column(String(32))
     error_code: Mapped[str | None] = mapped_column(String(64))
     deadline_exceeded: Mapped[bool] = mapped_column(
@@ -116,8 +128,6 @@ class Inspection(Base):
     reviewed_at: Mapped[datetime | None] = mapped_column(DATETIME(fsp=3))
 
     late_result_received_at: Mapped[datetime | None] = mapped_column(DATETIME(fsp=3))
-    late_predicted_cultivar: Mapped[str | None] = mapped_column(String(32))
-    late_predicted_grade: Mapped[str | None] = mapped_column(String(32))
     late_result_payload: Mapped[dict[str, object] | None] = mapped_column(JSON)
 
     control_attempts: Mapped[list[ControlAttempt]] = relationship(

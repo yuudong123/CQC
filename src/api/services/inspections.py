@@ -1,25 +1,47 @@
-"""검사 요청을 Inference 호출로 연결하는 Service."""
+"""검사 판정·DB mapping·제어·저장을 조정하는 Service."""
 
 from __future__ import annotations
 
 import asyncio
+import logging
+import math
+from datetime import datetime
+from decimal import Decimal
 
+import httpx
 from fastapi import UploadFile
+from pydantic import ValidationError
 
 from ..clients.inference import HttpInferenceClient, MockInferenceClient
 from ..control.virtual_control import MockVirtualControl
-from ..schemas.inference import InferenceRequest
-from ..schemas.inspection_results import InspectionResponse
-from ..schemas.inspections import InspectionImageMetadata
-from .bin_policy import (
-    DEMO_SWEETNESS_THRESHOLD_BRIX,
-    TEMPORARY_REINSPECTION_BIN_CODE,
-    determine_demo_target_bin,
-    determine_target_bin,
+from ..core.datetime import utc_now
+from ..repositories import (
+    BinMappingConfigurationError,
+    BinMappingRepository,
+    InspectionPersistence,
 )
+from ..repositories.records import ControlAttemptRecord, InspectionErrorRecord
+from ..schemas.control import ControlExecutionResult
+from ..schemas.inference import InferenceRequest, InferenceResponse
+from ..schemas.inspection_results import (
+    ControlStatus,
+    InspectionDecision,
+    InspectionDecisionReason,
+    InspectionResponse,
+    InspectionStatus,
+    PersistenceStatus,
+)
+from ..schemas.inspections import InspectionImageMetadata
+from .bin_policy import DEMO_SWEETNESS_THRESHOLD_BRIX
 from .control_policy import execute_virtual_control
-from .inspection_policy import decide_inference_timeout, decide_inspection
+from .inspection_policy import (
+    decide_inference_timeout,
+    decide_inspection,
+    decide_reinspection,
+)
 from .late_results import LateResultManager
+
+logger = logging.getLogger(__name__)
 
 
 class InferenceResponseMismatchError(RuntimeError):
@@ -27,7 +49,7 @@ class InferenceResponseMismatchError(RuntimeError):
 
 
 class InspectionService:
-    """이미지 요청을 구성하고 Inference 응답 정합성을 검증한다."""
+    """Inference부터 DB 기반 배차·제어·기록까지 검사 흐름을 조정한다."""
 
     def __init__(
         self,
@@ -38,6 +60,8 @@ class InspectionService:
         quality_confidence_threshold: float,
         inference_business_deadline_ms: int,
         late_result_manager: LateResultManager,
+        bin_mapping_repository: BinMappingRepository | None = None,
+        persistence: InspectionPersistence | None = None,
     ) -> None:
         self._inference_client = inference_client
         self._virtual_control = virtual_control
@@ -45,6 +69,8 @@ class InspectionService:
         self._quality_confidence_threshold = quality_confidence_threshold
         self._inference_business_deadline_ms = inference_business_deadline_ms
         self._late_result_manager = late_result_manager
+        self._bin_mapping_repository = bin_mapping_repository
+        self._persistence = persistence
 
     async def shutdown(self) -> None:
         """서버 종료 시 남아 있는 late Inference task를 정리한다."""
@@ -59,12 +85,33 @@ class InspectionService:
         metadata: list[InspectionImageMetadata],
         virtual_brix: float | None = None,
     ) -> InspectionResponse:
-        """Mock Inference 결과를 검증하고 confidence 정책을 적용한다."""
+        """검사 요청을 판정·제어하고 가능한 결과를 DB에 기록한다."""
+
+        sweetness_band = _classify_sweetness(virtual_brix)
+        created_at = utc_now()
+        row_created = False
+        persistence_status = PersistenceStatus.NOT_ATTEMPTED
+        if self._persistence is not None:
+            try:
+                await asyncio.to_thread(
+                    self._persistence.create_pending,
+                    self._pending_values(
+                        inspection_id=inspection_id,
+                        virtual_brix=virtual_brix,
+                        sweetness_band=sweetness_band,
+                        created_at=created_at,
+                    ),
+                )
+            except Exception:
+                persistence_status = PersistenceStatus.FAILED
+                logger.exception("검사 초기 행 저장에 실패했습니다: %s", inspection_id)
+            else:
+                row_created = True
+                persistence_status = PersistenceStatus.PENDING
 
         image_payloads: list[bytes] = []
         for image in images:
             image_payloads.append(await image.read())
-            # 후속 처리에서 UploadFile을 다시 사용할 수 있도록 읽기 위치를 복원한다.
             await image.seek(0)
 
         inference_request = InferenceRequest(
@@ -72,56 +119,74 @@ class InspectionService:
             images=image_payloads,
             metadata=metadata,
         )
-        event_loop = asyncio.get_running_loop()
-        inference_started_at = event_loop.time()
-        inference_task = asyncio.create_task(
-            self._inference_client.predict(inference_request)
+        inference_response, decision, processing_errors = await self._infer(
+            inference_request
         )
-        completed, _ = await asyncio.wait(
-            {inference_task},
-            timeout=self._inference_business_deadline_ms / 1000,
-        )
-        if inference_task not in completed:
-            self._late_result_manager.track(
-                inspection_id=inspection_id,
-                inference_task=inference_task,
-                started_at=inference_started_at,
-            )
-            inference_response = None
-            decision = decide_inference_timeout(
-                cultivar_confidence_threshold=self._cultivar_confidence_threshold,
-                quality_confidence_threshold=self._quality_confidence_threshold,
-            )
-        else:
-            inference_response = inference_task.result()
-            if inference_response.inspection_id != inference_request.inspection_id:
-                raise InferenceResponseMismatchError(
-                    "Inference 응답 inspection_id가 요청과 일치하지 않습니다"
-                )
-            if inference_response.used_frame_count != len(inference_request.images):
-                raise InferenceResponseMismatchError(
-                    "Inference 응답 used_frame_count가 요청 이미지 수와 일치하지 않습니다"
-                )
 
-            decision = decide_inspection(
-                inference_response,
+        if (
+            decision.inspection_status is InspectionStatus.COMPLETED
+            and virtual_brix is None
+        ):
+            decision = decide_reinspection(
+                InspectionDecisionReason.VIRTUAL_BRIX_MISSING,
                 cultivar_confidence_threshold=self._cultivar_confidence_threshold,
                 quality_confidence_threshold=self._quality_confidence_threshold,
+                exclude_from_normal_stats=False,
             )
-        # brix 없는 이전 Mock 요청은 BE-04의 6-bin 계약을 유지한다.
-        # 시연용 값이 전달된 요청은 품종×외관×가상 당도 12-bin을 적용한다.
-        target_bin_code = (
-            determine_target_bin(inference_response, decision)
-            if virtual_brix is None
-            else determine_demo_target_bin(inference_response, decision, virtual_brix)
-        )
+
+        try:
+            target_bin_code, reinspection_bin_code = await self._find_target_bins(
+                inference_response=inference_response,
+                decision=decision,
+                sweetness_band=sweetness_band,
+            )
+        except BinMappingConfigurationError as exc:
+            processing_errors.append(
+                _error_record(
+                    component="bin_mapping",
+                    error_code="BIN_MAPPING_CONFIGURATION_ERROR",
+                    message=str(exc),
+                )
+            )
+            if row_created:
+                persistence_status = await self._persist_without_control(
+                    inspection_id=inspection_id,
+                    inference_response=inference_response,
+                    decision=decision,
+                    virtual_brix=virtual_brix,
+                    sweetness_band=sweetness_band,
+                    errors=processing_errors,
+                )
+            logger.error(
+                "검사 bin mapping을 결정하지 못했습니다: %s (%s)",
+                inspection_id,
+                persistence_status.value,
+            )
+            raise
+
         control_result = await execute_virtual_control(
             self._virtual_control,
             inspection_id=inspection_id,
             target_bin_code=target_bin_code,
-            reinspection_bin_code=TEMPORARY_REINSPECTION_BIN_CODE,
+            reinspection_bin_code=reinspection_bin_code,
         )
+        control_attempts = _control_attempt_records(control_result)
+        processing_errors.extend(_control_error_records(control_result))
         final_control_response = control_result.final_response
+
+        if row_created:
+            persistence_status = await self._persist_final(
+                inspection_id=inspection_id,
+                inference_response=inference_response,
+                decision=decision,
+                virtual_brix=virtual_brix,
+                sweetness_band=sweetness_band,
+                target_bin_code=final_control_response.target_bin_code,
+                control_status=final_control_response.control_status,
+                control_attempts=control_attempts,
+                errors=processing_errors,
+            )
+
         inference_fields = (
             inference_response.model_dump(exclude={"inspection_id"})
             if inference_response is not None
@@ -135,14 +200,437 @@ class InspectionService:
             exclude_from_normal_stats=decision.exclude_from_normal_stats,
             decision_reason=decision.reason,
             virtual_brix=virtual_brix,
-            brix_is_measured=False if virtual_brix is not None else None,
-            sweetness_band=(
-                "sweet"
-                if virtual_brix >= DEMO_SWEETNESS_THRESHOLD_BRIX
-                else "less_sweet"
-            )
-            if virtual_brix is not None
-            else None,
+            brix_is_measured=False,
+            sweetness_band=sweetness_band,
             target_bin_code=final_control_response.target_bin_code,
             control_status=final_control_response.control_status,
+            persistence_status=persistence_status,
         )
+
+    async def _infer(
+        self,
+        request: InferenceRequest,
+    ) -> tuple[
+        InferenceResponse | None,
+        InspectionDecision,
+        list[InspectionErrorRecord],
+    ]:
+        event_loop = asyncio.get_running_loop()
+        inference_started_at = event_loop.time()
+        inference_task = asyncio.create_task(self._inference_client.predict(request))
+        completed, _ = await asyncio.wait(
+            {inference_task},
+            timeout=self._inference_business_deadline_ms / 1000,
+        )
+        if inference_task not in completed:
+            self._late_result_manager.track(
+                inspection_id=request.inspection_id,
+                inference_task=inference_task,
+                started_at=inference_started_at,
+            )
+            decision = decide_inference_timeout(
+                cultivar_confidence_threshold=self._cultivar_confidence_threshold,
+                quality_confidence_threshold=self._quality_confidence_threshold,
+            )
+            return (
+                None,
+                decision,
+                [
+                    _error_record(
+                        component="inference",
+                        error_code=decision.reason.value,
+                        message="Inference business deadline을 초과했습니다",
+                    )
+                ],
+            )
+
+        try:
+            response = inference_task.result()
+            _validate_inference_response(request, response)
+        except Exception as exc:  # noqa: BLE001 - 외부 Inference 오류 경계다.
+            reason = _inference_failure_reason(exc)
+            decision = decide_reinspection(
+                reason,
+                cultivar_confidence_threshold=self._cultivar_confidence_threshold,
+                quality_confidence_threshold=self._quality_confidence_threshold,
+                exclude_from_normal_stats=True,
+            )
+            return (
+                None,
+                decision,
+                [
+                    _error_record(
+                        component="inference",
+                        error_code=reason.value,
+                        message=_safe_inference_error_message(reason),
+                        diagnostic_data={"exception_type": type(exc).__name__},
+                    )
+                ],
+            )
+
+        decision = decide_inspection(
+            response,
+            cultivar_confidence_threshold=self._cultivar_confidence_threshold,
+            quality_confidence_threshold=self._quality_confidence_threshold,
+        )
+        return response, decision, []
+
+    async def _find_target_bins(
+        self,
+        *,
+        inference_response: InferenceResponse | None,
+        decision: InspectionDecision,
+        sweetness_band: str | None,
+    ) -> tuple[str, str]:
+        repository = self._bin_mapping_repository
+        if repository is None:
+            raise BinMappingConfigurationError(
+                "bin mapping Repository가 설정되지 않았습니다"
+            )
+
+        reinspection_bin = await asyncio.to_thread(repository.find_reinspection_bin)
+        if decision.inspection_status is InspectionStatus.REINSPECTION_REQUIRED:
+            return reinspection_bin, reinspection_bin
+        if inference_response is None or sweetness_band is None:
+            raise BinMappingConfigurationError("정상 배차에 필요한 판정값이 없습니다")
+
+        normal_bin = await asyncio.to_thread(
+            repository.find_normal_bin,
+            crop_type=inference_response.crop_type,
+            cultivar=inference_response.predicted_cultivar,
+            quality_grade=inference_response.predicted_grade,
+            sweetness_band=sweetness_band,
+        )
+        return normal_bin, reinspection_bin
+
+    async def _persist_final(
+        self,
+        *,
+        inspection_id: str,
+        inference_response: InferenceResponse | None,
+        decision: InspectionDecision,
+        virtual_brix: float | None,
+        sweetness_band: str | None,
+        target_bin_code: str,
+        control_status: ControlStatus,
+        control_attempts: list[ControlAttemptRecord],
+        errors: list[InspectionErrorRecord],
+    ) -> PersistenceStatus:
+        values = self._final_values(
+            inference_response=inference_response,
+            decision=decision,
+            virtual_brix=virtual_brix,
+            sweetness_band=sweetness_band,
+            target_bin_code=target_bin_code,
+            control_status=control_status,
+            persistence_status=PersistenceStatus.SUCCEEDED,
+        )
+        if values["error_code"] is None and errors:
+            values["error_code"] = errors[0].error_code
+        try:
+            await asyncio.to_thread(
+                self._persistence.finalize,  # type: ignore[union-attr]
+                inspection_id=inspection_id,
+                inspection_values=values,
+                control_attempts=control_attempts,
+                errors=errors,
+            )
+        except Exception as exc:  # noqa: BLE001 - DB 장애를 상태로 격리한다.
+            await self._mark_persistence_failed(inspection_id, exc)
+            return PersistenceStatus.FAILED
+        return PersistenceStatus.SUCCEEDED
+
+    async def _persist_without_control(
+        self,
+        *,
+        inspection_id: str,
+        inference_response: InferenceResponse | None,
+        decision: InspectionDecision,
+        virtual_brix: float | None,
+        sweetness_band: str | None,
+        errors: list[InspectionErrorRecord],
+    ) -> PersistenceStatus:
+        values = self._final_values(
+            inference_response=inference_response,
+            decision=decision,
+            virtual_brix=virtual_brix,
+            sweetness_band=sweetness_band,
+            target_bin_code=None,
+            control_status=ControlStatus.NOT_REQUESTED,
+            persistence_status=PersistenceStatus.SUCCEEDED,
+        )
+        values["error_code"] = errors[0].error_code
+        try:
+            await asyncio.to_thread(
+                self._persistence.finalize,  # type: ignore[union-attr]
+                inspection_id=inspection_id,
+                inspection_values=values,
+                control_attempts=[],
+                errors=errors,
+            )
+        except Exception as exc:  # noqa: BLE001 - DB 장애를 상태로 격리한다.
+            await self._mark_persistence_failed(inspection_id, exc)
+            return PersistenceStatus.FAILED
+        return PersistenceStatus.SUCCEEDED
+
+    async def _mark_persistence_failed(
+        self,
+        inspection_id: str,
+        cause: Exception,
+    ) -> None:
+        logger.error(
+            "검사 최종 저장에 실패했습니다: %s (%s)",
+            inspection_id,
+            type(cause).__name__,
+            exc_info=cause,
+        )
+        error = _error_record(
+            component="database",
+            error_code="DB_PERSISTENCE_ERROR",
+            message="검사 결과 저장에 실패했습니다",
+            diagnostic_data={"exception_type": type(cause).__name__},
+        )
+        try:
+            await asyncio.to_thread(
+                self._persistence.mark_failed,  # type: ignore[union-attr]
+                inspection_id=inspection_id,
+                updated_at=utc_now(),
+                error=error,
+            )
+        except Exception:
+            logger.exception(
+                "검사 저장 실패 상태도 기록하지 못했습니다: %s",
+                inspection_id,
+            )
+
+    def _pending_values(
+        self,
+        *,
+        inspection_id: str,
+        virtual_brix: float | None,
+        sweetness_band: str | None,
+        created_at: datetime,
+    ) -> dict[str, object]:
+        return {
+            "inspection_id": inspection_id,
+            "source_reference": None,
+            "created_at": created_at,
+            "completed_at": None,
+            "updated_at": created_at,
+            "crop_type": "apple",
+            "predicted_cultivar": None,
+            "predicted_grade": None,
+            "cultivar_confidence": None,
+            "quality_confidence": None,
+            "applied_cultivar_threshold": _decimal(self._cultivar_confidence_threshold),
+            "applied_quality_threshold": _decimal(self._quality_confidence_threshold),
+            "model_name": None,
+            "model_version": None,
+            "preprocessing_version": None,
+            "used_frame_count": None,
+            "inference_time_ms": None,
+            "virtual_brix": _decimal(virtual_brix),
+            "brix_source": None,
+            "brix_is_measured": False,
+            "sweetness_band": sweetness_band,
+            "review_required": False,
+            "target_bin_code": None,
+            "inspection_status": InspectionStatus.PROCESSING.value,
+            "control_status": ControlStatus.NOT_REQUESTED.value,
+            "persistence_status": PersistenceStatus.PENDING.value,
+            "error_code": None,
+            "deadline_exceeded": False,
+            "exclude_from_normal_stats": False,
+            "is_reviewed": False,
+            "suspected_error_type": None,
+            "review_note": None,
+            "reviewed_at": None,
+            "late_result_received_at": None,
+            "late_result_payload": None,
+        }
+
+    def _final_values(
+        self,
+        *,
+        inference_response: InferenceResponse | None,
+        decision: InspectionDecision,
+        virtual_brix: float | None,
+        sweetness_band: str | None,
+        target_bin_code: str | None,
+        control_status: ControlStatus,
+        persistence_status: PersistenceStatus,
+    ) -> dict[str, object]:
+        completed_at = utc_now()
+        return {
+            "completed_at": completed_at,
+            "updated_at": completed_at,
+            "predicted_cultivar": (
+                inference_response.predicted_cultivar
+                if inference_response is not None
+                else None
+            ),
+            "predicted_grade": (
+                inference_response.predicted_grade
+                if inference_response is not None
+                else None
+            ),
+            "cultivar_confidence": _decimal(
+                inference_response.cultivar_confidence
+                if inference_response is not None
+                else None
+            ),
+            "quality_confidence": _decimal(
+                inference_response.quality_confidence
+                if inference_response is not None
+                else None
+            ),
+            "model_name": inference_response.model_name if inference_response else None,
+            "model_version": (
+                inference_response.model_version if inference_response else None
+            ),
+            "preprocessing_version": (
+                inference_response.preprocessing_version if inference_response else None
+            ),
+            "used_frame_count": (
+                inference_response.used_frame_count if inference_response else None
+            ),
+            "inference_time_ms": _decimal(
+                inference_response.inference_time_ms if inference_response else None
+            ),
+            "virtual_brix": _decimal(virtual_brix),
+            "brix_source": None,
+            "brix_is_measured": False,
+            "sweetness_band": sweetness_band,
+            "review_required": decision.review_required,
+            "target_bin_code": target_bin_code,
+            "inspection_status": decision.inspection_status.value,
+            "control_status": control_status.value,
+            "persistence_status": persistence_status.value,
+            "error_code": (
+                None
+                if decision.reason is InspectionDecisionReason.NORMAL
+                else decision.reason.value
+            ),
+            "deadline_exceeded": (
+                decision.reason is InspectionDecisionReason.INFERENCE_DEADLINE_EXCEEDED
+            ),
+            "exclude_from_normal_stats": decision.exclude_from_normal_stats,
+        }
+
+
+def _classify_sweetness(virtual_brix: float | None) -> str | None:
+    if virtual_brix is None:
+        return None
+    if (
+        isinstance(virtual_brix, bool)
+        or not isinstance(virtual_brix, (int, float))
+        or not math.isfinite(virtual_brix)
+        or not 9 <= virtual_brix <= 18
+    ):
+        raise ValueError("시연용 virtual_brix는 9~18의 유한 숫자여야 합니다")
+    return "sweet" if virtual_brix >= DEMO_SWEETNESS_THRESHOLD_BRIX else "less_sweet"
+
+
+def _validate_inference_response(
+    request: InferenceRequest,
+    response: InferenceResponse,
+) -> None:
+    if response.inspection_id != request.inspection_id:
+        raise InferenceResponseMismatchError(
+            "Inference 응답 inspection_id가 요청과 일치하지 않습니다"
+        )
+    if response.used_frame_count != len(request.images):
+        raise InferenceResponseMismatchError(
+            "Inference 응답 used_frame_count가 요청 이미지 수와 일치하지 않습니다"
+        )
+
+
+def _inference_failure_reason(exc: Exception) -> InspectionDecisionReason:
+    if isinstance(exc, httpx.HTTPStatusError):
+        return InspectionDecisionReason.INFERENCE_HTTP_ERROR
+    if isinstance(exc, httpx.RequestError):
+        return InspectionDecisionReason.INFERENCE_CONNECTION_ERROR
+    if isinstance(exc, (ValidationError, InferenceResponseMismatchError, ValueError)):
+        return InspectionDecisionReason.INFERENCE_INVALID_RESPONSE
+    return InspectionDecisionReason.INFERENCE_ERROR
+
+
+def _safe_inference_error_message(reason: InspectionDecisionReason) -> str:
+    messages = {
+        InspectionDecisionReason.INFERENCE_CONNECTION_ERROR: (
+            "Inference 서비스 연결에 실패했습니다"
+        ),
+        InspectionDecisionReason.INFERENCE_HTTP_ERROR: (
+            "Inference 서비스가 오류 응답을 반환했습니다"
+        ),
+        InspectionDecisionReason.INFERENCE_INVALID_RESPONSE: (
+            "Inference 응답 검증에 실패했습니다"
+        ),
+        InspectionDecisionReason.INFERENCE_ERROR: "Inference 처리에 실패했습니다",
+    }
+    return messages[reason]
+
+
+def _error_record(
+    *,
+    component: str,
+    error_code: str,
+    message: str,
+    diagnostic_data: dict[str, object] | None = None,
+) -> InspectionErrorRecord:
+    return InspectionErrorRecord(
+        component=component,
+        error_code=error_code,
+        message=message,
+        diagnostic_data=diagnostic_data,
+        occurred_at=utc_now(),
+    )
+
+
+def _control_attempt_records(
+    control_result: ControlExecutionResult,
+) -> list[ControlAttemptRecord]:
+    return [
+        ControlAttemptRecord(
+            command_id=trace.command_id,
+            attempt_no=index,
+            requested_bin_code=response.target_bin_code,
+            command_type="ROUTE_TO_BIN",
+            control_status=response.control_status.value,
+            requested_at=trace.requested_at,
+            responded_at=trace.responded_at,
+            response_time_ms=trace.response_time_ms,
+            failure_reason=response.reason,
+        )
+        for index, (response, trace) in enumerate(
+            zip(control_result.attempts, control_result.traces, strict=True),
+            start=1,
+        )
+    ]
+
+
+def _control_error_records(
+    control_result: ControlExecutionResult,
+) -> list[InspectionErrorRecord]:
+    errors = []
+    for response, trace in zip(
+        control_result.attempts,
+        control_result.traces,
+        strict=True,
+    ):
+        if response.control_status is ControlStatus.SUCCEEDED:
+            continue
+        errors.append(
+            InspectionErrorRecord(
+                component="virtual_control",
+                error_code=f"CONTROL_{response.control_status.value}",
+                message=response.reason or "Virtual Control 요청이 성공하지 않았습니다",
+                diagnostic_data={"target_bin_code": response.target_bin_code},
+                occurred_at=trace.responded_at or trace.requested_at,
+            )
+        )
+    return errors
+
+
+def _decimal(value: float | None) -> Decimal | None:
+    return Decimal(str(value)) if value is not None else None

@@ -14,6 +14,8 @@ from src.api.schemas.inference import InferenceRequest, InferenceResponse
 from src.api.services.inspections import InspectionService
 from src.api.services.late_results import LateResultManager
 
+from .fakes import FakeBinMappingRepository, RecordingPersistence
+
 
 class MismatchedResponseClient(MockInferenceClient):
     def __init__(
@@ -75,9 +77,37 @@ def _post(
     )
 
 
+def _application(settings: Settings | None = None):
+    runtime_settings = settings or Settings()
+    service = InspectionService(
+        MockInferenceClient(),
+        MockVirtualControl(),
+        cultivar_confidence_threshold=runtime_settings.cultivar_confidence_threshold,
+        quality_confidence_threshold=runtime_settings.quality_confidence_threshold,
+        inference_business_deadline_ms=(
+            runtime_settings.inference_business_deadline_ms
+        ),
+        late_result_manager=LateResultManager(
+            hard_timeout_ms=runtime_settings.inference_hard_timeout_ms,
+            max_tasks=runtime_settings.max_late_tasks,
+        ),
+        bin_mapping_repository=FakeBinMappingRepository(),
+        persistence=RecordingPersistence(),
+    )
+    return create_app(runtime_settings, inspection_service=service)
+
+
 def test_inspection_accepts_valid_multipart_contract() -> None:
-    with TestClient(create_app(Settings())) as client:
-        response = _post(client, files=_images(2), metadata=_metadata([0, 1]))
+    with TestClient(_application()) as client:
+        response = client.post(
+            "/v1/inspections",
+            data={
+                "inspection_id": "inspection-001",
+                "metadata": _metadata([0, 1]),
+                "virtual_brix": "11.9",
+            },
+            files=_images(2),
+        )
 
     assert response.status_code == 200
     assert response.json() == {
@@ -98,11 +128,12 @@ def test_inspection_accepts_valid_multipart_contract() -> None:
         "review_required": False,
         "exclude_from_normal_stats": False,
         "decision_reason": "NORMAL",
-        "virtual_brix": None,
-        "brix_is_measured": None,
-        "sweetness_band": None,
-        "target_bin_code": "TEST_NORMAL_BIN_1",
+        "virtual_brix": 11.9,
+        "brix_is_measured": False,
+        "sweetness_band": "less_sweet",
+        "target_bin_code": "DEMO_BIN_01",
         "control_status": "SUCCEEDED",
+        "persistence_status": "SUCCEEDED",
     }
 
 
@@ -119,7 +150,7 @@ def test_inspection_routes_demo_brix_to_twelve_bins(
     target_bin: str,
     sweetness_band: str,
 ) -> None:
-    with TestClient(create_app(Settings())) as client:
+    with TestClient(_application()) as client:
         response = client.post(
             "/v1/inspections",
             data={
@@ -139,7 +170,7 @@ def test_inspection_routes_demo_brix_to_twelve_bins(
 
 @pytest.mark.parametrize("virtual_brix", ["8.9", "18.1", "nan", "inf"])
 def test_inspection_rejects_invalid_demo_brix(virtual_brix: str) -> None:
-    with TestClient(create_app(Settings())) as client:
+    with TestClient(_application()) as client:
         response = client.post(
             "/v1/inspections",
             data={
@@ -153,7 +184,7 @@ def test_inspection_rejects_invalid_demo_brix(virtual_brix: str) -> None:
 
 
 def test_inspection_accepts_jpeg_content_type() -> None:
-    with TestClient(create_app(Settings())) as client:
+    with TestClient(_application()) as client:
         response = _post(
             client,
             files=_images(1, content_type="image/jpeg"),
@@ -164,7 +195,7 @@ def test_inspection_accepts_jpeg_content_type() -> None:
 
 
 def test_inspection_accepts_twelve_images() -> None:
-    with TestClient(create_app(Settings())) as client:
+    with TestClient(_application()) as client:
         response = _post(
             client,
             files=_images(12),
@@ -180,7 +211,7 @@ def test_inspection_uses_thresholds_from_settings() -> None:
         cultivar_confidence_threshold=0.95,
         quality_confidence_threshold=0.50,
     )
-    with TestClient(create_app(settings)) as client:
+    with TestClient(_application(settings)) as client:
         response = _post(client, files=_images(1), metadata=_metadata([0]))
 
     assert response.status_code == 200
@@ -201,6 +232,8 @@ def test_inspection_returns_timeout_without_fabricated_prediction() -> None:
             hard_timeout_ms=200,
             max_tasks=4,
         ),
+        bin_mapping_repository=FakeBinMappingRepository(),
+        persistence=RecordingPersistence(),
     )
     with TestClient(create_app(Settings(), inspection_service=service)) as client:
         response = _post(client, files=_images(1), metadata=_metadata([0]))
@@ -239,16 +272,19 @@ def test_inspection_returns_internal_error_for_mismatched_inference_response(
             hard_timeout_ms=2000,
             max_tasks=4,
         ),
+        bin_mapping_repository=FakeBinMappingRepository(),
+        persistence=RecordingPersistence(),
     )
     with TestClient(create_app(Settings(), inspection_service=service)) as client:
         response = _post(client, files=_images(1), metadata=_metadata([0]))
 
-    assert response.status_code == 500
-    assert response.json() == {"detail": "Inference 응답 정합성 검증에 실패했습니다"}
+    assert response.status_code == 200
+    assert response.json()["decision_reason"] == "INFERENCE_INVALID_RESPONSE"
+    assert response.json()["target_bin_code"] == "TEST_REINSPECTION_BIN"
 
 
 def test_inspection_requires_at_least_one_image() -> None:
-    with TestClient(create_app(Settings())) as client:
+    with TestClient(_application()) as client:
         response = client.post(
             "/v1/inspections",
             data={"inspection_id": "inspection-001", "metadata": "[]"},
@@ -258,35 +294,35 @@ def test_inspection_requires_at_least_one_image() -> None:
 
 
 def test_inspection_rejects_more_than_twelve_images() -> None:
-    with TestClient(create_app(Settings())) as client:
+    with TestClient(_application()) as client:
         response = _post(client, files=_images(13), metadata=_metadata(list(range(13))))
 
     assert response.status_code == 413
 
 
 def test_inspection_rejects_mismatched_image_and_metadata_counts() -> None:
-    with TestClient(create_app(Settings())) as client:
+    with TestClient(_application()) as client:
         response = _post(client, files=_images(2), metadata=_metadata([0]))
 
     assert response.status_code == 422
 
 
 def test_inspection_rejects_duplicate_view_indexes() -> None:
-    with TestClient(create_app(Settings())) as client:
+    with TestClient(_application()) as client:
         response = _post(client, files=_images(2), metadata=_metadata([0, 0]))
 
     assert response.status_code == 422
 
 
 def test_inspection_rejects_view_indexes_out_of_order() -> None:
-    with TestClient(create_app(Settings())) as client:
+    with TestClient(_application()) as client:
         response = _post(client, files=_images(2), metadata=_metadata([1, 0]))
 
     assert response.status_code == 422
 
 
 def test_inspection_rejects_unknown_angle_direction() -> None:
-    with TestClient(create_app(Settings())) as client:
+    with TestClient(_application()) as client:
         response = _post(
             client,
             files=_images(1),
@@ -297,14 +333,14 @@ def test_inspection_rejects_unknown_angle_direction() -> None:
 
 
 def test_inspection_rejects_invalid_metadata_json() -> None:
-    with TestClient(create_app(Settings())) as client:
+    with TestClient(_application()) as client:
         response = _post(client, files=_images(1), metadata="not-json")
 
     assert response.status_code == 422
 
 
 def test_inspection_rejects_unsupported_image_content_type() -> None:
-    with TestClient(create_app(Settings())) as client:
+    with TestClient(_application()) as client:
         response = _post(
             client,
             files=_images(1, content_type="text/plain"),
@@ -316,7 +352,7 @@ def test_inspection_rejects_unsupported_image_content_type() -> None:
 
 def test_inspection_rejects_request_over_configured_size_limit() -> None:
     settings = Settings(inference_max_request_bytes=256)
-    with TestClient(create_app(settings)) as client:
+    with TestClient(_application(settings)) as client:
         response = _post(
             client,
             files=_images(1, content=b"x" * 512),

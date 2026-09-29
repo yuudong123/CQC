@@ -32,6 +32,7 @@ const fault = enumeration([
   "DB_ERROR",
   "CONTROL_REJECTED",
   "CONTROL_NO_RESPONSE",
+  "CONTROL_FAILED",
 ]);
 const id = {
   type: "string",
@@ -65,13 +66,13 @@ const resultProperties = {
   bin: text,
   virtualBrix: { type: ["number", "null"], minimum: 9, maximum: 18 },
   brixMeasured: { const: false },
-  imageIndex: integer,
+  imageIndex: nullable(integer),
   inferenceMs: nullable(num),
   modelVersion: nullable(text),
   reviewRequired: bool,
   previewUrl,
   excluded: bool,
-  control: enumeration(["SUCCEEDED", "FALLBACK", "NO_RESPONSE", "REJECTED"]),
+  control: enumeration(["NOT_REQUESTED", "SUCCEEDED", "FALLBACK", "NO_RESPONSE", "REJECTED", "FAILED"]),
   persistence: enumeration(["SAVED", "FAILED"]),
   faults: array(fault, 5),
 };
@@ -93,7 +94,7 @@ const today = object({
     OTHER: integer,
   }),
 });
-const runtime = object({
+const runtimeProperties = {
   throughput: num,
   running: bool,
   concurrency: { type: "integer", minimum: 1, maximum: 64 },
@@ -109,7 +110,13 @@ const runtime = object({
   today,
   lastSaved: nullable(num),
   dbDown: bool,
-});
+};
+const runtime = object(
+  runtimeProperties,
+  Object.keys(runtimeProperties).filter(
+    (key) => !["concurrency", "sequence", "tick", "scope"].includes(key),
+  ),
+);
 const schemas = {
   Result: object(
     resultProperties,
@@ -157,7 +164,7 @@ const schemas = {
         ]),
       ),
     ),
-    retention: object({ history: integer, images: integer }),
+    retention: object({ history: integer, images: integer }, ["images"]),
     periodTotals: object(
       Object.fromEntries(["1", "5", "10", "30"].map((key) => [key, integer])),
     ),

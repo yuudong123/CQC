@@ -10,6 +10,7 @@ export const FAULTS = {
   DB_ERROR: "DB 저장 오류",
   CONTROL_REJECTED: "명령 거부",
   CONTROL_NO_RESPONSE: "제어 무응답",
+  CONTROL_FAILED: "제어 실패",
 } as const;
 export type Fault = keyof typeof FAULTS;
 export type Scope = "ALL" | "NEXT";
@@ -29,7 +30,7 @@ export type Result = InspectionRecord & {
   previewUrl?: string;
   timestamp: number;
   excluded: boolean;
-  control: "SUCCEEDED" | "FALLBACK" | "NO_RESPONSE" | "REJECTED";
+  control: "NOT_REQUESTED" | "SUCCEEDED" | "FALLBACK" | "NO_RESPONSE" | "REJECTED" | "FAILED";
   persistence: "SAVED" | "FAILED";
   faults: Fault[];
 };
@@ -42,11 +43,11 @@ export type Point = {
 export type Runtime = {
   throughput: number;
   running: boolean;
-  concurrency: number;
-  sequence: number;
-  tick: number;
+  concurrency?: number;
+  sequence?: number;
+  tick?: number;
   faults: Fault[];
-  scope: Scope;
+  scope?: Scope;
   jobs: Job[];
   history: Result[];
   images: Result[];
@@ -111,7 +112,7 @@ export function step(state: Runtime, now: number): Runtime {
   const date = kst(now).slice(0, 10);
   const next: Runtime = {
     ...state,
-    tick: state.tick + 1,
+    tick: (state.tick ?? 0) + 1,
     jobs: state.jobs.filter((job) => job.finish > now),
     today:
       date === state.today.date
@@ -134,6 +135,7 @@ export function step(state: Runtime, now: number): Runtime {
       const review = excluded || job.index % 7 === 3;
       const rejected = job.faults.includes("CONTROL_REJECTED"),
         noResponse = job.faults.includes("CONTROL_NO_RESPONSE");
+      const controlFailed = job.faults.includes("CONTROL_FAILED");
       return {
         ...sample,
         id: job.id,
@@ -145,7 +147,7 @@ export function step(state: Runtime, now: number): Runtime {
         inferenceMs: excluded ? null : 300 + (job.index % 100),
         cultivarConfidence: excluded ? null : 95.4,
         modelVersion: excluded ? null : "reference-only",
-        reviewRequired: review || rejected || noResponse,
+        reviewRequired: review || rejected || noResponse || controlFailed,
         status: excluded ? "FAIL" : review ? "REVIEW" : "PASS",
         processingStatus: timeout
           ? "TIMEOUT"
@@ -155,13 +157,15 @@ export function step(state: Runtime, now: number): Runtime {
         confidence: excluded ? null : review ? 42 : 94.2,
         errorCode: job.faults[0] ?? "NONE",
         misclassification: "NONE",
-        bin: noResponse
+        bin: noResponse || controlFailed
           ? "전송 실패"
           : review || rejected
             ? "TEST_REINSPECTION_BIN"
             : `DEMO_BIN_${String((sample.variety === "양광" ? 6 : 0) + ["특", "상", "보통"].indexOf(sample.grade!) * 2 + (sample.virtualBrix! >= 14 ? 2 : 1)).padStart(2, "0")}`,
         excluded,
-        control: noResponse
+        control: controlFailed
+          ? "FAILED"
+          : noResponse
           ? "NO_RESPONSE"
           : rejected
             ? review
@@ -219,8 +223,9 @@ export function step(state: Runtime, now: number): Runtime {
         },
       ].slice(-1800);
   if (state.running) {
-    while (next.jobs.length < state.concurrency) {
-      const index = next.sequence++;
+    while (next.jobs.length < (state.concurrency ?? 0)) {
+      const index = next.sequence ?? 0;
+      next.sequence = index + 1;
       next.jobs.push({
         id: `DEMO-${String(index + 1).padStart(6, "0")}`,
         index,
