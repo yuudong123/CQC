@@ -1,4 +1,18 @@
-/* Quality operations: fixed viewport, readable controls, scrollable panel bodies. */
+/* 관제 화면은 뷰포트를 유지하고 패널 내부에서만 필요한 스크롤을 사용합니다. */
+.qc-line { color: #98545f; background: #f8ecee; border: 1px solid #e7ccd1; border-radius: 20px; padding: 5px 12px; font-size: 12px; white-space: nowrap; }
+.qc-market-link { font-size: 13px; color: #98545f; padding: 7px; }
+.market-page .apple-thumbs { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 54px; }
+.market-page .apple-thumbs img { height: 54px; object-fit: contain; }
+.qc-frame-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 5px; margin-bottom: 8px; }
+.qc-frame-grid > div { position: relative; overflow: hidden; border-radius: 5px; background: #f8f5f5; }
+.qc-frame-grid img { width: 100%; height: clamp(36px, 6vh, 72px); object-fit: contain; }
+.qc-frame-grid span { position: absolute; bottom: 1px; right: 3px; color: #7d4750; background: #ffffffdf; border-radius: 3px; font-size: 9px; padding: 0 3px; }
+.auto-auction-demo { background: linear-gradient(110deg, #f8ecee, #fff); border: 1px solid #e7ccd1; border-radius: 12px; padding: 18px 22px; margin-bottom: 18px; }
+.auto-demo-heading { display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.auto-demo-heading strong { color: #944651; font-size: 19px; }
+.auto-auction-demo p { margin: 8px 0; }
+.auto-auction-demo small, .auto-auction-demo ol { color: var(--muted); font-size: 12px; }
+.auto-auction-demo ol { display: flex; flex-wrap: wrap; gap: 8px 24px; padding-left: 18px; }
 .qc-console {
   height: 100%;
   width: 100%;
@@ -132,7 +146,7 @@
   padding: 10px;
   display: flex;
   flex-direction: column;
-  min-height: 180px;
+  min-height: 0;
   min-width: 0;
 }
 .qc-job-image {

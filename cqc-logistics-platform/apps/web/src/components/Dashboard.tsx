@@ -129,6 +129,7 @@ export function AppHeader() {
       <nav aria-label="주요 메뉴">
         {(
           [
+            { href: "/", label: "품질 검사", icon: "camera" },
             { href: "/market", label: "입찰 시장", icon: "market" },
             { href: "/control", label: "차량 관제", icon: "truck" },
           ] as const

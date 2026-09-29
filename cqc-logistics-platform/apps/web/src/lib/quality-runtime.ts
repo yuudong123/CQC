@@ -3,6 +3,7 @@ import {
   type InspectionRecord,
   type MisclassificationType,
 } from "./quality-contract";
+import { sampleApples } from "./sample-apples";
 
 export const FAULTS = {
   INFERENCE_TIMEOUT: "추론 시간 초과",
@@ -108,7 +109,11 @@ export function initialRuntime(): Runtime {
 export function kst(now: number) {
   return new Date(now + 9 * 3600_000).toISOString();
 }
-export function step(state: Runtime, now: number): Runtime {
+export function imageIndexForJob(index: number) {
+  const sample = MOCK_INSPECTIONS[index % MOCK_INSPECTIONS.length];
+  return Math.max(0, sampleApples.findIndex((apple) => apple.variety === sample.variety && apple.grade === sample.grade));
+}
+export function step(state: Runtime, now: number, intervalMs = 1000): Runtime {
   const date = kst(now).slice(0, 10);
   const next: Runtime = {
     ...state,
@@ -138,6 +143,7 @@ export function step(state: Runtime, now: number): Runtime {
       const controlFailed = job.faults.includes("CONTROL_FAILED");
       return {
         ...sample,
+        imageIndex: imageIndexForJob(job.index),
         id: job.id,
         date,
         time: kst(now).slice(11, 23),
@@ -176,7 +182,7 @@ export function step(state: Runtime, now: number): Runtime {
         faults: job.faults,
       } as Result;
     });
-  next.throughput = done.length;
+  next.throughput = done.length * (1000 / intervalMs);
   const saved = done.filter((row) => row.persistence === "SAVED");
   next.dbDown =
     state.faults.includes("DB_ERROR") ||
@@ -211,15 +217,17 @@ export function step(state: Runtime, now: number): Runtime {
     ...done.filter((row) => row.faults.length).reverse(),
     ...state.errors,
   ].slice(0, 50);
+  const bucket = Math.floor(now / 1000) * 1000;
+  const previous = state.points.at(-1)?.at === bucket ? state.points.at(-1) : undefined;
   next.points = next.dbDown
     ? state.points
     : [
-        ...state.points,
+        ...(previous ? state.points.slice(0, -1) : state.points),
         {
-          at: Math.floor(now / 1000) * 1000,
-          count: saved.length,
-          review: saved.filter((row) => row.status === "REVIEW").length,
-          excluded: saved.filter((row) => row.excluded).length,
+          at: bucket,
+          count: saved.length + (previous?.count ?? 0),
+          review: saved.filter((row) => row.status === "REVIEW").length + (previous?.review ?? 0),
+          excluded: saved.filter((row) => row.excluded).length + (previous?.excluded ?? 0),
         },
       ].slice(-1800);
   if (state.running) {
@@ -230,10 +238,12 @@ export function step(state: Runtime, now: number): Runtime {
         id: `DEMO-${String(index + 1).padStart(6, "0")}`,
         index,
         started: now,
-        finish: now + 900,
+        finish: now + intervalMs - 100,
         faults: [...next.faults],
       });
       if (next.scope === "NEXT") next.faults = [];
+      // 병렬 슬롯을 늘려도 브라우저의 투입 간격은 사과 한 개당 500ms입니다.
+      if (intervalMs === 500) break;
     }
   }
   return next;
