@@ -1,4 +1,4 @@
-"""Prepare the CQC v2 quality-improvement experiment matrix without using Test."""
+"""시험 데이터를 제외하고 v2 품질 개선용 손실함수·정규화 실험을 구성한다."""
 
 from __future__ import annotations
 
@@ -72,6 +72,7 @@ def build_plan(*, epochs: int = 25, batch_size: int = 2) -> list[dict[str, Any]]
 
 
 def command_for(run: dict[str, Any], device: str) -> list[str]:
+    """실험 설정 한 건을 공통 학습 실행 명령의 인자 목록으로 변환한다."""
     command = [
         sys.executable,
         "-m",
@@ -109,6 +110,7 @@ def command_for(run: dict[str, Any], device: str) -> list[str]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 시험 데이터를 제외하고 v2 품질 개선용 손실함수·정규화 실험을 구성한다."""
     parser = argparse.ArgumentParser(description="v2 품질 개선 실험 계획")
     parser.add_argument("--output", type=Path, default=Path("outputs/training-v2-plan.json"))
     parser.add_argument("--epochs", type=int, default=25)

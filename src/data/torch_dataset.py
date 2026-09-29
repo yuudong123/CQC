@@ -1,4 +1,4 @@
-"""PyTorch adapter using the same selected views as training and inference."""
+"""공통 사진 선택 결과를 학습·추론에 필요한 PyTorch 텐서로 변환한다."""
 
 from __future__ import annotations
 
@@ -14,11 +14,13 @@ from torchvision.transforms import v2
 from .multiview import MultiViewDataset
 
 
+# 사전학습 특징 추출기의 입력 분포에 맞추는 RGB 정규화 기준이다.
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
 
 
 def build_transform(*, training: bool, image_size: int = 224) -> v2.Compose:
+    """학습 시 증강을 적용하고 학습·추론 공통 크기와 정규화를 맞춘다."""
     operations: list[Any] = [v2.ToImage(), v2.Resize((image_size, image_size), antialias=True)]
     if training:
         operations.extend([v2.RandomHorizontalFlip(), v2.RandomRotation(8)])
@@ -27,6 +29,7 @@ def build_transform(*, training: bool, image_size: int = 224) -> v2.Compose:
 
 
 class TorchMultiViewDataset(Dataset[dict[str, Any]]):
+    """사과별 사진 바이트·마스크·정답을 배치 가능한 텐서로 연결한다."""
     def __init__(self, source: MultiViewDataset, *, training: bool, image_size: int = 224, virtual_brix: Mapping[str, tuple[float, float]] | None = None) -> None:
         self.source = source
         self.transform = build_transform(training=training, image_size=image_size)

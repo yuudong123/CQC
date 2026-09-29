@@ -1,4 +1,4 @@
-"""Audit all expected experiment artifacts before model comparison."""
+"""모델 비교 전에 계획된 실험의 설정·학습 기록·체크포인트가 갖춰졌는지 검사한다."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ from .experiments import build_plan
 
 
 def sha256(path: Path) -> str:
+    """파일을 나눠 읽어 SHA-256을 계산한다."""
     digest = hashlib.sha256()
     with path.open("rb") as stream:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
@@ -20,6 +21,7 @@ def sha256(path: Path) -> str:
 
 
 def audit_run(directory: Path, expected: dict[str, Any]) -> dict[str, Any]:
+    """실험 한 건의 필수 파일·학습 설정·기록·해시를 확인한다."""
     errors = []
     required = {
         "config": directory / "config.json",
@@ -54,6 +56,7 @@ def audit_run(directory: Path, expected: dict[str, Any]) -> dict[str, Any]:
 
 
 def audit_all(root: Path, *, epochs: int = 20, batch_size: int = 2) -> dict[str, Any]:
+    """전체 비교 계획에 대해 실험별 누락·불일치를 집계한다."""
     plan = build_plan(epochs=epochs, batch_size=batch_size)
     results = []
     for expected in plan:
@@ -70,6 +73,7 @@ def audit_all(root: Path, *, epochs: int = 20, batch_size: int = 2) -> dict[str,
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 모델 비교 전에 계획된 실험의 설정·학습 기록·체크포인트가 갖춰졌는지 검사한다."""
     parser = argparse.ArgumentParser(description="전체 학습 산출물 무결성 검사")
     parser.add_argument("--root", type=Path, default=Path("outputs/training"))
     parser.add_argument("--output", type=Path, default=Path("outputs/training-audit.json"))

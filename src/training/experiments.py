@@ -1,4 +1,4 @@
-"""Prepare or explicitly launch the complete DM-06 comparison matrix."""
+"""모델 종류·사진 수·교차검증 묶음의 비교 계획을 만들고 실행 요청 시 학습한다."""
 
 from __future__ import annotations
 
@@ -41,6 +41,7 @@ def build_plan(
 
 
 def command_for(run: dict[str, Any], device: str) -> list[str]:
+    """실험 설정 한 건을 공통 학습 실행 명령의 인자 목록으로 변환한다."""
     return [
         sys.executable,
         "-m",
@@ -63,6 +64,7 @@ def command_for(run: dict[str, Any], device: str) -> list[str]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 모델 종류·사진 수·교차검증 묶음의 비교 계획을 만들고 실행 요청 시 학습한다."""
     parser = argparse.ArgumentParser(description="학습 비교 실험 계획 생성")
     parser.add_argument("--output", type=Path, default=Path("outputs/training-plan.json"))
     parser.add_argument("--epochs", type=int, default=20)

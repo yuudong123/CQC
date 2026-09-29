@@ -1,3 +1,5 @@
+"""최종 재학습에서 시험 데이터를 제외하고 교차검증으로 학습 회차를 선택하는지 확인한다."""
+
 from __future__ import annotations
 
 import json

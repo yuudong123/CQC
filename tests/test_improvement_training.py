@@ -1,3 +1,5 @@
+"""품질 개선 실험의 손실함수 조합과 후보 선택 기준을 확인한다."""
+
 from __future__ import annotations
 
 import unittest

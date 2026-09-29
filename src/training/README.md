@@ -1,5 +1,7 @@
 # 학습 코드 안내
 
+데이터 작업의 실행 순서와 일회성 실험 코드는 [과정별 노트북](../../notebooks/README.md)에 정리했다. 이 폴더는 학습·추론·테스트가 공유하는 함수와 반복 실행용 모듈을 보관한다. 원격 PS1은 `scripts/remote/`로 이동했다.
+
 ## 가상 당도 시연 실험
 
 가상 당도는 RGB 이미지에서 생성한 시연값이며 실측값이 아니다. 원본 매니페스트는 수정하지 않는다.
@@ -47,11 +49,11 @@ AI Hub `전북 장수 사과 당도 품질 데이터`는 RGB 이미지와 착즙
 | `export_predictions.py` | validation fold 그룹별 확률·정답 CSV 생성 |
 | `thresholds.py` | 품종·품질 신뢰도 기준 후보 탐색 |
 | `final_fit.py` | 공통 epoch의 CV 평균 점수로 시점을 정해 Test 제외 전체 개발 데이터를 최종 학습 |
-| `run_final_fit.ps1` | 원격 Windows 예약 작업에서 최종 학습을 실행하고 로그 분리 저장 |
+| `../../scripts/remote/run_final_fit.ps1` | 원격 Windows 예약 작업에서 최종 학습을 실행하고 로그 분리 저장 |
 | `improvement_experiments.py` | 품질 v2 손실·정규화 4종의 5-fold·source holdout 24회 계획 |
 | `improvement_report.py` | 공통 epoch의 CV 최저 fold·source holdout을 함께 비교해 강건 후보 선정 |
-| `run_improvement_v2.ps1` | 원격 Windows 예약 작업에서 v2 24회 실험을 실행하고 로그 저장 |
-| `run_i7_4790_acceptance.ps1` | 목표 CPU·RAM을 확인한 뒤 지연시간·처리량 수용시험 실행 |
+| `../../scripts/remote/run_improvement_v2.ps1` | 원격 Windows 예약 작업에서 v2 24회 실험을 실행하고 로그 저장 |
+| `../../scripts/remote/run_i7_4790_acceptance.ps1` | 목표 CPU·RAM을 확인한 뒤 지연시간·처리량 수용시험 실행 |
 | `acceptance_cpu.py` | 학원 Linux Jenkins의 Docker에서 v2 패키지 해시·CPU·RAM 확인 후 합성 입력 모델 단독 수용시험 |
 | `../../data/sampling/experiments.py` | v2 미달 시 선정 설정을 유지하고 각도 균형 랜덤 12장으로 6회 후속 비교 |
 

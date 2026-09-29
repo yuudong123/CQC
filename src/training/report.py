@@ -1,4 +1,4 @@
-"""Build comparison tables and charts from completed experiment folders."""
+"""완료된 실험 폴더에서 비교 표·추천 결과·그래프를 만든다."""
 
 from __future__ import annotations
 
@@ -17,6 +17,7 @@ RUN_PATTERN = re.compile(r"^(joint|separate)-(4|8|12|16|40)view-fold-([0-4])$")
 
 
 def collect_runs(root: Path) -> list[dict[str, Any]]:
+    """실험 폴더를 순회하며 저장된 학습 기록과 설정을 읽는다."""
     runs = []
     for directory in sorted(root.iterdir() if root.exists() else ()):
         match = RUN_PATTERN.fullmatch(directory.name)
@@ -46,6 +47,7 @@ def collect_runs(root: Path) -> list[dict[str, Any]]:
 
 
 def aggregate_runs(runs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """모델·사진 수별 교차검증 결과의 평균과 편차를 집계한다."""
     import statistics
 
     grouped: dict[tuple[str, int], list[dict[str, Any]]] = defaultdict(list)
@@ -75,6 +77,7 @@ def aggregate_runs(runs: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def recommendation(rows: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """집계된 검증 성능을 바탕으로 비교 실험의 후보를 추천한다."""
     complete = [row for row in rows if row["complete"]]
     if not complete:
         return None
@@ -99,6 +102,7 @@ def recommendation(rows: list[dict[str, Any]]) -> dict[str, Any] | None:
 
 
 def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
+    """비교 결과 행을 표 형식의 CSV로 저장한다."""
     path.parent.mkdir(parents=True, exist_ok=True)
     if not rows:
         path.write_text("", encoding="utf-8-sig")
@@ -110,6 +114,7 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
 
 
 def write_chart(path: Path, rows: list[dict[str, Any]]) -> None:
+    """모델·사진 수별 평균 성능과 편차를 그래프로 저장한다."""
     import matplotlib.pyplot as plt
 
     complete = [row for row in rows if row["complete"]]
@@ -129,6 +134,7 @@ def write_chart(path: Path, rows: list[dict[str, Any]]) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 완료된 실험 폴더에서 비교 표·추천 결과·그래프를 만든다."""
     parser = argparse.ArgumentParser(description="전체 학습 결과 비교 보고서 생성")
     parser.add_argument("--root", type=Path, default=Path("outputs/training"))
     parser.add_argument("--output-dir", type=Path, default=Path("outputs/comparison"))

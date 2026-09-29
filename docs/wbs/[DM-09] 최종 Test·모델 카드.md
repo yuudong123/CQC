@@ -18,7 +18,7 @@ v2 외관 모델은 유지한다. 정상 배차는 v2 품종 2종 × 외관 3단
 
 앞선 v2+규칙만 유지 방침 이후, 사용자 지시로 **종합등급 자체를 출력하는 신규 모델**을 학습한다. 이전 가상 당도 결합 실험(외관 정답 예측)과 다르다. v2는 보존한다.
 
-- 코드: `src/training/train_commercial_v3.py`. 사진 12장(224 RGB)과 기존 가상 당도·불확실성을 입력한다.
+- 코드: `notebooks/03_virtual_brix_experiments.ipynb`의 `train_commercial()`. 사진 12장(224 RGB)과 기존 가상 당도·불확실성을 입력한다.
 - 품종 정답은 유지하고 품질 헤드 정답만 원본 외관 정답 + 가상 당도의 승인된 60:40 정책으로 생성한다. 원본 매니페스트·라벨은 변경하지 않는다.
 - 정답 의미는 `simulated_commercial_grade`, 모델 후보 버전은 `commercial-v3-candidate`. 신경망은 규칙을 근사하므로 규칙과 항상 일치하는 것은 아니다. 평가 점수는 실측 품질 정확도가 아닌 합성 정책 정답과의 일치도다.
 - Test 제외 후 source 분할: 학습 118개(L16/M61/S41), 검증 34개(L6/M15/S13). Test 27개와 시연용 사진 폴더는 학습에 사용하지 않는다.
@@ -47,7 +47,7 @@ v2 외관 모델은 유지한다. 정상 배차는 v2 품종 2종 × 외관 3단
 - 결과 파일: [결합 모델 기존 Test 진단](results/brix-source-reused-test-20260923.json).
 - 기존 Test 반복 사용에 따른 참고 진단이며 독립 최종 승인이나 Test 기반 후보 선택에 사용하지 않는다. v2 최종 모델은 152그룹 학습이므로 동등 학습 조건 비교가 아니다.
 - 이 모델은 가상 당도를 입력받아 **기존 외관 등급**을 예측한다. 당도 측정 모델이나 60:40 종합 상품성 정책을 학습한 모델이 아니다.
-- `scripts/evaluate_reused_test.py`에 결합 모델용 `--virtual-brix` 입력 검증·데이터 연결을 추가했다.
+- `notebooks/04_model_verification.ipynb`의 `evaluate_reused_test()`에 결합 모델용 `virtual_brix` 입력 검증·데이터 연결을 추가했다.
 
 Test를 보지 않고 확정한 모델 구조·입력 장수·epoch·신뢰도 기준으로 최종 학습한 뒤, 고정 Test 27그룹을 한 번만 평가하고 승인 여부와 한계를 기록한다.
 
@@ -169,10 +169,11 @@ DM-09의 최종 학습, Test 1회, 실패 분석, 모델 카드와 패키지 기
 - 이 검증은 프로세스 내부 API 시험이다. 실제 네트워크·Backend 통합·실사과 정확도·목표 CPU 성능을 검증한 것이 아니다.
 - 로컬 패키징·최종 학습 설정·추론 API·predictor 관련 테스트 16개 통과.
 
-재현 명령(프로젝트 루트, 검증 보고서는 새 경로 사용):
+재현 방법(04 노트북의 함수 정의 셀을 실행한 뒤, 검증 보고서는 새 경로 사용):
 
-```powershell
-python -m scripts.verify_candidate_package --package models/cqc-apple-separate12-focal-v2-candidate --output outputs/candidate-v2-smoke.json
+```python
+# notebooks/04_model_verification.ipynb에서 실행
+verify_candidate_package(package=Path("models/cqc-apple-separate12-focal-v2-candidate"), output=Path("outputs/candidate-v2-smoke.json"))
 ```
 
 백엔드 담당자는 후보 버전을 명시해 연동 시험에 사용할 수 있다. 입력 계약은 기존 대표 12장·inspection_id·metadata를 유지한다. 서버 상시 실행·운영 모델 교체는 이번 작업에서 하지 않았다.

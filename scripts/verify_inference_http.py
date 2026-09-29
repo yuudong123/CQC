@@ -1,4 +1,4 @@
-"""Real loopback HTTP smoke test with optional unmodified Backend response schema."""
+"""임시 로컬 추론 서버를 실행해 실제 HTTP 요청과 백엔드 응답 형식의 호환성을 검사한다."""
 from __future__ import annotations
 
 import argparse
@@ -18,6 +18,7 @@ from PIL import Image
 
 
 def backend_response_type(root: Path):
+    """지정한 백엔드 소스의 실제 응답 자료형을 읽어 호환성 검사에 사용한다."""
     package = root / "src/api"
     spec = importlib.util.spec_from_file_location(
         "cqc_backend_snapshot", package / "__init__.py",
@@ -31,6 +32,7 @@ def backend_response_type(root: Path):
 
 
 def main() -> None:
+    """실행 인자를 읽고 다음 작업을 수행한다: 임시 로컬 추론 서버를 실행해 실제 HTTP 요청과 백엔드 응답 형식의 호환성을 검사한다."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--package", type=Path, required=True)
     parser.add_argument("--backend-root", type=Path)

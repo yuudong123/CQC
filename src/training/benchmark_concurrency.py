@@ -1,4 +1,4 @@
-"""Compare sequential and concurrent model-only inference on validation input."""
+"""검증 입력으로 순차·동시 추론의 지연시간과 처리량을 비교한다."""
 
 from __future__ import annotations
 
@@ -23,6 +23,7 @@ from .train import resolve_device, write_json
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 검증 입력으로 순차·동시 추론의 지연시간과 처리량을 비교한다."""
     parser = argparse.ArgumentParser(description="순차·병렬 추론시간 비교")
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--manifest", type=Path, default=Path("data/processed/manifest.csv"))
@@ -53,6 +54,7 @@ def main(argv: list[str] | None = None) -> int:
     mask = item["view_mask"].unsqueeze(0).to(device)
 
     def infer_once() -> float:
+        """동시 실행에 사용할 모델 추론 한 번의 경과 시간을 측정한다."""
         started = time.perf_counter()
         with torch.inference_mode():
             model(images, mask)

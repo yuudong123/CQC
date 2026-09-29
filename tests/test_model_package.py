@@ -1,3 +1,5 @@
+"""모델 패키지의 파일 구성·해시·신뢰도 정보와 기존 버전 보존을 확인한다."""
+
 from __future__ import annotations
 
 import hashlib

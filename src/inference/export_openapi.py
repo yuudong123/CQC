@@ -1,4 +1,4 @@
-"""Export the inference API OpenAPI document without loading a real model."""
+"""실제 모델을 읽지 않고 추론 API의 OpenAPI 계약 문서를 내보낸다."""
 
 from __future__ import annotations
 
@@ -21,6 +21,7 @@ class _SchemaOnlyPredictor:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 실제 모델을 읽지 않고 추론 API의 OpenAPI 계약 문서를 내보낸다."""
     parser = argparse.ArgumentParser(description="inference OpenAPI JSON 생성")
     parser.add_argument(
         "--output", type=Path, default=Path("docs/contracts/inference-openapi.json")

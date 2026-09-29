@@ -1,3 +1,5 @@
+"""가상 당도의 재현성·값 범위·개발 데이터 보정과 실측 오인 방지 규칙을 확인한다."""
+
 from __future__ import annotations
 
 import csv

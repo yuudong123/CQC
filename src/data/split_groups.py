@@ -1,4 +1,4 @@
-"""Create the reproducible group-level holdout split and 5-fold CV assignment."""
+"""동일 사과를 분리하지 않으면서 학습·검증·시험과 5개 교차검증 묶음을 만든다."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ SPLIT_ORDER = tuple(SPLIT_RATIOS)
 
 
 class SplitValidationError(ValueError):
-    """Raised when a group split cannot satisfy the data contract."""
+    """사과 단위 분할이 데이터 규칙을 만족하지 못하면 발생한다."""
 
 
 @dataclass(frozen=True)
@@ -30,6 +30,7 @@ class GroupRecord:
 
     @property
     def stratum(self) -> tuple[str, str]:
+        """분할 비율을 맞출 품종·등급 조합을 반환한다."""
         return self.cultivar, self.quality_grade
 
 
@@ -41,7 +42,7 @@ class SplitRecord:
 
 
 def load_groups(manifest_path: Path) -> list[GroupRecord]:
-    """Collapse the frame manifest into one validated row per group_no."""
+    """사진별 행을 검증하고 group_no마다 사과 정보 한 행으로 모은다."""
 
     groups: dict[str, dict[str, object]] = {}
     with manifest_path.open("r", encoding="utf-8-sig", newline="") as stream:
@@ -83,6 +84,7 @@ def load_groups(manifest_path: Path) -> list[GroupRecord]:
 
 
 def _largest_remainder_targets(total: int) -> dict[str, int]:
+    """70/15/15 비율의 소수점 잔여를 배분해 전체 사과 수를 맞춘다."""
     raw = {split: total * ratio for split, ratio in SPLIT_RATIOS.items()}
     targets = {split: math.floor(value) for split, value in raw.items()}
     remaining = total - sum(targets.values())
@@ -99,7 +101,7 @@ def _largest_remainder_targets(total: int) -> dict[str, int]:
 def _allocate_stratum_counts(
     stratum_sizes: dict[tuple[str, str], int], seed: int
 ) -> dict[tuple[str, str], dict[str, int]]:
-    """Allocate exact global totals while keeping every stratum near 70/15/15."""
+    """전체 목표 수량을 맞추면서 품종·등급별 비율도 70/15/15에 가깝게 배정한다."""
 
     total = sum(stratum_sizes.values())
     global_targets = _largest_remainder_targets(total)
@@ -155,7 +157,7 @@ def _allocate_stratum_counts(
 def _allocate_fold_counts(
     development_sizes: dict[tuple[str, str], int], folds: int, seed: int
 ) -> dict[tuple[str, str], dict[int, int]]:
-    """Balance CV fold totals while keeping every stratum within one group."""
+    """품종·등급별 묶음 간 수량 차이를 한 사과 이내로 유지하며 교차검증 수량을 맞춘다."""
 
     total = sum(development_sizes.values())
     base_target, target_remainder = divmod(total, folds)
@@ -210,7 +212,7 @@ def _allocate_fold_counts(
 
 
 def assign_groups(groups: list[GroupRecord], seed: int = 42, folds: int = 5) -> list[SplitRecord]:
-    """Assign holdout split and CV fold without ever splitting a group."""
+    """한 사과의 사진은 같은 분할에 두고 교차검증 묶음 번호를 배정한다."""
 
     if folds < 2:
         raise SplitValidationError("folds는 2 이상이어야 합니다")
@@ -276,6 +278,7 @@ def assign_groups(groups: list[GroupRecord], seed: int = 42, folds: int = 5) -> 
 
 
 def validate_assignments(records: list[SplitRecord], folds: int = 5) -> None:
+    """같은 사과가 중복 배정되거나 교차검증 번호가 범위를 벗어나지 않았는지 확인한다."""
     group_ids = [record.group.group_no for record in records]
     if len(group_ids) != len(set(group_ids)):
         raise SplitValidationError("group_no가 여러 분할 행에 중복되었습니다")
@@ -287,6 +290,7 @@ def validate_assignments(records: list[SplitRecord], folds: int = 5) -> None:
 
 
 def build_summary(records: list[SplitRecord], seed: int, folds: int) -> dict:
+    """사과·사진 수와 품종·등급별 분할 통계를 요약한다."""
     split_counts = Counter(record.split for record in records)
     split_frames = Counter()
     stratum_counts: dict[str, Counter[str]] = defaultdict(Counter)
@@ -334,6 +338,7 @@ def build_summary(records: list[SplitRecord], seed: int, folds: int) -> dict:
 def write_outputs(
     records: list[SplitRecord], summary: dict, split_path: Path, summary_path: Path
 ) -> None:
+    """처리 결과와 요약 통계를 지정한 파일에 저장한다."""
     split_path.parent.mkdir(parents=True, exist_ok=True)
     summary_path.parent.mkdir(parents=True, exist_ok=True)
     with split_path.open("w", encoding="utf-8-sig", newline="") as stream:
@@ -366,6 +371,7 @@ def write_outputs(
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 동일 사과를 분리하지 않으면서 학습·검증·시험과 5개 교차검증 묶음을 만든다."""
     parser = argparse.ArgumentParser(description="group_no 기준 데이터 분할 생성")
     parser.add_argument(
         "--manifest", type=Path, default=Path("data/processed/manifest.csv")

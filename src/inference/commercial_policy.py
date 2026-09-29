@@ -1,4 +1,4 @@
-"""Demo-only commercial grading; not a learned model or official grade."""
+"""외관 등급과 가상 당도를 고정 정책으로 합산하는 시연용 상품등급 계산이다."""
 
 from __future__ import annotations
 
@@ -20,10 +20,10 @@ def assess_commercial_grade(
     severe_defect: bool = False,
     labels: Mapping[str, str] | None = None,
 ) -> dict:
-    """Keep external review/defect holds; never invent a missing sugar value.
+    """검토·결함 보류를 유지하고, 당도가 없으면 등급을 확정하지 않는다.
 
-    severe_defect is an external inspection flag, not a v2 model output.
-    Grade names may change without changing the stable L/M/S codes.
+    severe_defect는 외부 검사 결과이며 v2 모델의 출력이 아니다.
+    L/M/S 코드는 유지하고 화면에 표시할 등급 이름만 바꿀 수 있다.
     """
     if appearance_grade not in APPEARANCE_SCORES:
         raise ValueError("appearance_grade must be L, M or S")
@@ -57,9 +57,11 @@ def assess_commercial_grade(
     }
     if reasons:
         return result
+    # 시연 기획의 고정 기준으로 당도를 구간 점수화하고 외관 60%·당도 40%로 합산한다.
     brix_score = 100 if virtual_brix >= 14 else 70 if virtual_brix >= 12 else 40 if virtual_brix >= 10 else 0
     score = round(0.6 * APPEARANCE_SCORES[appearance_grade] + 0.4 * brix_score, 1)
     grade = "S"
+    # 합산 점수 외에도 각 등급에 필요한 최소 외관·당도 조건을 함께 적용한다.
     if score >= 90 and appearance_grade == "L" and virtual_brix >= 14:
         grade = "L"
     elif score >= 65 and appearance_grade in {"L", "M"} and virtual_brix >= 12:
@@ -69,10 +71,10 @@ def assess_commercial_grade(
 
 
 def assess_prediction(prediction: Mapping, virtual_brix: float | None, **options) -> dict:
-    """Wrap an existing v2 response without replacing its appearance prediction.
+    """기존 v2 예측에 시연용 상품등급 평가를 함께 묶는다.
 
-    This is a local demo envelope, NOT the /v1/predict HTTP response schema.
-    The caller must propagate backend review_required into options.
+    이 묶음은 로컬 시연용이며 /v1/predict의 HTTP 응답 형식과는 다르다.
+    호출 측은 백엔드의 review_required 상태를 options로 전달해야 한다.
     """
     return {
         "inference": dict(prediction),
@@ -81,6 +83,7 @@ def assess_prediction(prediction: Mapping, virtual_brix: float | None, **options
 
 
 def main():
+    """실행 인자를 읽고 다음 작업을 수행한다: 외관 등급과 가상 당도를 고정 정책으로 합산하는 시연용 상품등급 계산이다."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--appearance-grade", choices=tuple(GRADE_LABELS), required=True)
     parser.add_argument("--virtual-brix", type=float)

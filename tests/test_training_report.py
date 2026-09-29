@@ -1,3 +1,5 @@
+"""완료 실험 집계와 비교 보고서의 후보 추천을 확인한다."""
+
 from __future__ import annotations
 
 import unittest

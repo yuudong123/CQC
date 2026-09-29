@@ -1,3 +1,5 @@
+"""사과 단위 분할의 재현성, 품종·등급 비율과 묶음 간 누출 방지를 확인한다."""
+
 from __future__ import annotations
 
 import unittest

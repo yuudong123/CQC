@@ -1,3 +1,5 @@
+"""두 신뢰도 기준을 적용했을 때 승인 비율과 정확도·후보 선택을 확인한다."""
+
 from __future__ import annotations
 
 import unittest

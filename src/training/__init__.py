@@ -1,1 +1,1 @@
-"""Training and evaluation helpers for CQC."""
+"""CQC 모델 학습·실험 비교·평가·패키징을 위한 공통 함수 패키지다."""

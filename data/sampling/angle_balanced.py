@@ -1,4 +1,4 @@
-"""Angle-balanced view sampling for training-time multi-view augmentation."""
+"""학습 중 촬영 방향과 각도 구간을 고르게 포함하도록 사진을 무작위 선택한다."""
 
 from __future__ import annotations
 
@@ -11,13 +11,14 @@ from src.data.multiview import FrameRecord, MultiViewValidationError, SelectedVi
 
 
 def _stable_rng(*, seed: int, epoch: int, group_no: str) -> random.Random:
+    """시드·학습 회차·사과 식별자가 같으면 같은 난수 순서를 만든다."""
     payload = f"{seed}:{epoch}:{group_no}".encode("utf-8")
     digest = hashlib.sha256(payload).digest()
     return random.Random(int.from_bytes(digest[:8], "big"))
 
 
 def _allocate_slots(counts: dict[str, int], target: int) -> dict[str, int]:
-    """Allocate slots as evenly as possible across available camera directions."""
+    """촬영 방향별 사진 수를 고려해 선택할 자리를 가능한 고르게 배분한다."""
 
     directions = sorted(direction for direction, count in counts.items() if count > 0)
     if not directions:
@@ -41,7 +42,7 @@ def _allocate_slots(counts: dict[str, int], target: int) -> dict[str, int]:
 def _sample_spread(
     frames: Sequence[FrameRecord], count: int, rng: random.Random
 ) -> list[FrameRecord]:
-    """Choose one random frame from each contiguous angular sector."""
+    """정렬된 각도 구간마다 사진 한 장을 무작위로 뽑아 넓은 각도를 포함한다."""
 
     ordered = sorted(
         frames,
@@ -70,7 +71,7 @@ def select_angle_balanced_random_views(
     epoch: int,
     group_no: str,
 ) -> SelectedViews:
-    """Randomly sample views while covering camera directions and angular sectors."""
+    """방향·각도 구간을 덮는 사진을 무작위 선택한다. 부족한 사진은 중복 없이 패딩한다."""
 
     if target <= 0:
         raise MultiViewValidationError("target은 1 이상이어야 합니다")

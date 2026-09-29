@@ -1,3 +1,5 @@
+"""상태 확인·사진 업로드·각도 입력과 예측 응답의 API 계약을 확인한다."""
+
 from __future__ import annotations
 
 import io

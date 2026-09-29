@@ -25,7 +25,7 @@
 ## Backend 담당 작업
 
 1. Simulator의 시연용 12장 묶음 입력과 가상 당도 출처를 연결한다. `data/processed/realtime-apple-arrival-demo`는 Git 제외 자료다. 원본 `group_no`나 정답 라벨은 모델 입력으로 보내지 않는다. `demo-virtual-brix.csv`에서 조회한 9~18 범위의 값을 현재 Backend 검사 요청의 `virtual_brix` multipart form 필드로 전달한다. 계약 변경을 Simulator·Frontend·OpenAPI와 동기화한다.
-   - 자료 폴더의 `demo-virtual-brix.csv`는 `demo_bundle_id`로 `index.json`의 `inspection_id` 예시와 결합한다. 반복 검사에서는 새 `inspection_id`를 발급하되 당도 조회에는 원래 묶음 ID를 사용한다. 996개 묶음의 값을 모두 포함하며 기본 869개 중 12° 미만은 43개다. 이 파일은 `scripts/build_demo_bin_brix.py`로 생성·검증한다.
+   - 자료 폴더의 `demo-virtual-brix.csv`는 `demo_bundle_id`로 `index.json`의 `inspection_id` 예시와 결합한다. 반복 검사에서는 새 `inspection_id`를 발급하되 당도 조회에는 원래 묶음 ID를 사용한다. 996개 묶음의 값을 모두 포함하며 기본 869개 중 12° 미만은 43개다. 이 파일은 `notebooks/05_demo_bundles.ipynb`의 `attach_demo_brix()`로 생성·검증한다.
 2. 현재 HTTP 시연 경로는 12-bin으로 연결했으나, **가상 당도 누락 시 기존 6-bin Mock 경로가 남아 있다.** 실제 시연 모드에서는 누락을 재검사로 바꾸고, 응답·DB의 `virtual_brix`, 출처, `brix_is_measured=false`, 당도 구간, `target_bin_code` 저장을 연동한다. 이미지는 Inference에 보내되 가상 당도는 배차 정책에서 사용한다.
 3. 기존 `bin_mappings`의 `(crop_type, cultivar, quality_grade)` 유일 제약은 같은 외관의 당도 2개 bin을 담을 수 없다. 기존 마이그레이션을 고치지 말고 **새 마이그레이션**으로 sweetness 구간을 키에 추가하고 12개 정상+재검사 1개 seed를 준비한다.
 4. 가상 제어 거부 시 재검사 대체·시간 초과 후 확정 bin 불변·저신뢰 분기는 기존 정책을 유지한다. 12조합 및 11.9/12.0 경계 통합 테스트를 추가한다.

@@ -1,8 +1,8 @@
-"""Build a frame-level manifest directly from the AI Hub ZIP archives.
+"""AI Hub 원본 ZIP에서 사진별 매니페스트를 만든다.
 
-The source archives are intentionally not extracted. Image and JSON members are
-paired by their case-insensitive member stem because the JSON ``identifier``
-field is not a stable archive path and ``no``/``img_no`` are not unique.
+압축을 풀지 않고 이미지와 JSON의 파일명에서 확장자를 제외한 부분을
+대소문자 구분 없이 맞춘다. identifier는 안정적인 경로가 아니고
+no와 img_no도 고유하지 않으므로 매칭 키로 사용하지 않는다.
 """
 
 from __future__ import annotations
@@ -83,7 +83,7 @@ MANIFEST_FIELDS = (
 
 
 class DatasetValidationError(ValueError):
-    """Raised when the local dataset violates the agreed archive contract."""
+    """원본 데이터가 합의한 압축 파일·라벨 규칙을 위반하면 발생한다."""
 
 
 @dataclass(frozen=True, order=True)
@@ -101,16 +101,19 @@ class ArchivePair:
 
 
 def _relative_posix(path: Path, root: Path) -> str:
+    """경로를 저장소 기준 상대 경로로 바꾸고 구분자를 통일한다."""
     return path.relative_to(root).as_posix()
 
 
 def _member_stem(name: str) -> str:
+    """압축 내부 파일명을 확장자 없이 정규화해 이미지·라벨을 연결한다."""
     return PurePosixPath(name).stem.casefold()
 
 
 def _index_members(
     infos: Iterable[ZipInfo], *, suffixes: set[str], archive: Path
 ) -> dict[str, ZipInfo]:
+    """확장자에 맞는 ZIP 내부 파일을 찾아 중복 파일명도 검사한다."""
     indexed: dict[str, ZipInfo] = {}
     for info in infos:
         if info.is_dir() or PurePosixPath(info.filename).suffix.casefold() not in suffixes:
@@ -126,6 +129,7 @@ def _index_members(
 
 
 def _split_from_path(path: Path) -> str:
+    """원본 경로에서 학습·검증 분할 정보를 판별한다."""
     if "1.Training" in path.parts:
         return "train"
     if "2.Validation" in path.parts:
@@ -134,7 +138,7 @@ def _split_from_path(path: Path) -> str:
 
 
 def discover_archive_pairs(raw_root: Path) -> list[ArchivePair]:
-    """Find and pair the 12 image/label archive combinations."""
+    """분할·품종·등급별 이미지 ZIP과 라벨 ZIP의 12개 조합을 찾아 연결한다."""
 
     found: dict[ArchiveKey, dict[str, Path]] = defaultdict(dict)
     for path in raw_root.rglob("*.zip"):
@@ -180,6 +184,7 @@ def discover_archive_pairs(raw_root: Path) -> list[ArchivePair]:
 
 
 def _load_label(label_zip: ZipFile, info: ZipInfo) -> dict[str, Any]:
+    """ZIP 내부 JSON을 읽고 라벨 객체 형태를 검사한다."""
     try:
         value = json.loads(label_zip.read(info).decode("utf-8-sig"))
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
@@ -194,6 +199,7 @@ def _load_label(label_zip: ZipFile, info: ZipInfo) -> dict[str, Any]:
 
 
 def _read_png_dimensions(image_zip: ZipFile, info: ZipInfo) -> tuple[int, int]:
+    """이미지 전체를 디코딩하지 않고 PNG 헤더에서 너비·높이를 읽는다."""
     with image_zip.open(info) as stream:
         header = stream.read(24)
     if len(header) < 24 or header[:8] != b"\x89PNG\r\n\x1a\n":
@@ -209,6 +215,7 @@ def _read_png_dimensions(image_zip: ZipFile, info: ZipInfo) -> tuple[int, int]:
 
 
 def _validate_label(label: dict[str, Any], pair: ArchivePair, member: str) -> None:
+    """품종·등급·식별자·촬영 각도 등 필수 라벨 필드를 검사한다."""
     missing = sorted(REQUIRED_FIELDS - set(label))
     if missing:
         raise DatasetValidationError(f"필수 JSON 필드 누락: {member} ({missing})")
@@ -236,6 +243,7 @@ def _validate_label(label: dict[str, Any], pair: ArchivePair, member: str) -> No
 
 
 def _schema_variant(label: dict[str, Any]) -> str:
+    """품종·등급에 따른 라벨 구조를 구분한다."""
     return "camera_metadata" if "camera_model" in label else "legacy_metadata"
 
 
@@ -247,6 +255,7 @@ def _row(
     image_info: ZipInfo,
     label: dict[str, Any],
 ) -> dict[str, Any]:
+    """라벨과 ZIP 정보를 사진 한 장의 매니페스트 행으로 묶는다."""
     member_stem = _member_stem(label_info.filename)
     sample_id = f"{pair.key.split}:{pair.key.cultivar}:{pair.key.quality}:{member_stem}"
     return {
@@ -279,11 +288,12 @@ def _row(
 
 
 def _type_name(value: Any) -> str:
+    """필드별 자료형 통계에 사용할 이름을 반환한다."""
     return type(value).__name__
 
 
 def build_manifest(raw_root: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """Validate every JSON member and return manifest rows plus a summary."""
+    """모든 JSON 라벨을 검증하고 사진별 매니페스트 행과 통계 요약을 반환한다."""
 
     raw_root = raw_root.resolve()
     pairs = discover_archive_pairs(raw_root)
@@ -448,6 +458,7 @@ def write_outputs(
     manifest_path: Path,
     summary_path: Path,
 ) -> None:
+    """처리 결과와 요약 통계를 지정한 파일에 저장한다."""
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     summary_path.parent.mkdir(parents=True, exist_ok=True)
     with manifest_path.open("w", encoding="utf-8-sig", newline="") as stream:
@@ -460,6 +471,12 @@ def write_outputs(
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: AI Hub 원본 ZIP에서 사진별 매니페스트를 만든다.
+
+압축을 풀지 않고 이미지와 JSON의 파일명에서 확장자를 제외한 부분을
+대소문자 구분 없이 맞춘다. identifier는 안정적인 경로가 아니고
+no와 img_no도 고유하지 않으므로 매칭 키로 사용하지 않는다.
+"""
     parser = argparse.ArgumentParser(description="AI Hub 사과 ZIP 매니페스트 생성")
     parser.add_argument("--raw-root", type=Path, default=Path("data/raw"))
     parser.add_argument(

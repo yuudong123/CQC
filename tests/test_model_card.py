@@ -1,3 +1,5 @@
+"""저장된 학습·평가 결과로 모델 카드의 근거와 승인 상태가 기록되는지 확인한다."""
+
 from __future__ import annotations
 
 import unittest

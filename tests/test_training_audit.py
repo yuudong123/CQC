@@ -1,3 +1,5 @@
+"""실험 산출물의 누락·설정 불일치·완료 여부를 찾아내는지 확인한다."""
+
 from __future__ import annotations
 
 import hashlib
