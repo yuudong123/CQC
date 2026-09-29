@@ -78,6 +78,28 @@ async def validate_inspection_request(
 ) -> InspectionResponse:
     """검사 요청을 검증하고 Service의 Mock 추론 결과를 반환한다."""
 
+    try:
+        return await _validate_and_inspect(
+            request=request,
+            inspection_id=inspection_id,
+            images=images,
+            metadata=metadata,
+            virtual_brix=virtual_brix,
+        )
+    finally:
+        # FastAPI form 임시 파일을 유효성 검사 실패 시에도 명시적으로 닫는다.
+        for image in images:
+            await image.close()
+
+
+async def _validate_and_inspect(
+    *,
+    request: Request,
+    inspection_id: str,
+    images: list[UploadFile],
+    metadata: str,
+    virtual_brix: float | None,
+) -> InspectionResponse:
     settings = _settings_from(request)
 
     if not inspection_id.strip():
