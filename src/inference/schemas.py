@@ -1,4 +1,4 @@
-"""Typed HTTP response contracts for the inference service."""
+"""추론 서버의 상태 확인·예측 응답 필드와 자료형을 정의한다."""
 
 from __future__ import annotations
 

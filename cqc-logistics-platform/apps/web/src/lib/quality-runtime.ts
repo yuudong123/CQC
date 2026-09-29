@@ -161,7 +161,7 @@ export function step(state: Runtime, now: number): Runtime {
           ? "전송 실패"
           : review || rejected
             ? "TEST_REINSPECTION_BIN"
-            : `DEMO_BIN_${String((sample.variety === "양광" ? 6 : 0) + ["특", "상", "보통"].indexOf(sample.grade!) * 2 + (sample.virtualBrix! >= 12 ? 2 : 1)).padStart(2, "0")}`,
+            : `DEMO_BIN_${String((sample.variety === "양광" ? 6 : 0) + ["특", "상", "보통"].indexOf(sample.grade!) * 2 + (sample.virtualBrix! >= 14 ? 2 : 1)).padStart(2, "0")}`,
         excluded,
         control: controlFailed
           ? "FAILED"

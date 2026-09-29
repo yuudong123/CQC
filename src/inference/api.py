@@ -1,4 +1,4 @@
-"""Optional FastAPI adapter around the framework-independent Predictor."""
+"""추론기를 HTTP 상태 확인·예측 API로 제공하는 FastAPI 연결 계층이다."""
 
 from __future__ import annotations
 
@@ -15,11 +15,13 @@ MAX_REQUEST_BYTES = 24 * 1024 * 1024
 
 try:
     from fastapi import FastAPI, File, Form, HTTPException, UploadFile
-except ImportError:  # Optional runtime dependency.
+except ImportError:  # HTTP 서버 기능을 사용할 때 필요한 선택 의존성이다.
+    # 의존성이 없는 환경에서도 모듈을 읽게 한다. 아래 표기는 자료형 검사기 지시문이다.
     FastAPI = File = Form = HTTPException = UploadFile = None  # type: ignore[assignment]
 
 
 def _validate_metadata(value: str, image_count: int) -> list[dict[str, Any]]:
+    """사진 수와 각도 메타데이터의 길이·인덱스·필드를 확인한다."""
     try:
         metadata = json.loads(value)
     except json.JSONDecodeError as exc:
@@ -47,6 +49,7 @@ def _validate_metadata(value: str, image_count: int) -> list[dict[str, Any]]:
 
 
 def create_app(predictor: Predictor) -> Any:
+    """주입받은 추론기를 상태 확인·예측 HTTP 경로에 연결한다."""
     if FastAPI is None:
         raise RuntimeError("FastAPI 실행 의존성을 설치해야 합니다")
 
@@ -104,6 +107,7 @@ def create_app(predictor: Predictor) -> Any:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 추론기를 HTTP 상태 확인·예측 API로 제공하는 FastAPI 연결 계층이다."""
     parser = argparse.ArgumentParser(description="CQC inference HTTP API")
     parser.add_argument("--model-dir", type=Path, required=True)
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")

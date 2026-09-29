@@ -51,7 +51,7 @@ docker run --rm --network none \
 Windows 호스트에서 원본 데이터와 가상환경이 준비돼 있을 경우 기존 PowerShell 스크립트를 계속 사용할 수 있다. 이는 위 Docker 합성 입력 경로와 측정 자료·실행환경이 다르므로 결과에 실행 방식을 함께 적는다.
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File src\training\run_i7_4790_acceptance.ps1 `
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\remote\run_i7_4790_acceptance.ps1 `
   -Checkpoint models\<version>\model.pt
 ```
 

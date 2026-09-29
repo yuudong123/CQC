@@ -1,4 +1,4 @@
-"""Measure checkpoint inference latency on validation groups without using test."""
+"""시험 데이터를 사용하지 않고 검증 사과로 모델 추론 지연시간을 측정한다."""
 
 from __future__ import annotations
 
@@ -21,17 +21,20 @@ from .train import resolve_device, write_json
 
 
 def percentile(values: list[float], fraction: float) -> float:
+    """측정값을 정렬해 요청한 분위수 지연시간을 계산한다."""
     ordered = sorted(values)
     index = min(len(ordered) - 1, max(0, round((len(ordered) - 1) * fraction)))
     return ordered[index]
 
 
 def synchronize(device: torch.device) -> None:
+    """GPU 연산 완료를 기다려 실행 시간 측정이 먼저 끝나지 않게 한다."""
     if device.type == "cuda":
         torch.cuda.synchronize(device)
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 시험 데이터를 사용하지 않고 검증 사과로 모델 추론 지연시간을 측정한다."""
     parser = argparse.ArgumentParser(description="검증 그룹 추론시간 측정")
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--manifest", type=Path, default=Path("data/processed/manifest.csv"))

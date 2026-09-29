@@ -1,4 +1,4 @@
-"""Measure one group's JPEG upload and Inference HTTP response on the target CPU."""
+"""목표 CPU에서 사과 한 묶음의 JPEG 업로드와 HTTP 응답 시간을 측정한다."""
 
 import argparse
 import io
@@ -12,6 +12,7 @@ from PIL import Image
 
 
 def percentile(values, fraction):
+    """측정값을 정렬해 요청한 분위수 지연시간을 계산한다."""
     ordered = sorted(values)
     position = (len(ordered) - 1) * fraction
     lower = int(position)
@@ -40,6 +41,7 @@ def multipart_payload():
 
 
 def main():
+    """실행 인자를 읽고 다음 작업을 수행한다: 목표 CPU에서 사과 한 묶음의 JPEG 업로드와 HTTP 응답 시간을 측정한다."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--url", default="http://127.0.0.1:18001/v1/predict")
     parser.add_argument("--output", type=Path, required=True)

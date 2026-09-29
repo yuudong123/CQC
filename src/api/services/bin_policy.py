@@ -4,7 +4,9 @@ from __future__ import annotations
 
 TEMPORARY_REINSPECTION_BIN_CODE = "TEST_REINSPECTION_BIN"
 
-DEMO_SWEETNESS_THRESHOLD_BRIX = 12.0
+# 시연용 12-bin 정책. 기존 6-bin Mock 흐름은 Simulator가 virtual_brix를
+# 전달하기 전까지 유지하며, 통합 시 이 함수를 호출하도록 교체한다.
+DEMO_SWEETNESS_THRESHOLD_BRIX = 14.0
 DEMO_SWEETNESS_LABELS = ("less_sweet", "sweet")
 DEMO_NORMAL_BIN_MAPPING: dict[tuple[str, str, str], str] = {
     (cultivar, grade, sweetness): f"DEMO_BIN_{index:02d}"

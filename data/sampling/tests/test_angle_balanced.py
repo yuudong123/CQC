@@ -1,3 +1,5 @@
+"""각도 균형 선택의 방향 배분, 재현성, 회차별 변화와 부족 사진 패딩을 확인한다."""
+
 from __future__ import annotations
 
 import unittest

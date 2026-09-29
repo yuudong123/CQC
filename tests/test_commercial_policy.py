@@ -1,3 +1,5 @@
+"""외관·가상 당도 합산 등급과 검토·결함·당도 누락 시 보류 규칙을 확인한다."""
+
 import unittest
 
 from src.inference.commercial_policy import assess_commercial_grade, assess_prediction

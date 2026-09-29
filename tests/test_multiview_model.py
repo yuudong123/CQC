@@ -1,3 +1,5 @@
+"""유효 사진만 특징 집계에 참여하고 두 예측 출력의 크기가 맞는지 확인한다."""
+
 from __future__ import annotations
 
 import unittest

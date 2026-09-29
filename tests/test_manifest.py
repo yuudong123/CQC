@@ -1,3 +1,5 @@
+"""임시 ZIP의 이미지·라벨 매칭과 매니페스트 통계·오류 검출을 확인한다."""
+
 from __future__ import annotations
 
 import json

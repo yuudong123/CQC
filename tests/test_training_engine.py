@@ -1,3 +1,5 @@
+"""혼동행렬·분류 지표·손실 계산과 학습·평가 반복을 확인한다."""
+
 from __future__ import annotations
 
 import unittest
@@ -29,6 +31,7 @@ class TrainingEngineTest(unittest.TestCase):
     def test_evaluation_can_include_group_predictions(self) -> None:
         class FixedModel(torch.nn.Module):
             def forward(self, images, view_mask):
+                """사진과 유효 마스크를 받아 품종·품질 예측 점수를 계산한다."""
                 return {
                     "cultivar_logits": torch.tensor([[2.0, 1.0]]),
                     "quality_logits": torch.tensor([[0.0, 3.0, 1.0]]),

@@ -1,4 +1,4 @@
-"""Framework layer for loading a packaged model and predicting one apple group."""
+"""모델 패키지의 무결성을 확인하고 사과 한 개의 사진 묶음을 추론한다."""
 
 from __future__ import annotations
 
@@ -34,6 +34,7 @@ class Prediction:
     used_frame_count: int
 
     def to_dict(self) -> dict[str, Any]:
+        """예측 결과를 응답에 사용할 사전 형태로 변환한다."""
         return asdict(self)
 
 
@@ -72,6 +73,7 @@ class Predictor:
         self.model.eval()
 
     def _prepare(self, image_bytes: Sequence[bytes]) -> tuple[torch.Tensor, torch.Tensor]:
+        """업로드한 사진을 공통 크기·정규화로 바꾸고 부족한 입력의 마스크를 만든다."""
         if not image_bytes:
             raise ValueError("이미지는 1장 이상 필요합니다")
         selected = list(image_bytes)

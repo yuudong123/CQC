@@ -1,4 +1,4 @@
-"""Export per-group validation probabilities for confidence-policy analysis."""
+"""신뢰도 기준을 검토할 수 있도록 검증 사과별 정답·예측·확률을 내보낸다."""
 
 from __future__ import annotations
 
@@ -18,6 +18,7 @@ from .train import resolve_device
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 신뢰도 기준을 검토할 수 있도록 검증 사과별 정답·예측·확률을 내보낸다."""
     parser = argparse.ArgumentParser(description="검증 fold 그룹별 확률 내보내기")
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--cv-fold", type=int, choices=range(5), required=True)

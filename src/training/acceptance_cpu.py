@@ -1,4 +1,4 @@
-"""Portable, model-only CPU acceptance for the packaged v2 checkpoint."""
+"""패키지에 담긴 v2 모델의 CPU 지연시간·처리량과 목표 장비 조건을 검사한다."""
 
 from __future__ import annotations
 
@@ -20,6 +20,7 @@ from src.training.models import build_model
 
 
 def cpu_name() -> str:
+    """운영체제에서 CPU 모델명을 조회한다."""
     if Path('/proc/cpuinfo').is_file():
         for line in Path('/proc/cpuinfo').read_text(errors='replace').splitlines():
             if line.lower().startswith('model name'):
@@ -28,6 +29,7 @@ def cpu_name() -> str:
 
 
 def physical_memory_bytes() -> int:
+    """운영체제에서 실제 메모리 용량을 바이트로 조회한다."""
     if Path('/proc/meminfo').is_file():
         for line in Path('/proc/meminfo').read_text(errors='replace').splitlines():
             if line.startswith('MemTotal:'):
@@ -51,6 +53,7 @@ def physical_memory_bytes() -> int:
 
 
 def sha256(path: Path) -> str:
+    """파일을 나눠 읽어 SHA-256을 계산한다."""
     digest = hashlib.sha256()
     with path.open('rb') as stream:
         for chunk in iter(lambda: stream.read(1024 * 1024), b''):
@@ -59,10 +62,12 @@ def sha256(path: Path) -> str:
 
 
 def measured(values: list[float]) -> dict[str, float]:
+    """여러 지연시간 측정값의 평균·최댓값·95백분위수를 요약한다."""
     return dict(mean_ms=statistics.mean(values), max_ms=max(values), p95_ms=percentile(values, 0.95))
 
 
 def main() -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 패키지에 담긴 v2 모델의 CPU 지연시간·처리량과 목표 장비 조건을 검사한다."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--package-dir', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
@@ -101,6 +106,7 @@ def main() -> int:
     mask = torch.ones((1, 12), dtype=torch.bool)
 
     def infer() -> float:
+        """모델 추론 한 번의 경과 시간을 밀리초로 측정한다."""
         started = time.perf_counter()
         with torch.inference_mode():
             model(images, mask)

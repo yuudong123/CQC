@@ -1,4 +1,4 @@
-"""Select a robust v2 variant from development-only CV and source holdout histories."""
+"""개발 데이터의 교차검증과 원본 분할 검증 기록으로 v2 개선 후보를 선택한다."""
 
 from __future__ import annotations
 
@@ -19,6 +19,7 @@ def read_history(path: Path) -> list[dict[str, Any]]:
 
 
 def evaluate_variant(root: Path, variant: str) -> list[dict[str, Any]]:
+    """개선 설정 하나의 교차검증·원본 검증 기록에서 비교할 결과를 구성한다."""
     cv_histories = [
         read_history(root / f"{variant}-cv-fold-{fold}" / "history.json")
         for fold in range(5)
@@ -56,6 +57,7 @@ def evaluate_variant(root: Path, variant: str) -> list[dict[str, Any]]:
 
 
 def recommend(rows: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """교차검증과 원본 검증을 함께 고려해 개선 후보를 추천한다."""
     eligible = [
         row
         for row in rows
@@ -76,6 +78,7 @@ def recommend(rows: list[dict[str, Any]]) -> dict[str, Any] | None:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 개발 데이터의 교차검증과 원본 분할 검증 기록으로 v2 개선 후보를 선택한다."""
     parser = argparse.ArgumentParser(description="v2 개발 데이터 강건성 비교")
     parser.add_argument("--root", type=Path, default=Path("outputs/training-v2"))
     parser.add_argument("--output", type=Path, default=Path("outputs/training-v2-report.json"))

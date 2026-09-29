@@ -1,1 +1,1 @@
-"""Model definitions for CQC."""
+"""CQC에서 사용하는 신경망 모델 정의를 모은 패키지다."""

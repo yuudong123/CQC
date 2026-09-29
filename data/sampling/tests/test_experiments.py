@@ -1,3 +1,5 @@
+"""시험 데이터를 제외한 개선 설정으로 샘플링 실험 계획이 만들어지는지 확인한다."""
+
 from __future__ import annotations
 
 import json

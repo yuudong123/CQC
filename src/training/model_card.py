@@ -1,4 +1,4 @@
-"""Create the final model card from approved, immutable result artifacts."""
+"""저장된 최종 학습·평가 결과에서 모델 카드와 성능·한계를 작성한다."""
 
 from __future__ import annotations
 
@@ -103,6 +103,7 @@ def read_json(path: Path) -> dict[str, Any]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 저장된 최종 학습·평가 결과에서 모델 카드와 성능·한계를 작성한다."""
     parser = argparse.ArgumentParser(description="확정 산출물로 모델 카드 생성")
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--comparison", type=Path, required=True)

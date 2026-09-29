@@ -1,1 +1,1 @@
-"""Dataset inspection and manifest utilities."""
+"""원본 검사, 매니페스트 작성, 사과 단위 분할과 다각도 로더를 제공한다."""

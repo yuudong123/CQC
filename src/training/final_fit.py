@@ -1,4 +1,4 @@
-"""Prepare and explicitly run a final fit without touching the held-out Test split."""
+"""시험 사과를 제외하고 개발 데이터 전체로 최종 재학습을 준비·실행한다."""
 
 from __future__ import annotations
 
@@ -24,6 +24,7 @@ DEFAULT_FOLDS = tuple(range(5))
 
 
 def best_epoch_from_history(path: Path) -> int:
+    """한 교차검증 묶음에서 검증 점수가 가장 높은 학습 회차를 찾는다."""
     history = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(history, list) or not history:
         raise ValueError(f"비어 있거나 잘못된 history입니다: {path}")
@@ -43,6 +44,7 @@ def select_final_epochs(
     views: int,
     folds: Iterable[int] = DEFAULT_FOLDS,
 ) -> tuple[int, list[int]]:
+    """모든 묶음에 공통으로 존재하는 회차 중 평균 검증 점수가 높은 회차를 선택한다."""
     history_paths = [
         training_root / f"{model_kind}-{views}view-fold-{fold}" / "history.json"
         for fold in folds
@@ -51,6 +53,7 @@ def select_final_epochs(
         raise ValueError("fold가 하나 이상 필요합니다")
     histories = [json.loads(path.read_text(encoding="utf-8")) for path in history_paths]
     epoch_sets = [{int(row["epoch"]) for row in history} for history in histories]
+    # 일부 실험만 끝난 회차를 비교하지 않도록 공통으로 완료된 회차만 사용한다.
     common_epochs = set.intersection(*epoch_sets)
     if not common_epochs:
         raise ValueError("모든 fold에 공통으로 존재하는 epoch가 없습니다")
@@ -67,10 +70,12 @@ def select_final_epochs(
 
 
 def development_groups(groups: Iterable[GroupRecord]) -> list[GroupRecord]:
+    """최종 재학습에 사용할 개발 사과만 남기고 시험 사과는 제외한다."""
     return [group for group in groups if group.split != "test"]
 
 
 def set_reproducibility(seed: int) -> None:
+    """난수 시드를 고정해 같은 설정의 학습을 재현할 수 있게 한다."""
     random.seed(seed)
     torch.manual_seed(seed)
     if torch.cuda.is_available():
@@ -80,6 +85,7 @@ def set_reproducibility(seed: int) -> None:
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """학습 경로·모델·사진 수·손실함수 등의 실행 인자를 읽고 검증한다."""
     parser = argparse.ArgumentParser(description="Test 제외 전체 개발 데이터 최종 학습")
     parser.add_argument("--manifest", type=Path, default=Path("data/processed/manifest.csv"))
     parser.add_argument("--splits", type=Path, default=Path("configs/splits/seed-42.csv"))
@@ -125,6 +131,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 시험 사과를 제외하고 개발 데이터 전체로 최종 재학습을 준비·실행한다."""
     args = parse_args(argv)
     if args.epochs is None:
         epochs, fold_best_epochs = select_final_epochs(
