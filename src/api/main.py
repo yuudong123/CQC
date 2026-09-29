@@ -16,8 +16,10 @@ from .repositories import BinMappingRepository, InspectionPersistence
 from .repositories.quality_history import QualityHistoryRepository
 from .repositories.quality_statistics import QualityStatisticsRepository
 from .routers.inspections import router as inspections_router
+from .routers.quality_fault_images import router as quality_fault_images_router
 from .routers.quality_history import router as quality_history_router
 from .routers.quality_operations import router as quality_operations_router
+from .services.fault_image_storage import FaultImageStorage
 from .services.inspections import InspectionService
 from .services.late_results import LateResultManager
 from .services.quality_operations import QualityOperationsService
@@ -54,6 +56,14 @@ def create_app(
     session_factory = (
         create_session_factory(db_engine) if db_engine is not None else None
     )
+    fault_image_storage = (
+        FaultImageStorage(
+            runtime_settings.fault_image_storage_root,
+            limit=runtime_settings.fault_image_limit,
+        )
+        if runtime_settings.fault_image_storage_root is not None
+        else None
+    )
     runtime_inspection_service = inspection_service or InspectionService(
         inference_client,
         MockVirtualControl(),
@@ -73,6 +83,7 @@ def create_app(
             if session_factory is not None
             else None
         ),
+        fault_image_storage=fault_image_storage,
     )
 
     @asynccontextmanager
@@ -89,6 +100,7 @@ def create_app(
     application = FastAPI(title=runtime_settings.app_name, lifespan=lifespan)
     application.state.settings = runtime_settings
     application.state.inspection_service = runtime_inspection_service
+    application.state.fault_image_storage = fault_image_storage
     application.state.quality_history_repository = (
         QualityHistoryRepository(session_factory)
         if session_factory is not None
@@ -98,12 +110,14 @@ def create_app(
         QualityOperationsService(
             application.state.quality_history_repository,
             QualityStatisticsRepository(session_factory),
+            fault_image_storage,
         )
         if session_factory is not None
         else None
     )
     application.include_router(inspections_router)
     application.include_router(quality_history_router)
+    application.include_router(quality_fault_images_router)
     application.include_router(quality_operations_router)
 
     @application.get("/health", tags=["health"])

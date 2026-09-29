@@ -34,6 +34,7 @@ from ..schemas.inspection_results import (
 from ..schemas.inspections import InspectionImageMetadata
 from .bin_policy import DEMO_SWEETNESS_THRESHOLD_BRIX
 from .control_policy import execute_virtual_control
+from .fault_image_storage import FaultImage, FaultImageStorage
 from .inspection_policy import (
     decide_inference_timeout,
     decide_inspection,
@@ -42,6 +43,14 @@ from .inspection_policy import (
 from .late_results import LateResultManager
 
 logger = logging.getLogger(__name__)
+_FAULT_IMAGE_REASONS = frozenset(
+    {
+        InspectionDecisionReason.INFERENCE_DEADLINE_EXCEEDED,
+        InspectionDecisionReason.INFERENCE_CONNECTION_ERROR,
+        InspectionDecisionReason.INFERENCE_HTTP_ERROR,
+        InspectionDecisionReason.INFERENCE_INVALID_RESPONSE,
+    }
+)
 
 
 class InferenceResponseMismatchError(RuntimeError):
@@ -62,6 +71,7 @@ class InspectionService:
         late_result_manager: LateResultManager,
         bin_mapping_repository: BinMappingRepository | None = None,
         persistence: InspectionPersistence | None = None,
+        fault_image_storage: FaultImageStorage | None = None,
     ) -> None:
         self._inference_client = inference_client
         self._virtual_control = virtual_control
@@ -71,6 +81,7 @@ class InspectionService:
         self._late_result_manager = late_result_manager
         self._bin_mapping_repository = bin_mapping_repository
         self._persistence = persistence
+        self._fault_image_storage = fault_image_storage
 
     async def shutdown(self) -> None:
         """서버 종료 시 남아 있는 late Inference task를 정리한다."""
@@ -186,6 +197,21 @@ class InspectionService:
                 control_attempts=control_attempts,
                 errors=processing_errors,
             )
+
+        if decision.reason in _FAULT_IMAGE_REASONS and self._fault_image_storage:
+            try:
+                await asyncio.to_thread(
+                    self._fault_image_storage.save,
+                    inspection_id=inspection_id,
+                    error_code=decision.reason.value,
+                    images=[
+                        FaultImage(content, image.content_type or "")
+                        for content, image in zip(image_payloads, images, strict=True)
+                    ],
+                    created_at=utc_now(),
+                )
+            except Exception:
+                logger.exception("Fault image storage failed: %s", inspection_id)
 
         inference_fields = (
             inference_response.model_dump(exclude={"inspection_id"})

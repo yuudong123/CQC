@@ -128,6 +128,9 @@ async def _execute(request: Request, method: str, *args: object, **kwargs: objec
     except SQLAlchemyError:
         logger.exception("관제 %s DB 조회 실패", method)
         return _unavailable()
+    except OSError:
+        logger.exception("관제 %s 이미지 저장소 조회 실패", method)
+        return _error_response(503, "IMAGE_UNAVAILABLE")
     except (HistoryContractError, StatisticsContractError):
         logger.exception("관제 %s 계약 변환 실패", method)
         return _error_response(503, "HISTORY_CONTRACT_ERROR")
