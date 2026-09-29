@@ -37,8 +37,8 @@ export function useQualityConnection(mode: "demo" | "api") {
     const clockTimer = setInterval(() => setClock(Date.now()), 1000);
     if (mode === "demo") {
       const timer = setInterval(
-        () => update((current) => step(current, Date.now())),
-        1000,
+        () => update((current) => step(current, Date.now(), 500)),
+        500,
       );
       return () => {
         mounted.current = false;

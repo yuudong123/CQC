@@ -4,8 +4,10 @@ import Image from "next/image";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { Badge, Empty, Icon, Panel, Stats } from "@/components/Dashboard";
 import { sampleApples } from "@/lib/sample-apples";
+import { AutoAuctionDemo, useDemo } from "@/components/DemoProvider";
 
 type Lot = {
+  cqcId: string;
   lotId: string;
   sellerId: string;
   variety: string;
@@ -31,6 +33,7 @@ const variety = (value: string) =>
   ({ fuji: "부사", yanggwang: "양광" })[value.toLowerCase()] ?? value;
 const time = (value: string) =>
   new Date(value).toLocaleTimeString("ko-KR", { hour12: false });
+const buyerLabel = (value: string) => value.split("-FE-DEMO-")[0];
 function photo(lot: Lot) {
   return sampleApples.find(
     (apple) =>
@@ -46,6 +49,7 @@ function remaining(closesAt: string, now: number) {
 }
 
 export default function MarketPage() {
+  const { enabled: autoEnabled } = useDemo();
   const [role, setRole] = useState<"buyer" | "admin">("buyer");
   const [lots, setLots] = useState<Lot[]>([]);
   const [selectedId, setSelectedId] = useState<string>();
@@ -84,7 +88,9 @@ export default function MarketPage() {
         setConnected(true);
         setUpdatedAt(new Date().toLocaleTimeString("ko-KR", { hour12: false }));
         setSelectedId((current) =>
-          data.some((lot) => lot.lotId === current) ? current : data[0]?.lotId,
+          autoEnabled && data.some((lot) => lot.cqcId.startsWith("FE-DEMO-"))
+            ? data.find((lot) => lot.cqcId.startsWith("FE-DEMO-"))?.lotId
+            : data.some((lot) => lot.lotId === current) ? current : data[0]?.lotId,
         );
       } catch {
         if (!controller.signal.aborted) setConnected(false);
@@ -96,7 +102,7 @@ export default function MarketPage() {
       controller.abort();
       clearInterval(timer);
     };
-  }, [revision]);
+  }, [revision, autoEnabled]);
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(Date.now()), 1000);
@@ -211,6 +217,7 @@ export default function MarketPage() {
 
   return (
     <main className="dashboard market-page">
+      <AutoAuctionDemo />
       <Stats
         items={[
           {
@@ -318,7 +325,7 @@ export default function MarketPage() {
                   </p>
                   <small>
                     <Icon name="clock" />{" "}
-                    {now ? remaining(lot.closesAt, now) : "—"}
+                    {lot.cqcId.startsWith("FE-DEMO-") ? "시연 구매자 자동 입찰 · 12초 마감" : now ? remaining(lot.closesAt, now) : "—"}
                   </small>
                 </div>
                 <span className="chevron">›</span>
@@ -430,7 +437,7 @@ export default function MarketPage() {
               </div>
               <div>
                 <small>최고가 입찰자</small>
-                <b>{highestBid?.buyerId ?? "—"}</b>
+                <b>{highestBid ? buyerLabel(highestBid.buyerId) : "—"}</b>
               </div>
               <div>
                 <small>총 입찰 수</small>
@@ -453,7 +460,7 @@ export default function MarketPage() {
                     className={index === 0 ? "leading-bid" : ""}
                   >
                     <td>{index + 1}</td>
-                    <td>{bid.buyerId}</td>
+                    <td title={bid.buyerId}>{buyerLabel(bid.buyerId)}</td>
                     <td>{bid.priceWon.toLocaleString()}</td>
                     <td>{time(bid.placedAt)}</td>
                   </tr>
@@ -560,7 +567,7 @@ export default function MarketPage() {
                         </Badge>
                       </td>
                       <td>{selectedId}</td>
-                      <td>{bid.buyerId} 입찰이 접수됐습니다.</td>
+                      <td>{buyerLabel(bid.buyerId)} 입찰이 접수됐습니다.</td>
                       <td>{won(bid.priceWon)}</td>
                     </tr>
                   ))}

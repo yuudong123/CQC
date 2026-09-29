@@ -1,11 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Badge, Panel, Stats } from "./Dashboard";
 import QualityHistory from "./QualityHistory";
 import QualityStatistics from "./QualityStatistics";
-import { useQualityConnection } from "./useQualityConnection";
+import { useDemo } from "./DemoProvider";
 import { downloadQualityCsv } from "@/lib/quality-api";
 import { sampleApples } from "@/lib/sample-apples";
 import {
@@ -14,6 +15,7 @@ import {
 } from "@/lib/quality-contract";
 import {
   FAULTS,
+  imageIndexForJob,
   csvCell,
   kst,
   periodPoints,
@@ -250,6 +252,7 @@ export default function QualityConsole({
   mode?: "demo" | "api";
 }) {
   const remote = mode === "api";
+  const demo = useDemo();
   const {
     state,
     snapshot,
@@ -260,7 +263,7 @@ export default function QualityConsole({
     configure,
     classify,
     removeImages,
-  } = useQualityConnection(mode);
+  } = demo.connection;
   const [actionError, setActionError] = useState("");
   const action = (operation: Promise<void>) => {
     setActionError("");
@@ -392,6 +395,7 @@ export default function QualityConsole({
     <main className="qc-console">
       <section className="qc-top">
         <h1>품질 검사 관제</h1>
+        <span className="qc-line">{remote ? "현재 연결 설비 · 선별 라인 1" : "시연 농가 · 선별 라인 1"}</span>
         <Badge
           tone={
             remote && snapshot?.source === "backend" ? "success" : "warning"
@@ -406,6 +410,8 @@ export default function QualityConsole({
                 : "서버 관제"}
         </Badge>
         <div className="qc-actions">
+          <Link href="/market" className="qc-market-link">입찰 시장 →</Link>
+          <button disabled={demo.count >= 3} onClick={demo.toggle}>{demo.enabled ? "자동 경매 정지" : demo.count >= 3 ? "자동 경매 완료" : "자동 경매 시연"}</button>
           <button onClick={() => setTab("history")}>검사 이력</button>
           <button onClick={() => setTab("statistics")}>기간 통계</button>
           <button onClick={() => setTab("images")}>
@@ -422,6 +428,7 @@ export default function QualityConsole({
         </div>
       </section>
       <div className="qc-notices" aria-live="polite">
+        {demo.error && <div className="qc-warning">자동 경매: {demo.error} · 입찰 시장에서 확인하세요.</div>}
         {remote && stale && (
           <div className="qc-warning">
             {error || "서버 상태 확인 중"} ·{" "}
@@ -490,12 +497,13 @@ export default function QualityConsole({
       />
       <div className="qc-main">
         <Panel
-          title="처리 중 사과"
+          title={remote ? "처리 중 사과" : "사과 그룹 · 12장 동시 촬영"}
           icon="camera"
           action={
             <Badge tone={state.running ? "success" : "warning"}>
               {state.running ? "입력 중" : "정지"}
-              {state.concurrency !== undefined && (
+              {!remote && " · 2개/초"}
+              {remote && state.concurrency !== undefined && (
                 <> · {state.concurrency === 1 ? "순차" : `${state.concurrency}개 병렬`}</>
               )}
             </Badge>
@@ -504,22 +512,29 @@ export default function QualityConsole({
           <div className="qc-scroll qc-jobs">
             {state.jobs.map((job) => (
               <article key={job.id} className="qc-job">
-                <div className="qc-job-image">
+                {remote && <div className="qc-job-image">
                   <QualityImage
                     key={job.id}
                     remote={remote}
                     src={
                       remote
                         ? job.previewUrl
-                        : sampleApples[job.index % sampleApples.length]
+                        : sampleApples[imageIndexForJob(job.index)]
                             .images[0]
                     }
                     alt={`${job.id} 처리 중 이미지`}
                   />
-                </div>
+                </div>}
+                {!remote && <div className="qc-frame-grid" aria-label={`${job.id} 동일 사과 12장`}>
+                  {sampleApples[imageIndexForJob(job.index)].images.map((src, frame) => <div key={src}>
+                    <Image src={src} alt={`${job.id} 프레임 ${frame + 1}`} width={120} height={120} unoptimized />
+                    <span>{String(frame + 1).padStart(2, "0")}</span>
+                  </div>)}
+                </div>}
                 <div>
                   <strong>{job.id}</strong>
-                  <p>추론 처리 중</p>
+                  {!remote && <small> · 그룹 {sampleApples[imageIndexForJob(job.index)].group}</small>}
+                  <p>{remote ? "추론 처리 중" : "12장 입력 · 판정 시연"}</p>
                   <small>
                     {job.faults.length
                       ? job.faults.map((code) => FAULTS[code]).join(" · ")
