@@ -14,10 +14,13 @@ from .core.config import Settings, get_settings
 from .db.session import create_db_engine, create_session_factory
 from .repositories import BinMappingRepository, InspectionPersistence
 from .repositories.quality_history import QualityHistoryRepository
+from .repositories.quality_statistics import QualityStatisticsRepository
 from .routers.inspections import router as inspections_router
 from .routers.quality_history import router as quality_history_router
+from .routers.quality_operations import router as quality_operations_router
 from .services.inspections import InspectionService
 from .services.late_results import LateResultManager
+from .services.quality_operations import QualityOperationsService
 
 
 def create_app(
@@ -91,8 +94,17 @@ def create_app(
         if session_factory is not None
         else None
     )
+    application.state.quality_operations_service = (
+        QualityOperationsService(
+            application.state.quality_history_repository,
+            QualityStatisticsRepository(session_factory),
+        )
+        if session_factory is not None
+        else None
+    )
     application.include_router(inspections_router)
     application.include_router(quality_history_router)
+    application.include_router(quality_operations_router)
 
     @application.get("/health", tags=["health"])
     async def health() -> dict[str, str]:

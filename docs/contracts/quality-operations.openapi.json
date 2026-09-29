@@ -1622,7 +1622,6 @@
               }
             },
             "required": [
-              "history",
               "images"
             ],
             "additionalProperties": false
@@ -1844,11 +1843,7 @@
             "required": [
               "throughput",
               "running",
-              "concurrency",
-              "sequence",
-              "tick",
               "faults",
-              "scope",
               "jobs",
               "history",
               "images",

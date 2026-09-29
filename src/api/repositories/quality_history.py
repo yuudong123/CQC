@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta, timezone
 from typing import Any
 
-from sqlalchemy import distinct, exists, func, or_, select
+from sqlalchemy import distinct, exists, func, or_, select, tuple_
 from sqlalchemy.orm import selectinload, sessionmaker
 
 from ..db.models import Inspection, InspectionError
@@ -62,56 +62,7 @@ class QualityHistoryRepository:
         page_size: int,
     ) -> HistoryRows:
         i = Inspection
-        clauses: list[Any] = [
-            i.completed_at.is_not(None),
-            i.completed_at <= snapshot_at,
-            i.inspection_status != "PROCESSING",
-        ]
-        if filters.from_date is not None:
-            clauses.append(i.completed_at >= _kst_midnight_utc(filters.from_date))
-        if filters.to_date is not None:
-            clauses.append(
-                i.completed_at < _kst_midnight_utc(filters.to_date + timedelta(days=1))
-            )
-        if filters.variety != "ALL":
-            clauses.append(i.predicted_cultivar == _CULTIVARS[filters.variety])
-        if filters.grade != "ALL":
-            clauses.append(i.predicted_grade == _GRADES[filters.grade])
-        if filters.bin_code != "ALL":
-            clauses.append(i.target_bin_code == filters.bin_code)
-        if filters.processing_status == "TIMEOUT":
-            clauses.append(i.deadline_exceeded.is_(True))
-        elif filters.processing_status == "ERROR":
-            clauses.append(
-                or_(
-                    i.error_code.in_(
-                        (*_INFERENCE_ERRORS, "BIN_MAPPING_CONFIGURATION_ERROR")
-                    ),
-                    i.persistence_status == "FAILED",
-                )
-            )
-        elif filters.processing_status == "COMPLETED":
-            clauses.extend(
-                [
-                    i.deadline_exceeded.is_(False),
-                    or_(
-                        i.error_code.is_(None),
-                        ~i.error_code.in_(
-                            (*_INFERENCE_ERRORS, "BIN_MAPPING_CONFIGURATION_ERROR")
-                        ),
-                    ),
-                    i.persistence_status != "FAILED",
-                ]
-            )
-        elif filters.processing_status == "INFERENCING":
-            clauses.append(False)
-        if filters.error_code != "ALL":
-            clauses.append(_error_filter(filters.error_code))
-        if filters.misclassification != "ALL":
-            if filters.misclassification == "NONE":
-                clauses.append(i.suspected_error_type.is_(None))
-            else:
-                clauses.append(i.suspected_error_type == filters.misclassification)
+        clauses = history_clauses(filters, snapshot_at)
 
         with self._session_factory() as session:
             total = (
@@ -140,6 +91,115 @@ class QualityHistoryRepository:
                 )
             )
             return HistoryRows(items=items, total=total, bins=bins)
+
+    def iter_filtered(
+        self,
+        filters: HistoryFilters,
+        *,
+        snapshot_at: datetime,
+        batch_size: int = 500,
+    ):
+        """CSV용 전체 보존 이력을 일정 크기씩 최신순으로 읽는다."""
+
+        i = Inspection
+        clauses = history_clauses(filters, snapshot_at)
+        cursor: tuple[datetime, str] | None = None
+        while True:
+            page_clauses = list(clauses)
+            if cursor is not None:
+                page_clauses.append(tuple_(i.completed_at, i.inspection_id) < cursor)
+            with self._session_factory() as session:
+                rows = list(
+                    session.scalars(
+                        select(i)
+                        .where(*page_clauses)
+                        .options(
+                            selectinload(i.control_attempts), selectinload(i.errors)
+                        )
+                        .order_by(i.completed_at.desc(), i.inspection_id.desc())
+                        .limit(batch_size)
+                    )
+                )
+            if not rows:
+                return
+            yield rows
+            if len(rows) < batch_size:
+                return
+            cursor = (rows[-1].completed_at, rows[-1].inspection_id)
+
+    def recent_errors(self, snapshot_at: datetime, limit: int = 50) -> list[Inspection]:
+        i = Inspection
+        e = InspectionError
+        with self._session_factory() as session:
+            return list(
+                session.scalars(
+                    select(i)
+                    .where(
+                        *history_clauses(HistoryFilters(), snapshot_at),
+                        exists(select(e.id).where(e.inspection_id == i.inspection_id)),
+                    )
+                    .options(selectinload(i.control_attempts), selectinload(i.errors))
+                    .order_by(i.completed_at.desc(), i.inspection_id.desc())
+                    .limit(limit)
+                )
+            )
+
+
+def history_clauses(filters: HistoryFilters, snapshot_at: datetime) -> list[Any]:
+    """목록·CSV·기간 통계가 동일한 필터 의미를 공유한다."""
+
+    i = Inspection
+    clauses: list[Any] = [
+        i.completed_at.is_not(None),
+        i.completed_at <= snapshot_at,
+        i.inspection_status != "PROCESSING",
+    ]
+    if filters.from_date is not None:
+        clauses.append(i.completed_at >= _kst_midnight_utc(filters.from_date))
+    if filters.to_date is not None:
+        clauses.append(
+            i.completed_at < _kst_midnight_utc(filters.to_date + timedelta(days=1))
+        )
+    if filters.variety != "ALL":
+        clauses.append(i.predicted_cultivar == _CULTIVARS[filters.variety])
+    if filters.grade != "ALL":
+        clauses.append(i.predicted_grade == _GRADES[filters.grade])
+    if filters.bin_code != "ALL":
+        clauses.append(i.target_bin_code == filters.bin_code)
+    if filters.processing_status == "TIMEOUT":
+        clauses.append(i.deadline_exceeded.is_(True))
+    elif filters.processing_status == "ERROR":
+        clauses.append(
+            or_(
+                i.error_code.in_(
+                    (*_INFERENCE_ERRORS, "BIN_MAPPING_CONFIGURATION_ERROR")
+                ),
+                i.persistence_status == "FAILED",
+            )
+        )
+    elif filters.processing_status == "COMPLETED":
+        clauses.extend(
+            [
+                i.deadline_exceeded.is_(False),
+                or_(
+                    i.error_code.is_(None),
+                    ~i.error_code.in_(
+                        (*_INFERENCE_ERRORS, "BIN_MAPPING_CONFIGURATION_ERROR")
+                    ),
+                ),
+                i.persistence_status != "FAILED",
+            ]
+        )
+    elif filters.processing_status == "INFERENCING":
+        clauses.append(False)
+    if filters.error_code != "ALL":
+        clauses.append(_error_filter(filters.error_code))
+    if filters.misclassification != "ALL":
+        if filters.misclassification == "NONE":
+            clauses.append(i.suspected_error_type.is_(None))
+        else:
+            clauses.append(i.suspected_error_type == filters.misclassification)
+    return clauses
 
 
 def _kst_midnight_utc(day: date) -> datetime:

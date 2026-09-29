@@ -94,7 +94,7 @@ const today = object({
     OTHER: integer,
   }),
 });
-const runtime = object({
+const runtimeProperties = {
   throughput: num,
   running: bool,
   concurrency: { type: "integer", minimum: 1, maximum: 64 },
@@ -110,7 +110,13 @@ const runtime = object({
   today,
   lastSaved: nullable(num),
   dbDown: bool,
-});
+};
+const runtime = object(
+  runtimeProperties,
+  Object.keys(runtimeProperties).filter(
+    (key) => !["concurrency", "sequence", "tick", "scope"].includes(key),
+  ),
+);
 const schemas = {
   Result: object(
     resultProperties,
@@ -158,7 +164,7 @@ const schemas = {
         ]),
       ),
     ),
-    retention: object({ history: integer, images: integer }),
+    retention: object({ history: integer, images: integer }, ["images"]),
     periodTotals: object(
       Object.fromEntries(["1", "5", "10", "30"].map((key) => [key, integer])),
     ),

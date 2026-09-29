@@ -28,7 +28,7 @@ export type QualitySnapshot = {
     "Simulator" | "Inference" | "Backend" | "MySQL",
     ComponentState
   >;
-  retention: { history: number; images: number };
+  retention: { history?: number; images: number };
   periodTotals: Record<"1" | "5" | "10" | "30", number>;
   state: Runtime;
 };
@@ -130,7 +130,7 @@ export function parseSnapshot(value: unknown): QualitySnapshot {
     !object(v.components) ||
     !object(v.capabilities) ||
     !object(v.retention) ||
-    !finite(v.retention.history) ||
+    !(v.retention.history === undefined || finite(v.retention.history)) ||
     !finite(v.retention.images) ||
     !counts(v.periodTotals) ||
     !["1", "5", "10", "30"].every((key) =>
@@ -143,10 +143,13 @@ export function parseSnapshot(value: unknown): QualitySnapshot {
   const s = v.state;
   if (
     !["running", "dbDown"].every((key) => typeof s[key] === "boolean") ||
-    !["sequence", "tick", "throughput", "concurrency"].every((key) =>
+    !["throughput"].every((key) =>
       finite(s[key]),
     ) ||
-    !["ALL", "NEXT"].includes(String(s.scope)) ||
+    !["sequence", "tick", "concurrency"].every(
+      (key) => s[key] === undefined || finite(s[key]),
+    ) ||
+    !(s.scope === undefined || ["ALL", "NEXT"].includes(String(s.scope))) ||
     !Array.isArray(s.faults) ||
     !s.faults.every(validFault) ||
     !object(s.today) ||

@@ -44,6 +44,16 @@ test("history pagination stays anchored while new input arrives and CSV exports 
   assert.equal(csv.split("\r\n").length, 121);
   assert.ok(!csv.includes("previewUrl")); assert.ok(!csv.includes("/apples/"));
 });
+test("backend snapshot may omit unavailable Simulator settings and history retention", async () => {
+  const f = fixture(); f.tick(1);
+  const snapshot = await (await f.request("snapshot")).json();
+  const { concurrency, sequence, tick, scope, ...state } = snapshot.state;
+  const { history, ...retention } = snapshot.retention;
+  const backend = { ...snapshot, source: "backend", state, retention };
+  schema("Snapshot", parseSnapshot(backend));
+  assert.equal(backend.state.sequence, undefined);
+  assert.equal(backend.retention.history, undefined);
+});
 test("history accepts unavailable image index and an explicit control failure", async () => {
   const f = fixture(); f.tick(2);
   const history = await (await f.request("inspections?pageSize=50")).json();

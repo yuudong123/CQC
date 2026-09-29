@@ -43,11 +43,11 @@ export type Point = {
 export type Runtime = {
   throughput: number;
   running: boolean;
-  concurrency: number;
-  sequence: number;
-  tick: number;
+  concurrency?: number;
+  sequence?: number;
+  tick?: number;
   faults: Fault[];
-  scope: Scope;
+  scope?: Scope;
   jobs: Job[];
   history: Result[];
   images: Result[];
@@ -112,7 +112,7 @@ export function step(state: Runtime, now: number): Runtime {
   const date = kst(now).slice(0, 10);
   const next: Runtime = {
     ...state,
-    tick: state.tick + 1,
+    tick: (state.tick ?? 0) + 1,
     jobs: state.jobs.filter((job) => job.finish > now),
     today:
       date === state.today.date
@@ -223,8 +223,9 @@ export function step(state: Runtime, now: number): Runtime {
         },
       ].slice(-1800);
   if (state.running) {
-    while (next.jobs.length < state.concurrency) {
-      const index = next.sequence++;
+    while (next.jobs.length < (state.concurrency ?? 0)) {
+      const index = next.sequence ?? 0;
+      next.sequence = index + 1;
       next.jobs.push({
         id: `DEMO-${String(index + 1).padStart(6, "0")}`,
         index,
