@@ -11,52 +11,18 @@
 
 https://docs.google.com/spreadsheets/d/1E4s9fRkWV9CWqBU_eaYLZt1W7aAxbuuUmLPl04V08HM/edit?usp=sharing
 
-## 역할
+## 2. 역할
 
 | 코드 | 역할 | 담당자 | 소유 문서 |
 |---|---|---|---|
-| DM | 데이터 분석·모델 | 조현재 | `docs/wbs/reference/DM/data-spec.md`, `docs/wbs/reference/DM/model-stack.md`, 모델 카드 |
-| FE | 프론트엔드 | 강성민 | `docs/wbs/reference/FE/frontend-stack.md`, 화면 명세 |
-| BE | 백엔드·DB | 홍준희 | `docs/wbs/reference/BE/backend-stack.md`, OpenAPI, DB 설계 |
-| MO | MLOps·CI/CD | 홍유나 | `docs/wbs/reference/MO/mlops-stack.md`, Compose, CI/CD·운영 문서 |
+| DM | 데이터 분석·모델 | 조현재 | `reference/DM/data-spec.md`, `reference/DM/model-stack.md`, 모델 카드 |
+| FE | 프론트엔드 | 강성민 | `reference/FE/frontend-stack.md`, 화면 명세 |
+| BE | 백엔드·DB | 홍준희 | `reference/BE/backend-stack.md`, OpenAPI, DB 설계 |
+| MO | MLOps·CI/CD | 홍유나 | `reference/MO/mlops-stack.md`, Compose, CI/CD·운영 문서 |
 
-## 파트별 현황 (2026-09-29, dev `1958fa5`)
+### 현재 현황
 
-WBS의 ID·담당·일정은 바꾸지 않고 dev에 병합된 구현만 적는다. 같은 날 자동 시험은 Python 218개(MySQL 통합 5개 포함 시 모두 통과), 웹 31개가 통과했다.
-
-| 파트 | dev에 반영된 범위 | 남은 핵심 |
-|---|---|---|
-| DM | DM-01~09 문서·코드, v2 후보 패키지(`unverified_candidate`, 신뢰도 미보정), 시연 묶음·가상 당도 14°Brix 구간 | v2 기준 신뢰도 보정·임계값 재결정, 실제 사진 기반 처리시간 측정, 독립 holdout 부재를 한계로 명시 |
-| FE | FE-01~10 (PR #18·#21): 품질 관제·이력·통계·장애 관리, 12장 그룹 관제, 브라우저 자동 경매·배차 시연 | 실제 Backend·Simulator 연결, 장시간 브라우저 시험 |
-| BE | BE-01~05 완료, BE-06 장애 이미지 저장 계층(PR #22) | 장애 이미지 트리거·관제 제어/검수/이미지 API, BE-07 Simulator, BE-08 이후 |
-| MO | 아래 표 | 아래 표 |
-
-## MLOps 작업 상태 (2026-09-28, MO 작성)
-
-최신 `origin/dev` 반영 상태와 실제 구현을 대조해 완료 범위와 남은 범위를 갱신한다. 물류 API·웹 화면은 현재 dev에 반영된 범위까지만 완료로 표시하고, 서버 운영 설정과 전체 CQC 통합은 별도 확인 대상으로 둔다.
-
-| 작업 | 상태 | 이번에 확인한 범위 | 다음 확인 항목 |
-|---|---|---|---|
-| MO-01~MO-03 | 완료 | MLOps 규칙, Compose 골격, Jenkins 기본 파이프라인 | dev 브랜치와 배포 Job 설정 일치 여부 확인 |
-| MO-04 | 완료(Compose·healthcheck) | 실제 Inference·Backend Dockerfile, 모델 read-only mount, `/health`, `service_healthy`, 기동 순서 | 배포 서버 Job의 Poll SCM 실행 로그 확인 |
-| MO-05 | 부분 완료 | MySQL Named Volume, `.env`/Credentials, 모델 경로·버전 연결 | 장애·위치·로그 보존 Volume과 운영 Secret 절차 확정 |
-| MO-06 | 부분 완료 | i7-4790에서 Inference 및 Backend→Inference HTTP 기준 측정 | 입력 장수·병렬 수 비교표 확정 |
-| MO-07 | 부분 완료 | Compose Backend↔Inference와 물류 서비스 빌드·배포 연결 | 실패 시 기존 버전 유지·자동 복구 절차 검증 |
-| MO-08 이후 | 미착수 | MO-08~MO-10 운영·수용시험 범위는 아직 동결 전 | 위치 복구·로그 순환·최종 수용시험 |
-
-### 현재 기준과 증거 문서
-
-- Compose 통합 문서: [`docs/wbs/MO-04.md`](wbs/MO-04.md)
-- Volume·Secret 기준: [`docs/wbs/MO-05.md`](wbs/MO-05.md)
-- CPU 수용 기준: [`docs/wbs/reference/DM/i7-4790-acceptance.md`](wbs/reference/DM/i7-4790-acceptance.md)
-- Compose Backend→Inference 결과: [`docs/wbs/reference/DM/results/i7-4790-compose-backend-inference-http-20260923.json`](wbs/reference/DM/results/i7-4790-compose-backend-inference-http-20260923.json)
-
-### 다음 작업 순서
-
-1. **MO-05 잔여 정리:** 장애 이미지·Simulator 위치·로그 보존 영역과 운영 Secret 절차를 Compose/Jenkins 문서에 반영한다.
-2. **MO-06 잔여 정리:** 동일 Compose에서 입력 장수와 병렬 수를 비교하고 기준값을 고정한다.
-3. **MO-07 잔여 정리:** 배포 전 검증, 실패 시 기존 컨테이너 유지, 복구 명령을 Pipeline에 연결하고 검증한다.
-4. **BE-05 연계:** Backend 검사 결과 저장·조회가 연결되면 MO-07 통합 범위를 확장한다. (2026-09-29 BE-05가 dev에 병합됨)
+작업 현황은 [ALL-03 전체 통합 현황](ALL-03.md)에만 기록한다. 이 문서는 일정·담당·완료 기준의 원본이다.
 
 ## 3. 마일스톤
 
@@ -89,7 +55,7 @@ WBS의 ID·담당·일정은 바꾸지 않고 dev에 병합된 구현만 적는�
 
 | ID | 기간 | 작업 | 선행 | 완료 기준 |
 |---|---|---|---|---|
-| FE-01 | 09-16~09-18 | 기술 스택·화면 상태·mock 계약 작성 | M1 초안 | `docs/wbs/reference/FE/frontend-stack.md`, 정상·저신뢰·시간초과·장애 화면 상태 |
+| FE-01 | 09-16~09-18 | 기술 스택·화면 상태·mock 계약 작성 | M1 초안 | `reference/FE/frontend-stack.md`, 정상·저신뢰·시간초과·장애 화면 상태 |
 | FE-02 | 09-19~09-23 | 반응형 무스크롤 대시보드 골격 | FE-01, BE-01 | 고정 가독성 영역과 유동 이미지 영역 분리, 특정 해상도 고정 없음 |
 | FE-03 | 09-22~09-27 | 관리 화면·이력 필터·CSV UI | FE-01, BE-02 | 날짜·품종·품질·bin·상태·오류·오판 의심 필터, 50/100/200건 |
 | FE-04 | 09-24~09-30 | 처리 중 이미지 카드·시작/정지 | FE-02, BE-03 | 순차·병렬 카드 자동 대응, 기본 ON, 정지·재개 상태 표시 |
@@ -119,7 +85,7 @@ WBS의 ID·담당·일정은 바꾸지 않고 dev에 병합된 구현만 적는�
 
 | ID | 기간 | 작업 | 선행 | 완료 기준 |
 |---|---|---|---|---|
-| MO-01 | 09-16~09-18 | 기술 스택·브랜치·환경 규칙 작성 | 없음 | `docs/wbs/reference/MO/mlops-stack.md`, dev 자동 배포·main 표시 용도 문서화 |
+| MO-01 | 09-16~09-18 | 기술 스택·브랜치·환경 규칙 작성 | 없음 | `reference/MO/mlops-stack.md`, dev 자동 배포·main 표시 용도 문서화 |
 | MO-02 | 09-19~09-22 | 5개 서비스 Compose 골격 | MO-01, BE-01 | simulator·inference·backend·frontend·mysql, `unless-stopped` |
 | MO-03 | 09-20~09-24 | PR·dev CI 기본 검사 | MO-01 | feat PR 테스트, 최소 1명 확인, dev 배포, main 자동 배포 없음 |
 | MO-04 | 09-23~09-27 | healthcheck·기동 의존성 | MO-02 | MySQL·inference→backend→simulator·frontend 순서와 상태 확인 |

@@ -1,3 +1,16 @@
+"""CQC 물류 API: 출품·입찰(WebSocket)·낙찰·자동배차·배송·고장 대체배차.
+
+로컬 실행 (apps/api에서):
+    python -m venv .venv && .venv\\Scripts\\Activate.ps1
+    pip install -e ".[dev]"
+    uvicorn app.main:app --reload     # 문서 /docs, 상태 /api/v1/health
+    pytest                            # 자동 시험
+
+배포는 저장소 루트 compose.yaml의 logistics-mongodb·logistics-api(8100)·logistics-web(3100)로 하며
+Jenkins가 함께 빌드·기동한다. MongoDB는 외부 포트를 열지 않는다. 범위·명세·작업 기록은
+docs/wbs/LOGISTICS.md와 docs/wbs/reference/LOGISTICS/를 따른다.
+"""
+
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime

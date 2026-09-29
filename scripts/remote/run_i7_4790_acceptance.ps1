@@ -1,4 +1,5 @@
 # 지정한 체크포인트의 추론 성능을 목표 CPU·메모리 조건에서 확인한다.
+# 원격 Windows GPU PC에서 직접 또는 예약 작업으로 실행하며 실제 학습·측정을 시작한다. 예약 작업에 예전 src/training/*.ps1 경로가 남아 있으면 scripts/remote/*.ps1로 바꾼다.
 param(
     [Parameter(Mandatory = $true)]
     [string]$Checkpoint,

@@ -1,8 +1,6 @@
-# Backend·MLOps 인계: 시연용 12-bin 배차
+# 시연용 12-bin 배차 정책
 
 2026-09-26 사용자 결정. WBS 작업명·기간은 바꾸지 않고 시연 정책만 6개 정상 bin에서 12개로 확장한다. 실제 당도 측정·새 모델 학습은 하지 않는다.
-
-> **2026-09-29 dev `1958fa5` 반영:** 아래 Backend 작업 1~4 중 당도 누락 재검사, 구간 키 migration과 13개 seed, 12조합·13.9/14.0 경계 테스트는 BE-05로 구현됐다. 배차는 코드 상수 대신 DB `bin_mappings`를 조회하며, 구간 판정은 `src/api/services/inspections.py`의 `_classify_sweetness`, 상수는 `bin_policy.py`의 `DEMO_SWEETNESS_THRESHOLD_BRIX=14.0`이다(`determine_demo_target_bin` 함수는 제거됨). Simulator 연결과 migration 배포는 남아 있다. 본문의 "6-bin 경로가 남아 있다"는 설명은 09-26~29 당시 기록이다.
 
 ## 결정된 정책
 
@@ -22,17 +20,6 @@
 | yanggwang | M | `DEMO_BIN_09` | `DEMO_BIN_10` |
 | yanggwang | S | `DEMO_BIN_11` | `DEMO_BIN_12` |
 
-코드와 경계 테스트: `src/api/services/bin_policy.py`의 `determine_demo_target_bin`, `tests/api/test_bin_policy.py`. Backend `POST /v1/inspections`는 시연용 multipart 필드 `virtual_brix`를 받으면 12-bin 경로를 사용하고 응답에 `virtual_brix`, `brix_is_measured=false`, `sweetness_band`, `target_bin_code`를 반환한다. **기존 Mock 요청에 이 필드가 없으면 과거 6-bin 경로로 동작한다.** 이 하위 호환 동작은 시연 배포 완료 상태가 아니며, Simulator·DB·Frontend·실제 Inference 연결은 별도 작업이다.
+코드와 경계 테스트: `src/api/services/bin_policy.py`(상수·매핑), `src/api/services/inspections.py`의 `_classify_sweetness`, `tests/api/test_bin_policy.py`. Backend `POST /v1/inspections`는 multipart 필드 `virtual_brix`로 구간을 정하고 응답에 `virtual_brix`, `brix_is_measured=false`, `sweetness_band`, `target_bin_code`를 반환한다. `virtual_brix`가 없으면 재검사로 분기한다.
 
-## Backend 담당 작업
-
-1. Simulator의 시연용 12장 묶음 입력과 가상 당도 출처를 연결한다. `data/processed/realtime-apple-arrival-demo`는 Git 제외 자료다. 원본 `group_no`나 정답 라벨은 모델 입력으로 보내지 않는다. `demo-virtual-brix.csv`에서 조회한 9~18 범위의 값을 현재 Backend 검사 요청의 `virtual_brix` multipart form 필드로 전달한다. 계약 변경을 Simulator·Frontend·OpenAPI와 동기화한다.
-   - 자료 폴더의 `demo-virtual-brix.csv`는 `demo_bundle_id`로 `index.json`의 `inspection_id` 예시와 결합한다. 반복 검사에서는 새 `inspection_id`를 발급하되 당도 조회에는 원래 묶음 ID를 사용한다. 996개 묶음의 값을 모두 포함하며 기본 869개 중 14° 미만은 381개다. 이 파일은 `notebooks/05_demo_bundles.ipynb`의 `attach_demo_brix()`로 생성·검증한다.
-2. 현재 HTTP 시연 경로는 12-bin으로 연결했으나, **가상 당도 누락 시 기존 6-bin Mock 경로가 남아 있다.** 실제 시연 모드에서는 누락을 재검사로 바꾸고, 응답·DB의 `virtual_brix`, 출처, `brix_is_measured=false`, 당도 구간, `target_bin_code` 저장을 연동한다. 이미지는 Inference에 보내되 가상 당도는 배차 정책에서 사용한다.
-3. 기존 `bin_mappings`의 `(crop_type, cultivar, quality_grade)` 유일 제약은 같은 외관의 당도 2개 bin을 담을 수 없다. 기존 마이그레이션을 고치지 말고 **새 마이그레이션**으로 sweetness 구간을 키에 추가하고 12개 정상+재검사 1개 seed를 준비한다.
-4. 가상 제어 거부 시 재검사 대체·시간 초과 후 확정 bin 불변·저신뢰 분기는 기존 정책을 유지한다. 12조합 및 13.9/14.0 경계 통합 테스트를 추가한다.
-
-## Frontend·MLOps 담당 작업
-
-- Frontend: 12개 정상 목적지와 재검사 1개를 표시하고, 가상 당도/구간을 `실측 아님`으로 표기한다. 12개 상품군 물량 집계를 수요 분석용으로 보여준다.
-- MLOps: Git에서 제외된 시연용 사진 묶음과 가상 당도 자료를 서비스에 공급하고, DB 신규 마이그레이션·13개 bin seed를 배포한다. 자료 배치 전에는 12-bin 통합 시험 완료로 표시하지 않는다.
+구현 결과(DB `bin_mappings` 조회, 당도 누락 재검사, 13개 seed)와 남은 연동은 [BE-05](../BE-05.md), [ALL-03](../ALL-03.md)을 따른다.

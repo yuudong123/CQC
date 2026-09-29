@@ -31,7 +31,7 @@ web (입찰·배송 관제) → logistics-api → MongoDB
 
 | 폴더 | 역할 |
 |---|---|
-| `docs/` | 프로젝트 계획, 요구사항, 데이터 명세, 아키텍처, WBS, 역할별 기술 문서 |
+| `docs/` | 기획·요구사항·아키텍처·API 계약. 작업 기록과 현황은 `docs/wbs/`에만 둠 |
 | `data/raw/` | AI Hub 원본 이미지와 라벨. 원본은 수정하지 않음 |
 | `data/processed/` | 학습용 매니페스트와 가공·분할 데이터 |
 | `notebooks/` | 데이터 탐색과 모델 실험 기록 |
@@ -47,12 +47,10 @@ web (입찰·배송 관제) → logistics-api → MongoDB
 | `models/` | 로컬 모델 파일과 체크포인트. Git 제외 |
 | `outputs/` | 로컬 평가표, 그래프와 실험 산출물. Git 제외 |
 
-## 현재 상태
+## 현재 상태와 문서
 
-2026-09-29 dev 기준 상태입니다. 프로젝트 기간은 2026-09-16부터 2026-10-16까지이며, 2026-10-13에 기능을 동결합니다.
+- 작업 현황: [`docs/wbs/ALL-03.md`](docs/wbs/ALL-03.md) (단일 원본)
+- 문서 안내: [`docs/wbs/README.md`](docs/wbs/README.md)
+- 최상위 기획: [`docs/project-plan.md`](docs/project-plan.md), 결정 기록: [`docs/planning/decision-log.md`](docs/planning/decision-log.md), 일정·담당: [`docs/wbs/WBS.md`](docs/wbs/WBS.md)
 
-- 데이터·모델: `separate`·12장 구조와 Inference HTTP 계약 구현. 서비스 모델은 `cqc-apple-separate12-focal-v2-candidate`(미승인 후보, 신뢰도 미보정)이며, v1은 품질 Macro F1 0.7778로 승인 기준 미달입니다.
-- Backend: 검사 API, 실제 Inference 호출, 12-bin 판정, MySQL 저장·이력·통계·CSV 구현. 장애 이미지 저장 계층은 있으나 저장 트리거·조회 API는 연결 전이며, Simulator는 미구현입니다.
-- Web: 품질 관제·이력·통계·장애 관리와 입찰·배송 관제, 브라우저 자동 경매 시연 구현. 루트 Compose의 `frontend`·`simulator`는 아직 placeholder입니다.
-
-최상위 기획 기준은 [`docs/project-plan.md`](docs/project-plan.md)입니다. 세부 확정 기록은 [`docs/planning/decision-log.md`](<docs/planning/decision-log.md>), 역할별 일정은 [`docs/wbs.md`](docs/wbs.md)에서 관리합니다.
+프로젝트 기간은 2026-09-16부터 2026-10-16까지이며, 2026-10-13에 기능을 동결합니다.

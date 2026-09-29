@@ -7,7 +7,7 @@
 - 가상 당도 값·v2 모델·60:40 종합등급 실험 기준은 유지한다. 데이터 노트북, Backend 정책, Frontend 표시·예시와 테스트를 함께 갱신한다.
 - 기존 `demo-virtual-brix.csv`는 새 구간으로 재생성한다. 시연 물량 분할을 위한 정책이다.
 
-> 세부 결정과 변경 이력을 기록하는 문서다. 문서가 충돌하면 최신 팀 합의, 이 문서의 확정 결정, `docs/planning/requirements.md`, `docs/planning/architecture.md`, `docs/wbs/reference/DM/data-spec.md`, `project-plan.md`, `wbs.md`, `README.md` 순으로 확인한다. 충돌이나 미정 사항을 임의로 해석하지 않고 팀에 확인한다.
+> 세부 결정과 변경 이력을 기록하는 문서다. 문서가 충돌하면 최신 팀 합의, 이 문서의 확정 결정, `docs/planning/requirements.md`, `docs/planning/architecture.md`, `docs/wbs/reference/DM/data-spec.md`, `project-plan.md`, `docs/wbs/WBS.md`, `README.md` 순으로 확인한다. 충돌이나 미정 사항을 임의로 해석하지 않고 팀에 확인한다.
 
 ## 2026-09-16 기획 인터뷰
 
