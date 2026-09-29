@@ -93,7 +93,7 @@ def test_low_confidence_uses_reinspection_bin_without_normal_mapping() -> None:
 def test_demo_bin_has_two_sweetness_destinations(cultivar: str, grade: str) -> None:
     response = _inference_response(cultivar, grade)
     decision = _decision(InspectionStatus.COMPLETED)
-    lower = determine_demo_target_bin(response, decision, 11.9)
+    lower = determine_demo_target_bin(response, decision, 13.9)
     upper = determine_demo_target_bin(response, decision, DEMO_SWEETNESS_THRESHOLD_BRIX)
     assert lower != upper
     assert lower == DEMO_NORMAL_BIN_MAPPING[(cultivar, grade, "less_sweet")]
@@ -101,6 +101,7 @@ def test_demo_bin_has_two_sweetness_destinations(cultivar: str, grade: str) -> N
 
 
 def test_demo_mapping_has_twelve_distinct_normal_bins() -> None:
+    assert DEMO_SWEETNESS_THRESHOLD_BRIX == 14.0
     assert len(DEMO_NORMAL_BIN_MAPPING) == 12
     assert len(set(DEMO_NORMAL_BIN_MAPPING.values())) == 12
 

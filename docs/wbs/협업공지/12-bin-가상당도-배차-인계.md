@@ -5,13 +5,13 @@
 ## 결정된 정책
 
 - v2는 **품종(fuji/yanggwang)과 외관 등급(L/M/S)**을 예측한다. 가상 당도는 별도 시연 생성값(`virtual_brix`, `brix_is_measured=false`)이다.
-- 정상 판정에 한해 `virtual_brix < 12.0`은 `less_sweet`, `>= 12.0`은 `sweet`으로 분류한다. 12.0은 `sweet`에 속한다. 이는 프로젝트 시연 경계이며 실제 단맛 보증이 아니다.
+- 정상 판정에 한해 `virtual_brix < 14.0`은 `less_sweet`, `>= 14.0`은 `sweet`으로 분류한다. 14.0은 `sweet`에 속한다. 이는 프로젝트 시연 경계이며 실제 단맛 보증이 아니다.
 - 품종 2 × 외관 3 × 당도 2 = 정상 12 bin. 저신뢰·시간 초과·시스템 오류·가상 당도 누락은 기존 재검사 bin 1개로 보낸다. 가상 당도 9~18 범위를 벗어나거나 NaN/무한대이면 입력 오류로 거부한다.
 - 기존 외관 60%·가상 당도 40%의 `commercial_grade`는 별도 종합등급 실험/표시 값이다. **12-bin 배차에는 사용하지 않는다.** 원래 외관 등급과 당도 구간을 각각 유지해야 12개 조합이 성립한다.
 - bin별 입고량 집계는 수요 분석 화면에 사용할 수 있다. 주문·판매 데이터 없는 상태에서 이를 실제 수요 예측 정확도로 부르지 않는다.
-- 현재 시연용 기본 869묶음을 12° 기준으로 재생하면 12° 미만은 43묶음이다. 원본 사과 기준으로는 128개 중 6개뿐이며, `fuji/M/less_sweet`과 `yanggwang/S/less_sweet`의 시연 원본 사과는 0개다. **12개 목적지는 정의되지만 기본 데이터만 재생해서는 12개가 모두 채워지지 않는다.** 12° 경계는 사용자와 합의한 시연값으로 유지한다.
+- 2026-09-29 사용자 결정으로 구간 경계를 14°Brix로 변경했다. 전체 179개 사과는 미만 87개·이상 92개, 기본 869묶음은 미만 381개·이상 488개다. 전체 996묶음은 미만 434개·이상 562개다. 생성된 가상 당도 값과 기존 60:40 종합등급 기준은 유지한다.
 
-| 품종 | 외관 | 12 미만 | 12 이상 |
+| 품종 | 외관 | 14 미만 | 14 이상 |
 |---|---|---|---|
 | fuji | L | `DEMO_BIN_01` | `DEMO_BIN_02` |
 | fuji | M | `DEMO_BIN_03` | `DEMO_BIN_04` |
@@ -25,10 +25,10 @@
 ## Backend 담당 작업
 
 1. Simulator의 시연용 12장 묶음 입력과 가상 당도 출처를 연결한다. `data/processed/realtime-apple-arrival-demo`는 Git 제외 자료다. 원본 `group_no`나 정답 라벨은 모델 입력으로 보내지 않는다. `demo-virtual-brix.csv`에서 조회한 9~18 범위의 값을 현재 Backend 검사 요청의 `virtual_brix` multipart form 필드로 전달한다. 계약 변경을 Simulator·Frontend·OpenAPI와 동기화한다.
-   - 자료 폴더의 `demo-virtual-brix.csv`는 `demo_bundle_id`로 `index.json`의 `inspection_id` 예시와 결합한다. 반복 검사에서는 새 `inspection_id`를 발급하되 당도 조회에는 원래 묶음 ID를 사용한다. 996개 묶음의 값을 모두 포함하며 기본 869개 중 12° 미만은 43개다. 이 파일은 `notebooks/05_demo_bundles.ipynb`의 `attach_demo_brix()`로 생성·검증한다.
+   - 자료 폴더의 `demo-virtual-brix.csv`는 `demo_bundle_id`로 `index.json`의 `inspection_id` 예시와 결합한다. 반복 검사에서는 새 `inspection_id`를 발급하되 당도 조회에는 원래 묶음 ID를 사용한다. 996개 묶음의 값을 모두 포함하며 기본 869개 중 14° 미만은 381개다. 이 파일은 `notebooks/05_demo_bundles.ipynb`의 `attach_demo_brix()`로 생성·검증한다.
 2. 현재 HTTP 시연 경로는 12-bin으로 연결했으나, **가상 당도 누락 시 기존 6-bin Mock 경로가 남아 있다.** 실제 시연 모드에서는 누락을 재검사로 바꾸고, 응답·DB의 `virtual_brix`, 출처, `brix_is_measured=false`, 당도 구간, `target_bin_code` 저장을 연동한다. 이미지는 Inference에 보내되 가상 당도는 배차 정책에서 사용한다.
 3. 기존 `bin_mappings`의 `(crop_type, cultivar, quality_grade)` 유일 제약은 같은 외관의 당도 2개 bin을 담을 수 없다. 기존 마이그레이션을 고치지 말고 **새 마이그레이션**으로 sweetness 구간을 키에 추가하고 12개 정상+재검사 1개 seed를 준비한다.
-4. 가상 제어 거부 시 재검사 대체·시간 초과 후 확정 bin 불변·저신뢰 분기는 기존 정책을 유지한다. 12조합 및 11.9/12.0 경계 통합 테스트를 추가한다.
+4. 가상 제어 거부 시 재검사 대체·시간 초과 후 확정 bin 불변·저신뢰 분기는 기존 정책을 유지한다. 12조합 및 13.9/14.0 경계 통합 테스트를 추가한다.
 
 ## Frontend·MLOps 담당 작업
 
