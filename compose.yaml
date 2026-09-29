@@ -21,7 +21,7 @@
 #   Inference ─┘          └→ Frontend
 #
 # 이후 작업:
-# - 실제 Frontend / Simulator 실행 파일 준비 시 placeholder command 교체
+# - 기존 FE Dockerfile 배포 연결 및 Simulator 구현 후 placeholder command 교체
 # - Backend의 MySQL 저장·조회 연결 → BE 작업
 # ============================================================
 
@@ -227,7 +227,7 @@ services:
       backend:
         condition: service_healthy
 
-    # 현재 Frontend 실행 코드가 없으므로 placeholder 컨테이너를 유지한다.
+    # Frontend 코드와 apps/web/Dockerfile은 존재하며 루트 배포 연결 전까지 placeholder를 유지한다.
     command:
       - sh
       - -c

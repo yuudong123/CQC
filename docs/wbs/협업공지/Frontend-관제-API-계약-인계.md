@@ -65,3 +65,8 @@ FE는 위 API 호출까지 구현되어 있어 다른 파트 완료 후 주소�
 구현: `src/lib/quality-api.ts`, `quality-proxy.ts`, `quality-reference.ts`, `quality-statistics.ts`, `src/components/useQualityConnection.ts`, `QualityHistory.tsx`, `QualityStatistics.tsx`. 계약 재생성: `npm run quality:contract`.
 
 이후 사용자 요청에 따라 WBS 작업 단위로 커밋·푸시한다.
+## dev 병합 및 배포 인계 (2026-09-29)
+
+PR #18이 dev `2fa187b`에 병합됐다. MLOps는 기존 `cqc-logistics-platform/apps/web/Dockerfile`을 루트 Compose의 frontend placeholder 대신 연결하고 포트 3000·healthcheck를 구성한다. `CQC_QUALITY_MODE=api`, `CQC_QUALITY_BACKEND_URL=http://backend:8000`을 서버 실행 환경에 제공한다. 실제 Backend에 관제 API가 구현되기 전에는 이 주소만으로 정상 관제가 되지 않는다.
+
+참조 서버는 별도 개발/계약 검증용이다. 실제 Backend·Inference Compose 및 i7-4790 합성 입력 측정은 이미 존재하므로 이를 재구현 대상으로 요청하지 않는다. 실제 DB·Simulator 연결과 실제 사진 기반 통합시험은 남아 있다.

@@ -167,7 +167,7 @@ pipeline {
         // Compose의 build 설정이 존재하는 서비스를 빌드한다.
         //
         // Backend / Inference는 이 단계에서 실제 Dockerfile로 빌드된다.
-        // Frontend / Simulator는 실행 파일이 준비될 때까지 placeholder를 유지한다.
+        // Frontend는 기존 apps/web/Dockerfile 배포 연결 대기, Simulator는 구현 대기로 placeholder를 유지한다.
         // ====================================================
         stage('Docker Build') {
 
