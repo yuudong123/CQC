@@ -1,4 +1,4 @@
-"""Run a full, streaming integrity check for every PNG in the source ZIPs."""
+"""원본 ZIP 안의 모든 PNG를 순차적으로 읽어 손상과 중복을 검사한다."""
 
 from __future__ import annotations
 
@@ -19,10 +19,11 @@ PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 
 
 class PngValidationError(ValueError):
-    """Raised when a PNG stream has an invalid structure or chunk checksum."""
+    """PNG 구조나 청크 체크섬이 올바르지 않을 때 발생하는 예외다."""
 
 
 def _read_exact(stream: BinaryIO, size: int, hasher: object) -> bytes:
+    """요청한 바이트 수를 끝까지 읽고 해시를 갱신한다."""
     value = stream.read(size)
     if len(value) != size:
         raise PngValidationError(f"예상 {size}바이트 중 {len(value)}바이트만 읽었습니다")
@@ -31,7 +32,7 @@ def _read_exact(stream: BinaryIO, size: int, hasher: object) -> bytes:
 
 
 def validate_png_stream(stream: BinaryIO) -> tuple[str, int, int]:
-    """Validate all PNG chunks and return SHA-256 plus IHDR dimensions."""
+    """PNG 청크를 검사하고 파일의 SHA-256과 이미지 너비·높이를 반환한다."""
 
     hasher = hashlib.sha256()
     signature = _read_exact(stream, len(PNG_SIGNATURE), hasher)
@@ -84,7 +85,7 @@ def validate_png_stream(stream: BinaryIO) -> tuple[str, int, int]:
 
 
 def scan_images(raw_root: Path) -> dict:
-    """Read every source image fully and collect corrupt and duplicate files."""
+    """원본 이미지 전체를 읽고 손상 파일과 동일 내용의 중복 파일을 집계한다."""
 
     raw_root = raw_root.resolve()
     pairs = discover_archive_pairs(raw_root)
@@ -174,6 +175,7 @@ def scan_images(raw_root: Path) -> dict:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 원본 ZIP 안의 모든 PNG를 순차적으로 읽어 손상과 중복을 검사한다."""
     parser = argparse.ArgumentParser(description="전체 원본 PNG 무결성 검사")
     parser.add_argument("--raw-root", type=Path, default=Path("data/raw"))
     parser.add_argument(

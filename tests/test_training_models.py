@@ -1,3 +1,5 @@
+"""공유·분리·가상 당도 결합 모델의 입력·출력과 생성 옵션을 확인한다."""
+
 from __future__ import annotations
 
 import unittest

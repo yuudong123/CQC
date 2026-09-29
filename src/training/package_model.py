@@ -1,4 +1,4 @@
-"""Package a checkpoint; packaging does not grant production approval."""
+"""체크포인트와 모델 정보를 패키지로 묶는다. 패키지 생성만으로 운영 승인되지는 않는다."""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ from src.data.torch_dataset import IMAGENET_MEAN, IMAGENET_STD
 
 
 def sha256(path: Path) -> str:
+    """파일을 나눠 읽어 SHA-256을 계산한다."""
     digest = hashlib.sha256()
     with path.open("rb") as stream:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
@@ -21,6 +22,7 @@ def sha256(path: Path) -> str:
 
 
 def load_threshold_selection(path: Path) -> dict[str, float]:
+    """신뢰도 검증 보고서의 선택 기준을 읽고 0~1 범위를 확인한다."""
     payload = json.loads(path.read_text(encoding="utf-8"))
     selection = payload.get("selection")
     if not isinstance(selection, dict):
@@ -35,6 +37,7 @@ def load_threshold_selection(path: Path) -> dict[str, float]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 체크포인트와 모델 정보를 패키지로 묶는다. 패키지 생성만으로 운영 승인되지는 않는다."""
     parser = argparse.ArgumentParser(description="미승인 후보 모델 패키지 생성")
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--version", required=True)

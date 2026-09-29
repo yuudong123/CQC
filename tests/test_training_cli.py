@@ -1,3 +1,5 @@
+"""학습 기본 인자, 검증 점수와 체크포인트 해시를 확인한다."""
+
 from __future__ import annotations
 
 import tempfile

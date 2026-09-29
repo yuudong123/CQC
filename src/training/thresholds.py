@@ -1,4 +1,4 @@
-"""Search independent cultivar and quality confidence thresholds."""
+"""검증 예측에서 품종·품질 신뢰도 기준을 각각 탐색한다."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ from typing import Any
 def evaluate_thresholds(
     rows: list[dict[str, Any]], cultivar_threshold: float, quality_threshold: float
 ) -> dict[str, Any]:
+    """두 신뢰도 기준을 만족하는 사과의 비율과 분류 정확도를 계산한다."""
     accepted = [
         row
         for row in rows
@@ -38,6 +39,7 @@ def evaluate_thresholds(
 def select_thresholds(
     rows: list[dict[str, Any]], *, min_cultivar_accuracy: float, min_quality_accuracy: float
 ) -> dict[str, Any] | None:
+    """요구 정확도를 만족하면서 승인 가능한 사과 비율이 높은 기준을 선택한다."""
     candidates = []
     for cultivar_percent in range(50, 100):
         for quality_percent in range(50, 100):
@@ -63,6 +65,7 @@ def select_thresholds(
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 검증 예측에서 품종·품질 신뢰도 기준을 각각 탐색한다."""
     parser = argparse.ArgumentParser(description="두 신뢰도 기준 후보 탐색")
     parser.add_argument("predictions", nargs="+", type=Path)
     parser.add_argument("--min-cultivar-accuracy", type=float, required=True)

@@ -1,4 +1,4 @@
-"""Evaluate a selected checkpoint; final test requires an explicit confirmation token."""
+"""선택한 체크포인트를 평가한다. 최초 최종 시험에는 확인 문구와 평가 잠금을 적용한다."""
 
 from __future__ import annotations
 
@@ -22,6 +22,7 @@ FINAL_TEST_CONFIRMATION = "RUN_FINAL_TEST_ONCE"
 
 
 def load_checkpoint(path: Path, device: torch.device) -> dict[str, Any]:
+    """지정한 실행 장치로 체크포인트를 읽고 필요한 필드를 확인한다."""
     checkpoint = torch.load(path, map_location=device, weights_only=False)
     required = {"model_state", "config", "epoch", "metrics"}
     missing = required - set(checkpoint)
@@ -43,6 +44,7 @@ def claim_final_test(checkpoint_path: Path, output_path: Path) -> Path:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 선택한 체크포인트를 평가한다. 최초 최종 시험에는 확인 문구와 평가 잠금을 적용한다."""
     parser = argparse.ArgumentParser(description="선정 모델 평가")
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--manifest", type=Path, default=Path("data/processed/manifest.csv"))

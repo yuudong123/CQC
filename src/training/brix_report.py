@@ -1,4 +1,4 @@
-"""Compare 12-view image-only and virtual-Brix late-fusion development results."""
+"""대표 12장 이미지 단독 모델과 가상 당도 결합 모델의 개발 검증 결과를 비교한다."""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ from .improvement_report import evaluate_variant, recommend
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 대표 12장 이미지 단독 모델과 가상 당도 결합 모델의 개발 검증 결과를 비교한다."""
     parser = argparse.ArgumentParser(description="대표 12장 가상 당도 A/B 결과 비교")
     parser.add_argument("--root", type=Path, default=Path("outputs/training-brix-v1"))
     parser.add_argument("--output", type=Path, default=Path("outputs/training-brix-v1-report.json"))

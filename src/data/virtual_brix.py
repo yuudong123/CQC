@@ -1,4 +1,4 @@
-"""Generate deterministic demo-only virtual Brix values from RGB apple views."""
+"""사과 RGB 사진으로 재현 가능한 시연용 가상 당도를 생성한다. 실측 당도가 아니다."""
 
 from __future__ import annotations
 
@@ -50,6 +50,7 @@ class RGBProxyFeatures:
 
 
 def _apple_mask(rgb: torch.Tensor) -> torch.Tensor:
+    """배경을 줄이기 위해 색의 선명도와 밝기로 사과 영역을 대략 선택한다."""
     maximum = rgb.max(dim=0).values
     minimum = rgb.min(dim=0).values
     saturation = (maximum - minimum) / maximum.clamp_min(1e-6)
@@ -63,7 +64,7 @@ def _apple_mask(rgb: torch.Tensor) -> torch.Tensor:
 
 
 def extract_rgb_proxy(image_bytes: bytes) -> RGBProxyFeatures:
-    """Extract transparent RGB proxies; none of them is a measured sugar value."""
+    """붉은 정도·색 균일도·질감 등의 RGB 특징을 계산한다. 당도를 측정하는 함수는 아니다."""
 
     with Image.open(BytesIO(image_bytes)) as image:
         image = image.convert("RGB").resize((128, 128))
@@ -86,6 +87,7 @@ def extract_rgb_proxy(image_bytes: bytes) -> RGBProxyFeatures:
 
 
 def aggregate_features(features: Iterable[RGBProxyFeatures]) -> tuple[RGBProxyFeatures, float, int]:
+    """같은 사과의 사진별 특징 평균과 사진 간 편차를 계산한다."""
     items = tuple(features)
     if not items:
         raise ValueError("특징을 집계할 이미지가 없습니다")
@@ -99,6 +101,7 @@ def aggregate_features(features: Iterable[RGBProxyFeatures]) -> tuple[RGBProxyFe
 
 
 def _standardize(values: list[float], fit_indices: list[int]) -> list[float]:
+    """지정한 개발 사과의 평균·표준편차를 기준으로 전체 값을 표준화한다."""
     tensor = torch.tensor(values, dtype=torch.float64)
     fit = tensor[fit_indices]
     std = fit.std(unbiased=False)
@@ -108,6 +111,7 @@ def _standardize(values: list[float], fit_indices: list[int]) -> list[float]:
 
 
 def _seeded_normal(group_no: str, version: str) -> float:
+    """사과 식별자와 생성기 버전으로 고정된 난수를 만들어 재현성을 확보한다."""
     digest = hashlib.sha256(f"{group_no}:{version}".encode("utf-8")).digest()
     return Random(int.from_bytes(digest[:8], "big")).gauss(0.0, 1.0)
 
@@ -121,6 +125,7 @@ def build_virtual_brix_rows(
     generator_version: str = GENERATOR_VERSION,
     fit_group_numbers: set[str] | None = None,
 ) -> list[dict[str, object]]:
+    """색 특징과 고정 난수를 결합해 가상 당도·불확실성·생성 근거 행을 만든다."""
     if not 0 <= target_correlation <= 1:
         raise ValueError("target_correlation은 0~1이어야 합니다")
     group_numbers = sorted(group_features)
@@ -131,9 +136,11 @@ def build_virtual_brix_rows(
     redness_z = _standardize([group_features[key][0].redness for key in group_numbers], fit_indices)
     coverage_z = _standardize([group_features[key][0].red_coverage for key in group_numbers], fit_indices)
     uniformity_z = _standardize([group_features[key][0].color_uniformity for key in group_numbers], fit_indices)
+    # 붉은 정도·붉은 영역 비율·색 균일도로 시연용 외관 점수를 만든다.
     raw_visual = [0.45 * r + 0.30 * c + 0.25 * u for r, c, u in zip(redness_z, coverage_z, uniformity_z)]
     visual_scores = _standardize(raw_visual, fit_indices)
     rows: list[dict[str, object]] = []
+    # 이 계수는 생성 설정이며 실측 당도와의 검증된 상관계수가 아니다.
     noise_scale = math.sqrt(1.0 - target_correlation**2)
     for index, group_no in enumerate(group_numbers):
         feature, view_variation, valid_views = group_features[group_no]
@@ -162,6 +169,7 @@ def build_virtual_brix_rows(
 
 
 def extract_group_features(groups: Iterable[GroupRecord], raw_root: Path, *, views: int = 12) -> dict[str, tuple[RGBProxyFeatures, float, int]]:
+    """사과마다 선택한 사진을 ZIP에서 읽고 RGB 특징을 집계한다."""
     result: dict[str, tuple[RGBProxyFeatures, float, int]] = {}
     archives: dict[Path, object] = {}
     from zipfile import ZipFile
@@ -182,6 +190,7 @@ def extract_group_features(groups: Iterable[GroupRecord], raw_root: Path, *, vie
 
 
 def write_virtual_brix(path: Path, rows: list[dict[str, object]]) -> None:
+    """가상 당도와 생성 정보를 사과 식별자 기준 CSV로 저장한다."""
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8-sig", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=FIELDNAMES)
@@ -190,6 +199,7 @@ def write_virtual_brix(path: Path, rows: list[dict[str, object]]) -> None:
 
 
 def load_virtual_brix(path: Path) -> dict[str, tuple[float, float]]:
+    """CSV의 중복·값 범위·가상값 표시를 검사하고 당도·불확실성 사전을 만든다."""
     values: dict[str, tuple[float, float]] = {}
     with path.open("r", encoding="utf-8-sig", newline="") as stream:
         reader = csv.DictReader(stream)
@@ -216,6 +226,7 @@ def load_virtual_brix(path: Path) -> dict[str, tuple[float, float]]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 사과 RGB 사진으로 재현 가능한 시연용 가상 당도를 생성한다. 실측 당도가 아니다."""
     parser = argparse.ArgumentParser(description="RGB 기반 시연용 가상 당도 생성")
     parser.add_argument("--manifest", type=Path, default=Path("data/processed/manifest.csv"))
     parser.add_argument("--splits", type=Path, default=Path("configs/splits/seed-42.csv"))
@@ -226,6 +237,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     groups = load_groups(args.manifest, args.splits)
     features = extract_group_features(groups, args.raw_root, views=args.views)
+    # 표준화 기준에 시험 사과를 포함하지 않아 시험 정보가 보정에 섞이지 않게 한다.
     development_groups = {group.group_no for group in groups if group.split != "test"}
     rows = build_virtual_brix_rows(
         features,

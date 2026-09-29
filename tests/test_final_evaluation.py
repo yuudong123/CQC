@@ -1,3 +1,5 @@
+"""시험 평가의 확인 문구·재실행 잠금과 검증 평가의 입력 선택을 확인한다."""
+
 from __future__ import annotations
 
 import json

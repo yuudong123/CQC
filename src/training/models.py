@@ -1,4 +1,4 @@
-"""Model variants used by the DM-05/DM-06 training experiments."""
+"""기본 공유 모델, 품종·품질 분리 모델, 가상 당도 결합 모델을 생성한다."""
 
 from __future__ import annotations
 
@@ -24,6 +24,7 @@ class _TaskEncoder(nn.Module):
         self.head = nn.Linear(feature_dim, classes)
 
     def forward(self, images: Tensor, view_mask: Tensor) -> Tensor:
+        """사진과 유효 마스크를 받아 품종·품질 예측 점수를 계산한다."""
         batch, views, channels, height, width = images.shape
         encoded = self.encoder(images.reshape(batch * views, channels, height, width))
         pooled = MultiViewBaseline.masked_mean(
@@ -33,7 +34,7 @@ class _TaskEncoder(nn.Module):
 
 
 class SeparateTaskBaseline(nn.Module):
-    """Use independent encoders for cultivar and quality classification."""
+    """품종과 품질에 독립적인 이미지 특징 추출기를 사용한다."""
 
     def __init__(self, *, pretrained: bool = True, dropout: float = 0.2) -> None:
         super().__init__()
@@ -43,6 +44,7 @@ class SeparateTaskBaseline(nn.Module):
         self.quality_model = _TaskEncoder(3, pretrained=pretrained, dropout=dropout)
 
     def forward(self, images: Tensor, view_mask: Tensor) -> dict[str, Tensor]:
+        """사진과 유효 마스크를 받아 품종·품질 예측 점수를 계산한다."""
         if images.ndim != 5:
             raise ValueError("images는 [B,V,C,H,W]여야 합니다")
         return {
@@ -52,7 +54,7 @@ class SeparateTaskBaseline(nn.Module):
 
 
 class SeparateTaskBrixFusion(nn.Module):
-    """Fuse an explicitly simulated Brix proxy into the quality head only."""
+    """시연용 가상 당도와 불확실성을 품질 예측에만 결합한다."""
 
     def __init__(self, *, pretrained: bool = True, dropout: float = 0.2) -> None:
         super().__init__()
@@ -69,6 +71,7 @@ class SeparateTaskBrixFusion(nn.Module):
         )
 
     def forward(self, images: Tensor, view_mask: Tensor, virtual_brix: Tensor | None = None, brix_uncertainty: Tensor | None = None) -> dict[str, Tensor]:
+        """사진과 유효 마스크를 받아 품종·품질 예측 점수를 계산한다."""
         if virtual_brix is None or brix_uncertainty is None:
             raise ValueError("separate_brix 모델에는 virtual_brix와 brix_uncertainty가 필요합니다")
         quality_features = self.quality_encoder(images, view_mask)
@@ -80,6 +83,7 @@ class SeparateTaskBrixFusion(nn.Module):
 
 
 def build_model(kind: str, *, pretrained: bool = True, dropout: float = 0.2) -> nn.Module:
+    """모델 종류에 맞는 신경망을 만들고 사전학습·드롭아웃 설정을 적용한다."""
     if kind == "joint":
         return MultiViewBaseline(pretrained=pretrained, dropout=dropout)
     if kind == "separate":

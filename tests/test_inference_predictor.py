@@ -1,3 +1,5 @@
+"""패키지 검증, 사진 전처리와 예측 결과 구성을 확인한다."""
+
 from __future__ import annotations
 
 import io
@@ -13,6 +15,7 @@ from src.inference.predictor import Predictor
 
 class _FixedModel(nn.Module):
     def forward(self, images: torch.Tensor, mask: torch.Tensor) -> dict[str, torch.Tensor]:
+        """사진과 유효 마스크를 받아 품종·품질 예측 점수를 계산한다."""
         self.last_shape = tuple(images.shape)
         self.last_mask = mask.detach().cpu().tolist()
         return {

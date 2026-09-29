@@ -1,4 +1,4 @@
-"""Prepare angle-balanced random-sampling runs from the selected v2 variant."""
+"""선택된 v2 설정으로 각도 균형 무작위 선택의 교차검증·원본 검증 실험을 준비한다."""
 
 from __future__ import annotations
 
@@ -55,6 +55,7 @@ def build_plan(
 
 
 def plan_from_v2_report(report_path: Path, *, batch_size: int = 2) -> list[dict[str, Any]]:
+    """시험 데이터를 쓰지 않은 개선 보고서의 선택 설정으로 후속 실험을 구성한다."""
     report = json.loads(report_path.read_text(encoding="utf-8"))
     selection = report.get("selection")
     if not isinstance(selection, dict):
@@ -67,6 +68,7 @@ def plan_from_v2_report(report_path: Path, *, batch_size: int = 2) -> list[dict[
 
 
 def command_for(run: dict[str, Any], device: str) -> list[str]:
+    """실험 설정 한 건을 공통 학습 실행 명령의 인자 목록으로 변환한다."""
     return [
         sys.executable,
         "-m",
@@ -105,6 +107,7 @@ def command_for(run: dict[str, Any], device: str) -> list[str]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 선택된 v2 설정으로 각도 균형 무작위 선택의 교차검증·원본 검증 실험을 준비한다."""
     parser = argparse.ArgumentParser(description="각도 균형 랜덤 12장 후속 실험")
     parser.add_argument(
         "--v2-report", type=Path, default=Path("outputs/training-v2-report.json")

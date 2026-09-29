@@ -1,4 +1,4 @@
-"""Aggregate completed cross-validation histories without running training."""
+"""학습을 실행하지 않고 저장된 교차검증 기록에서 최적 시점과 결과를 집계한다."""
 
 from __future__ import annotations
 
@@ -10,6 +10,7 @@ from typing import Any
 
 
 def best_epoch(history_path: Path) -> dict[str, Any]:
+    """저장된 검증 기록에서 선택 점수가 가장 높은 학습 회차를 찾는다."""
     history = json.loads(history_path.read_text(encoding="utf-8"))
     if not history:
         raise ValueError(f"빈 학습 이력입니다: {history_path}")
@@ -52,6 +53,7 @@ def aggregate(run_dirs: list[Path]) -> dict[str, Any]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 학습을 실행하지 않고 저장된 교차검증 기록에서 최적 시점과 결과를 집계한다."""
     parser = argparse.ArgumentParser(description="5-fold 학습 결과 집계")
     parser.add_argument("run_dirs", nargs="+", type=Path)
     parser.add_argument("--output", type=Path, required=True)

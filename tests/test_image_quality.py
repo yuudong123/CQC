@@ -1,3 +1,5 @@
+"""정상·손상 PNG와 파일 중복을 작은 임시 데이터로 검사한다."""
+
 from __future__ import annotations
 
 import io

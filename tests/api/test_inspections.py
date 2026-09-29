@@ -108,7 +108,11 @@ def test_inspection_accepts_valid_multipart_contract() -> None:
 
 @pytest.mark.parametrize(
     ("virtual_brix", "target_bin", "sweetness_band"),
-    [("11.9", "DEMO_BIN_01", "less_sweet"), ("12.0", "DEMO_BIN_02", "sweet")],
+    [
+        ("12.0", "DEMO_BIN_01", "less_sweet"),
+        ("13.9", "DEMO_BIN_01", "less_sweet"),
+        ("14.0", "DEMO_BIN_02", "sweet"),
+    ],
 )
 def test_inspection_routes_demo_brix_to_twelve_bins(
     virtual_brix: str,

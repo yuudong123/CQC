@@ -1,1 +1,1 @@
-"""Checkpoint-backed multi-view inference service."""
+"""체크포인트를 불러와 사과 다각도 사진을 예측하는 추론 서비스다."""

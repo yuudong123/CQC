@@ -1,3 +1,5 @@
+"""이미지 단독·가상 당도 결합 실험의 설정, 완료 판정과 실행 인자를 확인한다."""
+
 from __future__ import annotations
 
 import json

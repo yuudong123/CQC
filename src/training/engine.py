@@ -1,4 +1,4 @@
-"""Reusable multi-task training loop and dependency-free classification metrics."""
+"""품종·품질 학습 반복과 혼동행렬 기반 평가 지표 계산을 공통으로 제공한다."""
 
 from __future__ import annotations
 
@@ -22,6 +22,7 @@ def quality_loss(
     focal_gamma: float = 2.0,
     ordinal_weight: float = 0.25,
 ) -> Tensor:
+    """기본 분류 손실에 어려운 표본 가중치 또는 등급 순서 오차를 선택적으로 반영한다."""
     if kind not in QUALITY_LOSS_KINDS:
         raise ValueError(f"지원하지 않는 품질 손실입니다: {kind!r}")
     per_sample = F.cross_entropy(logits, targets, reduction="none")
@@ -41,6 +42,7 @@ def quality_loss(
 
 
 def confusion_matrix(targets: Tensor, predictions: Tensor, classes: int) -> Tensor:
+    """행은 정답, 열은 예측인 혼동행렬을 만들고 클래스 범위를 검증한다."""
     targets = targets.detach().to(dtype=torch.long, device="cpu")
     predictions = predictions.detach().to(dtype=torch.long, device="cpu")
     if targets.shape != predictions.shape:
@@ -56,6 +58,7 @@ def confusion_matrix(targets: Tensor, predictions: Tensor, classes: int) -> Tens
 
 
 def classification_metrics(matrix: Tensor) -> dict[str, Any]:
+    """혼동행렬로 정확도와 클래스별 정밀도·재현율·F1 및 평균 F1을 계산한다."""
     matrix = matrix.to(dtype=torch.float64, device="cpu")
     if matrix.ndim != 2 or matrix.shape[0] != matrix.shape[1]:
         raise ValueError("혼동행렬은 정사각 행렬이어야 합니다")
@@ -79,6 +82,7 @@ def classification_metrics(matrix: Tensor) -> dict[str, Any]:
 
 
 def _move(batch: Mapping[str, Any], key: str, device: torch.device) -> Tensor:
+    """배치의 지정 필드가 텐서인지 검사하고 실행 장치로 옮긴다."""
     value = batch[key]
     if not isinstance(value, Tensor):
         raise TypeError(f"{key}는 Tensor여야 합니다")
@@ -98,6 +102,8 @@ def run_epoch(
     ordinal_weight: float = 0.25,
     include_predictions: bool = False,
 ) -> dict[str, Any]:
+    """최적화기가 있으면 학습하고, 없으면 평가만 하며 두 분류의 지표를 집계한다."""
+    # 최적화기가 전달된 경우에만 모델 파라미터를 갱신한다.
     training = optimizer is not None
     model.train(training)
     criterion = nn.CrossEntropyLoss()
@@ -184,6 +190,7 @@ def save_checkpoint(
     config: Mapping[str, Any],
     metrics: Mapping[str, Any],
 ) -> None:
+    """모델·최적화기 상태와 학습 설정·회차·지표를 함께 저장한다."""
     path.parent.mkdir(parents=True, exist_ok=True)
     torch.save(
         {

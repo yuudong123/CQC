@@ -1,3 +1,5 @@
+"""사과 단위 사진 연결, 고른 선택, 마스킹과 ZIP 로딩을 확인한다."""
+
 from __future__ import annotations
 
 import unittest

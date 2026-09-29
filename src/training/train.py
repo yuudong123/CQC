@@ -1,4 +1,4 @@
-"""Command-line training entrypoint for the masked multi-view baseline."""
+"""사과별 다각도 사진과 마스크로 모델을 학습하는 공통 실행 진입점이다."""
 
 from __future__ import annotations
 
@@ -20,6 +20,7 @@ from .models import TRAIN_MODEL_KINDS, build_model
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """학습 경로·모델·사진 수·손실함수 등의 실행 인자를 읽고 검증한다."""
     parser = argparse.ArgumentParser(description="다각도 MobileNetV3 기준선 학습")
     parser.add_argument("--manifest", type=Path, default=Path("data/processed/manifest.csv"))
     parser.add_argument("--splits", type=Path, default=Path("configs/splits/seed-42.csv"))
@@ -68,6 +69,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 def set_reproducibility(seed: int) -> None:
+    """난수 시드를 고정해 같은 설정의 학습을 재현할 수 있게 한다."""
     random.seed(seed)
     torch.manual_seed(seed)
     if torch.cuda.is_available():
@@ -77,6 +79,7 @@ def set_reproducibility(seed: int) -> None:
 
 
 def resolve_device(requested: str) -> torch.device:
+    """요청한 CPU·GPU 장치를 선택하고 사용할 수 없는 GPU 요청은 거절한다."""
     if requested == "cuda" and not torch.cuda.is_available():
         raise RuntimeError("CUDA를 요청했지만 사용할 수 없습니다")
     if requested == "auto":
@@ -85,6 +88,7 @@ def resolve_device(requested: str) -> torch.device:
 
 
 def validation_score(metrics: dict[str, Any]) -> float:
+    """품종과 품질의 평균 F1을 합산해 모델 선택 점수를 계산한다."""
     return (
         float(metrics["cultivar"]["macro_f1"])
         + float(metrics["quality"]["macro_f1"])
@@ -92,6 +96,7 @@ def validation_score(metrics: dict[str, Any]) -> float:
 
 
 def checkpoint_sha256(path: Path) -> str:
+    """체크포인트 파일의 해시를 계산해 인계·패키지 무결성 검증에 사용한다."""
     digest = hashlib.sha256()
     with path.open("rb") as stream:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
@@ -100,6 +105,7 @@ def checkpoint_sha256(path: Path) -> str:
 
 
 def write_json(path: Path, value: Any) -> None:
+    """한글을 유지하는 JSON으로 결과를 저장한다."""
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="\n") as stream:
         json.dump(value, stream, ensure_ascii=False, indent=2)
@@ -124,6 +130,7 @@ def select_development_groups(
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 사과별 다각도 사진과 마스크로 모델을 학습하는 공통 실행 진입점이다."""
     args = parse_args(argv)
     set_reproducibility(args.seed)
     device = resolve_device(args.device)

@@ -1,3 +1,5 @@
+"""분할·사진 선택 통계를 읽어 데이터 파트 발표용 그래프 이미지를 생성한다."""
+
 from pathlib import Path
 import csv
 import json
@@ -19,25 +21,30 @@ GRID, MUTED, WHITE = "#E8EDF2", "#52616F", "#FFFFFF"
 
 
 def font(size, bold=False):
+    """한글 글꼴을 지정한 크기와 굵기로 불러온다."""
     return ImageFont.truetype(str(FONT_BOLD if bold else FONT), size)
 
 
 def canvas():
+    """발표 그래프의 공통 크기 이미지와 그리기 도구를 만든다."""
     image = Image.new("RGB", (1600, 900), WHITE)
     return image, ImageDraw.Draw(image)
 
 
 def title(draw, text, subtitle=None):
+    """그래프 제목과 보조 설명을 공통 위치에 그린다."""
     draw.text((110, 72), text, fill=NAVY, font=font(46, True))
     if subtitle:
         draw.text((112, 137), subtitle, fill=MUTED, font=font(23))
 
 
 def footer(draw, text):
+    """그래프 아래에 데이터 수량이나 해석 근거를 표시한다."""
     draw.text((112, 842), text, fill=MUTED, font=font(21))
 
 
 def draw_grid(draw, box, steps=5):
+    """수치를 비교하기 쉽도록 그래프의 가로 눈금선을 그린다."""
     x0, y0, x1, y1 = box
     for i in range(steps + 1):
         y = y1 - (y1 - y0) * i / steps
@@ -45,10 +52,12 @@ def draw_grid(draw, box, steps=5):
 
 
 def centered(draw, xy, text, fnt, fill):
+    """문자열을 지정한 좌표의 가운데에 맞춰 그린다."""
     draw.text(xy, text, font=fnt, fill=fill, anchor="mm")
 
 
 def chart_dataset_composition(rows):
+    """품종·등급별 사진 수를 누적 막대 그래프로 저장한다."""
     cultivars, grades = ["fuji", "yanggwang"], ["L", "M", "S"]
     label = {"fuji": "부사", "yanggwang": "양광", "L": "특", "M": "상", "S": "보통"}
     counts = {(c, g): 0 for c in cultivars for g in grades}
@@ -78,6 +87,7 @@ def chart_dataset_composition(rows):
 
 
 def chart_split(summary):
+    """학습·검증·시험의 사과 수와 사진 수를 비교하는 그래프를 저장한다."""
     image, draw = canvas()
     title(draw, "그룹 단위 70·15·15 분할 결과", "같은 사과의 여러 각도를 한 세트에만 배치했습니다")
     labels, keys = ["학습", "검증", "시험"], ["train", "validation", "test"]
@@ -101,6 +111,7 @@ def chart_split(summary):
 
 
 def chart_multiview(view_summary):
+    """입력 사진 수에 따른 메모리와 패딩 그룹 수를 비교한다."""
     image, draw = canvas()
     title(draw, "입력 장수가 늘면 메모리·전송 부담도 커짐", "막대: 사과 1개 디코딩 메모리 · 점: 패딩이 필요한 그룹")
     plot = (155, 245, 1445, 745)
@@ -126,6 +137,7 @@ def chart_multiview(view_summary):
 
 
 def main():
+    """실행 인자를 읽고 다음 작업을 수행한다: 분할·사진 선택 통계를 읽어 데이터 파트 발표용 그래프 이미지를 생성한다."""
     with SPLIT_CSV.open("r", encoding="utf-8-sig", newline="") as f:
         rows = list(csv.DictReader(f))
     with SPLIT_SUMMARY.open("r", encoding="utf-8") as f:

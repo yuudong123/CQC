@@ -1,4 +1,4 @@
-"""Prepare a development-only 12-view baseline versus virtual-Brix experiment."""
+"""시험 데이터를 제외한 대표 12장 입력으로 이미지 단독·가상 당도 결합 실험을 준비한다."""
 
 from __future__ import annotations
 
@@ -48,6 +48,7 @@ def build_plan(
 
 
 def command_for(run: dict[str, Any], device: str, virtual_brix: Path) -> list[str]:
+    """실험 설정 한 건을 공통 학습 실행 명령의 인자 목록으로 변환한다."""
     command = [
         sys.executable,
         "-m",
@@ -87,6 +88,7 @@ def command_for(run: dict[str, Any], device: str, virtual_brix: Path) -> list[st
 
 
 def run_is_complete(run: dict[str, Any]) -> bool:
+    """완료 요약과 설정을 확인해 재실행할 필요가 없는 실험을 판별한다."""
     summary_path = Path(str(run["output_dir"])) / "summary.json"
     if not summary_path.is_file():
         return False
@@ -98,6 +100,7 @@ def run_is_complete(run: dict[str, Any]) -> bool:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 시험 데이터를 제외한 대표 12장 입력으로 이미지 단독·가상 당도 결합 실험을 준비한다."""
     parser = argparse.ArgumentParser(description="대표 12장 가상 당도 A/B 실험 계획")
     parser.add_argument(
         "--virtual-brix",

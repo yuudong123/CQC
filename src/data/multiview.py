@@ -1,4 +1,4 @@
-"""Framework-independent multi-view group loader and deterministic selector."""
+"""사과 단위로 여러 사진을 묶고 재현 가능한 순서로 입력 사진을 선택한다."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ QUALITY_CLASSES = ("L", "M", "S")
 
 
 class MultiViewValidationError(ValueError):
-    """Raised when the manifest, split, or selected views violate the contract."""
+    """매니페스트·분할·선택 사진이 입력 규칙을 위반하면 발생한다."""
 
 
 @dataclass(frozen=True)
@@ -36,6 +36,7 @@ class FrameRecord:
 
     @property
     def view_key(self) -> tuple[int, int, int, str]:
+        """촬영 방향·각도로 사진의 안정적인 정렬 순서를 만든다."""
         direction_order = {"top": 0, "bottom": 1}
         if self.angle_direction not in direction_order:
             raise MultiViewValidationError(
@@ -74,11 +75,12 @@ class SelectedViews:
 
     @property
     def real_frames(self) -> tuple[FrameRecord, ...]:
+        """패딩을 제외하고 실제 선택된 사진만 반환한다."""
         return tuple(frame for frame in self.frames if frame is not None)
 
 
 def evenly_spaced_indices(size: int, target: int) -> tuple[int, ...]:
-    """Return target unique indices spanning the complete ordered sequence."""
+    """정렬된 전체 구간을 고르게 덮는 중복 없는 인덱스를 반환한다."""
 
     if size <= 0:
         raise MultiViewValidationError("빈 프레임 그룹은 선택할 수 없습니다")
@@ -97,7 +99,7 @@ def evenly_spaced_indices(size: int, target: int) -> tuple[int, ...]:
 
 
 def select_views(frames: Sequence[FrameRecord], target: int) -> SelectedViews:
-    """Select evenly ordered views and right-pad missing views with a mask."""
+    """사진을 고르게 선택하고 부족한 자리는 오른쪽에 패딩과 마스크로 표시한다."""
 
     if target not in SUPPORTED_VIEW_COUNTS:
         raise MultiViewValidationError(
@@ -119,6 +121,7 @@ def select_views(frames: Sequence[FrameRecord], target: int) -> SelectedViews:
 
 
 def load_assignments(split_path: Path) -> dict[str, GroupAssignment]:
+    """고정 분할 CSV에서 사과별 분할·교차검증 번호를 읽는다."""
     assignments: dict[str, GroupAssignment] = {}
     with split_path.open("r", encoding="utf-8-sig", newline="") as stream:
         reader = csv.DictReader(stream)
@@ -140,7 +143,7 @@ def load_assignments(split_path: Path) -> dict[str, GroupAssignment]:
 
 
 def load_groups(manifest_path: Path, split_path: Path) -> list[GroupRecord]:
-    """Join the frame manifest with the fixed group split."""
+    """사진별 매니페스트에 사과 단위의 고정 분할 정보를 연결한다."""
 
     assignments = load_assignments(split_path)
     frames_by_group: dict[str, list[FrameRecord]] = defaultdict(list)
@@ -221,7 +224,7 @@ def load_groups(manifest_path: Path, split_path: Path) -> list[GroupRecord]:
 
 
 class MultiViewDataset:
-    """Load selected image bytes lazily from ZIP members, one apple per item."""
+    """항목 하나가 사과 하나이며, 필요한 사진 바이트만 ZIP에서 그때 읽는다."""
 
     def __init__(
         self,
@@ -267,6 +270,7 @@ class MultiViewDataset:
         self._archives: dict[str, ZipFile] = {}
 
     def set_epoch(self, epoch: int) -> None:
+        """무작위 사진 선택에 사용할 현재 학습 회차를 갱신한다."""
         if epoch < 0:
             raise MultiViewValidationError("epoch는 0 이상이어야 합니다")
         self.epoch = epoch
@@ -330,6 +334,7 @@ class MultiViewDataset:
         }
 
     def close(self) -> None:
+        """열어 둔 ZIP 파일을 닫아 파일 핸들을 반환한다."""
         for archive in self._archives.values():
             archive.close()
         self._archives.clear()
@@ -342,6 +347,7 @@ class MultiViewDataset:
 
 
 def build_selection_summary(groups: Sequence[GroupRecord]) -> dict[str, Any]:
+    """사진 수별 실제 입력·패딩 수량과 사과 그룹 통계를 집계한다."""
     targets: dict[str, Any] = {}
     for target in SUPPORTED_VIEW_COUNTS:
         padded_groups = 0
@@ -375,6 +381,7 @@ def build_selection_summary(groups: Sequence[GroupRecord]) -> dict[str, Any]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 사과 단위로 여러 사진을 묶고 재현 가능한 순서로 입력 사진을 선택한다."""
     parser = argparse.ArgumentParser(description="다각도 그룹 선택·마스킹 검증")
     parser.add_argument(
         "--manifest", type=Path, default=Path("data/processed/manifest.csv")

@@ -87,6 +87,29 @@ test("12-bin mapping uses cultivar, grade and virtual sweetness", () => {
   const result = complete().history[0];
   assert.equal(result.bin, "DEMO_BIN_08");
 });
+
+test("14 Brix boundary matches display labels and inspection fixtures", () => {
+  const { MOCK_INSPECTIONS } = require("../src/lib/quality-contract.ts");
+  const { qualityBins } = require("../src/lib/quality-bins.ts");
+  assert.deepEqual([...new Set(qualityBins.map((bin) => bin.sweetness))], [
+    "14° 미만", "14° 이상",
+  ]);
+  for (const row of MOCK_INSPECTIONS.filter((row) => row.status === "PASS")) {
+    const index = (row.variety === "양광" ? 6 : 0)
+      + ["특", "상", "보통"].indexOf(row.grade) * 2
+      + (row.virtualBrix >= 14 ? 2 : 1);
+    assert.equal(row.bin, `DEMO_BIN_${String(index).padStart(2, "0")}`);
+  }
+  const original = MOCK_INSPECTIONS[0].virtualBrix;
+  try {
+    for (const [brix, bin] of [[12, "DEMO_BIN_07"], [13.9, "DEMO_BIN_07"], [14, "DEMO_BIN_08"]]) {
+      MOCK_INSPECTIONS[0].virtualBrix = brix;
+      assert.equal(complete().history[0].bin, bin);
+    }
+  } finally {
+    MOCK_INSPECTIONS[0].virtualBrix = original;
+  }
+});
 test("KST midnight resets daily counts; history remains", () => {
   const before = Date.parse("2026-09-28T14:59:58Z");
   let s = step(initialRuntime(), before);

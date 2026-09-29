@@ -1,3 +1,5 @@
+"""모델 종류·사진 수·교차검증별 실험 계획과 실행 명령을 확인한다."""
+
 from __future__ import annotations
 
 import unittest
