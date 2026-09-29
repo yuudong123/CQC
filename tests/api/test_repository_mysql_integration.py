@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+from datetime import date
 from io import BytesIO
 from uuid import uuid4
 
@@ -12,13 +13,19 @@ from sqlalchemy import delete, select
 from src.api.clients.inference import MockInferenceClient
 from src.api.control.virtual_control import MockVirtualControl
 from src.api.core.config import Settings
+from src.api.core.datetime import to_utc_naive, utc_now
 from src.api.db.models import ControlAttempt, Inspection
 from src.api.db.session import create_db_engine, create_session_factory
 from src.api.repositories import BinMappingRepository, InspectionPersistence
+from src.api.repositories.quality_history import (
+    HistoryFilters,
+    QualityHistoryRepository,
+)
 from src.api.schemas.inspections import InspectionImageMetadata
 from src.api.services.bin_policy import DEMO_NORMAL_BIN_MAPPING
 from src.api.services.inspections import InspectionService
 from src.api.services.late_results import LateResultManager
+from src.api.services.quality_history import to_quality_result
 
 
 def _mysql_settings() -> Settings:
@@ -82,6 +89,19 @@ def test_mysql_repository_vertical_flow_and_all_seed_mappings() -> None:
 
         assert response.target_bin_code == "DEMO_BIN_01"
         assert response.persistence_status == "SUCCEEDED"
+        history = QualityHistoryRepository(session_factory).list_page(
+            HistoryFilters(
+                from_date=date(2020, 1, 1), variety="부사", bin_code="DEMO_BIN_01"
+            ),
+            snapshot_at=to_utc_naive(utc_now()),
+            page=1,
+            page_size=50,
+        )
+        item = next(row for row in history.items if row.inspection_id == inspection_id)
+        public_item = to_quality_result(item)
+        assert public_item["imageIndex"] is None
+        assert public_item["bin"] == "DEMO_BIN_01"
+        assert public_item["persistence"] == "SAVED"
         with session_factory() as session:
             inspection = session.get(Inspection, inspection_id)
             attempts = list(

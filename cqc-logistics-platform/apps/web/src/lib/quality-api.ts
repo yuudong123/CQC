@@ -1,5 +1,6 @@
 import {
   DEFAULT_QUALITY_FILTERS,
+  ERROR_LABEL,
   type QualityFilterState,
   type MisclassificationType,
 } from "./quality-contract";
@@ -79,6 +80,7 @@ const validResult = (v: unknown) => {
     typeof v.time === "string" &&
     finite(v.timestamp) &&
     typeof v.bin === "string" &&
+    Object.hasOwn(ERROR_LABEL, String(v.errorCode)) &&
     ["PASS", "FAIL", "REVIEW"].includes(String(v.status)) &&
     ["NONE", "CULTIVAR_SUSPECT", "QUALITY_SUSPECT", "OTHER"].includes(
       String(v.misclassification),
@@ -86,7 +88,7 @@ const validResult = (v: unknown) => {
     ["COMPLETED", "INFERENCING", "TIMEOUT", "ERROR"].includes(
       String(v.processingStatus),
     ) &&
-    ["SUCCEEDED", "FALLBACK", "NO_RESPONSE", "REJECTED"].includes(
+    ["NOT_REQUESTED", "SUCCEEDED", "FALLBACK", "NO_RESPONSE", "REJECTED", "FAILED"].includes(
       String(v.control),
     ) &&
     ["SAVED", "FAILED"].includes(String(v.persistence)) &&
@@ -94,7 +96,7 @@ const validResult = (v: unknown) => {
     typeof v.reviewRequired === "boolean" &&
     (v.virtualBrix === null || finite(v.virtualBrix)) &&
     v.brixMeasured === false &&
-    finite(v.imageIndex) &&
+    (v.imageIndex === null || (finite(v.imageIndex) && Number.isInteger(v.imageIndex))) &&
     (v.inferenceMs === null || finite(v.inferenceMs)) &&
     (v.modelVersion === null || typeof v.modelVersion === "string") &&
     Array.isArray(v.faults) &&
@@ -109,6 +111,7 @@ const validFault = (v: unknown) =>
     "DB_ERROR",
     "CONTROL_REJECTED",
     "CONTROL_NO_RESPONSE",
+    "CONTROL_FAILED",
   ].includes(String(v));
 const validPreview = (v: unknown) =>
   typeof v === "string" && /^\/api\/quality\/previews\/[A-Za-z0-9_-]+$/.test(v);

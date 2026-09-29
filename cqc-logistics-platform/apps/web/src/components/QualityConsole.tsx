@@ -174,7 +174,9 @@ function FaultImages({
               src={
                 remote
                   ? preview.previewUrl
-                  : sampleApples[preview.imageIndex].images[0]
+                  : preview.imageIndex === null
+                    ? undefined
+                    : sampleApples[preview.imageIndex]?.images[0]
               }
               alt={`${preview.id} 장애 이미지`}
             />
@@ -589,11 +591,15 @@ export default function QualityConsole({
                   제어:{" "}
                   {row.control === "NO_RESPONSE"
                     ? "전송 실패"
+                    : row.control === "NOT_REQUESTED"
+                      ? "미요청"
                     : row.control === "FALLBACK"
                       ? "재검사 대체 1회"
                       : row.control === "REJECTED"
                         ? "거부"
-                        : "성공"}{" "}
+                        : row.control === "FAILED"
+                          ? "실패"
+                          : "성공"}{" "}
                   · 저장: {row.persistence === "SAVED" ? "완료" : "실패"}
                 </small>
               </div>

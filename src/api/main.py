@@ -13,7 +13,9 @@ from .control.virtual_control import MockVirtualControl
 from .core.config import Settings, get_settings
 from .db.session import create_db_engine, create_session_factory
 from .repositories import BinMappingRepository, InspectionPersistence
+from .repositories.quality_history import QualityHistoryRepository
 from .routers.inspections import router as inspections_router
+from .routers.quality_history import router as quality_history_router
 from .services.inspections import InspectionService
 from .services.late_results import LateResultManager
 
@@ -84,7 +86,13 @@ def create_app(
     application = FastAPI(title=runtime_settings.app_name, lifespan=lifespan)
     application.state.settings = runtime_settings
     application.state.inspection_service = runtime_inspection_service
+    application.state.quality_history_repository = (
+        QualityHistoryRepository(session_factory)
+        if session_factory is not None
+        else None
+    )
     application.include_router(inspections_router)
+    application.include_router(quality_history_router)
 
     @application.get("/health", tags=["health"])
     async def health() -> dict[str, str]:

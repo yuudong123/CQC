@@ -8,7 +8,8 @@ export type ErrorCode =
   | "INFERENCE_ERROR"
   | "DB_ERROR"
   | "CONTROL_REJECTED"
-  | "CONTROL_NO_RESPONSE";
+  | "CONTROL_NO_RESPONSE"
+  | "CONTROL_FAILED";
 export type MisclassificationType =
   "NONE" | "CULTIVAR_SUSPECT" | "QUALITY_SUSPECT" | "OTHER";
 
@@ -26,7 +27,7 @@ export type InspectionRecord = {
   bin: string;
   virtualBrix: number | null;
   brixMeasured: false;
-  imageIndex: number;
+  imageIndex: number | null;
 };
 
 export type QualityFilterState = {
@@ -67,6 +68,7 @@ export const ERROR_LABEL: Record<ErrorCode, string> = {
   DB_ERROR: "DB 저장 오류",
   CONTROL_REJECTED: "제어 거부",
   CONTROL_NO_RESPONSE: "제어 무응답",
+  CONTROL_FAILED: "제어 실패",
 };
 export const MISCLASSIFICATION_LABEL: Record<MisclassificationType, string> = {
   NONE: "오판 의심 없음",
