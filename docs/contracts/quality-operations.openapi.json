@@ -1167,7 +1167,8 @@
               "pattern": "^[A-Za-z0-9_-]+$",
               "minLength": 1,
               "maxLength": 64
-            }
+            },
+            "description": "Individual fault image ID for retained fault previews."
           }
         ],
         "responses": {
@@ -1181,12 +1182,6 @@
                 }
               },
               "image/jpeg": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              },
-              "image/webp": {
                 "schema": {
                   "type": "string",
                   "format": "binary"
@@ -2084,7 +2079,8 @@
               "minLength": 1,
               "maxLength": 64
             },
-            "maxItems": 100
+            "maxItems": 100,
+            "description": "Individual fault image IDs."
           }
         },
         "required": [
@@ -2103,11 +2099,61 @@
               "minLength": 1,
               "maxLength": 64
             },
-            "maxItems": 100
+            "maxItems": 100,
+            "description": "Deleted individual fault image IDs."
           }
         },
         "required": [
           "deletedIds"
+        ],
+        "additionalProperties": false
+      },
+      "FaultImage": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "inspectionId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "imageIndex": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 11
+          },
+          "createdAt": {
+            "type": "number",
+            "minimum": 0
+          },
+          "errorCode": {
+            "type": "string",
+            "enum": [
+              "INFERENCE_TIMEOUT",
+              "INFERENCE_ERROR",
+              "INFERENCE_CONNECTION_ERROR",
+              "INFERENCE_HTTP_ERROR",
+              "INFERENCE_INVALID_RESPONSE"
+            ]
+          },
+          "previewUrl": {
+            "type": "string",
+            "pattern": "^/api/quality/previews/[A-Za-z0-9_-]+$"
+          }
+        },
+        "required": [
+          "id",
+          "inspectionId",
+          "imageIndex",
+          "createdAt",
+          "errorCode",
+          "previewUrl"
         ],
         "additionalProperties": false
       },
@@ -2117,7 +2163,7 @@
           "items": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Result"
+              "$ref": "#/components/schemas/FaultImage"
             },
             "maxItems": 100
           }

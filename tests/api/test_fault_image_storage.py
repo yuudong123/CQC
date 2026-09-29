@@ -11,6 +11,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from uuid import UUID
 
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 from starlette.datastructures import UploadFile
@@ -20,6 +21,8 @@ from src.api.control.virtual_control import MockVirtualControl
 from src.api.core.config import Settings
 from src.api.db.models import Inspection
 from src.api.main import create_app
+from src.api.repositories import BinMappingConfigurationError
+from src.api.schemas.inspection_results import ControlStatus
 from src.api.services.fault_image_storage import FaultImage, FaultImageStorage
 from src.api.services.inspections import InspectionService
 from src.api.services.late_results import LateResultManager
@@ -293,7 +296,305 @@ def test_normal_request_closes_uploads_without_persisting_image(
             data={"inspection_id": "invalid-1", "metadata": "[]"},
             files=[("images", ("../untrusted.jpg", JPEG, "image/jpeg"))],
         )
+        normal_preview = client.get("/v1/quality/previews/normal-1")
     assert response.status_code == 200
     assert invalid_response.status_code == 422
+    assert normal_preview.status_code == 410
     assert len(closed) >= 2 and all(image.file.closed for image in closed)
+    assert not fault_root.exists()
+
+
+def test_inventory_and_preview_are_per_image_and_do_not_expose_paths(
+    fault_root: Path,
+) -> None:
+    storage = FaultImageStorage(fault_root)
+    first = storage.save(
+        inspection_id="inspection-1",
+        error_code="INFERENCE_DEADLINE_EXCEEDED",
+        images=[_jpeg(), FaultImage(PNG, "image/png")],
+        created_at=START,
+    )
+    second = storage.save(
+        inspection_id="inspection-2",
+        error_code="INFERENCE_HTTP_ERROR",
+        images=[_jpeg()],
+        created_at=START + timedelta(seconds=1),
+    )
+    with TestClient(
+        create_app(Settings(fault_image_storage_root=fault_root))
+    ) as client:
+        response = client.get("/v1/quality/fault-images")
+        assert response.status_code == 200
+        assert response.headers["cache-control"] == "no-store"
+        items = response.json()["items"]
+        assert [item["id"] for item in items] == second + first[::-1]
+        assert [item["inspectionId"] for item in items] == [
+            "inspection-2",
+            "inspection-1",
+            "inspection-1",
+        ]
+        assert [item["imageIndex"] for item in items] == [0, 1, 0]
+        assert items[0]["errorCode"] == "INFERENCE_HTTP_ERROR"
+        assert items[1]["errorCode"] == "INFERENCE_TIMEOUT"
+        assert all(item["createdAt"] > 0 for item in items)
+        assert all(
+            item["previewUrl"] == f"/api/quality/previews/{item['id']}"
+            for item in items
+        )
+        assert str(fault_root).encode() not in response.content
+        assert b"image_00" not in response.content
+        for image_id, expected_type, expected_bytes in (
+            (first[0], "image/jpeg", JPEG),
+            (first[1], "image/png", PNG),
+        ):
+            preview = client.get(f"/v1/quality/previews/{image_id}")
+            assert preview.status_code == 200
+            assert preview.headers["content-type"] == expected_type
+            assert preview.headers["cache-control"] == "no-store"
+            assert preview.content == expected_bytes
+        for image_id in ("missing", "..", f"{first[0]}../image_00"):
+            preview = client.get(f"/v1/quality/previews/{image_id}")
+            assert preview.status_code in (404, 410)
+            if preview.status_code == 410:
+                assert preview.headers["cache-control"] == "no-store"
+
+
+def test_empty_inventory_and_pruning_remove_sidecars_and_empty_group(
+    fault_root: Path,
+) -> None:
+    storage = FaultImageStorage(fault_root, limit=2)
+    with TestClient(
+        create_app(Settings(fault_image_storage_root=fault_root))
+    ) as client:
+        assert client.get("/v1/quality/fault-images").json() == {"items": []}
+    first = storage.save(
+        inspection_id="inspection-1",
+        error_code="INFERENCE_CONNECTION_ERROR",
+        images=[_jpeg(), _jpeg()],
+        created_at=START,
+    )
+    second = storage.save(
+        inspection_id="inspection-2",
+        error_code="INFERENCE_INVALID_RESPONSE",
+        images=[_jpeg()],
+        created_at=START + timedelta(seconds=1),
+    )
+    assert {item.id for item in storage.list_images()} == {first[1], second[0]}
+    assert storage.read_image(first[0]) is None
+    assert storage.read_image(first[1]) == (JPEG, "image/jpeg")
+    first_group = fault_root / first[0].split("_")[0]
+    assert not (first_group / "image_00.json").exists()
+    storage.save(
+        inspection_id="inspection-3",
+        error_code="INFERENCE_HTTP_ERROR",
+        images=[_jpeg()],
+        created_at=START + timedelta(seconds=2),
+    )
+    assert not first_group.exists()
+    orphan = fault_root / second[0].split("_")[0] / "image_09.json"
+    orphan.write_text("{}", encoding="utf-8")
+    orphan_image = orphan.with_suffix(".jpg")
+    orphan_image.write_bytes(JPEG)
+    orphan.unlink()
+    orphan_sidecar = orphan.with_name("image_08.json")
+    orphan_sidecar.write_text("{}", encoding="utf-8")
+    storage.list_images()
+    assert not orphan.exists()
+    assert not orphan_image.exists()
+    assert not orphan_sidecar.exists()
+
+
+@pytest.mark.parametrize(
+    ("failure", "expected"),
+    [
+        ("timeout", "INFERENCE_DEADLINE_EXCEEDED"),
+        ("connection", "INFERENCE_CONNECTION_ERROR"),
+        ("http", "INFERENCE_HTTP_ERROR"),
+        ("invalid", "INFERENCE_INVALID_RESPONSE"),
+    ],
+)
+def test_inference_faults_store_original_upload_bytes(
+    fault_root: Path, failure: str, expected: str
+) -> None:
+    class FailingClient(MockInferenceClient):
+        async def predict(self, request):
+            if failure == "timeout":
+                return await MockInferenceClient(response_delay_ms=20).predict(request)
+            if failure == "connection":
+                raise httpx.ConnectError(
+                    "offline", request=httpx.Request("POST", "http://test")
+                )
+            if failure == "http":
+                raise httpx.HTTPStatusError(
+                    "bad response",
+                    request=httpx.Request("POST", "http://test"),
+                    response=httpx.Response(500),
+                )
+            return (await super().predict(request)).model_copy(
+                update={"inspection_id": "wrong"}
+            )
+
+    storage = FaultImageStorage(fault_root)
+    service = InspectionService(
+        FailingClient(),
+        MockVirtualControl(),
+        cultivar_confidence_threshold=0.5,
+        quality_confidence_threshold=0.5,
+        inference_business_deadline_ms=1 if failure == "timeout" else 500,
+        late_result_manager=LateResultManager(hard_timeout_ms=2000, max_tasks=4),
+        bin_mapping_repository=FakeBinMappingRepository(),
+        persistence=RecordingPersistence(),
+        fault_image_storage=storage,
+    )
+    with TestClient(create_app(Settings(), inspection_service=service)) as client:
+        response = client.post(
+            "/v1/inspections",
+            data={
+                "inspection_id": "fault-1",
+                "metadata": json.dumps(
+                    [
+                        {
+                            "view_index": 0,
+                            "angle_direction": "top",
+                            "verticality_angle": 0,
+                            "horizontality_angle": 0,
+                        },
+                        {
+                            "view_index": 1,
+                            "angle_direction": "bottom",
+                            "verticality_angle": 0,
+                            "horizontality_angle": 0,
+                        },
+                    ]
+                ),
+            },
+            files=[
+                ("images", ("a.jpg", JPEG, "image/jpeg")),
+                ("images", ("b.png", PNG, "image/png")),
+            ],
+        )
+    assert response.status_code == 200
+    assert response.json()["decision_reason"] == expected
+    records = storage.list_images()
+    assert len(records) == 2
+    assert [record.image_index for record in records] == [1, 0]
+    assert all(record.error_code == expected for record in records)
+    assert storage.read_image(records[0].id) == (PNG, "image/png")
+    assert storage.read_image(records[1].id) == (JPEG, "image/jpeg")
+
+
+def test_fault_storage_failure_does_not_change_inspection_result(
+    fault_root: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    class ConnectionFailureClient(MockInferenceClient):
+        async def predict(self, request):
+            raise httpx.ConnectError(
+                "offline", request=httpx.Request("POST", "http://test")
+            )
+
+    storage = FaultImageStorage(fault_root)
+
+    def fail_save(**kwargs):
+        raise OSError("disk full")
+
+    monkeypatch.setattr(storage, "save", fail_save)
+    persistence = RecordingPersistence()
+    service = InspectionService(
+        ConnectionFailureClient(),
+        MockVirtualControl(),
+        cultivar_confidence_threshold=0.5,
+        quality_confidence_threshold=0.5,
+        inference_business_deadline_ms=500,
+        late_result_manager=LateResultManager(hard_timeout_ms=2000, max_tasks=4),
+        bin_mapping_repository=FakeBinMappingRepository(),
+        persistence=persistence,
+        fault_image_storage=storage,
+    )
+    with TestClient(create_app(Settings(), inspection_service=service)) as client:
+        response = client.post(
+            "/v1/inspections",
+            data={
+                "inspection_id": "fault-1",
+                "metadata": json.dumps(
+                    [
+                        {
+                            "view_index": 0,
+                            "angle_direction": "top",
+                            "verticality_angle": 0,
+                            "horizontality_angle": 0,
+                        }
+                    ]
+                ),
+            },
+            files=[("images", ("a.jpg", JPEG, "image/jpeg"))],
+        )
+    assert response.status_code == 200
+    result = response.json()
+    assert result["decision_reason"] == "INFERENCE_CONNECTION_ERROR"
+    assert result["target_bin_code"] == "TEST_REINSPECTION_BIN"
+    assert result["control_status"] == "SUCCEEDED"
+    assert result["persistence_status"] == "SUCCEEDED"
+    assert persistence.final_values[0]["error_code"] == "INFERENCE_CONNECTION_ERROR"
+
+
+@pytest.mark.parametrize(
+    "excluded_case",
+    [
+        "low_confidence",
+        "control_rejected",
+        "control_no_response",
+        "control_failed",
+        "db_failure",
+        "mapping_error",
+    ],
+)
+def test_non_inference_failures_do_not_store_fault_images(
+    fault_root: Path, excluded_case: str
+) -> None:
+    class BrokenMapping(FakeBinMappingRepository):
+        def find_normal_bin(self, **kwargs):
+            raise BinMappingConfigurationError("missing mapping")
+
+    control_outcomes = {
+        "control_rejected": [ControlStatus.REJECTED, ControlStatus.SUCCEEDED],
+        "control_no_response": [ControlStatus.NO_RESPONSE],
+        "control_failed": [ControlStatus.FAILED],
+    }
+    service = InspectionService(
+        MockInferenceClient(),
+        MockVirtualControl(control_outcomes.get(excluded_case)),
+        cultivar_confidence_threshold=0.95
+        if excluded_case == "low_confidence"
+        else 0.5,
+        quality_confidence_threshold=0.5,
+        inference_business_deadline_ms=500,
+        late_result_manager=LateResultManager(hard_timeout_ms=2000, max_tasks=4),
+        bin_mapping_repository=(
+            BrokenMapping()
+            if excluded_case == "mapping_error"
+            else FakeBinMappingRepository()
+        ),
+        persistence=RecordingPersistence(fail_finalize=excluded_case == "db_failure"),
+        fault_image_storage=FaultImageStorage(fault_root),
+    )
+    with TestClient(create_app(Settings(), inspection_service=service)) as client:
+        response = client.post(
+            "/v1/inspections",
+            data={
+                "inspection_id": "non-fault",
+                "virtual_brix": "14.0",
+                "metadata": json.dumps(
+                    [
+                        {
+                            "view_index": 0,
+                            "angle_direction": "top",
+                            "verticality_angle": 0,
+                            "horizontality_angle": 0,
+                        }
+                    ]
+                ),
+            },
+            files=[("images", ("a.jpg", JPEG, "image/jpeg"))],
+        )
+    assert response.status_code == (500 if excluded_case == "mapping_error" else 200)
     assert not fault_root.exists()

@@ -202,9 +202,23 @@ const schemas = {
   ),
   Review: object({ misclassification: marker }),
   ReviewAck: object({ inspectionId: id, misclassification: marker }),
-  ImageDelete: object({ ids: array(id, 100) }),
-  ImageDeleteAck: object({ deletedIds: array(id, 100) }),
-  FaultImages: object({ items: array(ref("Result"), 100) }),
+  ImageDelete: object({ ids: { ...array(id, 100), description: "Individual fault image IDs." } }),
+  ImageDeleteAck: object({ deletedIds: { ...array(id, 100), description: "Deleted individual fault image IDs." } }),
+  FaultImage: object({
+    id,
+    inspectionId: id,
+    imageIndex: { type: "integer", minimum: 0, maximum: 11 },
+    createdAt: num,
+    errorCode: enumeration([
+      "INFERENCE_TIMEOUT",
+      "INFERENCE_ERROR",
+      "INFERENCE_CONNECTION_ERROR",
+      "INFERENCE_HTTP_ERROR",
+      "INFERENCE_INVALID_RESPONSE",
+    ]),
+    previewUrl,
+  }),
+  FaultImages: object({ items: array(ref("FaultImage"), 100) }),
   Error: object({ code: text }),
 };
 const response = (schema) => ({
@@ -333,12 +347,12 @@ const document = {
     "/previews/{id}": {
       get: {
         operationId: "qualityPreview",
-        parameters: [idParameter],
+        parameters: [{ ...idParameter, description: "Individual fault image ID for retained fault previews." }],
         responses: {
           200: {
             description: "Temporary or retained fault image. Never cache.",
             content: Object.fromEntries(
-              ["image/png", "image/jpeg", "image/webp"].map((t) => [
+              ["image/png", "image/jpeg"].map((t) => [
                 t,
                 { schema: { type: "string", format: "binary" } },
               ]),

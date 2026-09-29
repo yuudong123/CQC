@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 import shutil
 import tempfile
 from dataclasses import dataclass
@@ -32,6 +33,19 @@ class _StoredImage:
     path: Path
     metadata_path: Path
     created_at: datetime
+
+
+@dataclass(frozen=True)
+class FaultImageRecord:
+    id: str
+    inspection_id: str
+    image_index: int
+    created_at: datetime
+    error_code: str
+    content_type: str
+
+
+_IMAGE_ID = re.compile(r"^([0-9a-f]{32})_([0-9]{2})$")
 
 
 class FaultImageStorage:
@@ -99,6 +113,58 @@ class FaultImageStorage:
         with self._lock:
             return len(self._stored_images_locked())
 
+    def list_images(self) -> list[FaultImageRecord]:
+        """Return committed images newest first, without exposing storage paths."""
+        with self._lock:
+            return [
+                record
+                for image in reversed(self._stored_images_locked())
+                if (record := self._record(image)) is not None
+            ]
+
+    def read_image(self, image_id: str) -> tuple[bytes, str] | None:
+        """Resolve a validated image ID within the storage root."""
+        if _IMAGE_ID.fullmatch(image_id) is None:
+            return None
+        with self._lock:
+            for image in self._stored_images_locked():
+                record = self._record(image)
+                if record is not None and record.id == image_id:
+                    try:
+                        return image.path.read_bytes(), record.content_type
+                    except FileNotFoundError:
+                        return None
+        return None
+
+    @staticmethod
+    def _record(image: _StoredImage) -> FaultImageRecord | None:
+        try:
+            data = json.loads(image.metadata_path.read_text(encoding="utf-8"))
+            image_id = data["id"]
+            match = _IMAGE_ID.fullmatch(image_id)
+            if (
+                match is None
+                or match.group(1) != image.path.parent.name
+                or image.path.stem != f"image_{match.group(2)}"
+                or data["image_index"] != int(match.group(2))
+                or data["content_type"]
+                != ("image/png" if image.path.suffix == ".png" else "image/jpeg")
+            ):
+                return None
+            created_at = datetime.fromisoformat(data["created_at"])
+            if created_at.tzinfo is None:
+                return None
+            return FaultImageRecord(
+                id=image_id,
+                inspection_id=data["inspection_id"],
+                image_index=data["image_index"],
+                created_at=created_at,
+                error_code=data["error_code"],
+                content_type=data["content_type"],
+            )
+        except (OSError, ValueError, KeyError, TypeError):
+            return None
+
     @staticmethod
     def _write_image(path: Path, content: bytes) -> None:
         path.write_bytes(content)
@@ -115,25 +181,41 @@ class FaultImageStorage:
                     continue
             except ValueError:
                 continue
+            for metadata_path in group.glob("image_*.json"):
+                if metadata_path.is_symlink():
+                    continue
+                if not any(
+                    (group / f"{metadata_path.stem}{extension}").is_file()
+                    for extension in (".jpg", ".png")
+                ):
+                    metadata_path.unlink(missing_ok=True)
             for path in group.iterdir():
                 if path.is_symlink() or path.suffix not in {".jpg", ".png"}:
                     continue
                 if not path.stem.startswith("image_"):
                     continue
                 metadata_path = path.with_suffix(".json")
+                if metadata_path.is_symlink() or not metadata_path.is_file():
+                    path.unlink(missing_ok=True)
+                    continue
                 try:
                     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
                     created_at = datetime.fromisoformat(metadata["created_at"])
                     if created_at.tzinfo is None:
                         raise ValueError("timezone 없는 장애 이미지 시각")
                 except (OSError, ValueError, KeyError, TypeError):
-                    logger.warning(
-                        "장애 이미지 metadata가 없어 파일 시각을 사용합니다: %s", path
-                    )
-                    created_at = datetime.fromtimestamp(
-                        path.stat().st_mtime, timezone.utc
-                    )
-                stored.append(_StoredImage(path, metadata_path, created_at))
+                    logger.warning("Invalid fault image metadata removed: %s", path)
+                    path.unlink(missing_ok=True)
+                    metadata_path.unlink(missing_ok=True)
+                    continue
+                image = _StoredImage(path, metadata_path, created_at)
+                if self._record(image) is None:
+                    path.unlink(missing_ok=True)
+                    metadata_path.unlink(missing_ok=True)
+                    continue
+                stored.append(image)
+            if not any(group.iterdir()):
+                group.rmdir()
         return sorted(stored, key=lambda item: (item.created_at, str(item.path)))
 
     def _prune_locked(self) -> None:
