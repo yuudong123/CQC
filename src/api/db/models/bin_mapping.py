@@ -12,7 +12,7 @@ from ..base import Base
 
 
 class BinMapping(Base):
-    """현재 적용할 정상 6개 및 재검사 bin 매핑을 관리한다."""
+    """현재 적용할 정상 12개 및 재검사 bin 매핑을 관리한다."""
 
     __tablename__ = "bin_mappings"
     __table_args__ = (
@@ -20,6 +20,7 @@ class BinMapping(Base):
             "crop_type",
             "cultivar",
             "quality_grade",
+            "sweetness_band",
             name="uq_bin_mappings_normal_combination",
         ),
         Index(
@@ -30,10 +31,10 @@ class BinMapping(Base):
     )
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    mapping_key: Mapped[str] = mapped_column(String(64), unique=True)
     crop_type: Mapped[str | None] = mapped_column(String(32))
     cultivar: Mapped[str | None] = mapped_column(String(32))
     quality_grade: Mapped[str | None] = mapped_column(String(32))
+    sweetness_band: Mapped[str | None] = mapped_column(String(32))
     bin_code: Mapped[str] = mapped_column(String(64), unique=True)
     is_reinspection: Mapped[bool] = mapped_column(
         Boolean,
