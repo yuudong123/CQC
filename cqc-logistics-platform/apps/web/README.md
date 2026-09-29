@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CQC 스마트 APC 프런트엔드
 
-## Getting Started
+제공된 FE 초안을 기준으로 품질 검사(`/`), 입찰 시장(`/market`), 차량 관제(`/control`)를 구성합니다.
 
-First, run the development server:
+## 실행
 
-```bash
+```powershell
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+기본 주소는 `http://localhost:3000`입니다. API 주소는 `NEXT_PUBLIC_API_URL`로 설정하며 기본값은 `http://localhost:8000/api/v1`입니다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 데이터와 동작
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 품질 검사: 기존 AI Hub 데모 번들의 사과 사진과 명시적인 시뮬레이션 판정 값입니다. 실시간 추론, 처리 속도, 선별기 수량과 장애 정보는 연동 전입니다.
+- 선별함은 품종 2종 × 외관 3등급 × 가상 당도 2구간의 정상 12개와 재검사함으로 표시합니다. 가상 당도는 UI 예시 값이며 실측값이나 생성 CSV 연동값이 아닙니다.
+- 참고 사진 출처와 사과 그룹은 `public/apples/provenance.json`에 기록합니다. 검사 상세의 다섯 사진은 같은 사과 그룹입니다.
+- 입찰: 기존 API의 공개 출품, 입찰, 경매 마감과 WebSocket을 사용합니다. 2초 주기 조회로 연결을 재시도합니다. 금액은 기존 API의 원 단위를 유지하며 kg당 가격으로 변환하지 않습니다.
+- 출품 사진: 동일 품종·등급의 참고 이미지이며 해당 출품의 실물 사진은 아닙니다.
+- 구매자/관리자 전환은 시연용 UI입니다. 인증이나 서버 권한 관리 기능은 아닙니다.
+- 관제: 기존 API에서 차량과 경로를 조회하고 이동·고장·대체배차 기능을 호출합니다. 선택한 차량의 활성 경로만 표시합니다.
+- 지도: 기존 GoogleFleetMap 컴포넌트를 유지합니다. 지도 API 키 설정은 기존 방식을 사용합니다.
 
-## Learn More
+로컬 메모리 API에서 관제의 **발표 상태 초기화**를 누르면 데모 출품과 차량이 생성됩니다. 이 버튼은 기존 데모 상태를 초기화합니다.
 
-To learn more about Next.js, take a look at the following resources:
+## 확인
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```powershell
+npm run lint
+npm run build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+데스크톱과 작은 화면에서 목록 선택, 검사 상세 전환, 역할 전환을 확인합니다. 별도 로컬 메모리 API에서 입찰 제출, 낙찰, 차량 선택, 이동 및 고장 시뮬레이션을 확인할 수 있습니다.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+파트별 실제 연결 작업은 [Frontend 연동 인계](../../../../docs/wbs/협업공지/Frontend-화면-연동-작업-인계.md)를 따릅니다.

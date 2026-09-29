@@ -1,0 +1,2135 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "CQC Quality Operations API",
+    "version": "1.0.0",
+    "description": "FE-first operations read model. Reference implementation uses memory and synthetic results. Existing POST /v1/inspections is unchanged. All responses use Cache-Control: no-store. Numeric timestamps are Unix milliseconds; calendar dates use Asia/Seoul."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8101/v1/quality",
+      "description": "Local reference server"
+    }
+  ],
+  "paths": {
+    "/snapshot": {
+      "get": {
+        "operationId": "qualitySnapshot",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Snapshot"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inspections": {
+      "get": {
+        "operationId": "qualityHistory",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "variety",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "부사",
+                "양광"
+              ]
+            }
+          },
+          {
+            "name": "grade",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "특",
+                "상",
+                "보통"
+              ]
+            }
+          },
+          {
+            "name": "bin",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "processingStatus",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "COMPLETED",
+                "INFERENCING",
+                "TIMEOUT",
+                "ERROR"
+              ]
+            }
+          },
+          {
+            "name": "errorCode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "NONE",
+                "INFERENCE_TIMEOUT",
+                "INFERENCE_ERROR",
+                "DB_ERROR",
+                "CONTROL_REJECTED",
+                "CONTROL_NO_RESPONSE"
+              ]
+            }
+          },
+          {
+            "name": "misclassification",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "NONE",
+                "CULTIVAR_SUSPECT",
+                "QUALITY_SUSPECT",
+                "OTHER"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                50,
+                100,
+                200
+              ],
+              "default": 50
+            }
+          },
+          {
+            "name": "snapshotAt",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryPage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inspections.csv": {
+      "get": {
+        "operationId": "qualityHistoryCsv",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "variety",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "부사",
+                "양광"
+              ]
+            }
+          },
+          {
+            "name": "grade",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "특",
+                "상",
+                "보통"
+              ]
+            }
+          },
+          {
+            "name": "bin",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "processingStatus",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "COMPLETED",
+                "INFERENCING",
+                "TIMEOUT",
+                "ERROR"
+              ]
+            }
+          },
+          {
+            "name": "errorCode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "NONE",
+                "INFERENCE_TIMEOUT",
+                "INFERENCE_ERROR",
+                "DB_ERROR",
+                "CONTROL_REJECTED",
+                "CONTROL_NO_RESPONSE"
+              ]
+            }
+          },
+          {
+            "name": "misclassification",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "NONE",
+                "CULTIVAR_SUSPECT",
+                "QUALITY_SUSPECT",
+                "OTHER"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                50,
+                100,
+                200
+              ],
+              "default": 50
+            }
+          },
+          {
+            "name": "snapshotAt",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "UTF-8 BOM CSV, all retained matching rows; no image fields.",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/statistics": {
+      "get": {
+        "operationId": "qualityStatistics",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "variety",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "부사",
+                "양광"
+              ]
+            }
+          },
+          {
+            "name": "grade",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "특",
+                "상",
+                "보통"
+              ]
+            }
+          },
+          {
+            "name": "bin",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "processingStatus",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "COMPLETED",
+                "INFERENCING",
+                "TIMEOUT",
+                "ERROR"
+              ]
+            }
+          },
+          {
+            "name": "errorCode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "NONE",
+                "INFERENCE_TIMEOUT",
+                "INFERENCE_ERROR",
+                "DB_ERROR",
+                "CONTROL_REJECTED",
+                "CONTROL_NO_RESPONSE"
+              ]
+            }
+          },
+          {
+            "name": "misclassification",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "NONE",
+                "CULTIVAR_SUSPECT",
+                "QUALITY_SUSPECT",
+                "OTHER"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                50,
+                100,
+                200
+              ],
+              "default": 50
+            }
+          },
+          {
+            "name": "snapshotAt",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Summary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/statistics.csv": {
+      "get": {
+        "operationId": "qualityStatisticsCsv",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "variety",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "부사",
+                "양광"
+              ]
+            }
+          },
+          {
+            "name": "grade",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "특",
+                "상",
+                "보통"
+              ]
+            }
+          },
+          {
+            "name": "bin",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "processingStatus",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "COMPLETED",
+                "INFERENCING",
+                "TIMEOUT",
+                "ERROR"
+              ]
+            }
+          },
+          {
+            "name": "errorCode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "NONE",
+                "INFERENCE_TIMEOUT",
+                "INFERENCE_ERROR",
+                "DB_ERROR",
+                "CONTROL_REJECTED",
+                "CONTROL_NO_RESPONSE"
+              ]
+            }
+          },
+          {
+            "name": "misclassification",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "NONE",
+                "CULTIVAR_SUSPECT",
+                "QUALITY_SUSPECT",
+                "OTHER"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [
+                50,
+                100,
+                200
+              ],
+              "default": 50
+            }
+          },
+          {
+            "name": "snapshotAt",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "minutes",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "enum": [
+                1,
+                5,
+                10,
+                30
+              ],
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "UTF-8 BOM CSV, all retained matching rows; no image fields.",
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/simulator": {
+      "put": {
+        "operationId": "qualitySimulatorSettings",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Settings"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Snapshot"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inspections/{id}/review": {
+      "patch": {
+        "operationId": "qualityReview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Review"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewAck"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/fault-images": {
+      "get": {
+        "operationId": "qualityFaultImages",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FaultImages"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "qualityDeleteImages",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImageDelete"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImageDeleteAck"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/previews/{id}": {
+      "get": {
+        "operationId": "qualityPreview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Temporary or retained fault image. Never cache.",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/webp": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Result": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "time": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "number",
+            "minimum": 0
+          },
+          "variety": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "부사",
+              "양광",
+              null
+            ]
+          },
+          "grade": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "특",
+              "상",
+              "보통",
+              null
+            ]
+          },
+          "confidence": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100
+          },
+          "cultivarConfidence": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 100
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PASS",
+              "REVIEW",
+              "FAIL"
+            ]
+          },
+          "processingStatus": {
+            "type": "string",
+            "enum": [
+              "COMPLETED",
+              "INFERENCING",
+              "TIMEOUT",
+              "ERROR"
+            ]
+          },
+          "errorCode": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "INFERENCE_TIMEOUT",
+              "INFERENCE_ERROR",
+              "DB_ERROR",
+              "CONTROL_REJECTED",
+              "CONTROL_NO_RESPONSE"
+            ]
+          },
+          "misclassification": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "CULTIVAR_SUSPECT",
+              "QUALITY_SUSPECT",
+              "OTHER"
+            ]
+          },
+          "bin": {
+            "type": "string"
+          },
+          "virtualBrix": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 9,
+            "maximum": 18
+          },
+          "brixMeasured": {
+            "const": false
+          },
+          "imageIndex": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "inferenceMs": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "modelVersion": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reviewRequired": {
+            "type": "boolean"
+          },
+          "previewUrl": {
+            "type": "string",
+            "pattern": "^/api/quality/previews/[A-Za-z0-9_-]+$"
+          },
+          "excluded": {
+            "type": "boolean"
+          },
+          "control": {
+            "type": "string",
+            "enum": [
+              "SUCCEEDED",
+              "FALLBACK",
+              "NO_RESPONSE",
+              "REJECTED"
+            ]
+          },
+          "persistence": {
+            "type": "string",
+            "enum": [
+              "SAVED",
+              "FAILED"
+            ]
+          },
+          "faults": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "INFERENCE_TIMEOUT",
+                "INFERENCE_ERROR",
+                "DB_ERROR",
+                "CONTROL_REJECTED",
+                "CONTROL_NO_RESPONSE"
+              ]
+            },
+            "maxItems": 5
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "time",
+          "timestamp",
+          "variety",
+          "grade",
+          "confidence",
+          "cultivarConfidence",
+          "status",
+          "processingStatus",
+          "errorCode",
+          "misclassification",
+          "bin",
+          "virtualBrix",
+          "brixMeasured",
+          "imageIndex",
+          "inferenceMs",
+          "modelVersion",
+          "reviewRequired",
+          "excluded",
+          "control",
+          "persistence",
+          "faults"
+        ],
+        "additionalProperties": false
+      },
+      "Job": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "started": {
+            "type": "number",
+            "minimum": 0
+          },
+          "finish": {
+            "type": "number",
+            "minimum": 0
+          },
+          "faults": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "INFERENCE_TIMEOUT",
+                "INFERENCE_ERROR",
+                "DB_ERROR",
+                "CONTROL_REJECTED",
+                "CONTROL_NO_RESPONSE"
+              ]
+            },
+            "maxItems": 5
+          },
+          "previewUrl": {
+            "type": "string",
+            "pattern": "^/api/quality/previews/[A-Za-z0-9_-]+$"
+          }
+        },
+        "required": [
+          "id",
+          "index",
+          "started",
+          "finish",
+          "faults"
+        ],
+        "additionalProperties": false
+      },
+      "Point": {
+        "type": "object",
+        "properties": {
+          "at": {
+            "type": "number",
+            "minimum": 0
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "review": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "excluded": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "at",
+          "count",
+          "review",
+          "excluded"
+        ],
+        "additionalProperties": false
+      },
+      "Component": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "healthy",
+              "stopped",
+              "error",
+              "unknown"
+            ]
+          },
+          "lastSeenAt": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "detail": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "lastSeenAt",
+          "detail"
+        ],
+        "additionalProperties": false
+      },
+      "Snapshot": {
+        "type": "object",
+        "properties": {
+          "contractVersion": {
+            "const": "1"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "reference",
+              "backend"
+            ]
+          },
+          "capturedAt": {
+            "type": "number",
+            "minimum": 0
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "capabilities": {
+            "type": "object",
+            "properties": {
+              "control": {
+                "type": "boolean"
+              },
+              "faults": {
+                "type": "boolean"
+              },
+              "review": {
+                "type": "boolean"
+              },
+              "deleteImages": {
+                "type": "boolean"
+              },
+              "concurrency": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 64
+                },
+                "maxItems": 64
+              }
+            },
+            "required": [
+              "control",
+              "faults",
+              "review",
+              "deleteImages",
+              "concurrency"
+            ],
+            "additionalProperties": false
+          },
+          "components": {
+            "type": "object",
+            "properties": {
+              "Simulator": {
+                "$ref": "#/components/schemas/Component"
+              },
+              "Inference": {
+                "$ref": "#/components/schemas/Component"
+              },
+              "Backend": {
+                "$ref": "#/components/schemas/Component"
+              },
+              "MySQL": {
+                "$ref": "#/components/schemas/Component"
+              }
+            },
+            "required": [
+              "Simulator",
+              "Inference",
+              "Backend",
+              "MySQL"
+            ],
+            "additionalProperties": false
+          },
+          "retention": {
+            "type": "object",
+            "properties": {
+              "history": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "images": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "history",
+              "images"
+            ],
+            "additionalProperties": false
+          },
+          "periodTotals": {
+            "type": "object",
+            "properties": {
+              "1": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "5": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "10": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "30": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "1",
+              "5",
+              "10",
+              "30"
+            ],
+            "additionalProperties": false
+          },
+          "state": {
+            "type": "object",
+            "properties": {
+              "throughput": {
+                "type": "number",
+                "minimum": 0
+              },
+              "running": {
+                "type": "boolean"
+              },
+              "concurrency": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 64
+              },
+              "sequence": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "tick": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "faults": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "INFERENCE_TIMEOUT",
+                    "INFERENCE_ERROR",
+                    "DB_ERROR",
+                    "CONTROL_REJECTED",
+                    "CONTROL_NO_RESPONSE"
+                  ]
+                },
+                "maxItems": 5
+              },
+              "scope": {
+                "type": "string",
+                "enum": [
+                  "ALL",
+                  "NEXT"
+                ]
+              },
+              "jobs": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Job"
+                },
+                "maxItems": 64
+              },
+              "history": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Result"
+                },
+                "maxItems": 200
+              },
+              "images": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Result"
+                },
+                "maxItems": 100
+              },
+              "points": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Point"
+                },
+                "maxItems": 1800
+              },
+              "errors": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Result"
+                },
+                "maxItems": 50
+              },
+              "today": {
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string"
+                  },
+                  "total": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "normal": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "review": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "excluded": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "grades": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "number",
+                      "minimum": 0
+                    }
+                  },
+                  "varieties": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "number",
+                      "minimum": 0
+                    }
+                  },
+                  "bins": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "number",
+                      "minimum": 0
+                    }
+                  },
+                  "reinspection": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "inferenceTotalMs": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "inferenceCount": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "suspicions": {
+                    "type": "object",
+                    "properties": {
+                      "CULTIVAR_SUSPECT": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "QUALITY_SUSPECT": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "OTHER": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "required": [
+                      "CULTIVAR_SUSPECT",
+                      "QUALITY_SUSPECT",
+                      "OTHER"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "date",
+                  "total",
+                  "normal",
+                  "review",
+                  "excluded",
+                  "grades",
+                  "varieties",
+                  "bins",
+                  "reinspection",
+                  "inferenceTotalMs",
+                  "inferenceCount",
+                  "suspicions"
+                ],
+                "additionalProperties": false
+              },
+              "lastSaved": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "dbDown": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "throughput",
+              "running",
+              "concurrency",
+              "sequence",
+              "tick",
+              "faults",
+              "scope",
+              "jobs",
+              "history",
+              "images",
+              "points",
+              "errors",
+              "today",
+              "lastSaved",
+              "dbDown"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "contractVersion",
+          "source",
+          "capturedAt",
+          "revision",
+          "capabilities",
+          "components",
+          "retention",
+          "periodTotals",
+          "state"
+        ],
+        "additionalProperties": false
+      },
+      "HistoryPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Result"
+            },
+            "maxItems": 200
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "enum": [
+              50,
+              100,
+              200
+            ]
+          },
+          "snapshotAt": {
+            "type": "number",
+            "minimum": 0
+          },
+          "bins": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "pageSize",
+          "snapshotAt",
+          "bins"
+        ],
+        "additionalProperties": false
+      },
+      "Summary": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "normal": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "excluded": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reinspection": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "inferenceTotalMs": {
+            "type": "number",
+            "minimum": 0
+          },
+          "inferenceCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "varieties": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "grades": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "bins": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "suspicions": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "required": [
+          "total",
+          "normal",
+          "excluded",
+          "reinspection",
+          "inferenceTotalMs",
+          "inferenceCount",
+          "varieties",
+          "grades",
+          "bins",
+          "suspicions"
+        ],
+        "additionalProperties": false
+      },
+      "Settings": {
+        "type": "object",
+        "properties": {
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "running": {
+            "type": "boolean"
+          },
+          "concurrency": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 64
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "ALL",
+              "NEXT"
+            ]
+          },
+          "faults": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "INFERENCE_TIMEOUT",
+                "INFERENCE_ERROR",
+                "DB_ERROR",
+                "CONTROL_REJECTED",
+                "CONTROL_NO_RESPONSE"
+              ]
+            },
+            "maxItems": 5,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "expectedRevision"
+        ],
+        "additionalProperties": false
+      },
+      "Review": {
+        "type": "object",
+        "properties": {
+          "misclassification": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "CULTIVAR_SUSPECT",
+              "QUALITY_SUSPECT",
+              "OTHER"
+            ]
+          }
+        },
+        "required": [
+          "misclassification"
+        ],
+        "additionalProperties": false
+      },
+      "ReviewAck": {
+        "type": "object",
+        "properties": {
+          "inspectionId": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "misclassification": {
+            "type": "string",
+            "enum": [
+              "NONE",
+              "CULTIVAR_SUSPECT",
+              "QUALITY_SUSPECT",
+              "OTHER"
+            ]
+          }
+        },
+        "required": [
+          "inspectionId",
+          "misclassification"
+        ],
+        "additionalProperties": false
+      },
+      "ImageDelete": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "ids"
+        ],
+        "additionalProperties": false
+      },
+      "ImageDeleteAck": {
+        "type": "object",
+        "properties": {
+          "deletedIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "deletedIds"
+        ],
+        "additionalProperties": false
+      },
+      "FaultImages": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Result"
+            },
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

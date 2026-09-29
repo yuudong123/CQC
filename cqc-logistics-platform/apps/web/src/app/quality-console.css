@@ -1,0 +1,443 @@
+/* Quality operations: fixed viewport, readable controls, scrollable panel bodies. */
+.qc-console {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 12px;
+  padding: 16px;
+  overflow: hidden;
+  min-width: 0;
+}
+.qc-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.qc-top h1 {
+  font-size: 22px;
+  margin: 0;
+}
+.qc-top > .qc-actions {
+  margin-left: auto;
+}
+.qc-console button,
+.qc-dialog button,
+.qc-console select,
+.qc-dialog select {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: white;
+  color: var(--ink);
+  padding: 7px 10px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.qc-console button:focus-visible,
+.qc-dialog button:focus-visible {
+  outline: 3px solid #b85360;
+  outline-offset: 2px;
+}
+.qc-console button:disabled,
+.qc-dialog button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.qc-console .qc-run {
+  background: var(--rose);
+  color: white;
+}
+.qc-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.qc-actions label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.qc-notices:empty {
+  display: none;
+}
+.qc-console:has(.qc-notices:empty) {
+  grid-template-rows: auto auto minmax(0, 1.1fr) minmax(0, 1fr);
+}
+.qc-warning {
+  background: #fff0d6;
+  color: #794614;
+  border: 1px solid #e8c789;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.qc-notices {
+  max-height: 105px;
+  overflow: auto;
+  display: grid;
+  gap: 6px;
+}
+.quality-canvas .qc-console .stats {
+  margin: 0;
+  gap: 10px;
+}
+.quality-canvas .qc-console .stat {
+  min-height: 72px;
+  padding: 10px 14px;
+}
+.quality-canvas .qc-console .stat strong {
+  font-size: 26px;
+}
+.qc-main,
+.qc-bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 12px;
+  min-height: 0;
+  min-width: 0;
+}
+.qc-main > .panel,
+.qc-bottom > .panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+.qc-console .panel-heading {
+  flex-shrink: 0;
+}
+.qc-scroll {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  flex: 1;
+}
+.qc-jobs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+  gap: 10px;
+}
+.qc-job {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  min-height: 180px;
+  min-width: 0;
+}
+.qc-job-image {
+  position: relative;
+  min-height: 80px;
+  flex: 1;
+  margin-bottom: 8px;
+}
+.qc-job-image img {
+  object-fit: contain;
+}
+.qc-job > div:last-child {
+  flex-shrink: 0;
+}
+.qc-job strong {
+  font-size: 15px;
+}
+.qc-job p {
+  margin: 5px 0;
+}
+.qc-job small {
+  color: var(--muted);
+}
+.qc-components {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.qc-components > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+  border: 1px solid var(--line);
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.qc-console h3 {
+  font-size: 14px;
+  margin: 12px 0 8px;
+}
+.qc-error {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.qc-error time {
+  float: right;
+  color: var(--muted);
+}
+.qc-error p {
+  margin: 5px 0;
+}
+.qc-error small {
+  color: var(--muted);
+}
+.qc-muted {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.qc-empty {
+  padding: 24px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.quality-canvas .qc-console table {
+  font-size: 13px;
+  white-space: nowrap;
+}
+.qc-console th {
+  position: sticky;
+  top: 0;
+  background: #f7f3f4;
+  z-index: 1;
+}
+.qc-period {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.qc-period strong {
+  font-size: 25px;
+}
+.qc-period span {
+  font-size: 13px;
+  color: var(--muted);
+}
+.qc-chart {
+  height: 100px;
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  border-bottom: 1px solid var(--line);
+}
+.qc-chart > div {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  background: #faf7f7;
+}
+.qc-chart span {
+  display: block;
+  width: 100%;
+  background: var(--rose);
+  min-height: 2px;
+  border-radius: 3px 3px 0 0;
+}
+.qc-chart-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 7px;
+}
+.qc-bottom p {
+  font-size: 13px;
+  margin-top: 12px;
+}
+.qc-dialog {
+  width: min(1400px, 95vw);
+  height: 90dvh;
+  max-width: none;
+  max-height: none;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0;
+  color: var(--ink);
+  background: var(--paper);
+}
+.qc-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+.qc-dialog::backdrop {
+  background: #25151d80;
+}
+.qc-dialog-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: white;
+  border-bottom: 1px solid var(--line);
+}
+.qc-dialog-heading h2 {
+  font-size: 20px;
+}
+.qc-dialog-body {
+  padding: 18px;
+  overflow: auto;
+  min-height: 0;
+  flex: 1;
+}
+.qc-dialog .qc-faults {
+  display: grid;
+  gap: 18px;
+  margin: 24px 0;
+}
+.qc-faults label {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.qc-faults input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--rose);
+}
+.qc-preview {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin: 18px 0;
+}
+.qc-preview-image {
+  position: relative;
+  width: min(260px, 50%);
+  aspect-ratio: 1;
+  flex-shrink: 0;
+}
+.qc-preview-image img {
+  object-fit: contain;
+}
+.qc-distributions {
+  display: grid;
+  gap: 10px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.qc-distributions button {
+  justify-self: start;
+}
+.qc-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+.qc-summary-grid > div { padding: 16px; background: white; border: 1px solid var(--line); border-radius: 8px; }
+.qc-summary-grid strong { display: block; margin-top: 10px; font-size: 22px; }
+.qc-dialog td {
+  overflow-wrap: anywhere;
+}
+.qc-dialog .quality-history {
+  display: grid;
+  gap: 14px;
+}
+.quality-history .ops-heading,
+.quality-history > .stats,
+.quality-history > .ops-connection {
+  display: none;
+}
+.quality-history .ops-main {
+  display: none;
+}
+.quality-history .ops-bottom {
+  display: block;
+  margin: 0;
+}
+.quality-history .ops-bottom > .panel:not(:first-child) {
+  display: none;
+}
+.quality-history .history-filters {
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+}
+.quality-history .panel-heading {
+  flex-wrap: wrap;
+}
+.qc-dialog table {
+  font-size: 13px;
+}
+.qc-dialog .panel {
+  overflow: auto;
+}
+@media (max-width: 1100px) {
+  .qc-console {
+    padding: 10px;
+    gap: 8px;
+  }
+  .qc-top h1 {
+    font-size: 19px;
+  }
+  .qc-top > .qc-actions {
+    margin-left: 0;
+  }
+  .quality-canvas .qc-console .stat-icon {
+    display: none;
+  }
+  .qc-components {
+    grid-template-columns: 1fr;
+  }
+  .qc-main,
+  .qc-bottom {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+@media (max-width: 650px) {
+  .qc-top > .badge {
+    display: none;
+  }
+  .qc-top button {
+    font-size: 12px;
+    padding: 6px;
+  }
+  .quality-canvas .qc-console .stats {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+  }
+  .quality-canvas .qc-console .stat {
+    padding: 6px;
+    min-height: 60px;
+  }
+  .quality-canvas .qc-console .stat strong {
+    font-size: 17px;
+  }
+  .quality-canvas .qc-console .stat p {
+    font-size: 11px;
+  }
+  .qc-main,
+  .qc-bottom {
+    gap: 6px;
+  }
+  .quality-canvas .qc-console .panel {
+    padding: 8px;
+  }
+  .quality-canvas .qc-console .panel-heading {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .quality-canvas .qc-console .panel-heading h2 {
+    font-size: 14px;
+  }
+  .qc-components > div {
+    font-size: 12px;
+    padding: 6px;
+  }
+  .qc-dialog-body {
+    padding: 10px;
+  }
+  .qc-period {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+}
