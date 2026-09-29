@@ -7,8 +7,11 @@ import logging
 from collections.abc import Iterator
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
+from decimal import Decimal
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from threading import Event
+from types import SimpleNamespace
 from uuid import UUID
 
 import httpx
@@ -26,6 +29,7 @@ from src.api.schemas.inspection_results import ControlStatus
 from src.api.services.fault_image_storage import FaultImage, FaultImageStorage
 from src.api.services.inspections import InspectionService
 from src.api.services.late_results import LateResultManager
+from src.api.services.quality_operations import QualityOperationsService
 
 from .fakes import FakeBinMappingRepository, RecordingPersistence
 
@@ -598,3 +602,400 @@ def test_non_inference_failures_do_not_store_fault_images(
         )
     assert response.status_code == (500 if excluded_case == "mapping_error" else 200)
     assert not fault_root.exists()
+
+
+def test_delete_api_removes_only_requested_images_and_preserves_others(
+    fault_root: Path,
+) -> None:
+    storage = FaultImageStorage(fault_root)
+    first = storage.save(
+        inspection_id="inspection-1",
+        error_code="INFERENCE_HTTP_ERROR",
+        images=[_jpeg(), _jpeg()],
+        created_at=START,
+    )
+    second = storage.save(
+        inspection_id="inspection-2",
+        error_code="INFERENCE_INVALID_RESPONSE",
+        images=[_jpeg()],
+        created_at=START + timedelta(seconds=1),
+    )
+    with TestClient(
+        create_app(Settings(fault_image_storage_root=fault_root))
+    ) as client:
+        response = client.request(
+            "DELETE", "/v1/quality/fault-images", json={"ids": [first[0], second[0]]}
+        )
+        assert response.status_code == 200
+        assert response.json() == {"deletedIds": [first[0], second[0]]}
+        assert response.headers["cache-control"] == "no-store"
+        assert [
+            item["id"]
+            for item in client.get("/v1/quality/fault-images").json()["items"]
+        ] == [first[1]]
+        expired = client.get(f"/v1/quality/previews/{first[0]}")
+        assert expired.status_code == 410
+        assert expired.headers["cache-control"] == "no-store"
+        assert client.get(f"/v1/quality/previews/{first[1]}").status_code == 200
+        assert client.get(f"/v1/quality/previews/{second[0]}").status_code == 410
+    first_group = fault_root / first[0].split("_")[0]
+    second_group = fault_root / second[0].split("_")[0]
+    assert not (first_group / "image_00.jpg").exists()
+    assert not (first_group / "image_00.json").exists()
+    assert (first_group / "image_01.jpg").exists()
+    assert (first_group / "image_01.json").exists()
+    assert not second_group.exists()
+
+
+def test_delete_all_uses_confirmation_id_snapshot_and_keeps_new_images(
+    fault_root: Path,
+) -> None:
+    storage = FaultImageStorage(fault_root)
+    old = storage.save(
+        inspection_id="inspection-old",
+        error_code="INFERENCE_HTTP_ERROR",
+        images=[_jpeg(), _jpeg()],
+        created_at=START,
+    )
+    with TestClient(
+        create_app(Settings(fault_image_storage_root=fault_root))
+    ) as client:
+        captured = [
+            item["id"]
+            for item in client.get("/v1/quality/fault-images").json()["items"]
+        ]
+        newer = storage.save(
+            inspection_id="inspection-new",
+            error_code="INFERENCE_HTTP_ERROR",
+            images=[_jpeg()],
+            created_at=START + timedelta(seconds=1),
+        )[0]
+        response = client.request(
+            "DELETE", "/v1/quality/fault-images", json={"ids": captured}
+        )
+        assert set(response.json()["deletedIds"]) == set(old)
+        assert [
+            item["id"]
+            for item in client.get("/v1/quality/fault-images").json()["items"]
+        ] == [newer]
+        assert client.request(
+            "DELETE", "/v1/quality/fault-images", json={"ids": [newer]}
+        ).json() == {"deletedIds": [newer]}
+        assert client.get("/v1/quality/fault-images").json() == {"items": []}
+        assert client.request(
+            "DELETE", "/v1/quality/fault-images", json={"ids": []}
+        ).json() == {"deletedIds": []}
+    assert storage.count_files() == 0
+
+
+def test_delete_is_idempotent_for_missing_pruned_and_duplicate_ids(
+    fault_root: Path,
+) -> None:
+    storage = FaultImageStorage(fault_root, limit=1)
+    pruned = storage.save(
+        inspection_id="old",
+        error_code="INFERENCE_ERROR",
+        images=[_jpeg()],
+        created_at=START,
+    )[0]
+    current = storage.save(
+        inspection_id="new",
+        error_code="INFERENCE_ERROR",
+        images=[_jpeg()],
+        created_at=START + timedelta(seconds=1),
+    )[0]
+    with TestClient(
+        create_app(Settings(fault_image_storage_root=fault_root, fault_image_limit=1))
+    ) as client:
+        response = client.request(
+            "DELETE",
+            "/v1/quality/fault-images",
+            json={"ids": [pruned, "a" * 32 + "_00", current, current]},
+        )
+        assert response.status_code == 200
+        assert response.json() == {"deletedIds": [current]}
+        assert client.request(
+            "DELETE", "/v1/quality/fault-images", json={"ids": [current]}
+        ).json() == {"deletedIds": []}
+        for payload in ({}, {"ids": ["../outside"]}, {"ids": [], "all": True}):
+            invalid = client.request("DELETE", "/v1/quality/fault-images", json=payload)
+            assert invalid.status_code == 422
+            assert invalid.json() == {"code": "INVALID_IDS"}
+            assert invalid.headers["cache-control"] == "no-store"
+
+
+def test_delete_does_not_clean_unrelated_record_directory(fault_root: Path) -> None:
+    storage = FaultImageStorage(fault_root)
+    target = storage.save(
+        inspection_id="target", error_code="INFERENCE_ERROR", images=[_jpeg()]
+    )[0]
+    unrelated = storage.save(
+        inspection_id="unrelated", error_code="INFERENCE_ERROR", images=[_jpeg()]
+    )[0]
+    unrelated_group = fault_root / unrelated.split("_")[0]
+    unrelated_image = unrelated_group / "image_00.jpg"
+    unrelated_sidecar = unrelated_group / "image_00.json"
+    unrelated_image.unlink()
+    assert storage.delete_images([target]) == [target]
+    assert unrelated_sidecar.exists()
+    assert unrelated_group.exists()
+    storage.list_images()
+    assert not unrelated_group.exists()
+
+
+def test_delete_without_configured_storage_is_unavailable() -> None:
+    with TestClient(create_app(Settings())) as client:
+        response = client.request(
+            "DELETE", "/v1/quality/fault-images", json={"ids": []}
+        )
+    assert response.status_code == 503
+    assert response.json() == {"code": "IMAGE_UNAVAILABLE"}
+    assert response.headers["cache-control"] == "no-store"
+
+
+@pytest.mark.parametrize("failure", ["image", "metadata", "directory"])
+def test_delete_partial_failure_reports_only_completed_ids(
+    fault_root: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    failure: str,
+) -> None:
+    storage = FaultImageStorage(fault_root)
+    failing = storage.save(
+        inspection_id="first",
+        error_code="INFERENCE_ERROR",
+        images=[_jpeg()],
+        created_at=START,
+    )[0]
+    succeeding = storage.save(
+        inspection_id="second",
+        error_code="INFERENCE_ERROR",
+        images=[_jpeg()],
+        created_at=START + timedelta(seconds=1),
+    )[0]
+    failing_group = fault_root / failing.split("_")[0]
+    target = {
+        "image": failing_group / "image_00.jpg",
+        "metadata": failing_group / "image_00.json",
+        "directory": failing_group,
+    }[failure]
+    method = "rmdir" if failure == "directory" else "unlink"
+    original = getattr(Path, method)
+    calls = 0
+
+    def fail_once(path: Path, *args, **kwargs):
+        nonlocal calls
+        if path == target and calls == 0:
+            calls += 1
+            raise OSError("simulated delete failure")
+        return original(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, method, fail_once)
+    with TestClient(
+        create_app(Settings(fault_image_storage_root=fault_root))
+    ) as client:
+        response = client.request(
+            "DELETE", "/v1/quality/fault-images", json={"ids": [failing, succeeding]}
+        )
+        assert response.status_code == 200
+        assert response.json() == {"deletedIds": [succeeding]}
+        assert response.headers["cache-control"] == "no-store"
+        assert client.get("/v1/quality/fault-images").status_code == 200
+    assert calls == 1
+    assert storage.count_files() == (1 if failure == "image" else 0)
+    if failure != "image":
+        assert not any(fault_root.glob("*/image_*.json"))
+
+
+def test_delete_and_save_share_lock_and_preserve_new_arrival(
+    fault_root: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    storage = FaultImageStorage(fault_root)
+    old = storage.save(
+        inspection_id="old",
+        error_code="INFERENCE_ERROR",
+        images=[_jpeg()],
+        created_at=START,
+    )[0]
+    deleting = Event()
+    release = Event()
+    original_delete = FaultImageStorage._delete_image
+
+    def paused_delete(image):
+        deleting.set()
+        assert release.wait(5)
+        original_delete(image)
+
+    monkeypatch.setattr(FaultImageStorage, "_delete_image", staticmethod(paused_delete))
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        delete_future = pool.submit(storage.delete_images, [old])
+        assert deleting.wait(5)
+        save_future = pool.submit(
+            storage.save,
+            inspection_id="new",
+            error_code="INFERENCE_ERROR",
+            images=[_jpeg()],
+            created_at=START + timedelta(seconds=1),
+        )
+        release.set()
+        assert delete_future.result(timeout=5) == [old]
+        new_id = save_future.result(timeout=5)[0]
+    assert [item.id for item in storage.list_images()] == [new_id]
+
+
+def test_prune_list_and_preview_race_with_delete_keep_consistent_files(
+    fault_root: Path,
+) -> None:
+    storage = FaultImageStorage(fault_root, limit=2)
+    old = storage.save(
+        inspection_id="old",
+        error_code="INFERENCE_ERROR",
+        images=[_jpeg()],
+        created_at=START,
+    )[0]
+
+    def save_and_prune() -> str:
+        for index in range(2):
+            result = storage.save(
+                inspection_id=f"new-{index}",
+                error_code="INFERENCE_ERROR",
+                images=[_jpeg()],
+                created_at=START + timedelta(seconds=index + 1),
+            )[0]
+        return result
+
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        futures = [
+            pool.submit(storage.delete_images, [old]),
+            pool.submit(save_and_prune),
+            pool.submit(storage.list_images),
+            pool.submit(storage.read_image, old),
+        ]
+        for future in futures:
+            future.result(timeout=5)
+    records = storage.list_images()
+    assert len(records) <= 2
+    assert old not in {item.id for item in records}
+    assert len(list(fault_root.glob("*/image_*.jpg"))) == len(records)
+    assert len(list(fault_root.glob("*/image_*.json"))) == len(records)
+
+
+def test_snapshot_reflects_actual_image_count_and_delete_capability(
+    fault_root: Path,
+) -> None:
+    history_row = Inspection(
+        inspection_id="inspection-retained",
+        completed_at=datetime(2026, 9, 29, 14, 59, 59, 123000),  # noqa: DTZ001 - DB UTC naive
+        predicted_cultivar="fuji",
+        predicted_grade="L",
+        quality_confidence=Decimal("0.8"),
+        cultivar_confidence=Decimal("0.9"),
+        exclude_from_normal_stats=False,
+        review_required=True,
+        deadline_exceeded=False,
+        persistence_status="SUCCEEDED",
+        control_status="SUCCEEDED",
+        target_bin_code="DEMO_BIN_02",
+        error_code=None,
+        suspected_error_type="CULTIVAR_SUSPECT",
+        virtual_brix=Decimal("14.0"),
+        inference_time_ms=Decimal("120.125"),
+        model_version="demo-v1",
+    )
+    history_row.control_attempts = []
+    history_row.errors = []
+
+    class FakeHistory:
+        def list_page(self, *args, **kwargs):
+            return SimpleNamespace(items=[history_row])
+
+        def recent_errors(self, *args, **kwargs):
+            return []
+
+    class FakeStatistics:
+        def today(self, *args, **kwargs):
+            return "2026-09-29", {
+                "total": 0,
+                "normal": 0,
+                "excluded": 0,
+                "grades": {},
+                "varieties": {},
+                "bins": {},
+                "suspicions": {"CULTIVAR_SUSPECT": 1},
+                "reinspection": 0,
+                "inferenceTotalMs": 0,
+                "inferenceCount": 0,
+            }
+
+        def review_count(self, *args, **kwargs):
+            return 0
+
+        def last_saved(self, *args, **kwargs):
+            return None
+
+        def period_totals(self, *args, **kwargs):
+            return {key: 0 for key in ("1", "5", "10", "30")}
+
+        def points(self, *args, **kwargs):
+            return []
+
+    storage = FaultImageStorage(fault_root, limit=2)
+    app = create_app(Settings(fault_image_storage_root=fault_root, fault_image_limit=2))
+    app.state.quality_operations_service = QualityOperationsService(
+        FakeHistory(), FakeStatistics(), storage
+    )
+    unconfigured = QualityOperationsService(FakeHistory(), FakeStatistics()).snapshot(
+        datetime(2026, 9, 29, 0, 0, 0)  # noqa: DTZ001 - DB UTC naive
+    )
+    assert unconfigured["capabilities"]["deleteImages"] is False
+    assert unconfigured["retention"]["images"] == 0
+    with TestClient(app) as client:
+
+        def snapshot() -> dict:
+            response = client.get("/v1/quality/snapshot")
+            assert response.status_code == 200
+            return response.json()
+
+        assert snapshot()["retention"]["images"] == 0
+        first = storage.save(
+            inspection_id="first",
+            error_code="INFERENCE_ERROR",
+            images=[_jpeg()],
+            created_at=START,
+        )[0]
+        assert snapshot()["retention"]["images"] == 1
+        storage.save(
+            inspection_id="second",
+            error_code="INFERENCE_ERROR",
+            images=[_jpeg()],
+            created_at=START + timedelta(seconds=1),
+        )
+        assert snapshot()["retention"]["images"] == 2
+        storage.save(
+            inspection_id="third",
+            error_code="INFERENCE_ERROR",
+            images=[_jpeg()],
+            created_at=START + timedelta(seconds=2),
+        )
+        assert snapshot()["retention"]["images"] == 2
+        assert storage.read_image(first) is None
+        ids = [item.id for item in storage.list_images()]
+        assert (
+            client.request(
+                "DELETE", "/v1/quality/fault-images", json={"ids": ids[:1]}
+            ).status_code
+            == 200
+        )
+        assert snapshot()["retention"]["images"] == 1
+        assert (
+            client.request(
+                "DELETE", "/v1/quality/fault-images", json={"ids": ids[1:]}
+            ).status_code
+            == 200
+        )
+        state = snapshot()
+        assert state["retention"]["images"] == 0
+        assert state["capabilities"]["deleteImages"] is True
+        assert state["state"]["images"] == []
+        assert state["state"]["history"][0]["id"] == "inspection-retained"
+        assert state["state"]["history"][0]["misclassification"] == "CULTIVAR_SUSPECT"

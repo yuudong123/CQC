@@ -8,6 +8,7 @@ from io import StringIO
 
 from ..repositories.quality_history import HistoryFilters, QualityHistoryRepository
 from ..repositories.quality_statistics import QualityStatisticsRepository
+from .fault_image_storage import FaultImageStorage
 from .quality_history import KST, to_quality_result
 
 _INSPECTION_COLUMNS = [
@@ -38,9 +39,11 @@ class QualityOperationsService:
         self,
         history: QualityHistoryRepository,
         statistics: QualityStatisticsRepository,
+        fault_image_storage: FaultImageStorage | None = None,
     ) -> None:
         self._history = history
         self._statistics = statistics
+        self._fault_image_storage = fault_image_storage
 
     def statistics(
         self, filters: HistoryFilters, snapshot_at: datetime
@@ -60,6 +63,11 @@ class QualityOperationsService:
         periods = self._statistics.period_totals(captured_at)
         points = self._statistics.points(captured_at)
         captured_ms = _epoch_ms(captured_at)
+        image_count = (
+            self._fault_image_storage.count_files()
+            if self._fault_image_storage is not None
+            else 0
+        )
         component_unknown = {
             "status": "unknown",
             "lastSeenAt": None,
@@ -74,7 +82,7 @@ class QualityOperationsService:
                 "control": False,
                 "faults": False,
                 "review": False,
-                "deleteImages": False,
+                "deleteImages": self._fault_image_storage is not None,
                 "concurrency": [],
             },
             "components": {
@@ -95,7 +103,7 @@ class QualityOperationsService:
                     "detail": "검사 이력 조회 성공",
                 },
             },
-            "retention": {"images": 0},
+            "retention": {"images": image_count},
             "periodTotals": periods,
             "state": {
                 "throughput": points[-1]["count"] if points else 0,

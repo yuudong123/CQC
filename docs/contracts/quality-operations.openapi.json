@@ -1080,6 +1080,7 @@
       },
       "delete": {
         "operationId": "qualityDeleteImages",
+        "description": "Delete only the requested individual fault image IDs. No inspection history is removed; newly stored images are unaffected.",
         "requestBody": {
           "required": true,
           "content": {
@@ -1613,7 +1614,8 @@
               },
               "images": {
                 "type": "integer",
-                "minimum": 0
+                "minimum": 0,
+                "description": "Current number of retained fault images in the Backend storage."
               }
             },
             "required": [
@@ -2080,7 +2082,7 @@
               "maxLength": 64
             },
             "maxItems": 100,
-            "description": "Individual fault image IDs."
+            "description": "Individual fault image IDs captured when the confirmation dialog opens. Send that snapshot for delete-all; an empty array is a no-op. IDs that are already absent are ignored."
           }
         },
         "required": [
@@ -2100,7 +2102,7 @@
               "maxLength": 64
             },
             "maxItems": 100,
-            "description": "Deleted individual fault image IDs."
+            "description": "Only individual fault image IDs successfully deleted by this request; missing or failed IDs are omitted."
           }
         },
         "required": [

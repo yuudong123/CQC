@@ -136,6 +136,43 @@ class FaultImageStorage:
                         return None
         return None
 
+    def delete_images(self, image_ids: list[str]) -> list[str]:
+        """Delete only requested committed image IDs; missing IDs are no-ops."""
+        with self._lock:
+            # Capture targets under the same lock used by save and prune. A later
+            # save cannot become part of this deletion snapshot.
+            stored = {
+                record.id: image
+                for image in self._stored_images_locked(cleanup_orphans=False)
+                if (record := self._record(image)) is not None
+            }
+            deleted: list[str] = []
+            for image_id in dict.fromkeys(image_ids):
+                image = stored.get(image_id)
+                if image is None:
+                    continue
+                try:
+                    self._delete_image(image)
+                except OSError:
+                    logger.exception("Fault image deletion failed: %s", image_id)
+                    self._repair_partial_delete_locked(image)
+                else:
+                    deleted.append(image_id)
+            return deleted
+
+    @staticmethod
+    def _repair_partial_delete_locked(image: _StoredImage) -> None:
+        """Try once to remove only the requested image's orphaned counterpart."""
+        try:
+            if not image.path.exists():
+                image.metadata_path.unlink(missing_ok=True)
+            elif not image.metadata_path.exists():
+                image.path.unlink(missing_ok=True)
+            if not any(image.path.parent.iterdir()):
+                image.path.parent.rmdir()
+        except OSError:
+            logger.exception("Fault image orphan cleanup failed: %s", image.path)
+
     @staticmethod
     def _record(image: _StoredImage) -> FaultImageRecord | None:
         try:
@@ -169,7 +206,9 @@ class FaultImageStorage:
     def _write_image(path: Path, content: bytes) -> None:
         path.write_bytes(content)
 
-    def _stored_images_locked(self) -> list[_StoredImage]:
+    def _stored_images_locked(
+        self, *, cleanup_orphans: bool = True
+    ) -> list[_StoredImage]:
         stored: list[_StoredImage] = []
         if not self._root.exists():
             return stored
@@ -181,14 +220,15 @@ class FaultImageStorage:
                     continue
             except ValueError:
                 continue
-            for metadata_path in group.glob("image_*.json"):
-                if metadata_path.is_symlink():
-                    continue
-                if not any(
-                    (group / f"{metadata_path.stem}{extension}").is_file()
-                    for extension in (".jpg", ".png")
-                ):
-                    metadata_path.unlink(missing_ok=True)
+            if cleanup_orphans:
+                for metadata_path in group.glob("image_*.json"):
+                    if metadata_path.is_symlink():
+                        continue
+                    if not any(
+                        (group / f"{metadata_path.stem}{extension}").is_file()
+                        for extension in (".jpg", ".png")
+                    ):
+                        metadata_path.unlink(missing_ok=True)
             for path in group.iterdir():
                 if path.is_symlink() or path.suffix not in {".jpg", ".png"}:
                     continue
@@ -196,7 +236,8 @@ class FaultImageStorage:
                     continue
                 metadata_path = path.with_suffix(".json")
                 if metadata_path.is_symlink() or not metadata_path.is_file():
-                    path.unlink(missing_ok=True)
+                    if cleanup_orphans:
+                        path.unlink(missing_ok=True)
                     continue
                 try:
                     metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
@@ -204,17 +245,19 @@ class FaultImageStorage:
                     if created_at.tzinfo is None:
                         raise ValueError("timezone 없는 장애 이미지 시각")
                 except (OSError, ValueError, KeyError, TypeError):
-                    logger.warning("Invalid fault image metadata removed: %s", path)
-                    path.unlink(missing_ok=True)
-                    metadata_path.unlink(missing_ok=True)
+                    if cleanup_orphans:
+                        logger.warning("Invalid fault image metadata removed: %s", path)
+                        path.unlink(missing_ok=True)
+                        metadata_path.unlink(missing_ok=True)
                     continue
                 image = _StoredImage(path, metadata_path, created_at)
                 if self._record(image) is None:
-                    path.unlink(missing_ok=True)
-                    metadata_path.unlink(missing_ok=True)
+                    if cleanup_orphans:
+                        path.unlink(missing_ok=True)
+                        metadata_path.unlink(missing_ok=True)
                     continue
                 stored.append(image)
-            if not any(group.iterdir()):
+            if cleanup_orphans and not any(group.iterdir()):
                 group.rmdir()
         return sorted(stored, key=lambda item: (item.created_at, str(item.path)))
 

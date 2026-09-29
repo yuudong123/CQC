@@ -81,6 +81,7 @@ def test_openapi_operations_match_shared_contract() -> None:
     assert "history" not in shared_retention["required"]
     assert retention["properties"]["history"]["type"] == "integer"
     assert shared_retention["properties"]["history"]["type"] == "integer"
+    assert "Current number" in shared_retention["properties"]["images"]["description"]
 
 
 def test_fault_image_contract_is_per_image_while_snapshot_remains_per_inspection() -> (
@@ -113,4 +114,11 @@ def test_fault_image_contract_is_per_image_while_snapshot_remains_per_inspection
     actual = create_app(Settings()).openapi()["paths"]
     assert "/v1/quality/fault-images" in actual
     assert "/v1/quality/previews/{id}" in actual
-    assert "delete" not in actual["/v1/quality/fault-images"]
+    delete = actual["/v1/quality/fault-images"]["delete"]
+    expected = shared["paths"]["/fault-images"]["delete"]
+    assert set(delete["responses"]) == set(expected["responses"])
+    assert (
+        delete["requestBody"]["content"]["application/json"]["schema"]["$ref"]
+        == "#/components/schemas/QualityImageDelete"
+    )
+    assert "delete-all" in schemas["ImageDelete"]["properties"]["ids"]["description"]

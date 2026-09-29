@@ -164,7 +164,7 @@ const schemas = {
         ]),
       ),
     ),
-    retention: object({ history: integer, images: integer }, ["images"]),
+    retention: object({ history: integer, images: { ...integer, description: "Current number of retained fault images in the Backend storage." } }, ["images"]),
     periodTotals: object(
       Object.fromEntries(["1", "5", "10", "30"].map((key) => [key, integer])),
     ),
@@ -202,8 +202,8 @@ const schemas = {
   ),
   Review: object({ misclassification: marker }),
   ReviewAck: object({ inspectionId: id, misclassification: marker }),
-  ImageDelete: object({ ids: { ...array(id, 100), description: "Individual fault image IDs." } }),
-  ImageDeleteAck: object({ deletedIds: { ...array(id, 100), description: "Deleted individual fault image IDs." } }),
+  ImageDelete: object({ ids: { ...array(id, 100), description: "Individual fault image IDs captured when the confirmation dialog opens. Send that snapshot for delete-all; an empty array is a no-op. IDs that are already absent are ignored." } }),
+  ImageDeleteAck: object({ deletedIds: { ...array(id, 100), description: "Only individual fault image IDs successfully deleted by this request; missing or failed IDs are omitted." } }),
   FaultImage: object({
     id,
     inspectionId: id,
@@ -340,6 +340,7 @@ const document = {
       },
       delete: {
         operationId: "qualityDeleteImages",
+        description: "Delete only the requested individual fault image IDs. No inspection history is removed; newly stored images are unaffected.",
         requestBody: body(ref("ImageDelete")),
         responses: responses(ref("ImageDeleteAck")),
       },

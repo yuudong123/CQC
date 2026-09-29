@@ -6,14 +6,34 @@ import asyncio
 import logging
 
 from fastapi import APIRouter, Request, Response
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.routing import APIRoute
 
-from ..schemas.quality_fault_images import QualityFaultImages
+from ..schemas.quality_fault_images import (
+    QualityFaultImages,
+    QualityImageDelete,
+    QualityImageDeleteAck,
+)
 from ..schemas.quality_history import QualityError
 from ..services.fault_image_storage import FaultImageStorage
 from .quality_history import _error_response
 
-router = APIRouter(prefix="/v1/quality", tags=["quality"])
+
+class _FaultImageRoute(APIRoute):
+    def get_route_handler(self):
+        handler = super().get_route_handler()
+
+        async def wrapped(request: Request) -> Response:
+            try:
+                return await handler(request)
+            except RequestValidationError:
+                return _error_response(422, "INVALID_IDS")
+
+        return wrapped
+
+
+router = APIRouter(prefix="/v1/quality", tags=["quality"], route_class=_FaultImageRoute)
 logger = logging.getLogger(__name__)
 _ERROR_RESPONSES = {code: {"model": QualityError} for code in (404, 409, 410, 422, 503)}
 
@@ -52,6 +72,24 @@ async def fault_images(request: Request, response: Response) -> dict | JSONRespo
             for item in records
         ]
     }
+
+
+@router.delete(
+    "/fault-images", response_model=QualityImageDeleteAck, responses=_ERROR_RESPONSES
+)
+async def delete_fault_images(
+    request: Request, payload: QualityImageDelete, response: Response
+) -> dict | JSONResponse:
+    response.headers["Cache-Control"] = "no-store"
+    storage = _storage(request)
+    if storage is None:
+        return _error_response(503, "IMAGE_UNAVAILABLE")
+    try:
+        deleted = await asyncio.to_thread(storage.delete_images, payload.ids)
+    except OSError:
+        logger.exception("Fault image deletion unavailable")
+        return _error_response(503, "IMAGE_UNAVAILABLE")
+    return {"deletedIds": deleted}
 
 
 @router.get(

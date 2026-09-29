@@ -110,6 +110,7 @@ def create_app(
         QualityOperationsService(
             application.state.quality_history_repository,
             QualityStatisticsRepository(session_factory),
+            fault_image_storage,
         )
         if session_factory is not None
         else None

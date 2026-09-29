@@ -1,6 +1,6 @@
 """Public per-image fault inventory contract."""
 
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -26,3 +26,20 @@ class QualityFaultImages(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     items: list[QualityFaultImage] = Field(max_length=100)
+
+
+FaultImageId = Annotated[
+    str, Field(min_length=1, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
+]
+
+
+class QualityImageDelete(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    ids: list[FaultImageId] = Field(max_length=100)
+
+
+class QualityImageDeleteAck(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    deletedIds: list[FaultImageId] = Field(max_length=100)
