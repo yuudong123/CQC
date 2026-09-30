@@ -259,9 +259,11 @@ def fit(
         }
     table = threshold_table(rows, temperatures["cultivar"], temperatures["quality"])
     report["threshold_table_rows"] = len(table)
-    report["reference_at_current_thresholds"] = next(
-        row for row in table if row["cultivar_threshold"] == 0.5 and row["quality_threshold"] == 0.5
-    )
+    # 현재 운영은 보정 전 신뢰도(temperature 1.0)에 0.50/0.50을 쓰므로 비교 기준도 보정 전 확률로 계산한다.
+    report["reference_at_current_thresholds"] = {
+        "temperature": 1.0,
+        **threshold_table(rows, 1.0, 1.0, quality_thresholds=[0.5], cultivar_thresholds=[0.5])[0],
+    }
     report["recommendation"] = {
         "constraints": {"min_quality_accuracy": min_quality_accuracy, "max_reinspection": max_reinspection},
         "selection": recommend(

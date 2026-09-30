@@ -99,6 +99,20 @@ class ThresholdTableTest(unittest.TestCase):
         self.assertIsNone(calibration.recommend(table, min_quality_accuracy=0.999, max_reinspection=0.3))
         self.assertIsNone(calibration.recommend(table, min_quality_accuracy=None, max_reinspection=None))
 
+    def test_reference_uses_uncalibrated_confidence(self) -> None:
+        # 과소 확신 모델에서 보정 후 0.50/0.50과 현재 운영(보정 전 0.50/0.50)의 자동 처리 수가 달라야 한다.
+        rows = _synthetic_rows(500, 0.4, seed=5)
+        report = calibration.fit(rows)
+        reference = report["reference_at_current_thresholds"]
+        uncalibrated = calibration.threshold_table(rows, 1.0, 1.0, quality_thresholds=[0.5], cultivar_thresholds=[0.5])[0]
+        calibrated = next(
+            row for row in report["threshold_table"]
+            if row["cultivar_threshold"] == 0.5 and row["quality_threshold"] == 0.5
+        )
+        self.assertEqual(reference["temperature"], 1.0)
+        self.assertEqual(reference["accepted"], uncalibrated["accepted"])
+        self.assertLess(reference["accepted"], calibrated["accepted"])
+
 
 class FileFlowTest(unittest.TestCase):
     def test_cli_fit_and_apply_keep_checkpoint(self) -> None:
