@@ -73,21 +73,28 @@ def _inference_response(
         ),
         (
             0.90,
-            0.49,
+            0.59,
             InspectionStatus.REINSPECTION_REQUIRED,
             InspectionDecisionReason.LOW_QUALITY_CONFIDENCE,
             True,
         ),
         (
             0.49,
-            0.49,
+            0.59,
             InspectionStatus.REINSPECTION_REQUIRED,
             InspectionDecisionReason.LOW_BOTH_CONFIDENCE,
             True,
         ),
         (
             0.50,
+            0.60,
+            InspectionStatus.COMPLETED,
+            InspectionDecisionReason.NORMAL,
+            False,
+        ),
+        (
             0.50,
+            0.61,
             InspectionStatus.COMPLETED,
             InspectionDecisionReason.NORMAL,
             False,
@@ -107,7 +114,7 @@ def test_decide_inspection_applies_confidence_policy(
             quality_confidence=quality_confidence,
         ),
         cultivar_confidence_threshold=0.50,
-        quality_confidence_threshold=0.50,
+        quality_confidence_threshold=0.60,
     )
 
     assert decision.inspection_status is expected_status
@@ -115,7 +122,7 @@ def test_decide_inspection_applies_confidence_policy(
     assert decision.review_required is expected_review
     assert decision.exclude_from_normal_stats is False
     assert decision.cultivar_confidence_threshold == 0.50
-    assert decision.quality_confidence_threshold == 0.50
+    assert decision.quality_confidence_threshold == 0.60
 
 
 def test_decide_inspection_uses_configurable_thresholds() -> None:

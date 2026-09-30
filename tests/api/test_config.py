@@ -38,7 +38,7 @@ def test_policy_settings_use_confirmed_defaults() -> None:
     settings = Settings(_env_file=None)
 
     assert settings.cultivar_confidence_threshold == 0.50
-    assert settings.quality_confidence_threshold == 0.50
+    assert settings.quality_confidence_threshold == 0.60
     assert settings.inference_business_deadline_ms == 500
     assert settings.inference_hard_timeout_ms == 2000
     assert settings.max_late_tasks == 4

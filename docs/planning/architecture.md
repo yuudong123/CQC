@@ -264,6 +264,6 @@ Compose 실행 단위는 simulator, inference, backend, frontend, mysql이다. �
 | 마이그레이션 도구 | 홍준희·홍유나 | 재현성과 배포 환경 |
 | CI/CD·컨테이너 도구 | 홍유나 | Jenkins·Docker Compose 기준 확정, 실제 통합 배포 검증 필요 |
 | 장애 이미지 저장 경로 | 홍준희·홍유나 | Docker 볼륨과 관리 화면 접근 방식 |
-| 저신뢰 임계값 | 조현재·홍준희 | 품종 0.50·품질 0.50 확정 |
+| 저신뢰 임계값 | 조현재·홍준희 | v2 보정 모델 적용 후 품종 0.50·품질 0.60 확정 (DM-08) |
 | bin 코드와 매핑 구조 | 홍준희 | DB 설계 및 통계 쿼리 요구 |
 | Backend의 late result 수신 방식 | 홍준희 | 확정된 500ms 범위와 Backend 비동기 처리 구조 |
