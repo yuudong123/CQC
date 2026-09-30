@@ -19,6 +19,7 @@ from .routers.inspections import router as inspections_router
 from .routers.quality_fault_images import router as quality_fault_images_router
 from .routers.quality_history import router as quality_history_router
 from .routers.quality_operations import router as quality_operations_router
+from .routers.quality_simulator import router as quality_simulator_router
 from .services.fault_image_storage import FaultImageStorage
 from .services.inspections import InspectionService
 from .services.late_results import LateResultManager
@@ -102,7 +103,8 @@ def create_app(
     application.state.settings = runtime_settings
     application.state.inspection_service = runtime_inspection_service
     application.state.fault_image_storage = fault_image_storage
-    application.state.simulator_state_service = SimulatorStateService()
+    simulator_state_service = SimulatorStateService()
+    application.state.simulator_state_service = simulator_state_service
     application.state.quality_history_repository = (
         QualityHistoryRepository(session_factory)
         if session_factory is not None
@@ -113,6 +115,7 @@ def create_app(
             application.state.quality_history_repository,
             QualityStatisticsRepository(session_factory),
             fault_image_storage,
+            simulator_state_service,
         )
         if session_factory is not None
         else None
@@ -121,6 +124,7 @@ def create_app(
     application.include_router(quality_history_router)
     application.include_router(quality_fault_images_router)
     application.include_router(quality_operations_router)
+    application.include_router(quality_simulator_router)
 
     @application.get("/health", tags=["health"])
     async def health() -> dict[str, str]:

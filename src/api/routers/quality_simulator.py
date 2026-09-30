@@ -1,0 +1,63 @@
+"""Frontend 관제 계약의 Simulator 설정 변경 API."""
+
+from __future__ import annotations
+
+from datetime import datetime, timezone
+
+from fastapi import APIRouter, Request, Response
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from fastapi.routing import APIRoute
+
+from ..schemas.quality_history import QualityError
+from ..schemas.quality_operations import QualitySnapshot
+from ..services.simulator_state import RevisionMismatchError, SimulatorSettingsUpdate
+from .quality_history import _error_response
+from .quality_operations import _execute
+
+
+class _SimulatorErrorRoute(APIRoute):
+    """제어 요청의 입력 오류를 공유 Error body로 반환한다."""
+
+    def get_route_handler(self):
+        handler = super().get_route_handler()
+
+        async def wrapped(request: Request) -> Response:
+            try:
+                return await handler(request)
+            except RequestValidationError:
+                return _error_response(422, "INVALID_SETTINGS")
+
+        return wrapped
+
+
+router = APIRouter(
+    prefix="/v1/quality", tags=["quality"], route_class=_SimulatorErrorRoute
+)
+
+
+@router.put(
+    "/simulator",
+    response_model=QualitySnapshot,
+    response_model_exclude_unset=True,
+    responses={code: {"model": QualityError} for code in (404, 409, 410, 422, 503)},
+)
+async def update_simulator(
+    update: SimulatorSettingsUpdate, request: Request, response: Response
+) -> dict[str, object] | JSONResponse:
+    """DB snapshot을 준비한 뒤 제어 설정만 revision 조건으로 변경한다."""
+
+    response.headers["Cache-Control"] = "no-store"
+    captured_at = datetime.now(timezone.utc).replace(tzinfo=None)
+    snapshot = await _execute(request, "snapshot", captured_at)
+    if isinstance(snapshot, JSONResponse):
+        return snapshot
+
+    service = request.app.state.simulator_state_service
+    try:
+        state = service.update_state(update)
+    except RevisionMismatchError:
+        return _error_response(409, "REVISION_CONFLICT")
+
+    operations = request.app.state.quality_operations_service
+    return operations.with_simulator_state(snapshot, state)

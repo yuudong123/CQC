@@ -7,6 +7,7 @@ from threading import Lock
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic.json_schema import SkipJsonSchema
 
 FaultType = Literal[
     "INFERENCE_TIMEOUT",
@@ -19,20 +20,40 @@ FaultType = Literal[
 FaultScope = Literal["ALL", "NEXT"]
 
 
+def _omit_unset_defaults(schema: dict[str, object]) -> None:
+    for field in ("running", "concurrency", "faults", "scope"):
+        property_schema = schema.get("properties", {}).get(field)
+        if isinstance(property_schema, dict):
+            property_schema.pop("default", None)
+
+
 class SimulatorSettingsUpdate(BaseModel):
     """공유 Settings 계약과 같은 부분 변경 입력을 검증한다."""
 
-    model_config = ConfigDict(extra="forbid", strict=True)
+    model_config = ConfigDict(
+        extra="forbid", strict=True, json_schema_extra=_omit_unset_defaults
+    )
 
     expected_revision: int = Field(alias="expectedRevision", ge=0)
-    running: bool | None = None
-    concurrency: int | None = Field(default=None, ge=1, le=64)
-    faults: list[FaultType] | None = Field(default=None, max_length=5)
-    scope: FaultScope | None = None
+    running: bool | SkipJsonSchema[None] = None
+    concurrency: Literal[1, 2, 4] | SkipJsonSchema[None] = None
+    faults: list[FaultType] | SkipJsonSchema[None] = Field(
+        default=None, json_schema_extra={"maxItems": 5, "uniqueItems": True}
+    )
+    scope: FaultScope | SkipJsonSchema[None] = None
+
+    @field_validator("concurrency", mode="before")
+    @classmethod
+    def integer_concurrency(cls, value: object) -> object:
+        if type(value) is not int:
+            raise ValueError("concurrency must be an integer")
+        return value
 
     @field_validator("faults")
     @classmethod
     def unique_faults(cls, value: list[FaultType] | None) -> list[FaultType] | None:
+        if value is not None and len(value) > 5:
+            raise ValueError("faults must contain at most five items")
         if value is not None and len(value) != len(set(value)):
             raise ValueError("faults must be unique")
         return value
@@ -93,3 +114,18 @@ class SimulatorStateService:
                 self._state, **changes, revision=self._state.revision + 1
             )
             return self._state
+
+    def claim_faults_for_inspection(self) -> tuple[FaultType, ...]:
+        """새 Simulator 검사 1건에 적용할 장애를 원자적으로 가져온다.
+
+        NEXT는 첫 검사에서만 비우고, FE 참조 구현처럼 scope는 유지한다.
+        실제 검사 전송과 장애 주입은 후속 Simulator 실행 단계에서 연결한다.
+        """
+
+        with self._lock:
+            faults = self._state.faults
+            if faults and self._state.scope == "NEXT":
+                self._state = replace(
+                    self._state, faults=(), revision=self._state.revision + 1
+                )
+            return faults

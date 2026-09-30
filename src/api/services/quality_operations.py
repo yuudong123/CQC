@@ -10,6 +10,7 @@ from ..repositories.quality_history import HistoryFilters, QualityHistoryReposit
 from ..repositories.quality_statistics import QualityStatisticsRepository
 from .fault_image_storage import FaultImageStorage
 from .quality_history import KST, to_quality_result
+from .simulator_state import SimulatorRuntimeState, SimulatorStateService
 
 _INSPECTION_COLUMNS = [
     "inspection_id",
@@ -40,10 +41,12 @@ class QualityOperationsService:
         history: QualityHistoryRepository,
         statistics: QualityStatisticsRepository,
         fault_image_storage: FaultImageStorage | None = None,
+        simulator_state: SimulatorStateService | None = None,
     ) -> None:
         self._history = history
         self._statistics = statistics
         self._fault_image_storage = fault_image_storage
+        self._simulator_state = simulator_state
 
     def statistics(
         self, filters: HistoryFilters, snapshot_at: datetime
@@ -73,7 +76,7 @@ class QualityOperationsService:
             "lastSeenAt": None,
             "detail": "상태 확인 연동 전",
         }
-        return {
+        snapshot = {
             "contractVersion": "1",
             "source": "backend",
             "capturedAt": captured_ms,
@@ -144,6 +147,40 @@ class QualityOperationsService:
                 "dbDown": False,
             },
         }
+        return self.with_simulator_state(snapshot)
+
+    def with_simulator_state(
+        self,
+        snapshot: dict[str, object],
+        state: SimulatorRuntimeState | None = None,
+    ) -> dict[str, object]:
+        """같은 앱의 제어 설정을 관제 snapshot 계약에 반영한다."""
+
+        if self._simulator_state is None:
+            return snapshot
+        current = state or self._simulator_state.get_state()
+        snapshot["revision"] = current.revision
+        capabilities = snapshot["capabilities"]
+        assert isinstance(capabilities, dict)
+        capabilities.update({"control": True, "faults": True, "concurrency": [1, 2, 4]})
+        simulator = snapshot["state"]
+        assert isinstance(simulator, dict)
+        simulator.update(
+            {
+                "running": current.running,
+                "concurrency": current.concurrency,
+                "faults": list(current.faults),
+                "scope": current.scope,
+            }
+        )
+        components = snapshot["components"]
+        assert isinstance(components, dict)
+        components["Simulator"] = {
+            "status": "stopped",
+            "lastSeenAt": None,
+            "detail": "제어 설정만 저장 중; 실행 루프 미구현",
+        }
+        return snapshot
 
     def inspections_csv(self, filters: HistoryFilters, snapshot_at: datetime) -> str:
         output, writer = _csv_writer()

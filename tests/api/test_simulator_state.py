@@ -103,4 +103,4 @@ def test_snapshot_is_immutable_and_app_keeps_one_runtime_service() -> None:
     with pytest.raises(FrozenInstanceError):
         state.running = True  # type: ignore[misc]
     assert service.get_state().running is False
-    assert "/v1/quality/simulator" not in app.openapi()["paths"]
+    assert "put" in app.openapi()["paths"]["/v1/quality/simulator"]
