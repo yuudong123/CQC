@@ -1,9 +1,21 @@
-"""추론기를 HTTP 상태 확인·예측 API로 제공하는 FastAPI 연결 계층이다."""
+"""추론기를 HTTP 상태 확인·예측 API로 제공하는 FastAPI 연결 계층이다.
+
+- ``GET /health``: 모델 로딩·버전·장치, 승인·보정 상태.
+- ``POST /v1/predict``: ``inspection_id``, 사진별 각도 ``metadata`` JSON, ``images`` 이름의 PNG/JPEG
+  multipart 파일 1~12장(합계 24MiB). 12장보다 적으면 마스크로 패딩하고 초과하면 413.
+- 응답은 같은 ``inspection_id``, 사용한 장수, 품종·품질 확률·예측·신뢰도, 모델 계산 시간, 모델명·버전.
+  단계별 시간은 ``Server-Timing`` 헤더로 준다.
+- bin·재검사·DB 정책은 Backend 책임이다. 패키지 로딩 성공은 품질 승인이 아니다.
+- 컨테이너는 ``Dockerfile.inference``, 모델 슬롯은 읽기 전용 ``/app/models/approved``.
+  공유 OpenAPI JSON은 ``python -m src.inference.export_openapi``로 만든다.
+"""
 
 from __future__ import annotations
 
 import argparse
 import json
+import os
+import time
 from pathlib import Path
 from typing import Any
 
@@ -14,10 +26,28 @@ from .schemas import HealthResponse, PredictionResponse
 MAX_REQUEST_BYTES = 24 * 1024 * 1024
 
 try:
-    from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+    from fastapi import FastAPI, File, Form, HTTPException, Response, UploadFile
+    from fastapi.concurrency import run_in_threadpool
 except ImportError:  # HTTP 서버 기능을 사용할 때 필요한 선택 의존성이다.
     # 의존성이 없는 환경에서도 모듈을 읽게 한다. 아래 표기는 자료형 검사기 지시문이다.
-    FastAPI = File = Form = HTTPException = UploadFile = None  # type: ignore[assignment]
+    FastAPI = File = Form = HTTPException = Response = UploadFile = None  # type: ignore[assignment]
+    run_in_threadpool = None  # type: ignore[assignment]
+
+
+def _timed_predict(predictor: Any, payload: list[bytes]) -> tuple[Any, dict[str, float]]:
+    """``predict_timed``가 있으면 단계별 시간도 받고, 없으면 모델 시간만 쓴다."""
+    timed = getattr(predictor, "predict_timed", None)
+    if timed is not None:
+        return timed(payload)
+    prediction = predictor.predict(payload)
+    return prediction, {"model": float(prediction.inference_time_ms)}
+
+
+def _server_timing(timings: dict[str, float], total_ms: float) -> str:
+    """단계별 시간을 표준 ``Server-Timing`` 헤더 값으로 만든다. 응답 본문 계약은 바꾸지 않는다."""
+    parts = [f"{name};dur={value:.2f}" for name, value in timings.items()]
+    parts.append(f"total;dur={total_ms:.2f}")
+    return ", ".join(parts)
 
 
 def _validate_metadata(value: str, image_count: int) -> list[dict[str, Any]]:
@@ -72,6 +102,7 @@ def create_app(predictor: Predictor) -> Any:
         },
     )
     async def predict(
+        response: Response,
         inspection_id: str = Form(..., min_length=1),
         metadata: str = Form(...),
         images: list[UploadFile] = File(...),
@@ -97,7 +128,13 @@ def create_app(predictor: Predictor) -> Any:
                 raise HTTPException(status_code=413, detail="전체 이미지는 최대 24MiB입니다")
             payload.append(value)
         try:
-            result = predictor.predict(payload).to_dict()
+            # CPU를 쓰는 추론을 스레드풀에서 실행해 그동안 /health 등 다른 요청이 막히지 않게 한다.
+            started = time.perf_counter()
+            prediction, timings = await run_in_threadpool(_timed_predict, predictor, payload)
+            response.headers["Server-Timing"] = _server_timing(
+                timings, (time.perf_counter() - started) * 1000
+            )
+            result = prediction.to_dict()
             result["inspection_id"] = inspection_id
             return result
         except (ValueError, OSError) as exc:
@@ -113,12 +150,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")
     parser.add_argument("--host", default="0.0.0.0")
     parser.add_argument("--port", type=int, default=8001)
+    parser.add_argument(
+        "--decode-workers", type=int, default=int(os.environ.get("INFERENCE_DECODE_WORKERS", "0")),
+        help="사진 해제 스레드 수. 0이면 CPU 수 기준 자동, 1이면 순차 (환경변수 INFERENCE_DECODE_WORKERS)",
+    )
     args = parser.parse_args(argv)
     try:
         import uvicorn
     except ImportError as exc:
         raise RuntimeError("uvicorn 실행 의존성을 설치해야 합니다") from exc
-    uvicorn.run(create_app(Predictor(args.model_dir, device=args.device)), host=args.host, port=args.port)
+    uvicorn.run(create_app(Predictor(args.model_dir, device=args.device, decode_workers=args.decode_workers)), host=args.host, port=args.port)
     return 0
 
 

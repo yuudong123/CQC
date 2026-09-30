@@ -118,6 +118,57 @@ class InferenceApiTest(unittest.TestCase):
         self.assertEqual(response.status_code, 422)
         self.assertIn("항목 수", response.json()["detail"])
 
+    def test_predict_reports_stage_timing_header(self) -> None:
+        response = self.client.post(
+            "/v1/predict",
+            data={"inspection_id": "inspection-005", "metadata": json.dumps([{"view_index": 0, "angle_direction": "top", "verticality_angle": 0, "horizontality_angle": 0}])},
+            files=[("images", ("front.png", _png(), "image/png"))],
+        )
+        self.assertEqual(response.status_code, 200)
+        timing = response.headers["server-timing"]
+        self.assertIn("model;dur=10.00", timing)
+        self.assertIn("total;dur=", timing)
+        self.assertNotIn("decode_ms", response.json())
+
+    def test_health_is_served_while_prediction_runs(self) -> None:
+        import asyncio
+        import threading
+        import time
+
+        import httpx
+
+        release = threading.Event()
+
+        class _SlowPredictor(_FakePredictor):
+            def predict(self, images: list[bytes]) -> Prediction:
+                release.wait(timeout=5)
+                return super().predict(images)
+
+        app = create_app(_SlowPredictor())
+
+        async def scenario() -> tuple[float, int]:
+            transport = httpx.ASGITransport(app=app)
+            async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+                started = time.perf_counter()
+                predict = asyncio.create_task(
+                    client.post(
+                        "/v1/predict",
+                        data={"inspection_id": "slow", "metadata": json.dumps([{"view_index": 0, "angle_direction": "top", "verticality_angle": 0, "horizontality_angle": 0}])},
+                        files=[("images", ("front.png", _png(), "image/png"))],
+                    )
+                )
+                await asyncio.sleep(0.2)
+                health = await asyncio.wait_for(client.get("/health"), timeout=2)
+                elapsed = time.perf_counter() - started
+                release.set()
+                result = await predict
+                self.assertEqual(result.status_code, 200)
+                return elapsed, health.status_code
+
+        elapsed, status = asyncio.run(scenario())
+        self.assertEqual(status, 200)
+        self.assertLess(elapsed, 1.0)
+
     def test_openapi_contains_typed_prediction_contract(self) -> None:
         schema = self.client.app.openapi()
         response = schema["paths"]["/v1/predict"]["post"]["responses"]["200"]

@@ -20,7 +20,7 @@ Jenkins에는 아직 이 시험 단계가 없다. Compose 검사·빌드·기동
 
 | 파트 | dev에 반영된 범위 | 남은 핵심 |
 |---|---|---|
-| DM (조현재) | DM-01~09. `separate`·12장 모델, Inference HTTP API, v2 후보 패키지(`unverified_candidate`, 신뢰도 미보정), 시연 묶음 996개(12장 869개)·가상 당도 14°Brix 구간 | v2 설정 5-fold OOF로 신뢰도 보정·임계값 재결정(현재 0.50은 v1 검증 예측 기준), 실제 시연 사진 기준 지연 측정, 독립 holdout 부재를 한계로 명시 |
+| DM (조현재) | DM-01~09. `separate`·12장 모델, Inference HTTP API, v2 후보 패키지(`unverified_candidate`, 신뢰도 미보정), 시연 묶음 996개(12장 869개)·가상 당도 14°Brix 구간. (feat/data 작업분) v2 보정 파이프라인(`calibration.py`·`run_v2_calibration.ps1`), 추론 스레드 풀·병렬 사진 해제·`Server-Timing`, 시연 사진 드라이런(36묶음, 2 vCPU 서버 p95 261ms, 품질 0.50 기준 재검사 13.9%) | 집 PC에서 보정 실행 → 임계값 팀 결정 → 보정 패키지 배포·Backend 임계값 반영, i7-4790에서 실제 시연 사진 재측정, 독립 holdout 부재를 한계로 명시 |
 | FE (강성민, FE-01~10 작업은 조현재) | FE-01~10: 품질 관제·이력·통계·장애 관리, 12장 그룹 관제, 브라우저 자동 경매·배차 시연 | 실제 Backend 연결 확인. BE-06 장애 이미지 API(이미지별 ID)에 맞춰 참조 서버와 삭제 흐름 수정, 장시간 브라우저 시험 |
 | BE (홍준희) | BE-01~06: 검사 API, 실제 Inference 호출, 500ms 기한·지연 결과, 12-bin migration·13개 seed, 저장·이력·통계·CSV, 장애 이미지 저장·목록·미리보기·선택 삭제(최대 100장) | **BE-07 Simulator**(500ms 입력·시작/정지·위치 복구·장애 토글), 검수 API, 지연 결과 DB 저장, 이력 보존 삭제(86,400/8,640), BE-08 이후 통합 |
 | MO (홍유나) | MO-01~06. Compose 8개 서비스(QC 5·물류 3), healthcheck·기동 순서, MySQL·Mongo Volume, Jenkins Credentials, i7-4790 합성 입력 측정 | frontend·simulator placeholder 교체, 배포 시 `alembic upgrade head`, 장애 이미지 Volume(`FAULT_IMAGE_STORAGE_ROOT`), Jenkins 테스트 단계, 실패 시 이전 버전 유지(MO-07), MO-08~10 |
