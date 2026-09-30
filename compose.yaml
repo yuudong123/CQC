@@ -330,13 +330,13 @@ services:
     # ==========================================================
     # Simulator Healthcheck
     # ==========================================================
-    # /health 엔드포인트를 통해 프로세스 정상 실행 여부 확인
+    # 자동 재생 중이며 최근 30초 내 Backend 검사 전송이 성공했는지 확인
     healthcheck:
       test:
         - CMD
         - python
         - -c
-        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8002/health', timeout=3)"
+        - "import json, time, urllib.request; data = json.load(urllib.request.urlopen('http://127.0.0.1:8002/health', timeout=3)); assert data['status'] == 'ok' and data['running'] is True; assert data['lastSeenAt'] is not None and 0 <= time.time() * 1000 - data['lastSeenAt'] <= 30000"
       interval: 10s
       timeout: 5s
       retries: 5
