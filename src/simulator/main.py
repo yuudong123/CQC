@@ -89,8 +89,7 @@ def create_app(
         now_ms = time.time() * 1000
 
         playback_recent = (
-            current.lastSeenAt is not None
-            and 0 <= now_ms - current.lastSeenAt <= 30000
+            current.lastSeenAt is not None and 0 <= now_ms - current.lastSeenAt <= 30000
         )
 
         # 실행 중이 아니거나 최근 검사 성공 기록이 없으면 실패

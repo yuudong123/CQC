@@ -135,13 +135,14 @@ class SimulatorRunner:
                     inspection_id,
                     bundle.bundle_id,
                 )
+            else:
+                self._last_seen_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
             async with position_lock:
                 completed.add(sequence)
                 while committed in completed:
                     completed.remove(committed)
                     committed += 1
                     await asyncio.to_thread(store.save, committed)
-            self._last_seen_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
 
         try:
             while not self._stop.is_set():
