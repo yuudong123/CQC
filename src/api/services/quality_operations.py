@@ -6,11 +6,12 @@ import csv
 from datetime import datetime, timezone
 from io import StringIO
 
+from src.simulator.schemas import SimulatorStatus
+
 from ..repositories.quality_history import HistoryFilters, QualityHistoryRepository
 from ..repositories.quality_statistics import QualityStatisticsRepository
 from .fault_image_storage import FaultImageStorage
 from .quality_history import KST, to_quality_result
-from .simulator_state import SimulatorRuntimeState, SimulatorStateService
 
 _INSPECTION_COLUMNS = [
     "inspection_id",
@@ -41,12 +42,10 @@ class QualityOperationsService:
         history: QualityHistoryRepository,
         statistics: QualityStatisticsRepository,
         fault_image_storage: FaultImageStorage | None = None,
-        simulator_state: SimulatorStateService | None = None,
     ) -> None:
         self._history = history
         self._statistics = statistics
         self._fault_image_storage = fault_image_storage
-        self._simulator_state = simulator_state
 
     def statistics(
         self, filters: HistoryFilters, snapshot_at: datetime
@@ -84,15 +83,15 @@ class QualityOperationsService:
             "capabilities": {
                 "control": False,
                 "faults": False,
-                "review": False,
+                "review": True,
                 "deleteImages": self._fault_image_storage is not None,
                 "concurrency": [],
             },
             "components": {
                 "Simulator": {
-                    "status": "stopped",
+                    "status": "unknown",
                     "lastSeenAt": None,
-                    "detail": "Simulator 미구현",
+                    "detail": "Simulator 연결 상태 확인 전",
                 },
                 "Inference": component_unknown,
                 "Backend": {
@@ -147,19 +146,25 @@ class QualityOperationsService:
                 "dbDown": False,
             },
         }
-        return self.with_simulator_state(snapshot)
+        return snapshot
 
     def with_simulator_state(
         self,
         snapshot: dict[str, object],
-        state: SimulatorRuntimeState | None = None,
+        state: SimulatorStatus | None = None,
     ) -> dict[str, object]:
-        """같은 앱의 제어 설정을 관제 snapshot 계약에 반영한다."""
+        """Simulator 내부 API 결과를 공개 관제 snapshot에 반영한다."""
 
-        if self._simulator_state is None:
+        if state is None:
+            components = snapshot["components"]
+            assert isinstance(components, dict)
+            components["Simulator"] = {
+                "status": "unknown",
+                "lastSeenAt": None,
+                "detail": "Simulator 연결 불가",
+            }
             return snapshot
-        current = state or self._simulator_state.get_state()
-        snapshot["revision"] = current.revision
+        snapshot["revision"] = state.revision
         capabilities = snapshot["capabilities"]
         assert isinstance(capabilities, dict)
         capabilities.update({"control": True, "faults": True, "concurrency": [1, 2, 4]})
@@ -167,18 +172,22 @@ class QualityOperationsService:
         assert isinstance(simulator, dict)
         simulator.update(
             {
-                "running": current.running,
-                "concurrency": current.concurrency,
-                "faults": list(current.faults),
-                "scope": current.scope,
+                "running": state.running,
+                "concurrency": state.concurrency,
+                "faults": state.faults,
+                "scope": state.scope,
             }
         )
         components = snapshot["components"]
         assert isinstance(components, dict)
         components["Simulator"] = {
-            "status": "stopped",
-            "lastSeenAt": None,
-            "detail": "제어 설정만 저장 중; 실행 루프 미구현",
+            "status": state.status,
+            "lastSeenAt": state.lastSeenAt,
+            "detail": "실행 실패"
+            if state.status == "error"
+            else "검사 전송 중"
+            if state.status == "healthy"
+            else "정지",
         }
         return snapshot
 

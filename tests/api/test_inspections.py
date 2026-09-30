@@ -97,6 +97,45 @@ def _application(settings: Settings | None = None):
     return create_app(runtime_settings, inspection_service=service)
 
 
+def test_simulator_fault_headers_are_private_and_external_post_does_not_claim_next() -> (
+    None
+):
+    app = _application(Settings(simulator_fault_token="test-token"))
+    assert not hasattr(app.state, "simulator_state_service")
+    data = {
+        "inspection_id": "simulator-header-1",
+        "metadata": _metadata([0]),
+        "virtual_brix": "14.0",
+    }
+    with TestClient(app) as client:
+        external = client.post("/v1/inspections", data=data, files=_images(1))
+        assert external.status_code == 200
+        assert external.json()["decision_reason"] == "NORMAL"
+        forbidden = client.post(
+            "/v1/inspections",
+            data=data,
+            files=_images(1),
+            headers={
+                "X-CQC-Simulator-Token": "wrong",
+                "X-CQC-Simulator-Faults": "INFERENCE_ERROR",
+                "X-CQC-Simulator-Bundle-ID": "demo-0",
+            },
+        )
+        assert forbidden.status_code == 403
+        internal = client.post(
+            "/v1/inspections",
+            data={**data, "inspection_id": "simulator-header-2"},
+            files=_images(1),
+            headers={
+                "X-CQC-Simulator-Token": app.state.simulator_fault_token,
+                "X-CQC-Simulator-Faults": "INFERENCE_ERROR",
+                "X-CQC-Simulator-Bundle-ID": "demo-0",
+            },
+        )
+        assert internal.status_code == 200
+        assert internal.json()["decision_reason"] == "INFERENCE_HTTP_ERROR"
+
+
 def test_inspection_accepts_valid_multipart_contract() -> None:
     with TestClient(_application()) as client:
         response = client.post(

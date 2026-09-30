@@ -35,6 +35,9 @@ class Settings(BaseSettings):
     max_late_tasks: int = Field(default=4, ge=0)
     fault_image_storage_root: Path | None = None
     fault_image_limit: int = Field(default=100, ge=1)
+    simulator_internal_url: str | None = None
+    simulator_internal_timeout_ms: int = Field(default=30_000, ge=1)
+    simulator_fault_token: str | None = None
 
     @model_validator(mode="after")
     def validate_inference_deadlines(self) -> Settings:

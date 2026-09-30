@@ -9,22 +9,24 @@ import uvicorn
 from fastapi import FastAPI
 
 from .clients.inference import HttpInferenceClient, MockInferenceClient
+from .clients.simulator import SimulatorClient
 from .control.virtual_control import MockVirtualControl
 from .core.config import Settings, get_settings
 from .db.session import create_db_engine, create_session_factory
 from .repositories import BinMappingRepository, InspectionPersistence
+from .repositories.inspections import InspectionReviewRepository
 from .repositories.quality_history import QualityHistoryRepository
 from .repositories.quality_statistics import QualityStatisticsRepository
 from .routers.inspections import router as inspections_router
 from .routers.quality_fault_images import router as quality_fault_images_router
 from .routers.quality_history import router as quality_history_router
 from .routers.quality_operations import router as quality_operations_router
+from .routers.quality_review import router as quality_review_router
 from .routers.quality_simulator import router as quality_simulator_router
 from .services.fault_image_storage import FaultImageStorage
 from .services.inspections import InspectionService
 from .services.late_results import LateResultManager
 from .services.quality_operations import QualityOperationsService
-from .services.simulator_state import SimulatorStateService
 
 
 def create_app(
@@ -87,6 +89,14 @@ def create_app(
         ),
         fault_image_storage=fault_image_storage,
     )
+    simulator_client = (
+        SimulatorClient(
+            runtime_settings.simulator_internal_url,
+            timeout_ms=runtime_settings.simulator_internal_timeout_ms,
+        )
+        if runtime_settings.simulator_internal_url
+        else None
+    )
 
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
@@ -94,6 +104,8 @@ def create_app(
             yield
         finally:
             await runtime_inspection_service.shutdown()
+            if simulator_client is not None:
+                await simulator_client.close()
             if isinstance(inference_client, HttpInferenceClient):
                 await inference_client.close()
             if db_engine is not None:
@@ -103,10 +115,15 @@ def create_app(
     application.state.settings = runtime_settings
     application.state.inspection_service = runtime_inspection_service
     application.state.fault_image_storage = fault_image_storage
-    simulator_state_service = SimulatorStateService()
-    application.state.simulator_state_service = simulator_state_service
+    application.state.simulator_fault_token = runtime_settings.simulator_fault_token
+    application.state.simulator_client = simulator_client
     application.state.quality_history_repository = (
         QualityHistoryRepository(session_factory)
+        if session_factory is not None
+        else None
+    )
+    application.state.inspection_review_repository = (
+        InspectionReviewRepository(session_factory)
         if session_factory is not None
         else None
     )
@@ -115,7 +132,6 @@ def create_app(
             application.state.quality_history_repository,
             QualityStatisticsRepository(session_factory),
             fault_image_storage,
-            simulator_state_service,
         )
         if session_factory is not None
         else None
@@ -125,6 +141,7 @@ def create_app(
     application.include_router(quality_fault_images_router)
     application.include_router(quality_operations_router)
     application.include_router(quality_simulator_router)
+    application.include_router(quality_review_router)
 
     @application.get("/health", tags=["health"])
     async def health() -> dict[str, str]:

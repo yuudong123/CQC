@@ -13,6 +13,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 
+from ..clients.simulator import SimulatorUnavailable
 from ..repositories.quality_history import HistoryFilters
 from ..repositories.quality_statistics import StatisticsContractError
 from ..schemas.quality_history import PageSize, QualityError
@@ -147,7 +148,19 @@ async def snapshot(
 ) -> dict[str, object] | JSONResponse:
     response.headers["Cache-Control"] = "no-store"
     captured_at = datetime.now(timezone.utc).replace(tzinfo=None)
-    return await _execute(request, "snapshot", captured_at)
+    result = await _execute(request, "snapshot", captured_at)
+    if isinstance(result, JSONResponse):
+        return result
+    simulator = getattr(request.app.state, "simulator_client", None)
+    state = None
+    if simulator is not None:
+        try:
+            state = await simulator.get_status()
+        except SimulatorUnavailable:
+            logger.warning("Simulator 상태 조회 실패")
+    return request.app.state.quality_operations_service.with_simulator_state(
+        result, state
+    )
 
 
 @router.get(

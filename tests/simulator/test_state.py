@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import FrozenInstanceError
+from pathlib import Path
 from threading import Barrier
 
 import pytest
@@ -11,7 +12,9 @@ from pydantic import ValidationError
 
 from src.api.core.config import Settings
 from src.api.main import create_app
-from src.api.services.simulator_state import (
+from src.simulator.config import SimulatorSettings
+from src.simulator.main import create_app as create_simulator_app
+from src.simulator.state import (
     RevisionMismatchError,
     SimulatorSettingsUpdate,
     SimulatorStateService,
@@ -96,11 +99,21 @@ def test_invalid_settings_are_rejected(changes: dict[str, object]) -> None:
         _update(0, **changes)
 
 
-def test_snapshot_is_immutable_and_app_keeps_one_runtime_service() -> None:
-    app = create_app(Settings())
+def test_snapshot_is_immutable_and_only_simulator_owns_runtime_service() -> None:
+    app = create_simulator_app(
+        SimulatorSettings(
+            simulator_dataset_root=Path("."),
+            simulator_position_path=Path("position.json"),
+            simulator_backend_url="http://backend",
+            simulator_fault_token="test-token",
+        )
+    )
     service = app.state.simulator_state_service
     state = service.get_state()
     with pytest.raises(FrozenInstanceError):
         state.running = True  # type: ignore[misc]
     assert service.get_state().running is False
-    assert "put" in app.openapi()["paths"]["/v1/quality/simulator"]
+    assert "put" in app.openapi()["paths"]["/state"]
+    backend = create_app(Settings())
+    assert not hasattr(backend.state, "simulator_state_service")
+    assert not hasattr(backend.state, "simulator_runner")

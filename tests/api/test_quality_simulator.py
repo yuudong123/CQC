@@ -1,4 +1,4 @@
-"""Simulator 제어 API와 관제 snapshot의 공유 상태 계약."""
+"""Backend 공개 제어 API가 독립 Simulator 상태를 전달하는 계약."""
 
 from __future__ import annotations
 
@@ -12,10 +12,15 @@ from threading import Barrier
 import pytest
 from fastapi.testclient import TestClient
 
+from src.api.clients.simulator import SimulatorRevisionConflict, SimulatorUnavailable
 from src.api.core.config import Settings
 from src.api.main import create_app
 from src.api.services.quality_operations import QualityOperationsService
-from src.api.services.simulator_state import SimulatorStateService
+from src.simulator.schemas import SimulatorSettingsUpdate, SimulatorStatus
+from src.simulator.state import (
+    RevisionMismatchError,
+    SimulatorStateService,
+)
 
 
 def _base_snapshot() -> dict[str, object]:
@@ -28,7 +33,7 @@ def _base_snapshot() -> dict[str, object]:
         "capabilities": {
             "control": False,
             "faults": False,
-            "review": False,
+            "review": True,
             "deleteImages": False,
             "concurrency": [],
         },
@@ -72,52 +77,74 @@ def _base_snapshot() -> dict[str, object]:
 
 
 class _SnapshotOperations(QualityOperationsService):
-    def __init__(self, state: SimulatorStateService) -> None:
-        self._simulator_state = state
+    def __init__(self) -> None:
+        pass
 
     def snapshot(self, captured_at: datetime) -> dict[str, object]:
         del captured_at
-        return self.with_simulator_state(deepcopy(_base_snapshot()))
+        return deepcopy(_base_snapshot())
+
+
+class _FakeSimulatorClient:
+    def __init__(self) -> None:
+        self.state = SimulatorStateService()
+        self.unavailable = False
+        self.updates: list[SimulatorSettingsUpdate] = []
+
+    async def get_status(self) -> SimulatorStatus:
+        if self.unavailable:
+            raise SimulatorUnavailable("disconnected")
+        current = self.state.get_state()
+        return SimulatorStatus(
+            revision=current.revision,
+            running=current.running,
+            concurrency=current.concurrency,
+            faults=list(current.faults),
+            scope=current.scope,
+            status="healthy" if current.running else "stopped",
+            lastSeenAt=None,
+        )
+
+    async def update(self, update: SimulatorSettingsUpdate) -> SimulatorStatus:
+        if self.unavailable:
+            raise SimulatorUnavailable("disconnected")
+        self.updates.append(update)
+        try:
+            self.state.update_state(update)
+        except RevisionMismatchError as exc:
+            raise SimulatorRevisionConflict from exc
+        return await self.get_status()
 
 
 @pytest.fixture
 def client() -> TestClient:
     app = create_app(Settings())
-    app.state.quality_operations_service = _SnapshotOperations(
-        app.state.simulator_state_service
-    )
+    app.state.simulator_client = _FakeSimulatorClient()
+    app.state.quality_operations_service = _SnapshotOperations()
     with TestClient(app) as test_client:
         yield test_client
 
 
-def test_partial_updates_snapshot_and_revision_conflict(client: TestClient) -> None:
+def test_partial_update_and_revision_conflict_are_forwarded(client: TestClient) -> None:
     initial = client.get("/v1/quality/snapshot")
     assert initial.status_code == 200
-    assert initial.headers["cache-control"] == "no-store"
-    assert initial.json()["state"]["concurrency"] == 1
+    assert initial.json()["revision"] == 0
     assert initial.json()["capabilities"]["control"] is True
-    assert initial.json()["capabilities"]["concurrency"] == [1, 2, 4]
-
+    assert initial.json()["components"]["Simulator"]["status"] == "stopped"
     changed = client.put(
         "/v1/quality/simulator",
         json={"expectedRevision": 0, "concurrency": 4},
     )
     assert changed.status_code == 200
-    assert changed.headers["cache-control"] == "no-store"
     assert changed.json()["revision"] == 1
     assert changed.json()["state"]["concurrency"] == 4
-    assert changed.json()["state"]["running"] is False
-    assert changed.json()["state"]["faults"] == []
-    assert "sequence" not in changed.json()["state"]
-    assert "tick" not in changed.json()["state"]
-
+    assert client.app.state.simulator_client.updates[0].concurrency == 4
     stale = client.put(
         "/v1/quality/simulator",
         json={"expectedRevision": 0, "running": True},
     )
     assert stale.status_code == 409
     assert stale.json() == {"code": "REVISION_CONFLICT"}
-    assert stale.headers["cache-control"] == "no-store"
     assert client.get("/v1/quality/snapshot").json()["revision"] == 1
 
 
@@ -143,11 +170,11 @@ def test_other_concurrency_values_are_rejected(
     )
     assert response.status_code == 422
     assert response.json() == {"code": "INVALID_SETTINGS"}
-    assert client.get("/v1/quality/snapshot").json()["revision"] == 0
+    assert client.app.state.simulator_client.updates == []
 
 
-def test_fault_scope_and_running_are_visible_in_snapshot(client: TestClient) -> None:
-    response = client.put(
+def test_fault_scope_and_next_claim_are_owned_by_simulator(client: TestClient) -> None:
+    configured = client.put(
         "/v1/quality/simulator",
         json={
             "expectedRevision": 0,
@@ -156,18 +183,19 @@ def test_fault_scope_and_running_are_visible_in_snapshot(client: TestClient) -> 
             "scope": "NEXT",
         },
     )
-    assert response.status_code == 200
-    state = response.json()["state"]
-    assert state["running"] is True
-    assert state["faults"] == ["INFERENCE_TIMEOUT"]
-    assert state["scope"] == "NEXT"
-    assert response.json()["components"]["Simulator"]["status"] == "stopped"
-    current = client.get("/v1/quality/snapshot").json()
-    assert current["revision"] == 1
-    assert current["state"]["faults"] == ["INFERENCE_TIMEOUT"]
+    assert configured.status_code == 200
+    assert configured.json()["state"]["running"] is True
+    assert configured.json()["components"]["Simulator"]["status"] == "healthy"
+    state = client.app.state.simulator_client.state
+    assert state.claim_faults_for_inspection() == ("INFERENCE_TIMEOUT",)
+    assert state.claim_faults_for_inspection() == ()
+    snapshot = client.get("/v1/quality/snapshot").json()
+    assert snapshot["revision"] == 2
+    assert snapshot["state"]["faults"] == []
+    assert snapshot["state"]["scope"] == "NEXT"
 
 
-def test_same_revision_control_requests_have_one_winner(client: TestClient) -> None:
+def test_concurrent_controls_have_one_revision_winner(client: TestClient) -> None:
     barrier = Barrier(2)
 
     def update(running: bool) -> int:
@@ -180,73 +208,40 @@ def test_same_revision_control_requests_have_one_winner(client: TestClient) -> N
     with ThreadPoolExecutor(max_workers=2) as pool:
         statuses = list(pool.map(update, (True, False)))
     assert sorted(statuses) == [200, 409]
-    assert client.get("/v1/quality/snapshot").json()["revision"] == 1
 
 
-@pytest.mark.parametrize(
-    "field,value",
-    [("faults", ["BOGUS"]), ("scope", "OFF"), ("faults", ["DB_ERROR", "DB_ERROR"])],
-)
-def test_invalid_fault_settings_are_rejected(
-    client: TestClient, field: str, value: object
-) -> None:
+def test_unavailable_simulator_keeps_snapshot_available(client: TestClient) -> None:
+    client.app.state.simulator_client.unavailable = True
+    snapshot = client.get("/v1/quality/snapshot")
+    assert snapshot.status_code == 200
+    assert snapshot.json()["components"]["Simulator"]["status"] == "unknown"
+    assert snapshot.json()["capabilities"]["control"] is False
     response = client.put(
-        "/v1/quality/simulator", json={"expectedRevision": 0, field: value}
+        "/v1/quality/simulator", json={"expectedRevision": 0, "running": True}
     )
-    assert response.status_code == 422
-    assert response.json() == {"code": "INVALID_SETTINGS"}
+    assert response.status_code == 503
+    assert response.json() == {"code": "SIMULATOR_UNAVAILABLE"}
 
 
-def test_next_claim_is_atomic_and_increments_visible_revision(
-    client: TestClient,
-) -> None:
-    service = client.app.state.simulator_state_service
-    configured = client.put(
-        "/v1/quality/simulator",
-        json={
-            "expectedRevision": 0,
-            "faults": ["INFERENCE_TIMEOUT"],
-            "scope": "NEXT",
-        },
-    )
-    assert configured.status_code == 200
-    barrier = Barrier(2)
-
-    def claim() -> tuple[str, ...]:
-        barrier.wait()
-        return service.claim_faults_for_inspection()
-
-    with ThreadPoolExecutor(max_workers=2) as pool:
-        claimed = list(pool.map(lambda _: claim(), range(2)))
-    assert sorted(claimed) == [(), ("INFERENCE_TIMEOUT",)]
-    snapshot = client.get("/v1/quality/snapshot").json()
-    assert snapshot["revision"] == 2
-    assert snapshot["state"]["faults"] == []
-    assert snapshot["state"]["scope"] == "NEXT"
-    assert service.claim_faults_for_inspection() == ()
-    assert service.get_state().revision == 2
+def test_backend_without_internal_url_has_no_runner_or_state() -> None:
+    app = create_app(Settings())
+    assert app.state.simulator_client is None
+    assert not hasattr(app.state, "simulator_runner")
+    assert not hasattr(app.state, "simulator_state_service")
+    app.state.quality_operations_service = _SnapshotOperations()
+    with TestClient(app) as client:
+        snapshot = client.get("/v1/quality/snapshot")
+        assert snapshot.status_code == 200
+        assert snapshot.json()["components"]["Simulator"]["status"] == "unknown"
+        assert (
+            client.put(
+                "/v1/quality/simulator", json={"expectedRevision": 0, "running": True}
+            ).status_code
+            == 503
+        )
 
 
-def test_all_scope_keeps_faults_and_empty_next_is_allowed(client: TestClient) -> None:
-    service = client.app.state.simulator_state_service
-    configured = client.put(
-        "/v1/quality/simulator",
-        json={"expectedRevision": 0, "faults": ["DB_ERROR"], "scope": "ALL"},
-    )
-    assert configured.status_code == 200
-    assert service.claim_faults_for_inspection() == ("DB_ERROR",)
-    assert service.claim_faults_for_inspection() == ("DB_ERROR",)
-    assert service.get_state().revision == 1
-    empty_next = client.put(
-        "/v1/quality/simulator",
-        json={"expectedRevision": 1, "faults": [], "scope": "NEXT"},
-    )
-    assert empty_next.status_code == 200
-    assert service.claim_faults_for_inspection() == ()
-    assert service.get_state().revision == 2
-
-
-def test_shared_openapi_matches_concurrency_and_simulator_responses() -> None:
+def test_shared_openapi_keeps_public_simulator_contract() -> None:
     contract = json.loads(
         (
             Path(__file__).resolve().parents[2]
@@ -258,13 +253,4 @@ def test_shared_openapi_matches_concurrency_and_simulator_responses() -> None:
     assert settings["properties"]["concurrency"]["enum"] == [1, 2, 4]
     assert set(actual["paths"]["/v1/quality/simulator"]["put"]["responses"]) == set(
         contract["paths"]["/simulator"]["put"]["responses"]
-    )
-    assert actual["components"]["schemas"]["SimulatorSettingsUpdate"]["properties"][
-        "concurrency"
-    ]["enum"] == [1, 2, 4]
-    assert (
-        actual["components"]["schemas"]["SimulatorSettingsUpdate"]["properties"][
-            "faults"
-        ]["uniqueItems"]
-        is True
     )

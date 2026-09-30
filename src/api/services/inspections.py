@@ -12,6 +12,8 @@ import httpx
 from fastapi import UploadFile
 from pydantic import ValidationError
 
+from src.simulator.schemas import FaultType
+
 from ..clients.inference import HttpInferenceClient, MockInferenceClient
 from ..control.virtual_control import MockVirtualControl
 from ..core.datetime import utc_now
@@ -95,6 +97,9 @@ class InspectionService:
         images: list[UploadFile],
         metadata: list[InspectionImageMetadata],
         virtual_brix: float | None = None,
+        simulator_faults: tuple[FaultType, ...] = (),
+        injected_inference_reason: InspectionDecisionReason | None = None,
+        source_reference: str | None = None,
     ) -> InspectionResponse:
         """검사 요청을 판정·제어하고 가능한 결과를 DB에 기록한다."""
 
@@ -102,12 +107,15 @@ class InspectionService:
         created_at = utc_now()
         row_created = False
         persistence_status = PersistenceStatus.NOT_ATTEMPTED
-        if self._persistence is not None:
+        if "DB_ERROR" in simulator_faults:
+            persistence_status = PersistenceStatus.FAILED
+        elif self._persistence is not None:
             try:
                 await asyncio.to_thread(
                     self._persistence.create_pending,
                     self._pending_values(
                         inspection_id=inspection_id,
+                        source_reference=source_reference,
                         virtual_brix=virtual_brix,
                         sweetness_band=sweetness_band,
                         created_at=created_at,
@@ -130,8 +138,13 @@ class InspectionService:
             images=image_payloads,
             metadata=metadata,
         )
+        injected_reason = injected_inference_reason
+        if "INFERENCE_TIMEOUT" in simulator_faults:
+            injected_reason = InspectionDecisionReason.INFERENCE_DEADLINE_EXCEEDED
+        elif "INFERENCE_ERROR" in simulator_faults:
+            injected_reason = InspectionDecisionReason.INFERENCE_HTTP_ERROR
         inference_response, decision, processing_errors = await self._infer(
-            inference_request
+            inference_request, injected_reason=injected_reason
         )
 
         if (
@@ -175,8 +188,25 @@ class InspectionService:
             )
             raise
 
+        control_outcome = next(
+            (
+                status
+                for fault, status in (
+                    ("CONTROL_REJECTED", ControlStatus.REJECTED),
+                    ("CONTROL_NO_RESPONSE", ControlStatus.NO_RESPONSE),
+                    ("CONTROL_FAILED", ControlStatus.FAILED),
+                )
+                if fault in simulator_faults
+            ),
+            None,
+        )
+        control = (
+            MockVirtualControl([control_outcome, ControlStatus.SUCCEEDED])
+            if control_outcome is not None
+            else self._virtual_control
+        )
         control_result = await execute_virtual_control(
-            self._virtual_control,
+            control,
             inspection_id=inspection_id,
             target_bin_code=target_bin_code,
             reinspection_bin_code=reinspection_bin_code,
@@ -236,11 +266,39 @@ class InspectionService:
     async def _infer(
         self,
         request: InferenceRequest,
+        *,
+        injected_reason: InspectionDecisionReason | None = None,
     ) -> tuple[
         InferenceResponse | None,
         InspectionDecision,
         list[InspectionErrorRecord],
     ]:
+        if injected_reason is not None:
+            decision = (
+                decide_inference_timeout(
+                    cultivar_confidence_threshold=self._cultivar_confidence_threshold,
+                    quality_confidence_threshold=self._quality_confidence_threshold,
+                )
+                if injected_reason
+                is InspectionDecisionReason.INFERENCE_DEADLINE_EXCEEDED
+                else decide_reinspection(
+                    injected_reason,
+                    cultivar_confidence_threshold=self._cultivar_confidence_threshold,
+                    quality_confidence_threshold=self._quality_confidence_threshold,
+                    exclude_from_normal_stats=True,
+                )
+            )
+            return (
+                None,
+                decision,
+                [
+                    _error_record(
+                        component="inference",
+                        error_code=decision.reason.value,
+                        message="Simulator 장애 주입",
+                    )
+                ],
+            )
         event_loop = asyncio.get_running_loop()
         inference_started_at = event_loop.time()
         inference_task = asyncio.create_task(self._inference_client.predict(request))
@@ -433,13 +491,14 @@ class InspectionService:
         self,
         *,
         inspection_id: str,
+        source_reference: str | None,
         virtual_brix: float | None,
         sweetness_band: str | None,
         created_at: datetime,
     ) -> dict[str, object]:
         return {
             "inspection_id": inspection_id,
-            "source_reference": None,
+            "source_reference": source_reference,
             "created_at": created_at,
             "completed_at": None,
             "updated_at": created_at,
