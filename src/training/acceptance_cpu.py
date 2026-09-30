@@ -19,6 +19,10 @@ from src.training.benchmark import percentile
 from src.training.models import build_model
 
 
+# 서버컴(학원 배포 서버)의 CPU 모델명. 다른 장비 측정이 서버컴 승인으로 기록되지 않도록 판별에만 쓴다.
+SERVER_CPU_PATTERN = r'i7[-\s]*4790\b'
+
+
 def cpu_name() -> str:
     """운영체제에서 CPU 모델명을 조회한다."""
     if Path('/proc/cpuinfo').is_file():
@@ -80,10 +84,10 @@ def main() -> int:
 
     detected_cpu = cpu_name()
     memory_gib = physical_memory_bytes() / 1024**3
-    cpu_match = re.search(r'i7[-\s]*4790\b', detected_cpu, re.IGNORECASE) is not None
+    cpu_match = re.search(SERVER_CPU_PATTERN, detected_cpu, re.IGNORECASE) is not None
     ram_match = memory_gib >= 15.0
     if not args.smoke and (not cpu_match or not ram_match):
-        parser.error(f'Target must be i7-4790 / at least 15 GiB RAM; detected {detected_cpu}, {memory_gib:.2f} GiB')
+        parser.error(f'Target must be 서버컴 CPU / at least 15 GiB RAM; detected {detected_cpu}, {memory_gib:.2f} GiB')
 
     manifest_path = args.package_dir / 'model.json'
     model_path = args.package_dir / 'model.pt'
@@ -130,7 +134,7 @@ def main() -> int:
                           and one['throughput_per_second'] >= 2)
     result = dict(
         evaluation_role='model_only_cpu_acceptance',
-        target_cpu='Intel Core i7-4790', detected_cpu=detected_cpu,
+        target_cpu='서버컴', detected_cpu=detected_cpu,
         physical_memory_gib=round(memory_gib, 2), cpu_verified=cpu_match,
         memory_verified=ram_match, smoke=args.smoke,
         model_version=manifest['model_version'], checkpoint_sha256=actual_sha,

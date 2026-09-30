@@ -1,6 +1,6 @@
 {
   "evaluation_role": "model_only_cpu_acceptance",
-  "target_cpu": "Intel Core i7-4790",
+  "target_cpu": "서버컴",
   "detected_cpu": "Intel(R) Core(TM) i7-4790 CPU @ 3.60GHz",
   "physical_memory_gib": 15.5,
   "cpu_verified": true,

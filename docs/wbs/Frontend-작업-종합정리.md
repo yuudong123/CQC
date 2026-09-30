@@ -1,6 +1,6 @@
 # 프론트엔드 작업 종합 정리
 
-기준일: 2026-09-29 · 작업 위치: `cqc-logistics-platform/apps/web` · 기준: [프로젝트 기획](../project-plan.md), [WBS](../wbs.md)
+기준일: 2026-09-29 · 작업 위치: `cqc-logistics-platform/apps/web` · 기준: [프로젝트 기획](../project-plan.md), [WBS](WBS.md)
 
 ## 1. 지금 어디까지 됐나
 

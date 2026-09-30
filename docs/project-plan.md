@@ -9,7 +9,6 @@
 - 데이터: [AI Hub 농산물 품질(QC) 이미지](https://aihub.or.kr/aihubdata/data/view.do?aihubDataSe=data&dataSetSn=149&topMenu=103)
 - 프로젝트 기간: 1개월
 - 문서 상태: QC 검사·선별과 판매·물류 시연의 실행 기준. 현재 구현, 남은 통합 요구사항과 농가별·클라우드 확장 후보를 구분한다.
-- 확인 기준: `origin/dev` `1958fa5`(PR #21 FE-10, PR #22 BE-05·BE-06 포함), 현재 코드·Compose·저장된 평가 결과, 같은 날 재실행한 자동 시험(Python 218개 통과·MySQL 통합 5개 통과, 웹 31개 통과). 다른 기능 브랜치의 미병합 작업이나 서버의 현재 실행 상태는 완료 근거로 사용하지 않는다.
 
 > 이 문서를 프로젝트의 최상위 기획 기준으로 사용한다. [의사결정 기록](<planning/decision-log.md>)은 세부 결정 근거를 보존하며, 두 문서가 충돌하면 이 문서를 우선한다.
 
@@ -21,18 +20,7 @@
 
 ### 0.1 현재 진행 상태
 
-| 영역 | 확인한 구현·결과 | 남은 확인·작업 |
-|---|---|---|
-| 데이터·모델 | 25,024장·179개 사과, 사과 단위 분할, 다각도 로더·학습·추론 코드, 과정별 노트북 | 현장 데이터 일반화와 신규 독립 시험 데이터 확보 |
-| 모델 품질 | v1 최초 Test 품질 Macro F1 0.7778; v2 후보 개발 검증 품질 F1 5-fold 0.8844·source 0.7932, 재사용 Test 진단 1.0000 | v2의 독립 품질 승인과 신뢰도 재보정(현재 임계값 0.50은 v1 검증 예측 기준). 재사용 Test 점수로 승인하지 않음 |
-| 목표 CPU | i7-4790 합성 입력 모델 단독 및 별도 Compose HTTP 측정 기록 존재 | 실제 사진·동시 요청·DB·Simulator를 포함한 운영 수용시험 |
-| Backend | 검사 API·실제 Inference HTTP 호출·시간초과/지연 결과 관리·가상 제어, 12-bin migration·13개 bin seed, MySQL 저장·이력·통계·CSV와 관제 조회 API 5개(BE-05), 장애 이미지 저장 계층(BE-06) | 관제 제어·검수·장애 이미지·미리보기 API, 장애 이미지 저장 트리거, 지연 결과 DB 저장, 보존 삭제, 배포 시 migration 적용 |
-| Frontend | Next.js 품질 관제·이력·통계·장애 관리 화면, API 클라이언트·proxy·참조 서버, 12장 그룹 관제와 브라우저 자동 경매·배차 시연(FE-10) | 실제 Backend·DB·Simulator 연결과 장시간 검증. 현재 화면 구성으로 마무리 |
-| Simulator | 시연 사진 묶음·당도 CSV와 입력 계약 준비 | 실제 입력·시작/정지·위치 저장·복구 구현 및 루트 배포 연결 |
-| 물류 | 출품·입찰·배차·배송 상태 코드와 역할별 화면, Compose 구성. 정상 선별 결과를 브라우저에서 출품·입찰·배차까지 보내는 시연(FE-10) | Backend 기반 출품 연결·중복 방지와 통합 시연 검증 |
-| 통합 배포 | QC 5개·물류 3개 서비스 구성. Backend·Inference는 실제 실행 설정 | 루트 `frontend`·`simulator`는 placeholder; Jenkins 운영 트리거 확인 및 전체 흐름 시험 |
-
-이 표는 저장소와 보존된 증거의 상태다. 이번 검토에서 서버에 접속해 재배포하거나 현재 운영 상태를 재측정하지 않았다.
+작업 현황은 [ALL-03 전체 통합 현황](wbs/ALL-03.md)에만 기록한다. 이 기획서는 범위·기준·원칙을 다룬다.
 
 ### BE-07 구현 완료 갱신 (2026-09-30)
 
@@ -201,7 +189,7 @@
 
 AI Hub의 공식 촬영 설명은 여러 카메라 위치와 회전 각도로 동일 농산물을 촬영하는 구조다. CQC는 동일 `group_no`를 하나의 사과 묶음으로 사용한다. 촬영 사진 수와 모델이 사용할 대표 사진 수는 구분한다.
 
-다만 상용 장비의 촬영 프레임 수를 i7-4790 CPU가 전부 CNN으로 처리한다고 가정하지 않는다. 촬영·입력 프레임 수와 실제 모델에 투입할 대표 프레임 수를 분리한다. 공유 특징 추출기와 결합 계층을 사용하고, 대표 시점 수에 따른 품종·품질 Macro F1과 CPU 지연을 비교하여 최종 입력 장수를 정한다.
+다만 상용 장비의 촬영 프레임 수를 서버컴 CPU가 전부 CNN으로 처리한다고 가정하지 않는다. 촬영·입력 프레임 수와 실제 모델에 투입할 대표 프레임 수를 분리한다. 공유 특징 추출기와 결합 계층을 사용하고, 대표 시점 수에 따른 품종·품질 Macro F1과 CPU 지연을 비교하여 최종 입력 장수를 정한다.
 
 179개 그룹 중 175개는 40장 이상이고 나머지 4개는 8·16·21·30장이다. 원본 1000×1000 RGB 40장을 모두 디코딩하면 약 114.4MiB이므로 사진 수에 따른 메모리·처리시간을 측정해야 한다. 비교 실험 결과 서비스 기본 입력은 대표 12장으로 정했다. 기본 시연은 미리 구성한 `realtime-apple-arrival-demo`의 12장 묶음을 Simulator가 읽고 Backend가 같은 순서로 중계하는 목표 흐름이다.
 
@@ -346,7 +334,7 @@ FE 관제용 조회·통계·CSV·시연 제어·이미지 관리 계약은 [관
 - 앞으로도 시연에 필요한 단순한 규칙과 상태 전이를 우선한다. 프론트 화면 흐름에 따라 세부 동작은 조정할 수 있으나 적재 한도, 픽업 후 하차, 확인 게이트, 고장 차량 제외는 유지한다. 변경 시 API·문서·검증 기준을 함께 맞춘다.
 - 기존 WBS의 ID·담당·일정은 유지한다. 물류 상세 작업은 별도 작업 순서 문서로 관리하며 추가 담당 배정은 팀 합의로 정한다. 모델 파트는 QC 결과 계약, 백엔드는 실제 결과 전달, 프론트는 역할별 화면, MLOps는 통합 배포 경계를 검토한다.
 
-현재 루트 Compose는 QC 5개 서비스와 물류 3개 서비스(`logistics-mongodb`, `logistics-api`, `logistics-web`)로 구성된다. QC의 MySQL·Backend·Inference는 실제 실행 설정이고, 루트 `frontend`·`simulator`는 placeholder다. 웹 코드와 Dockerfile은 존재하며 `logistics-web` 배포와 QC 프론트 역할의 연결을 정리해야 한다. 전체 흐름 완료는 공동 수용시험으로 확인한다. 상세 기준: [물류 제품 범위](../cqc-logistics-platform/docs/01-product-scope.md), [작업 순서](../cqc-logistics-platform/docs/06-build-order.md).
+현재 루트 Compose는 QC 5개 서비스와 물류 3개 서비스(`logistics-mongodb`, `logistics-api`, `logistics-web`)로 구성된다. QC의 MySQL·Backend·Inference는 실제 실행 설정이고, 루트 `frontend`·`simulator`는 placeholder다. 웹 코드와 Dockerfile은 존재하며 `logistics-web` 배포와 QC 프론트 역할의 연결을 정리해야 한다. 전체 흐름 완료는 공동 수용시험으로 확인한다. 상세 기준: [물류 제품 범위](wbs/reference/LOGISTICS/01-product-scope.md), [작업 순서](wbs/reference/LOGISTICS/06-build-order.md).
 
 ## 4. 구현 기술 검토
 
@@ -388,7 +376,7 @@ FE 관제용 조회·통계·CSV·시연 제어·이미지 관리 계약은 [관
 
 서버 운영은 Jenkins의 SCM 변경 감지 후 Docker Compose 빌드·배포하는 흐름을 목표로 한다. 운영자가 설명한 방식은 **Poll SCM**이지만, 현재 저장소 `Jenkinsfile`의 트리거는 `githubPush()`이며 `pollSCM(...)` 선언은 없다. Job 화면에서 별도로 Poll SCM이 설정됐는지는 이번 검토로 확인하지 않았다. 실제 Job의 대상 브랜치·폴링 설정을 확인한 뒤 저장소 선언과 운영 문서를 맞춘다. 푸시만으로 배포 성공을 판정하지 않는다.
 
-데이터 작업 순서와 일회성 실험은 [과정별 노트북](../notebooks/README.md), 공통 학습·추론 함수는 `src/`, 원격 PS1은 `scripts/remote/`에서 관리한다.
+데이터 작업 순서와 일회성 실험은 [과정별 노트북](../notebooks/01_data_preparation.ipynb), 공통 학습·추론 함수는 `src/`, 원격 PS1은 `scripts/remote/`에서 관리한다.
 
 ## 5. 한 달 실행 계획
 
@@ -401,7 +389,7 @@ FE 관제용 조회·통계·CSV·시연 제어·이미지 관리 계약은 [관
 | 1주차 | 계약·데이터 기반 | API·상태 계약, ZIP·JSON 분석, group_no 분할, mock 화면·API, Compose 골격 | 네 파트가 고정 계약과 mock으로 독립 실행 |
 | 2주차 | 핵심 기능 구현 | 다각도 로더·기준선, 검사 오케스트레이션, DB·관리 화면, dev CI | 그룹 모델·상태 전이·이력 흐름이 독립 시험 통과 |
 | 3주차 | 모델 선정·통합 | 4·8·12·16·40장 및 단일·분리 모델 비교, 실제 inference와 전체 HTTP 흐름 연결 | simulator부터 웹·DB·가상 제어까지 연결 |
-| 4주차 | 성능·장애·발표 | i7-4790 성능, 장애 5종, 보존 정책, 재시작, CSV, 반응형 화면과 발표 검증 | 10-13 기능 동결 후 동일 버전으로 반복 시연 |
+| 4주차 | 성능·장애·발표 | 서버컴 성능, 장애 5종, 보존 정책, 재시작, CSV, 반응형 화면과 발표 검증 | 10-13 기능 동결 후 동일 버전으로 반복 시연 |
 
 ### 5.2 역할 구성
 
@@ -412,7 +400,7 @@ FE 관제용 조회·통계·CSV·시연 제어·이미지 관리 계약은 [관
 | 데이터 분석·모델 담당 | 조현재 | group_no 분석·분할, 대표 프레임 선택 규칙, 다각도 그룹 로더, 단일·분리 모델과 입력 장수 비교, 신뢰도·CPU 평가, inference API | 매니페스트, 분할 목록, 학습 코드, 모델 카드·파일, inference 계약 | 백엔드가 호출할 품종·품질 예측 서비스와 MLOps 성능 기준 |
 | 프론트엔드 담당 | 강성민 | 무스크롤 대시보드, 처리 카드, 이력·통계·CSV, 장애 이미지·오판 의심·시연 토글 화면 | 반응형 화면, API 연동, 상태·오류 UI, 프론트 기술 문서 | 백엔드 API를 사용하는 운영·관리·시연 화면 |
 | 백엔드 담당 | 홍준희 | multipart 검사 요청, inference 조정, 상태·재검사·제어 정책, MySQL·통계·CSV·이미지 생명주기 | OpenAPI, 판정 정책, DB 설계·마이그레이션, simulator·가상 제어 | 프론트 조회 API와 MLOps가 배포할 backend·simulator 서비스 |
-| MLOps·CI/CD 담당 | 홍유나 | QC 5개·물류 3개 Compose 구성, healthcheck, dev CI/CD, 모델·볼륨·로그·위치 복구, CPU 시험 환경 | Compose·CI, 배포·복구 문서, 수용시험, 모델 버전 규칙 | 네 영역을 i7-4790 환경에서 검증·실행하는 통합 기반 |
+| MLOps·CI/CD 담당 | 홍유나 | QC 5개·물류 3개 Compose 구성, healthcheck, dev CI/CD, 모델·볼륨·로그·위치 복구, CPU 시험 환경 | Compose·CI, 배포·복구 문서, 수용시험, 모델 버전 규칙 | 네 영역을 서버컴 환경에서 검증·실행하는 통합 기반 |
 
 #### 역할 경계
 
@@ -432,7 +420,7 @@ FE 관제용 조회·통계·CSV·시연 제어·이미지 관리 계약은 [관
 | M1 | 요구사항·계약 동결 | 없음 | 로컬 라벨·group_no·분할 규칙 확정 | 화면 상태·mock 응답 정의 | multipart·inference·상태·오류·DB 논리 계약 | 브랜치·Compose·CI 원칙 정의 | 네 역할의 계약과 소유 문서 합의 |
 | M2 | 독립 개발 기반 구축 | M1 | 그룹 EDA·70/15/15·5-Fold·다각도 로더 | mock 기반 반응형 대시보드·관리 화면 | mock inference API·MySQL 스키마·마이그레이션 | 5개 Compose 서비스와 feat PR·dev CI | 네 영역이 mock으로 독립 실행 |
 | M3 | 핵심 기능 구현 | M2 | 기준선·그룹 결합 모델과 지표 | 처리 카드·이력·통계·CSV UI | 상태 분리·Inference 500ms·DB·내부 가상 제어·이미지 정책 | healthcheck·모델·볼륨·배포 기반 | 핵심 기능이 영역별 시험 통과 |
-| M4 | 모델 선정·전체 흐름 연결 | M3 | 4·8·12·16·40장과 단일·분리 모델 비교, inference API | 실제 API·1초 갱신 연동 | simulator·inference·DB·제어·프론트 연결 | i7-4790 시험 환경·통합 배포 | simulator부터 웹까지 전체 흐름 작동 |
+| M4 | 모델 선정·전체 흐름 연결 | M3 | 4·8·12·16·40장과 단일·분리 모델 비교, inference API | 실제 API·1초 갱신 연동 | simulator·inference·DB·제어·프론트 연결 | 서버컴 시험 환경·통합 배포 | simulator부터 웹까지 전체 흐름 작동 |
 | M5 | 성능·장애·운영 검증 | M4 | 신뢰도·병렬 수 결정 | 무스크롤·상태·장애 5종 화면 검증 | 순환 삭제·DB 장애·지연 결과·CSV 검증 | 재시작·로그·기존 버전 유지·수용시험 | 초당 2개와 정상·장애 시나리오 반복 성공 |
 | M6 | 기능 동결·발표 준비 | M5 | 최초 Test 근거 보존·후보 승인 상태·모델 카드 | 10-13 화면 동결·발표 흐름 | OpenAPI·DB 계약 동결 | 배포·복구 절차와 발표 버전 동결 | 문서·발표·실행 버전 일치 |
 
@@ -498,7 +486,7 @@ MLOps·CI/CD: 기본 실행 환경 → 영역별 자동 검사 → 통합 배포
 
 ### 6.1.1 CPU·처리량 측정 근거
 
-[i7-4790 모델 단독 시험](wbs/reference/DM/results/i7-4790-model-only-20260923.json)은 합성 텐서 기준으로 `accepted=true`이며 순차 p95 138.50ms다. [별도 Compose HTTP 시험](wbs/reference/DM/results/i7-4790-compose-backend-inference-http-20260923.json)은 같은 합성 JPEG 12장을 반복했고 평균 166.61ms·p95 205.76ms·처리량 6.00건/초다. 모델 실행, HTTP 경로, 전체 운영 시험의 측정 범위를 구분한다.
+[서버컴 모델 단독 시험](wbs/reference/DM/results/server-model-only-20260923.json)은 합성 텐서 기준으로 `accepted=true`이며 순차 p95 138.50ms다. [별도 Compose HTTP 시험](wbs/reference/DM/results/server-compose-backend-inference-http-20260923.json)은 같은 합성 JPEG 12장을 반복했고 평균 166.61ms·p95 205.76ms·처리량 6.00건/초다. 모델 실행, HTTP 경로, 전체 운영 시험의 측정 범위를 구분한다.
 
 전체 운영 승인은 실제 시연 사진 크기·내용, 동시 요청, Simulator, 저장·관제 연결을 포함해 확인한다. 다른 CPU의 성능이나 합성 입력 성공을 현장·클라우드의 성능 보장으로 사용하지 않는다.
 
@@ -624,11 +612,11 @@ MLOps·CI/CD: 기본 실행 환경 → 영역별 자동 검사 → 통합 배포
 - 학습 데이터와 판정 이력 필드: [`data-spec.md`](<wbs/reference/DM/data-spec.md>)
 - 가상 당도 생성·검증 계획: [`virtual-brix-plan.md`](<wbs/reference/DM/virtual-brix-plan.md>)
 - 구성 요소와 연결: [`architecture.md`](<planning/architecture.md>)
-- 일정과 담당: [`wbs.md`](./wbs.md)
-- 데이터 작업 실행 순서: [과정별 노트북](../notebooks/README.md)
+- 일정과 담당: [`wbs/WBS.md`](wbs/WBS.md)
+- 데이터 작업 실행 순서: [과정별 노트북](../notebooks/01_data_preparation.ipynb)
 - 최신 통합·담당 경계: [파트별 협업 요청](wbs/협업공지/파트별-협업-요청.md)
 - 현재 화면과 남은 연동 조건: [Frontend 작업 종합 정리](wbs/Frontend-작업-종합정리.md)
 - API 계약: [Inference OpenAPI](contracts/inference-openapi.json), [관제 OpenAPI](contracts/quality-operations.openapi.json)
-- 목표 CPU 시험 증거: [i7-4790 수용시험](wbs/reference/DM/i7-4790-acceptance.md)
+- 목표 CPU 시험 증거: [서버컴 수용시험](wbs/reference/DM/server-acceptance.md)
 
 문서 간 우선순위와 충돌 처리 원칙은 [`decision-log.md`](<planning/decision-log.md>)를 따른다. 각 문서는 자신의 목적에 맞는 상세 수준을 유지하고 같은 계약을 서로 다르게 정의하지 않는다.

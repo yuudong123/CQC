@@ -1,0 +1,656 @@
+{
+ "date": "2026-09-30 12:58",
+ "target": "http://192.168.133.106:8001/v1/predict (서버컴)",
+ "bundles": 36,
+ "mean_upload_mib": 13.81,
+ "runs": {
+  "concurrency_1": {
+   "errors": [],
+   "server_throughput_per_s": 3.68,
+   "wall_throughput_per_s_from_laptop": 1.62,
+   "decode_ms": {
+    "mean": 131.1,
+    "p50": 136.4,
+    "p95": 149.1,
+    "max": 157.7,
+    "over_500ms": 0
+   },
+   "model_ms": {
+    "mean": 139.9,
+    "p50": 136.2,
+    "p95": 161.1,
+    "max": 178.1,
+    "over_500ms": 0
+   },
+   "round_trip_ms": {
+    "mean": 618.7,
+    "p50": 599.2,
+    "p95": 767.1,
+    "max": 935.7,
+    "over_500ms": 35
+   },
+   "total_ms": {
+    "mean": 271.4,
+    "p50": 273.0,
+    "p95": 308.8,
+    "max": 324.9,
+    "over_500ms": 0
+   },
+   "rows": [
+    {
+     "bundle_id": "demo-601031008000-000",
+     "round_trip_ms": 593.8454999995884,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 94.54,
+     "model_ms": 141.85,
+     "total_ms": 236.83
+    },
+    {
+     "bundle_id": "demo-601143008000-000",
+     "round_trip_ms": 586.8525999976555,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 130.65,
+     "model_ms": 136.4,
+     "total_ms": 267.42
+    },
+    {
+     "bundle_id": "demo-601141012000-000",
+     "round_trip_ms": 609.4209000002593,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 137.18,
+     "model_ms": 145.39,
+     "total_ms": 282.92
+    },
+    {
+     "bundle_id": "demo-601032015000-000",
+     "round_trip_ms": 589.1201000049477,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 137.34,
+     "model_ms": 135.26,
+     "total_ms": 273.0
+    },
+    {
+     "bundle_id": "demo-601141013000-000",
+     "round_trip_ms": 559.2973999882815,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 135.01,
+     "model_ms": 136.22,
+     "total_ms": 271.65
+    },
+    {
+     "bundle_id": "demo-601032009000-000",
+     "round_trip_ms": 560.4029000096489,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 134.38,
+     "model_ms": 132.48,
+     "total_ms": 267.25
+    },
+    {
+     "bundle_id": "demo-601142007000-000",
+     "round_trip_ms": 680.1495999970939,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 149.13,
+     "model_ms": 131.22,
+     "total_ms": 280.75
+    },
+    {
+     "bundle_id": "demo-601032016000-000",
+     "round_trip_ms": 732.6173999899765,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 157.74,
+     "model_ms": 150.13,
+     "total_ms": 308.28
+    },
+    {
+     "bundle_id": "demo-601033004000-000",
+     "round_trip_ms": 767.0533999917097,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 148.52,
+     "model_ms": 147.04,
+     "total_ms": 295.93
+    },
+    {
+     "bundle_id": "demo-601141007000-000",
+     "round_trip_ms": 626.9256999948993,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 135.73,
+     "model_ms": 172.7,
+     "total_ms": 308.82
+    },
+    {
+     "bundle_id": "demo-601143020000-000",
+     "round_trip_ms": 557.2463999997126,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 128.24,
+     "model_ms": 127.72,
+     "total_ms": 256.3
+    },
+    {
+     "bundle_id": "demo-601033003000-000",
+     "round_trip_ms": 635.7500000012806,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 144.32,
+     "model_ms": 132.46,
+     "total_ms": 277.15
+    },
+    {
+     "bundle_id": "demo-601032003000-000",
+     "round_trip_ms": 652.2939999995288,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 146.75,
+     "model_ms": 133.33,
+     "total_ms": 280.45
+    },
+    {
+     "bundle_id": "demo-601033026000-000",
+     "round_trip_ms": 570.4181000037352,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 132.71,
+     "model_ms": 137.84,
+     "total_ms": 270.9
+    },
+    {
+     "bundle_id": "demo-601033014000-000",
+     "round_trip_ms": 600.4444999998668,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 150.68,
+     "model_ms": 161.14,
+     "total_ms": 312.27
+    },
+    {
+     "bundle_id": "demo-601031016000-000",
+     "round_trip_ms": 599.2453000071691,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 109.57,
+     "model_ms": 146.32,
+     "total_ms": 256.39
+    },
+    {
+     "bundle_id": "demo-601142010000-000",
+     "round_trip_ms": 544.3186000047717,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 129.18,
+     "model_ms": 130.93,
+     "total_ms": 260.52
+    },
+    {
+     "bundle_id": "demo-601033009000-000",
+     "round_trip_ms": 640.0330000033136,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 136.79,
+     "model_ms": 133.0,
+     "total_ms": 270.18
+    },
+    {
+     "bundle_id": "demo-601142014000-000",
+     "round_trip_ms": 581.9704000023194,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 138.68,
+     "model_ms": 154.54,
+     "total_ms": 293.63
+    },
+    {
+     "bundle_id": "demo-601143015000-000",
+     "round_trip_ms": 700.2584000001661,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 146.19,
+     "model_ms": 132.89,
+     "total_ms": 279.48
+    },
+    {
+     "bundle_id": "demo-601141014000-000",
+     "round_trip_ms": 633.4254999965196,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 142.69,
+     "model_ms": 136.12,
+     "total_ms": 279.2
+    },
+    {
+     "bundle_id": "demo-601031028000-000",
+     "round_trip_ms": 610.2265999943484,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 147.76,
+     "model_ms": 130.83,
+     "total_ms": 278.98
+    },
+    {
+     "bundle_id": "demo-601033013000-000",
+     "round_trip_ms": 705.6970999983605,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 134.17,
+     "model_ms": 143.65,
+     "total_ms": 278.21
+    },
+    {
+     "bundle_id": "demo-601031010000-000",
+     "round_trip_ms": 500.85900000703987,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 94.21,
+     "model_ms": 134.07,
+     "total_ms": 228.66
+    },
+    {
+     "bundle_id": "demo-601032028000-000",
+     "round_trip_ms": 935.7356000109576,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 146.33,
+     "model_ms": 178.11,
+     "total_ms": 324.88
+    },
+    {
+     "bundle_id": "demo-601141020000-000",
+     "round_trip_ms": 586.991999996826,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 145.32,
+     "model_ms": 140.64,
+     "total_ms": 286.33
+    },
+    {
+     "bundle_id": "demo-601142004000-000",
+     "round_trip_ms": 601.5305000037188,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 136.99,
+     "model_ms": 142.67,
+     "total_ms": 280.01
+    },
+    {
+     "bundle_id": "demo-601031015000-000",
+     "round_trip_ms": 486.92169999412727,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 82.19,
+     "model_ms": 127.7,
+     "total_ms": 210.27
+    },
+    {
+     "bundle_id": "demo-601031007000-000",
+     "round_trip_ms": 583.4629000019049,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 104.81,
+     "model_ms": 146.53,
+     "total_ms": 251.75
+    },
+    {
+     "bundle_id": "demo-601143013000-000",
+     "round_trip_ms": 637.107599992305,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 132.75,
+     "model_ms": 144.03,
+     "total_ms": 277.11
+    },
+    {
+     "bundle_id": "demo-601141009000-000",
+     "round_trip_ms": 788.4989000012865,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 141.0,
+     "model_ms": 126.46,
+     "total_ms": 267.86
+    },
+    {
+     "bundle_id": "demo-601143028000-000",
+     "round_trip_ms": 583.0676000041422,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 136.45,
+     "model_ms": 136.22,
+     "total_ms": 273.02
+    },
+    {
+     "bundle_id": "demo-601031011000-000",
+     "round_trip_ms": 551.4255000016419,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 103.01,
+     "model_ms": 128.5,
+     "total_ms": 231.93
+    },
+    {
+     "bundle_id": "demo-601141006000-000",
+     "round_trip_ms": 581.2686999997823,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 128.5,
+     "model_ms": 137.06,
+     "total_ms": 266.04
+    },
+    {
+     "bundle_id": "demo-601031005000-000",
+     "round_trip_ms": 567.4200999928871,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 117.8,
+     "model_ms": 133.54,
+     "total_ms": 251.7
+    },
+    {
+     "bundle_id": "demo-601031014000-000",
+     "round_trip_ms": 532.6702000020305,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 102.36,
+     "model_ms": 131.16,
+     "total_ms": 233.9
+    }
+   ]
+  },
+  "concurrency_2": {
+   "errors": [],
+   "server_throughput_per_s": null,
+   "wall_throughput_per_s_from_laptop": 2.21,
+   "decode_ms": {
+    "mean": 175.9,
+    "p50": 177.8,
+    "p95": 225.2,
+    "max": 243.2,
+    "over_500ms": 0
+   },
+   "model_ms": {
+    "mean": 237.9,
+    "p50": 242.4,
+    "p95": 294.7,
+    "max": 387.4,
+    "over_500ms": 0
+   },
+   "round_trip_ms": {
+    "mean": 891.3,
+    "p50": 839.5,
+    "p95": 1403.5,
+    "max": 1548.6,
+    "over_500ms": 36
+   },
+   "total_ms": {
+    "mean": 415.5,
+    "p50": 429.7,
+    "p95": 528.1,
+    "max": 621.5,
+    "over_500ms": 3
+   },
+   "rows": [
+    {
+     "bundle_id": "demo-601031008000-000",
+     "round_trip_ms": 1098.4991000004811,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 146.46,
+     "model_ms": 266.94,
+     "total_ms": 413.85
+    },
+    {
+     "bundle_id": "demo-601143008000-000",
+     "round_trip_ms": 1259.035600000061,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 153.61,
+     "model_ms": 207.9,
+     "total_ms": 362.24
+    },
+    {
+     "bundle_id": "demo-601141012000-000",
+     "round_trip_ms": 791.933299988159,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 186.48,
+     "model_ms": 239.66,
+     "total_ms": 438.84
+    },
+    {
+     "bundle_id": "demo-601032015000-000",
+     "round_trip_ms": 1046.5573999972548,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 202.87,
+     "model_ms": 271.26,
+     "total_ms": 476.92
+    },
+    {
+     "bundle_id": "demo-601141013000-000",
+     "round_trip_ms": 616.1493000108749,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 157.49,
+     "model_ms": 178.07,
+     "total_ms": 335.87
+    },
+    {
+     "bundle_id": "demo-601032009000-000",
+     "round_trip_ms": 1440.31749998976,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 165.07,
+     "model_ms": 352.46,
+     "total_ms": 528.93
+    },
+    {
+     "bundle_id": "demo-601142007000-000",
+     "round_trip_ms": 839.4757999922149,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 200.78,
+     "model_ms": 279.19,
+     "total_ms": 482.52
+    },
+    {
+     "bundle_id": "demo-601032016000-000",
+     "round_trip_ms": 963.2778999948641,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 225.15,
+     "model_ms": 387.36,
+     "total_ms": 621.55
+    },
+    {
+     "bundle_id": "demo-601033004000-000",
+     "round_trip_ms": 840.7858999999007,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 177.81,
+     "model_ms": 232.39,
+     "total_ms": 411.54
+    },
+    {
+     "bundle_id": "demo-601141007000-000",
+     "round_trip_ms": 691.9275999971433,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 174.53,
+     "model_ms": 176.9,
+     "total_ms": 352.1
+    },
+    {
+     "bundle_id": "demo-601143020000-000",
+     "round_trip_ms": 1403.5467999929097,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 167.89,
+     "model_ms": 182.85,
+     "total_ms": 351.02
+    },
+    {
+     "bundle_id": "demo-601033003000-000",
+     "round_trip_ms": 804.1719000029843,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 192.35,
+     "model_ms": 261.49,
+     "total_ms": 454.17
+    },
+    {
+     "bundle_id": "demo-601032003000-000",
+     "round_trip_ms": 883.2625999930315,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 211.66,
+     "model_ms": 280.47,
+     "total_ms": 496.09
+    },
+    {
+     "bundle_id": "demo-601033026000-000",
+     "round_trip_ms": 988.5286000062479,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 161.55,
+     "model_ms": 251.14,
+     "total_ms": 413.13
+    },
+    {
+     "bundle_id": "demo-601033014000-000",
+     "round_trip_ms": 778.5773999930825,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 196.88,
+     "model_ms": 252.87,
+     "total_ms": 450.2
+    },
+    {
+     "bundle_id": "demo-601031016000-000",
+     "round_trip_ms": 680.8773000084329,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 130.03,
+     "model_ms": 204.52,
+     "total_ms": 334.88
+    },
+    {
+     "bundle_id": "demo-601142010000-000",
+     "round_trip_ms": 727.2913000051631,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 190.63,
+     "model_ms": 277.64,
+     "total_ms": 470.25
+    },
+    {
+     "bundle_id": "demo-601033009000-000",
+     "round_trip_ms": 780.3213000006508,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 171.76,
+     "model_ms": 213.71,
+     "total_ms": 385.82
+    },
+    {
+     "bundle_id": "demo-601142014000-000",
+     "round_trip_ms": 829.8893999890424,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 203.55,
+     "model_ms": 287.39,
+     "total_ms": 493.02
+    },
+    {
+     "bundle_id": "demo-601143015000-000",
+     "round_trip_ms": 889.2333999974653,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 203.48,
+     "model_ms": 225.79,
+     "total_ms": 429.71
+    },
+    {
+     "bundle_id": "demo-601141014000-000",
+     "round_trip_ms": 861.6225000005215,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 232.83,
+     "model_ms": 294.73,
+     "total_ms": 528.07
+    },
+    {
+     "bundle_id": "demo-601031028000-000",
+     "round_trip_ms": 779.4009000062943,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 170.12,
+     "model_ms": 213.55,
+     "total_ms": 384.3
+    },
+    {
+     "bundle_id": "demo-601033013000-000",
+     "round_trip_ms": 726.7953999980818,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 193.06,
+     "model_ms": 242.44,
+     "total_ms": 436.07
+    },
+    {
+     "bundle_id": "demo-601031010000-000",
+     "round_trip_ms": 731.8419000075664,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 111.98,
+     "model_ms": 214.15,
+     "total_ms": 326.56
+    },
+    {
+     "bundle_id": "demo-601032028000-000",
+     "round_trip_ms": 842.7563000004739,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 194.45,
+     "model_ms": 276.41,
+     "total_ms": 471.55
+    },
+    {
+     "bundle_id": "demo-601141020000-000",
+     "round_trip_ms": 799.8774000006961,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 158.74,
+     "model_ms": 177.56,
+     "total_ms": 336.64
+    },
+    {
+     "bundle_id": "demo-601142004000-000",
+     "round_trip_ms": 826.517800000147,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 204.53,
+     "model_ms": 258.03,
+     "total_ms": 463.13
+    },
+    {
+     "bundle_id": "demo-601031015000-000",
+     "round_trip_ms": 734.0000999975018,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 96.25,
+     "model_ms": 176.95,
+     "total_ms": 273.82
+    },
+    {
+     "bundle_id": "demo-601031007000-000",
+     "round_trip_ms": 672.9538000072353,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 115.84,
+     "model_ms": 164.91,
+     "total_ms": 281.06
+    },
+    {
+     "bundle_id": "demo-601143013000-000",
+     "round_trip_ms": 1548.6011000029976,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 188.46,
+     "model_ms": 210.73,
+     "total_ms": 399.78
+    },
+    {
+     "bundle_id": "demo-601141009000-000",
+     "round_trip_ms": 861.266699997941,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 243.19,
+     "model_ms": 249.19,
+     "total_ms": 493.06
+    },
+    {
+     "bundle_id": "demo-601143028000-000",
+     "round_trip_ms": 1094.3065999890678,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 176.53,
+     "model_ms": 197.35,
+     "total_ms": 374.39
+    },
+    {
+     "bundle_id": "demo-601031011000-000",
+     "round_trip_ms": 924.0518000005977,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 210.27,
+     "model_ms": 244.8,
+     "total_ms": 455.75
+    },
+    {
+     "bundle_id": "demo-601141006000-000",
+     "round_trip_ms": 961.0218000016175,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 154.57,
+     "model_ms": 186.69,
+     "total_ms": 341.69
+    },
+    {
+     "bundle_id": "demo-601031005000-000",
+     "round_trip_ms": 789.2074000119464,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 159.8,
+     "model_ms": 287.06,
+     "total_ms": 447.42
+    },
+    {
+     "bundle_id": "demo-601031014000-000",
+     "round_trip_ms": 578.3807000116212,
+     "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+     "decode_ms": 102.07,
+     "model_ms": 139.94,
+     "total_ms": 242.36
+    }
+   ]
+  }
+ },
+ "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+ "note": "배포된 dev(보정 패키지, 병렬 사진 해제)에 노트북에서 실제 시연 사진 36묶음을 보냈다. decode·model·total은 서버 Server-Timing(추론 함수 내부), round_trip은 노트북 업로드 포함이라 수용 판단에 쓰지 않는다. 읽기 전용 추론 호출만 했다."
+}

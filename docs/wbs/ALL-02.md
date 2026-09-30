@@ -1,12 +1,12 @@
 # ALL-02 독립 실행 점검 및 통합 기록
 
-- 기준일: 2026-09-23 (2026-09-29 dev `1958fa5` 기준 갱신 절 추가)
+- 기준일: 2026-09-23 (당시 기록. 현재 현황은 [ALL-03](ALL-03.md))
 - 상태: 점검 기록 작성, 독립 실행 전체 완료 미확인
 - WBS의 ID·담당·일정은 변경하지 않는다.
 
 ## 문서 구조 정리 (2026-09-23)
 
-- 문서 진입점은 [docs 안내](../README.md)로 통일한다.
+- 문서 진입점은 [docs 안내](README.md)로 통일한다.
 - 기획 기준은 `docs/planning/`, 작업 부속 명세는 `docs/wbs/reference/<파트>/`로 분류했다.
 - 검증 JSON은 `docs/wbs/results/`, 공유 공지는 `docs/wbs/협업공지/`에 모았다.
 - 24개 문서를 이동하고 내용은 보존했다. 루트에 작업 요약 파일을 추가하지 않는다.
@@ -35,28 +35,6 @@
 - 기존 27개 Test 재평가는 회귀 비교이며 독립적인 최종 승인에는 신규 holdout이 필요하다.
 - 가상 당도 결합보다 이미지 단독의 개발 강건 점수가 높아 이미지 단독을 최종 학습 후보로 기록했다.
 
-## 2026-09-29 갱신: 코드별 문서와 통합 잔여
-
-아래 09-23 기록은 보존하고, 현재 상태는 이 절을 따른다.
-
-| 파트 | dev의 작업 문서 | 비고 |
-|---|---|---|
-| DM | DM-01~09 | v2 후보는 미승인·신뢰도 미보정 |
-| MO | MO-01~06 | MO-07 이후 작업 기록은 없음 |
-| BE | BE-01~05 | BE-06 코드는 병합됐고 문서는 없음 |
-| FE | FE-01~10, Frontend 작업 종합 정리 | PR #18·#21 병합 |
-
-| 항목 | 현재 상태 | 완료 조건 |
-|---|---|---|
-| 실제 QC → 물류 | 브라우저 탭이 정상 선별 결과를 물류 API로 출품·입찰·배차하는 시연(FE-10) | Backend 기반 출품·중복 방지, 통합 시연 시험 |
-| 가상 당도 표시 | Backend 응답 `brix_is_measured=false`, FE 이력 화면 "가상 °Brix (비실측)" 표시, 14°Brix 구간 | 실제 Simulator 입력으로 확인 |
-| QC Compose | mysql·inference·backend는 실제 설정, frontend·simulator는 placeholder | FE Dockerfile 연결, Simulator 구현 |
-| CI | Jenkins는 Compose 검사·빌드·기동·health 확인. pytest·웹 테스트 단계 없음 | 파트 테스트 단계와 실패 시 이전 버전 유지 |
-| QC 프론트 | FE-01~10 구현, 자동 시험 31개 통과 | 실제 Backend 연결과 장시간 시험 |
-| QC Backend | 저장·이력·통계·CSV와 관제 조회 API 5개, 장애 이미지 저장 계층 | 관제 제어·검수·이미지 API, Simulator, 배포 시 migration 적용 |
-| CPU 성능 | i7-4790 합성 입력 모델 단독·Compose HTTP 측정 | 실제 시연 사진·Simulator·DB 포함 측정 |
-| 최종 모델 | v2 후보 패키지·체크섬·HTTP 계약 | v2 신뢰도 보정·임계값 재결정, 독립 holdout 부재를 한계로 명시 |
-
 ## 통합 잔여 작업 (2026-09-23 기록)
 
 | 항목 | 현재 확인 상태 | 완료 조건 |
@@ -67,57 +45,7 @@
 | CI | 구조 검사·기동 검사 중심 | 파트 테스트와 dev 배포 조건 반영, 실제 Job 설정 확인 |
 | QC 프론트 | 확인한 저장소에서 구현 미확인 | 담당자 최신 작업 반영 후 mock 독립 실행 |
 | QC Backend | origin/dev에 BE-01~04 mock 정책·DB 스키마 통합 | 실제 HTTP·DB·조회·Simulator 연결 |
-| CPU 성능 | i7-4790 시험 스크립트 존재 | 목표 장비에서 실제 측정 |
+| CPU 성능 | 서버컴 시험 스크립트 존재 | 목표 장비에서 실제 측정 |
 | 최종 모델 | 4 epoch 완료·후보 패키지·체크섬·HTTP 계약 검증 완료(DM-09·07) | 독립 평가 자료 확보·신뢰도 검증·목표 CPU 시험 |
 
 기능 구현이 없는 항목은 문서 수정으로 완료 처리하지 않는다. 다른 파트의 mock을 임의의 서비스로 바꾸거나 API 응답에 새 필드를 강제로 추가하지 않고, 해당 구현과 계약 검증 단계에서 처리한다. 이번 작업은 학습 프로세스를 변경하거나 Test를 실행하지 않았다.
-
-
-## 기준 문서의 역할 및 미결정 사항
-
-
-## 기준 문서
-
-| 문서 | 목적 | 현재 상태 | 다음 갱신 조건 |
-|---|---|---|---|
-| `project-plan.md` | 프로젝트 배경, 데이터 조사, 범위와 실행 원칙 | 고도화 합의 반영 | 범위·성능 정책 변경 시 |
-| `docs/planning/requirements.md` | 기능·비기능 요구와 수용 기준 | 고도화 합의 반영 | API·화면 계약 변경 시 |
-| `docs/wbs/reference/DM/data-spec.md` | 원본 데이터, 그룹 분할, 모델·MySQL 논리 명세 | 로컬 데이터 확인 결과 반영 | 백엔드 물리 DB 설계 완료 시 |
-| `docs/planning/architecture.md` | HTTP 서비스, 상태, 저장·배포 구조 | 고도화 합의 반영 | 파트별 기술 스택 확정 시 |
-| `wbs.md` | 09-16~10-16 역할별 일정·의존성·완료 조건 | 전면 개정 완료 | 실제 진행 지연·범위 변경 시 |
-| `docs/planning/decision-log.md` | 기획 인터뷰 확정 사항 | 최신 | 새 결정 즉시 |
-| `docs/wbs/reference/BE/backend-stack.md` | Backend 기술 선택·버전·실행법 | FastAPI·MySQL·HTTP 기초 합의 반영 | 세부 라이브러리·버전 선정 시 |
-| `docs/wbs/reference/DM/model-stack.md` | 데이터·모델 기술 선택·실행법 | 구현·평가 결과 반영 | v2 결과와 i7-4790 수용시험 완료 시 |
-| `docs/wbs/reference/FE/frontend-stack.md` | Frontend 기술 선택·실행법 | 작성됨(2026-09-29) | 실제 Backend 연결 시 |
-| `docs/wbs/reference/MO/mlops-stack.md` | MLOps 기술 선택·실행법 | MO-01~05와 현재 통합 기반 반영 | QC 5개와 물류 3개 서비스 통합 시 |
-
-## 확정 사항
-
-- 프로젝트명: CQC
-- 프로젝트 기간: 2026-09-16~2026-10-16
-- MVP: 부사·양광의 품종과 특·상·보통 품질 판정
-- 입력 단위: 동일 `group_no`의 다각도 사과 그룹
-- 입력 방식: Simulator 전용, 그룹당 각도 기준 대표 12장 전송
-- 데이터 분할: seed 42, 그룹 층화 70/15/15, 5-Fold Group CV
-- 입력 장수 실험: 4·8·12·16·40장
-- 처리 목표: 500ms 간격 입력과 초당 사과 그룹 2개, Inference HTTP 구간 500ms, 가상 제어 100ms
-- 서비스: QC 5개와 logistics-mongodb·logistics-api·logistics-web, Kafka 제외
-- 데이터베이스: MySQL 검사 이력·통계, MongoDB 거래·배송 상태
-- 기능 동결: 2026-10-13
-- 담당: 조현재(DM), 강성민(FE), 홍준희(BE), 홍유나(MO)
-
-## 담당자 작성 문서
-
-| 문서 | 담당자 | 작성할 핵심 내용 |
-|---|---|---|
-| `docs/wbs/reference/DM/model-stack.md` | 조현재 | 프레임워크, 그룹 모델, 전처리, CPU 최적화, 실행법 |
-| `docs/wbs/reference/BE/backend-stack.md` | 홍준희 | FastAPI 세부 라이브러리·버전, OpenAPI, 오류 코드, MySQL 물리 설계, 마이그레이션 |
-| `docs/wbs/reference/FE/frontend-stack.md` | 강성민 | 프레임워크, 차트, 화면 상태, 빌드·테스트 |
-| `docs/wbs/reference/MO/mlops-stack.md` | 홍유나 | Compose, dev CI/CD, healthcheck, 볼륨·로그·복구 |
-
-## 남은 결정
-
-- v2 품질 승인 여부와 신규 독립 holdout 확보 방식
-- i7-4790 실측에 따른 최종 병렬 처리 수
-- 최종 대시보드 차트 종류
-- 두 번째 농산물 품목 확장 여부

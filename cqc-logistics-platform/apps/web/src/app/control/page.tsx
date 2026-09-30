@@ -10,6 +10,7 @@ import {
   Progress,
   Stats,
 } from "@/components/Dashboard";
+import { logisticsFetch, logisticsLive } from "@/lib/logistics-client";
 
 type Point = { type: "Point"; coordinates: [number, number] };
 type Fleet = {
@@ -54,8 +55,6 @@ type Overview = {
     attentionRequired: number;
   };
 };
-const apiUrl =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
 const statusLabel = (status: string) =>
   ({
     IDLE: "대기",
@@ -96,7 +95,7 @@ export default function ControlPage() {
 
   const loadOverview = useCallback(async (signal?: AbortSignal) => {
     try {
-      const response = await fetch(`${apiUrl}/control/overview`, {
+      const response = await logisticsFetch("/control/overview", {
         cache: "no-store",
         signal,
       });
@@ -134,7 +133,7 @@ export default function ControlPage() {
   async function action(path: string, success: string) {
     setBusy(true);
     try {
-      const response = await fetch(`${apiUrl}${path}`, { method: "POST" });
+      const response = await logisticsFetch(path, { method: "POST" });
       const result = (await response.json().catch(() => null)) as {
         detail?: string;
       } | null;
@@ -179,7 +178,7 @@ export default function ControlPage() {
       />
       <div className="control-toolbar">
         <Badge tone={connected ? "success" : "warning"}>
-          {connected ? "● 실시간 연결" : "서버 연결 대기"}
+          {connected ? (logisticsLive ? "● 실시간 연결" : "● 시연용 가상 물류") : "서버 연결 대기"}
         </Badge>
         <span className="muted">
           {connected

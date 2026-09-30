@@ -162,6 +162,9 @@ services:
     # 서비스 비정상 종료 시 자동 재시작
     restart: unless-stopped
 
+    # DB 마이그레이션 적용 후 Backend 실행
+    command: ["sh", "-c", "alembic upgrade head && python -m src.api.main"]
+
     # ==========================================================
     # MO-04 기동 의존성
     # ==========================================================
@@ -177,6 +180,14 @@ services:
       INFERENCE_CLIENT_MODE: ${INFERENCE_CLIENT_MODE:-http}
       INFERENCE_URL: ${INFERENCE_URL:-http://inference:8001/v1/predict}
       DATABASE_URL: ${DATABASE_URL:-mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}}
+      FAULT_IMAGE_STORAGE_ROOT: /data/fault-images
+      # DM-08 v2 보정 모델(cal-20260930) 기준 신뢰도 임계값. 보정 전 model.json에서는 품질 0.60을 쓰지 않는다.
+      CULTIVAR_CONFIDENCE_THRESHOLD: ${CULTIVAR_CONFIDENCE_THRESHOLD:-0.50}
+      QUALITY_CONFIDENCE_THRESHOLD: ${QUALITY_CONFIDENCE_THRESHOLD:-0.60}
+
+    # 장애 이미지 저장
+    volumes:
+      - fault_images:/data/fault-images
 
     ports:
       - "${BACKEND_PORT:-8000}:8000"
@@ -343,3 +354,4 @@ services:
 volumes:
   mysql_data:
   logistics_mongodb_data:
+  fault_images:

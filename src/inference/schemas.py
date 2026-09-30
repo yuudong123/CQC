@@ -14,6 +14,12 @@ class HealthResponse(BaseModel):
     model_version: str
     device: str
     views: int = Field(ge=1)
+    approval_status: str = Field(default="unknown", examples=["unverified_candidate"])
+    threshold_status: str = Field(default="unknown", examples=["not_calibrated"])
+    checkpoint_sha256: str = ""
+    quality_temperature: float = Field(default=1.0, gt=0)
+    cultivar_temperature: float = Field(default=1.0, gt=0)
+    decode_workers: int = Field(default=1, ge=1)
 
 
 class PredictionResponse(BaseModel):

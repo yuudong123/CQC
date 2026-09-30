@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
 import { useQualityConnection } from "./useQualityConnection";
 import { advanceTask, collectBatches, DEMO_LOT_LIMIT, type DemoTask } from "@/lib/auction-demo";
 import type { Result } from "@/lib/quality-runtime";
+import { logisticsFetch } from "@/lib/logistics-client";
 type Demo = { connection: ReturnType<typeof useQualityConnection>; enabled: boolean; count: number; buffered: number; events: string[]; error: string; toggle: () => void };
 const Context = createContext<Demo | null>(null);
 export function useDemo() {
@@ -38,7 +39,7 @@ export default function DemoProvider({ mode, children }: { mode: "demo" | "api";
     let disposed = false;
     const controller = new AbortController();
     async function api<T>(path: string, body?: unknown): Promise<T> {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1"}${path}`, {
+      const response = await logisticsFetch(path, {
         method: body === undefined ? "GET" : "POST", cache: "no-store", headers: { "Content-Type": "application/json" },
         ...(body === undefined ? {} : { body: JSON.stringify(body) }),
         signal: AbortSignal.any([controller.signal, AbortSignal.timeout(8000)]),

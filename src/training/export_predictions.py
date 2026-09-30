@@ -1,4 +1,7 @@
-"""신뢰도 기준을 검토할 수 있도록 검증 사과별 정답·예측·확률을 내보낸다."""
+"""신뢰도 기준을 검토할 수 있도록 검증 사과별 정답·예측·확률과 logits를 내보낸다.
+
+logits 열(``cultivar_logit_*``, ``quality_logit_*``)은 ``src.training.calibration``의 temperature 적합에 쓴다.
+"""
 
 from __future__ import annotations
 
@@ -53,8 +56,10 @@ def main(argv: list[str] | None = None) -> int:
         with torch.inference_mode():
             for batch in loader:
                 output = model(batch["images"].to(device), batch["view_mask"].to(device))
-                cultivar = output["cultivar_logits"].softmax(dim=1)[0].cpu()
-                quality = output["quality_logits"].softmax(dim=1)[0].cpu()
+                cultivar_logits = output["cultivar_logits"][0].cpu()
+                quality_logits = output["quality_logits"][0].cpu()
+                cultivar = cultivar_logits.softmax(dim=0)
+                quality = quality_logits.softmax(dim=0)
                 cultivar_prediction = int(cultivar.argmax())
                 quality_prediction = int(quality.argmax())
                 rows.append(
@@ -67,6 +72,15 @@ def main(argv: list[str] | None = None) -> int:
                         "quality_target": QUALITY_CLASSES[int(batch["quality_target"][0])],
                         "quality_prediction": QUALITY_CLASSES[quality_prediction],
                         "quality_confidence": float(quality[quality_prediction]),
+                        "checkpoint_epoch": int(checkpoint["epoch"]),
+                        **{
+                            f"cultivar_logit_{name}": float(value)
+                            for name, value in zip(CULTIVAR_CLASSES, cultivar_logits)
+                        },
+                        **{
+                            f"quality_logit_{name}": float(value)
+                            for name, value in zip(QUALITY_CLASSES, quality_logits)
+                        },
                     }
                 )
     finally:

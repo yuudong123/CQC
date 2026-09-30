@@ -69,4 +69,19 @@ FE는 위 API 호출까지 구현되어 있어 다른 파트 완료 후 주소�
 
 PR #18이 dev `2fa187b`에 병합됐다. MLOps는 기존 `cqc-logistics-platform/apps/web/Dockerfile`을 루트 Compose의 frontend placeholder 대신 연결하고 포트 3000·healthcheck를 구성한다. `CQC_QUALITY_MODE=api`, `CQC_QUALITY_BACKEND_URL=http://backend:8000`을 서버 실행 환경에 제공한다. 2026-09-29 BE-05 병합으로 Backend에 조회 계약 5개(`snapshot`, `inspections`, `inspections.csv`, `statistics`, `statistics.csv`)가 구현됐다. 시연 제어(`PUT /simulator`), 검수(`PATCH /inspections/{id}/review`), 장애 이미지(`/fault-images`), 미리보기(`/previews/{id}`) 4개는 아직 Backend에 없으므로 해당 화면 기능은 API 모드에서 동작하지 않는다.
 
-참조 서버는 별도 개발/계약 검증용이다. 실제 Backend·Inference Compose 및 i7-4790 합성 입력 측정은 이미 존재하므로 이를 재구현 대상으로 요청하지 않는다. 실제 DB·Simulator 연결과 실제 사진 기반 통합시험은 남아 있다.
+참조 서버는 별도 개발/계약 검증용이다. 실제 Backend·Inference Compose 및 서버컴 합성 입력 측정은 이미 존재하므로 이를 재구현 대상으로 요청하지 않는다. 실제 DB·Simulator 연결과 실제 사진 기반 통합시험은 남아 있다.
+
+## 2026-09-30 BE-06 개별 장애 이미지 계약 반영
+
+Backend PR #24가 포함된 dev `b0b08dd`의 OpenAPI를 기준으로 FE를 수정했다.
+
+- `/fault-images`는 별도로 조회하며 한 항목은 사진 한 장이다. id는 이미지 ID, inspectionId는 검사 ID, imageIndex는 입력 view_index다.
+- preview/delete는 이미지 ID를 사용한다. 오판 의심 지정은 inspectionId로 요청한다. snapshot.state.images는 기존 검사 단위 Result[]를 유지하며 이미지 목록으로 사용하지 않는다.
+- 전체 삭제도 확인 창을 열 때의 이미지 ID 목록만 보낸다. 서버가 삭제를 확인한 ID만 우선 반영하고 목록을 다시 조회한다. 삭제 실패로 남은 항목은 경고하며 신규 도착 사진은 보존한다.
+- 표시 장수는 API 모드에서 retention.images를 사용한다. 최대 보존 한도 100장과 실제 장수를 구분하며 capabilities.deleteImages가 허용한 경우에만 삭제한다.
+- 브라우저 demo와 reference 서버도 검사 기록과 개별 이미지 목록을 분리했다. 추론 오류/시간초과 검사의 각 시연 view를 개별 항목으로 보관하며 100장 초과 시 오래된 사진부터 제거한다. 참조 모드의 원본 시연 자산은 공유 정적 파일이므로 목록/접근권 만료를 재현하며 원본 파일을 지우지 않는다.
+- 기존 계약 schema는 Backend 변경을 그대로 사용한다. 프론트에서 Backend OpenAPI를 다시 정의하거나 덮어쓰지 않았다.
+
+검증: FE 자동 시험 33개 통과. 개별 삭제 후 같은 검사 나머지 view·이력 보존, 확인 후 새 이미지 보호, 100장 순환, preview 만료, 실제 보존 장수, Backend OpenAPI 응답 검증 포함. 실제 배포 Backend의 파일 시스템을 대상으로 한 브라우저 통합시험은 별도 확인이 필요하다.
+
+조회 실패 격리: `/fault-images` 실패는 snapshot 반영을 막지 않는다. FE는 두 요청을 병렬로 보내고 이미지 목록 오류는 장애 이미지 창에만 표시한다. 배포 시 Backend `FAULT_IMAGE_STORAGE_ROOT` Volume이 없으면 목록은 계속 503이므로 MO-05 설정이 필요하다.
