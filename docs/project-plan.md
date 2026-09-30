@@ -318,7 +318,7 @@ QC 이력 보존 목표는 상한 86,400건 도달 시 오래된 8,640건 삭제
 
 현재 요청 경로는 Backend의 `POST /v1/inspections`, Inference의 `POST /v1/predict`다. `virtual_brix`는 Backend 분기용 보조 값이며 현재 이미지 단독 Inference의 모델 입력이 아니다. 가상 당도의 출처·비실측 표시와 묶음 연결은 별도 인계 계약으로 유지한다.
 
-품질 코드는 `L=특`, `M=상`, `S=보통`이다. Backend는 클래스 인덱스를 추측하지 않고 응답의 라벨별 확률을 사용한다. Inference는 예측·진단을 반환하고 저신뢰·시간초과·bin·DB·제어 정책은 Backend가 적용한다. 검사·제어·저장 상태는 각각 구분한다. 지연 결과는 현재 메모리에서 관리하며, 확정된 제어 명령을 바꾸지 않고 DB 진단으로 저장하는 연결은 남아 있다.
+품질 코드는 `L=특`, `M=상`, `S=보통`이다. Backend는 클래스 인덱스를 추측하지 않고 응답의 라벨별 확률을 사용한다. Inference는 예측·진단을 반환하고 저신뢰·시간초과·bin·DB·제어 정책은 Backend가 적용한다. 검사·제어·저장 상태는 각각 구분한다. 늦은 응답은 제한된 task에서 수집해 기존 검사 행의 진단 필드에 별도 저장하며, 확정된 판정·bin·제어·통계는 변경하지 않는다. DB 장애나 Backend 재시작 시 진단 결과 유실은 허용한다.
 
 FE 관제용 조회·통계·CSV·시연 제어·이미지 관리 계약은 [관제 API 인계](wbs/협업공지/Frontend-관제-API-계약-인계.md)와 [관제 OpenAPI](contracts/quality-operations.openapi.json)를 따른다. 기존 검사 API와 별도다. Backend에는 조회 5개(`snapshot`, `inspections`, `inspections.csv`, `statistics`, `statistics.csv`)가 구현됐고 제어·검수·장애 이미지·미리보기 4개는 남아 있다.
 
@@ -599,7 +599,7 @@ MLOps·CI/CD: 기본 실행 환경 → 영역별 자동 검사 → 통합 배포
 | 모델 성능 승인값 | 확정 | 품종·품질 Macro F1 각각 0.90 이상 |
 | 이미지 형식·파일/요청 크기·허용 프레임 수 | 확정 | PNG/JPEG, 1~12장, multipart 합계 24MiB |
 | 상태·오류·OpenAPI | 검사 계약·상태 Enum과 FE 관제 계약, Backend 조회 API 5개 구현 | 제어·검수·이미지 API 구현과 공동 검증 |
-| late result 처리 | 제한된 메모리 추적·hard timeout 구현 | 확정 제어 유지, 진단 DB 저장 연결 |
+| late result 처리 | 제한된 메모리 추적·hard timeout과 진단 DB 저장 구현 | 실제 Inference·MySQL 수직 통합 검증 |
 | Simulator·FE 통합 배포 | 루트 Compose에서 두 서비스 placeholder | Simulator 구현·볼륨과 기존 웹 컨테이너의 역할 연결 |
 | Jenkins 운영 트리거 | 사용자 설명 Poll SCM, 저장소는 githubPush 선언 | 실제 Job 대상 브랜치·폴링 설정 확인 후 일치시킴 |
 | 농가별·클라우드 확장 | 향후 검토, 현재 MVP에 미포함 | 장치 인증·데이터 분리·현장 표본·설비 제약·서버 용량·비용 |

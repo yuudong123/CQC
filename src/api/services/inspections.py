@@ -34,6 +34,7 @@ from ..schemas.inspection_results import (
     PersistenceStatus,
 )
 from ..schemas.inspections import InspectionImageMetadata
+from ..schemas.late_results import LateInferenceResult
 from .bin_policy import DEMO_SWEETNESS_THRESHOLD_BRIX
 from .control_policy import execute_virtual_control
 from .fault_image_storage import FaultImage, FaultImageStorage
@@ -307,10 +308,14 @@ class InspectionService:
             timeout=self._inference_business_deadline_ms / 1000,
         )
         if inference_task not in completed:
+            frame_count = len(request.images)
             self._late_result_manager.track(
                 inspection_id=request.inspection_id,
                 inference_task=inference_task,
                 started_at=inference_started_at,
+                on_result=lambda result: self._persist_late_result(
+                    result, expected_frame_count=frame_count
+                ),
             )
             decision = decide_inference_timeout(
                 cultivar_confidence_threshold=self._cultivar_confidence_threshold,
@@ -358,6 +363,30 @@ class InspectionService:
             quality_confidence_threshold=self._quality_confidence_threshold,
         )
         return response, decision, []
+
+    async def _persist_late_result(
+        self, result: LateInferenceResult, *, expected_frame_count: int
+    ) -> None:
+        """늦은 응답은 확정 판정과 분리해 기존 검사 행에만 기록한다."""
+
+        response = result.inference_response
+        if (
+            response.inspection_id != result.inspection_id
+            or response.used_frame_count != expected_frame_count
+        ):
+            logger.warning("늦은 Inference 응답 계약 불일치: %s", result.inspection_id)
+            return
+        if self._persistence is None:
+            return
+        try:
+            await asyncio.to_thread(
+                self._persistence.save_late_result,
+                inspection_id=result.inspection_id,
+                received_at=utc_now(),
+                payload=response.model_dump(mode="json"),
+            )
+        except Exception:
+            logger.exception("늦은 Inference 진단 저장 실패: %s", result.inspection_id)
 
     async def _find_target_bins(
         self,

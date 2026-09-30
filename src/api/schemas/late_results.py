@@ -10,7 +10,7 @@ from .inference import InferenceResponse
 
 
 class LateInferenceResult(BaseModel):
-    """확정 판정과 분리해 메모리에만 보관하는 늦은 응답."""
+    """확정 판정과 분리해 수집하는 늦은 응답."""
 
     model_config = ConfigDict(extra="forbid")
 

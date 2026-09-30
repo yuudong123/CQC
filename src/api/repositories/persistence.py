@@ -74,6 +74,20 @@ class InspectionPersistence:
             )
             InspectionErrorRepository(session).add_all(inspection_id, [error])
 
+    def save_late_result(
+        self,
+        *,
+        inspection_id: str,
+        received_at: datetime,
+        payload: dict[str, object],
+    ) -> None:
+        """원래 요청과 분리된 session에서 늦은 응답 진단만 commit한다."""
+
+        with self._session_factory() as session, session.begin():
+            InspectionRepository(session).update_late_result(
+                inspection_id, to_utc_naive(received_at), payload
+            )
+
 
 def _datetime_value(values: dict[str, object], field_name: str) -> datetime:
     value = values[field_name]

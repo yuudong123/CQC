@@ -29,6 +29,17 @@ class InspectionRepository:
         for field_name, value in values.items():
             setattr(inspection, field_name, value)
 
+    def update_late_result(
+        self, inspection_id: str, received_at: datetime, payload: dict[str, object]
+    ) -> None:
+        """원래 판정 필드는 유지하고 늦은 Inference 진단 필드만 갱신한다."""
+
+        inspection = self._session.get(Inspection, inspection_id)
+        if inspection is None:
+            raise LookupError(f"검사 행을 찾을 수 없습니다: {inspection_id}")
+        inspection.late_result_received_at = received_at
+        inspection.late_result_payload = payload
+
 
 class InspectionReviewRepository:
     """검사 결과를 유지하면서 검수 metadata만 갱신한다."""
