@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -81,8 +82,39 @@ def create_app(
         )
 
     @app.get("/health")
-    async def health() -> dict[str, str]:
-        return {"status": "ok"}
+    async def health() -> JSONResponse:
+        current = status()
+
+        # 마지막 검사 성공 시각 확인
+        now_ms = time.time() * 1000
+
+        playback_recent = (
+            current.lastSeenAt is not None
+            and 0 <= now_ms - current.lastSeenAt <= 30000
+        )
+
+        # 실행 중이 아니거나 최근 검사 성공 기록이 없으면 실패
+        if (
+            current.running is not True
+            or current.status != "healthy"
+            or not playback_recent
+        ):
+            return JSONResponse(
+                status_code=503,
+                content={
+                    "status": "unhealthy",
+                    "reason": "SIMULATOR_NOT_PLAYING",
+                },
+            )
+
+        return JSONResponse(
+            status_code=200,
+            content={
+                "status": "ok",
+                "running": True,
+                "lastSeenAt": current.lastSeenAt,
+            },
+        )
 
     @app.get("/state", response_model=SimulatorStatus)
     async def get_state() -> SimulatorStatus:

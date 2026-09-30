@@ -73,6 +73,9 @@ pipeline {
         MYSQL_ROOT_PASSWORD = credentials('cqc-mysql-root-password')
         MYSQL_CREDS = credentials('cqc-mysql-creds')
 
+        // BE-07 Backend ↔ Simulator 내부 인증 토큰
+        SIMULATOR_FAULT_TOKEN = credentials('cqc-simulator-fault-token')
+
         MYSQL_DATABASE = 'cqc'
         MYSQL_USER = "${MYSQL_CREDS_USR}"
         MYSQL_PASSWORD = "${MYSQL_CREDS_PSW}"
@@ -169,8 +172,8 @@ pipeline {
         // ====================================================
         // Compose의 build 설정이 존재하는 서비스를 빌드한다.
         //
-        // Backend / Inference는 이 단계에서 실제 Dockerfile로 빌드된다.
-        // Frontend는 기존 apps/web/Dockerfile 배포 연결 대기, Simulator는 구현 대기로 placeholder를 유지한다.
+        // Backend / Inference / Simulator는 실제 Dockerfile로 빌드된다.
+        // Frontend는 기존 apps/web/Dockerfile 배포 연결 전까지 placeholder를 유지한다.
         // ====================================================
         stage('Docker Build') {
 
@@ -293,7 +296,8 @@ pipeline {
                     echo " Healthcheck Verification"
                     echo "======================================"
 
-                    HEALTH_SERVICES="mysql inference backend logistics-mongodb logistics-api logistics-web"
+                    # Healthcheck가 적용된 실제 서비스 검증
+                    HEALTH_SERVICES="mysql inference backend simulator logistics-mongodb logistics-api logistics-web"
 
                     for service in $HEALTH_SERVICES; do
 
@@ -341,7 +345,8 @@ pipeline {
                     echo " Runtime Verification"
                     echo "======================================"
 
-                    for service in frontend simulator; do
+                    # Healthcheck가 없는 placeholder 서비스만 실행 상태 확인
+                    for service in frontend; do
 
                         container_id="$(docker-compose -f compose.yaml ps -q "$service")"
 
@@ -368,11 +373,39 @@ pipeline {
 
                     backend_id="$(docker-compose -f compose.yaml ps -q backend)"
                     inference_id="$(docker-compose -f compose.yaml ps -q inference)"
+                    simulator_id="$(docker-compose -f compose.yaml ps -q simulator)"
 
                     docker exec "$inference_id" python -c \
                         "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=5)"
                     docker exec "$backend_id" python -c \
                         "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"
+
+                    echo "======================================"
+                    echo " Simulator Playback Verification"
+                    echo "======================================"
+
+                    # Simulator 실제 재생 상태 및 첫 검사 전송 성공 확인
+                    docker exec "$simulator_id" python -c "
+import json
+import time
+import urllib.request
+
+with urllib.request.urlopen(
+    'http://127.0.0.1:8002/health',
+    timeout=5
+) as response:
+    data = json.load(response)
+
+assert data['status'] == 'ok'
+assert data['running'] is True
+assert data['lastSeenAt'] is not None
+
+# 마지막 검사 성공 시각이 현재 기준 30초 이내인지 확인
+age_ms = time.time() * 1000 - data['lastSeenAt']
+assert 0 <= age_ms <= 30000, f'Simulator playback stale: {age_ms}ms'
+
+print('Simulator playback OK:', data)
+"
 
                     echo "======================================"
                     echo " MO-04 healthcheck + API verification OK"

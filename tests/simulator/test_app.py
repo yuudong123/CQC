@@ -9,6 +9,7 @@ from threading import Event
 from time import sleep
 
 import httpx
+import pytest
 from fastapi.testclient import TestClient
 
 from src.simulator.config import SimulatorSettings
@@ -51,8 +52,7 @@ def test_internal_health_control_next_and_graceful_shutdown() -> None:
             started = client.put(
                 "/state",
                 json={
-                    "expectedRevision": 0,
-                    "running": True,
+                    "expectedRevision": 1,
                     "concurrency": 2,
                     "faults": ["INFERENCE_ERROR"],
                     "scope": "NEXT",
@@ -65,19 +65,24 @@ def test_internal_health_control_next_and_graceful_shutdown() -> None:
                     break
                 sleep(0.01)
             state = client.get("/state").json()
-            assert state["revision"] == 2
+            assert state["revision"] == 3
             assert state["faults"] == []
             assert state["scope"] == "NEXT"
             assert state["status"] == "healthy"
-            stale = client.put("/state", json={"expectedRevision": 1, "running": False})
+            stale = client.put("/state", json={"expectedRevision": 2, "running": False})
             assert stale.status_code == 409
             stopped = client.put(
-                "/state", json={"expectedRevision": 2, "running": False}
+                "/state", json={"expectedRevision": 3, "running": False}
             )
             assert stopped.status_code == 200
             assert stopped.json()["running"] is False
             assert stopped.json()["status"] == "stopped"
             assert app.state.simulator_runner.active is False
+            assert client.get("/health").status_code == 503
+            assert client.get("/health").json() == {
+                "status": "unhealthy",
+                "reason": "SIMULATOR_NOT_PLAYING",
+            }
         assert (
             sum(bool(item.headers["x-cqc-simulator-faults"]) for item in requests) == 1
         )
@@ -92,10 +97,8 @@ def test_internal_health_control_next_and_graceful_shutdown() -> None:
 def test_internal_start_without_dataset_does_not_change_revision() -> None:
     with TemporaryDirectory(prefix="cqc-simulator-app-", dir=Path.cwd()) as temporary:
         root = Path(temporary) / "missing"
-        with TestClient(create_app(_settings(root))) as client:
-            response = client.put(
-                "/state", json={"expectedRevision": 0, "running": True}
-            )
-            assert response.status_code == 503
-            assert response.json() == {"code": "SIMULATOR_DATASET_UNAVAILABLE"}
-            assert client.get("/state").json()["revision"] == 0
+        app = create_app(_settings(root))
+        with pytest.raises(FileNotFoundError):
+            with TestClient(app):
+                pass
+        assert app.state.simulator_state_service.get_state().revision == 0

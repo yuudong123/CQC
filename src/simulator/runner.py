@@ -80,6 +80,7 @@ class SimulatorRunner:
             return
         self._stop = asyncio.Event()
         self._failed = False
+        self._last_seen_ms = None  # 재시작 시 이전 검사 성공 기록 초기화
         self._task = asyncio.create_task(self._run(*prepared), name="simulator-runner")
 
     async def stop(self) -> None:

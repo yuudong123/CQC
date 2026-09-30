@@ -1,7 +1,7 @@
 # ALL-03 전체 통합 현황
 
 - WBS 코드: `ALL-03` (전체 흐름 1차 통합, 예정 10-08)
-- 기준: dev `b0b08dd` (2026-09-29 18:30, PR #23 feat/data·#24 feat/backend 병합 후) + 2026-09-30 feat/data(DM-08 보정)·feat/front(FE-07·실제 Backend 연결) 작업
+- 기준: dev `8f5eb5d` (2026-09-30 17시, PR #27~#32 병합 후). 학원 서버에서 Simulator 자동 재생 확인
 - 역할: **프로젝트 작업 현황의 단일 원본.** 다른 문서에는 현황을 따로 적지 않고 이 문서를 링크한다. 파트별 상세는 각 WBS 문서(DM-xx, FE-xx, BE-xx, MO-xx)를 따른다.
 - WBS의 ID·담당·일정은 바꾸지 않는다.
 
@@ -22,10 +22,10 @@ Jenkins에는 아직 이 시험 단계가 없다. Compose 검사·빌드·기동
 
 | 파트 | dev에 반영된 범위 | 남은 핵심 |
 |---|---|---|
-| DM (조현재) | DM-01~09. `separate`·12장 모델, Inference HTTP API, 시연 묶음 996개(12장 869개)·가상 당도 14°Brix 구간. v2 보정 실행 완료(09-30): 품질 T=0.391·ECE 0.259→0.081, **임계값 품종 0.50·품질 0.60 결정**, 패키지 `cqc-apple-separate12-focal-v2-cal-20260930`(가중치 동일, `model.json`만 변경), Compose 임계값 전달. 개발 OOF 기준 재검사 23.7%→16.4%·자동 처리 품질 92.2%→92.9%, 시연 36묶음 재검사 13.9%→8.3%. 배포 후 서버컴 실제 사진 서버 내부 전체 p95 309ms(해제 149·모델 161ms, 동시 처리 1, 500ms 초과 0/36) | 학원 서버 모델 폴더 `model.json`을 보정본으로 교체한 뒤 Compose 임계값 배포(순서 중요), BE-07 이후 Backend→Inference 운영 경로 전체 시간 확인(ALL-04). 독립 holdout 부재는 모델 카드 한계에 명시됨 |
-| FE (강성민, FE-01~10 작업은 조현재) | FE-01~10: 품질 관제·이력·통계·장애 관리, 12장 그룹 관제, 브라우저 자동 경매·배차 시연. 09-30 BE-06 개별 장애 이미지 계약 반영, **실제 Backend 연결 확인**(snapshot·이력·필터·통계·CSV·장애 이미지 미리보기/삭제, DB 중단·복구, 장애 이미지 100장 순환), 신뢰도 표시 자리수 수정, 프로덕션 빌드 31.5분·3,600건 연속 관제(heap 중앙값 22~23MB에서 안정, DOM 2,074 고정) | BE-07 Simulator·검수 API 연결 후 제어·검수 화면 확인, 목표 배포 환경 8시간 시험·실제 브라우저 탭 전환 확인 |
-| BE (홍준희) | BE-01~06: 검사 API, 실제 Inference 호출, 500ms 기한·지연 결과, 12-bin migration·13개 seed, 저장·이력·통계·CSV, 장애 이미지 저장·목록·미리보기·선택 삭제(최대 100장) | **BE-07 Simulator**(500ms 입력·시작/정지·위치 복구·장애 토글), 검수 API, 지연 결과 DB 저장, 이력 보존 삭제(86,400/8,640), BE-08 이후 통합. 09-30 통합 점검 요청 4건: DB 중단 시 선별 중단, 처리량 과소 표시, 연결 오류 코드, Inference 상태([협업 요청](협업공지/파트별-협업-요청.md)) |
-| MO (홍유나) | MO-01~06. Compose 8개 서비스(QC 5·물류 3), healthcheck·기동 순서, MySQL·Mongo Volume, Jenkins Credentials, 서버컴 합성 입력 측정. 09-30 PR #25: Backend 기동 시 `alembic upgrade head`, 장애 이미지 Volume(`FAULT_IMAGE_STORAGE_ROOT`) | frontend·simulator placeholder 교체, 학원 서버 모델 폴더 `model.json` 보정본 교체(DM-08), Jenkins 테스트 단계, 실패 시 이전 버전 유지(MO-07), MO-08~10 |
+| DM (조현재) | DM-01~09. `separate`·12장 모델, Inference HTTP API, 시연 묶음 996개(12장 869개)·가상 당도 14°Brix 구간. v2 보정 실행 완료(09-30): 품질 T=0.391·ECE 0.259→0.081, **임계값 품종 0.50·품질 0.60 결정**, 패키지 `cqc-apple-separate12-focal-v2-cal-20260930`(가중치 동일, `model.json`만 변경), Compose 임계값 전달. 개발 OOF 기준 재검사 23.7%→16.4%·자동 처리 품질 92.2%→92.9%, 시연 36묶음 재검사 13.9%→8.3%. 배포 후 서버컴 실제 사진 서버 내부 전체 p95 309ms(해제 149·모델 161ms, 동시 처리 1, 500ms 초과 0/36). **Simulator 운영 경로 실측 초당 0.63건·시간 초과 3%** → 입력 간격 2000ms로 조정([PR #33](https://github.com/yuudong123/CQC/pull/33)) | PR #33 병합 후 처리량·시간 초과 재확인. 초당 2건은 현재 구조로 미달(결정 기록 09-30). 독립 holdout 부재는 모델 카드 한계에 명시됨 |
+| FE (강성민, FE-01~10 작업은 조현재) | FE-01~10: 품질 관제·이력·통계·장애 관리, 12장 그룹 관제, 브라우저 자동 경매·배차 시연. 09-30 BE-06 개별 장애 이미지 계약 반영, **실제 Backend 연결 확인**(snapshot·이력·필터·통계·CSV·장애 이미지 미리보기/삭제, DB 중단·복구, 장애 이미지 100장 순환), 신뢰도 표시 자리수 수정, 프로덕션 빌드 31.5분·3,600건 연속 관제(heap 중앙값 22~23MB에서 안정, DOM 2,074 고정) | 실제 Simulator 제어·검수 화면 확인(학원 웹 3100은 아직 브라우저 예시 모드), 목표 배포 환경 8시간 시험·실제 브라우저 탭 전환 확인 |
+| BE (홍준희) | BE-01~07: 검사 API, 실제 Inference 호출, 500ms 기한·지연 결과, 12-bin migration·13개 seed, 저장·이력·통계·CSV, 장애 이미지(최대 100장). 09-30 PR #30: 독립 Simulator(목록 순환·위치 복구·동시 처리 1·2·4·장애 6종·다음 1건), `PUT /simulator`, 검수 API | 검사 1건 실패 시 Simulator 전체 정지, 지연 결과 DB 저장, 이력 보존 삭제(86,400/8,640, 현재 DB 무한 증가), BE-08 이후 통합. 09-30 통합 점검 요청 4건: DB 중단 시 선별 중단, 처리량 0 표시, 연결 오류 코드, Inference 상태([협업 요청](협업공지/파트별-협업-요청.md)) |
+| MO (홍유나) | MO-01~06. Compose 8개 서비스(QC 5·물류 3), healthcheck·기동 순서, MySQL·Mongo Volume, Jenkins Credentials, 서버컴 합성 입력 측정. 09-30 PR #25: Backend 기동 시 `alembic upgrade head`, 장애 이미지 Volume. PR #31·#32: Simulator 이미지·데이터 볼륨·위치 볼륨, 자동 재생, 재생 여부 health·Jenkins 검증([배포 문서](reference/MO/simulator-deployment.md)) | frontend placeholder 교체, Jenkins 테스트 단계, 실패 시 이전 버전 유지(MO-07), MO-08~10 |
 | 물류 | LOGISTICS-01~06: 출품·입찰·배차·배송 API와 화면, Compose·Jenkins. FE-10이 정상 선별 결과를 브라우저에서 출품·입찰·배차까지 보냄 | MVP 포함 여부 미정, Backend 기반 출품 연결. 상세는 [LOGISTICS](LOGISTICS.md) |
 | 발표 | 최종발표 HTML(좌측 목차 바, MVP 04쪽)·대본, 로컬 `docs/최종발표/` | PDF 재출력, 실제 시연 캡처·단계별 소요시간·장애 복구 결과 추가 |
 
@@ -37,8 +37,8 @@ Jenkins에는 아직 이 시험 단계가 없다. Compose 검사·빌드·기동
 |---|---|
 | `GET /snapshot`, `/inspections`, `/inspections.csv`, `/statistics`, `/statistics.csv` | 구현 (BE-05) |
 | `GET·DELETE /fault-images`, `GET /previews/{id}` | 구현 (BE-06) |
-| `PUT /simulator` | 미구현 (BE-07) |
-| `PATCH /inspections/{id}/review` | 미구현 |
+| `PUT /simulator` | 구현 (BE-07) |
+| `PATCH /inspections/{id}/review` | 구현 (BE-07) |
 
 ## 4. MLOps 세부 (MO 작성 09-28 기록을 09-29 기준으로 갱신)
 
@@ -54,7 +54,7 @@ Jenkins에는 아직 이 시험 단계가 없다. Compose 검사·빌드·기동
 ## 5. 동결까지 핵심 경로
 
 ```text
-BE-07 Simulator → 루트 Compose에 FE·Simulator 연결, migration·장애 이미지 Volume
+Simulator 입력 간격 조정(PR #33) → 루트 Compose에 FE 연결(API 모드) → Simulator 실패 시 계속 전송·DB 중단 시 선별 지속(BE)
 → ALL-03 전체 흐름 1차 통합 (10-08) → ALL-04 정상 100건·장애 5종 수용시험 (10-12) → ALL-05 기능 동결 (10-13)
 ```
 
@@ -66,5 +66,6 @@ BE-07 Simulator → 루트 Compose에 FE·Simulator 연결, migration·장애 �
 | 문서 안내 | [README](README.md) |
 | 09-23 독립 실행 점검 기록 | [ALL-02](ALL-02.md) |
 | 파트 간 요청 | [파트별 협업 요청](협업공지/파트별-협업-요청.md) |
+| 발표용 문제 해결 사례 | [개발 중 문제 해결 사례](../최종발표자료/개발%20중%20문제%20해결%20사례.md) |
 | 확정 범위 QA (ALL-04 사전 점검) | [QA 테스트 케이스](reference/ALL/qa-test-cases.md) |
 | 기획·요구사항·결정 | [기획서](../project-plan.md), [요구사항](../planning/requirements.md), [결정 기록](../planning/decision-log.md) |
