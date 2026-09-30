@@ -10,6 +10,7 @@ import { useDemo } from "./DemoProvider";
 import type { FaultImage } from "@/lib/quality-fault-images";
 import { downloadQualityCsv } from "@/lib/quality-api";
 import { sampleApples } from "@/lib/sample-apples";
+import { formatMs, formatPercent } from "@/lib/quality-format";
 import {
   MISCLASSIFICATION_LABEL,
   type MisclassificationType,
@@ -693,10 +694,10 @@ export default function QualityConsole({
                     <td>
                       {row.excluded
                         ? "—"
-                        : `${row.cultivarConfidence ?? "—"}% / ${row.confidence}%`}
+                        : `${formatPercent(row.cultivarConfidence)} / ${formatPercent(row.confidence)}`}
                     </td>
                     <td>
-                      {row.inferenceMs === null ? "—" : `${row.inferenceMs}ms`}
+                      {formatMs(row.inferenceMs)}
                     </td>
                     <td>{row.bin}</td>
                   </tr>

@@ -17,6 +17,7 @@ import {
   type MisclassificationType,
 } from "@/lib/quality-contract";
 import { csvCell, type Result } from "@/lib/quality-runtime";
+import { formatMs, formatPercent } from "@/lib/quality-format";
 
 export default function QualityHistory({
   records: latestRecords,
@@ -426,10 +427,10 @@ export default function QualityHistory({
               <td>
                 {row.excluded
                   ? "—"
-                  : `${row.cultivarConfidence ?? "—"}% / ${row.confidence}%`}
+                  : `${formatPercent(row.cultivarConfidence)} / ${formatPercent(row.confidence)}`}
               </td>
               <td>
-                {row.inferenceMs === null ? "—" : `${row.inferenceMs}ms`} /{" "}
+                {formatMs(row.inferenceMs)} /{" "}
                 {row.modelVersion ?? "—"}
               </td>
               <td>{row.virtualBrix?.toFixed(1) ?? "—"}</td>
