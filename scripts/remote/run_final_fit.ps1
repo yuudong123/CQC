@@ -1,4 +1,5 @@
 # 시험 사과를 제외한 개발 데이터 전체로 최종 모델을 학습한다.
+# 원격 Windows GPU PC에서 직접 또는 예약 작업으로 실행하며 실제 학습·측정을 시작한다. 예약 작업에 예전 src/training/*.ps1 경로가 남아 있으면 scripts/remote/*.ps1로 바꾼다.
 # scripts/remote 기준 두 단계 위에서 프로젝트 가상환경을 사용한다.
 $ErrorActionPreference = "Stop"
 $repo = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)

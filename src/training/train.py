@@ -49,6 +49,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--workers", type=int, default=0)
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")
     parser.add_argument("--no-pretrained", action="store_true")
+    parser.add_argument(
+        "--save-last",
+        action="store_true",
+        help="마지막 epoch 체크포인트를 last.pt로 추가 저장한다(정해진 epoch의 OOF 예측·보정용)",
+    )
     args = parser.parse_args(argv)
     if args.epochs <= 0 or args.batch_size <= 0 or args.image_size <= 0:
         parser.error("epochs, batch-size, image-size는 1 이상이어야 합니다")
@@ -186,6 +191,7 @@ def main(argv: list[str] | None = None) -> int:
         "pretrained": not args.no_pretrained,
         "train_groups": len(train_source),
         "validation_groups": len(validation_source),
+        "save_last": args.save_last,
         "test_used": False,
     }
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -247,6 +253,15 @@ def main(argv: list[str] | None = None) -> int:
                     config=config,
                     metrics=validation_metrics,
                 )
+            if args.save_last and epoch == args.epochs:
+                save_checkpoint(
+                    args.output_dir / "last.pt",
+                    model=model,
+                    optimizer=optimizer,
+                    epoch=epoch,
+                    config=config,
+                    metrics=validation_metrics,
+                )
             print(
                 f"epoch={epoch}/{args.epochs} train_loss={train_metrics['loss']:.4f} "
                 f"validation_loss={validation_metrics['loss']:.4f} "
@@ -259,6 +274,7 @@ def main(argv: list[str] | None = None) -> int:
 
     summary = {
         "best_validation_score": best_score,
+        "last_checkpoint": str(args.output_dir / "last.pt") if args.save_last else None,
         "checkpoint": str(checkpoint_path),
         "checkpoint_sha256": checkpoint_sha256(checkpoint_path),
         "epochs_completed": len(history),

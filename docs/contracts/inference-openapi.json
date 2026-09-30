@@ -123,6 +123,45 @@
             "type": "integer",
             "minimum": 1.0,
             "title": "Views"
+          },
+          "approval_status": {
+            "type": "string",
+            "title": "Approval Status",
+            "default": "unknown",
+            "examples": [
+              "unverified_candidate"
+            ]
+          },
+          "threshold_status": {
+            "type": "string",
+            "title": "Threshold Status",
+            "default": "unknown",
+            "examples": [
+              "not_calibrated"
+            ]
+          },
+          "checkpoint_sha256": {
+            "type": "string",
+            "title": "Checkpoint Sha256",
+            "default": ""
+          },
+          "quality_temperature": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Quality Temperature",
+            "default": 1.0
+          },
+          "cultivar_temperature": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Cultivar Temperature",
+            "default": 1.0
+          },
+          "decode_workers": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Decode Workers",
+            "default": 1
           }
         },
         "additionalProperties": false,

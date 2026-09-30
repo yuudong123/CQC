@@ -1,4 +1,10 @@
-"""CQC Backend Alembic 실행 환경."""
+"""CQC Backend Alembic 실행 환경.
+
+이 디렉터리(``versions/``)가 MySQL 물리 스키마 변경 이력의 유일한 원본이다. 애플리케이션은
+``Base.metadata.create_all()``을 호출하지 않으므로 스키마 생성·변경은 Alembic revision으로만 한다.
+연결 정보는 ``DATABASE_URL`` 환경변수로 주입하며, 적용은 저장소 루트에서
+``alembic upgrade head``로 실행한다.
+"""
 
 from __future__ import annotations
 

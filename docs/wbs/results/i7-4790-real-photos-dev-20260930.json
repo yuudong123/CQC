@@ -1,0 +1,345 @@
+{
+ "date": "2026-09-30",
+ "note": "학원 i7-4790 dev 배포본(병렬 사진 해제·Server-Timing 적용 전). model_ms는 모델 계산만, round_trip은 노트북→학원 서버 네트워크 포함",
+ "summary": {
+  "target": "192.168.133.106:8001 (i7-4790, dev 배포본)",
+  "bundles": 36,
+  "mean_upload_mib": 13.814379321204292,
+  "model_ms": {
+   "mean": 123.73288016659798,
+   "p95": 138.28385099986917,
+   "max": 165.45992999999726
+  },
+  "round_trip_from_laptop_ms": {
+   "mean": 796.8021111114972,
+   "p95": 985.7087999989744,
+   "max": 1152.0733000070322
+  }
+ },
+ "rows": [
+  {
+   "bundle_id": "demo-601031008000-000",
+   "upload_mib": 12.844347953796387,
+   "round_trip_ms": 732.3586999991676,
+   "model_ms": 120.97982900013449,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "L",
+   "quality_confidence": 0.8064303398132324
+  },
+  {
+   "bundle_id": "demo-601143008000-000",
+   "upload_mib": 12.910892486572266,
+   "round_trip_ms": 744.6890999999596,
+   "model_ms": 127.07953300014196,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "S",
+   "quality_confidence": 0.6599421501159668
+  },
+  {
+   "bundle_id": "demo-601141012000-000",
+   "upload_mib": 13.851492881774902,
+   "round_trip_ms": 884.903199999826,
+   "model_ms": 120.05479199979163,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "L",
+   "quality_confidence": 0.62941575050354
+  },
+  {
+   "bundle_id": "demo-601032015000-000",
+   "upload_mib": 14.674072265625,
+   "round_trip_ms": 806.0808000009274,
+   "model_ms": 119.42109800020262,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "M",
+   "quality_confidence": 0.7179011106491089
+  },
+  {
+   "bundle_id": "demo-601141013000-000",
+   "upload_mib": 13.50919246673584,
+   "round_trip_ms": 791.9846000004327,
+   "model_ms": 120.64477900003112,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "L",
+   "quality_confidence": 0.5305802226066589
+  },
+  {
+   "bundle_id": "demo-601032009000-000",
+   "upload_mib": 14.932038307189941,
+   "round_trip_ms": 935.3216999879805,
+   "model_ms": 116.82071199993516,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "M",
+   "quality_confidence": 0.7239093780517578
+  },
+  {
+   "bundle_id": "demo-601142007000-000",
+   "upload_mib": 13.929115295410156,
+   "round_trip_ms": 669.4232000008924,
+   "model_ms": 116.28393299997697,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "M",
+   "quality_confidence": 0.6695367097854614
+  },
+  {
+   "bundle_id": "demo-601032016000-000",
+   "upload_mib": 15.4716215133667,
+   "round_trip_ms": 864.7772999975132,
+   "model_ms": 128.71767599972372,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "M",
+   "quality_confidence": 0.8460842370986938
+  },
+  {
+   "bundle_id": "demo-601033004000-000",
+   "upload_mib": 15.024041175842285,
+   "round_trip_ms": 985.7087999989744,
+   "model_ms": 120.45430800026224,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "S",
+   "quality_confidence": 0.9077160358428955
+  },
+  {
+   "bundle_id": "demo-601141007000-000",
+   "upload_mib": 13.072453498840332,
+   "round_trip_ms": 755.2606999961426,
+   "model_ms": 116.02056999981869,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "L",
+   "quality_confidence": 0.550943911075592
+  },
+  {
+   "bundle_id": "demo-601143020000-000",
+   "upload_mib": 14.354862213134766,
+   "round_trip_ms": 773.5319000057643,
+   "model_ms": 117.82619999939925,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "S",
+   "quality_confidence": 0.9573566913604736
+  },
+  {
+   "bundle_id": "demo-601033003000-000",
+   "upload_mib": 14.127542495727539,
+   "round_trip_ms": 840.2484000107506,
+   "model_ms": 117.22755699975096,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "S",
+   "quality_confidence": 0.7718148827552795
+  },
+  {
+   "bundle_id": "demo-601032003000-000",
+   "upload_mib": 15.342042922973633,
+   "round_trip_ms": 778.277799996431,
+   "model_ms": 121.17864199990436,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "M",
+   "quality_confidence": 0.8004912734031677
+  },
+  {
+   "bundle_id": "demo-601033026000-000",
+   "upload_mib": 13.418196678161621,
+   "round_trip_ms": 714.7847000014735,
+   "model_ms": 128.53857200025232,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "S",
+   "quality_confidence": 0.43063539266586304
+  },
+  {
+   "bundle_id": "demo-601033014000-000",
+   "upload_mib": 12.629083633422852,
+   "round_trip_ms": 802.3616999998922,
+   "model_ms": 126.34061400058272,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "S",
+   "quality_confidence": 0.47950971126556396
+  },
+  {
+   "bundle_id": "demo-601031016000-000",
+   "upload_mib": 14.261605262756348,
+   "round_trip_ms": 688.9843999961158,
+   "model_ms": 117.79559699971287,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "L",
+   "quality_confidence": 0.6402022242546082
+  },
+  {
+   "bundle_id": "demo-601142010000-000",
+   "upload_mib": 12.656578063964844,
+   "round_trip_ms": 758.4978999948362,
+   "model_ms": 120.53409500003909,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "M",
+   "quality_confidence": 0.5174118876457214
+  },
+  {
+   "bundle_id": "demo-601033009000-000",
+   "upload_mib": 13.916679382324219,
+   "round_trip_ms": 760.6822000088869,
+   "model_ms": 118.31903499933105,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "S",
+   "quality_confidence": 0.618308424949646
+  },
+  {
+   "bundle_id": "demo-601142014000-000",
+   "upload_mib": 13.386920928955078,
+   "round_trip_ms": 713.2256000040798,
+   "model_ms": 116.65433500002109,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "M",
+   "quality_confidence": 0.57178795337677
+  },
+  {
+   "bundle_id": "demo-601143015000-000",
+   "upload_mib": 14.814399719238281,
+   "round_trip_ms": 843.2342000014614,
+   "model_ms": 126.94186799944873,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "S",
+   "quality_confidence": 0.727440357208252
+  },
+  {
+   "bundle_id": "demo-601141014000-000",
+   "upload_mib": 14.244949340820312,
+   "round_trip_ms": 957.509800005937,
+   "model_ms": 165.45992999999726,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "M",
+   "quality_confidence": 0.4477844834327698
+  },
+  {
+   "bundle_id": "demo-601031028000-000",
+   "upload_mib": 15.854279518127441,
+   "round_trip_ms": 922.569399990607,
+   "model_ms": 123.82279000030394,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "L",
+   "quality_confidence": 0.39286431670188904
+  },
+  {
+   "bundle_id": "demo-601033013000-000",
+   "upload_mib": 13.199987411499023,
+   "round_trip_ms": 827.8745999996318,
+   "model_ms": 133.50913199974457,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "S",
+   "quality_confidence": 0.7608818411827087
+  },
+  {
+   "bundle_id": "demo-601031010000-000",
+   "upload_mib": 12.854695320129395,
+   "round_trip_ms": 649.6946999977808,
+   "model_ms": 138.28385099986917,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "L",
+   "quality_confidence": 0.7129989862442017
+  },
+  {
+   "bundle_id": "demo-601032028000-000",
+   "upload_mib": 14.3666410446167,
+   "round_trip_ms": 745.6506000016816,
+   "model_ms": 122.58645999918372,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "M",
+   "quality_confidence": 0.7134634256362915
+  },
+  {
+   "bundle_id": "demo-601141020000-000",
+   "upload_mib": 13.5703763961792,
+   "round_trip_ms": 744.9049999995623,
+   "model_ms": 123.1615740007328,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "L",
+   "quality_confidence": 0.4925759732723236
+  },
+  {
+   "bundle_id": "demo-601142004000-000",
+   "upload_mib": 14.12415599822998,
+   "round_trip_ms": 759.0492000017548,
+   "model_ms": 125.58960400019714,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "M",
+   "quality_confidence": 0.6584901809692383
+  },
+  {
+   "bundle_id": "demo-601031015000-000",
+   "upload_mib": 11.489700317382812,
+   "round_trip_ms": 707.589800003916,
+   "model_ms": 127.63610199999675,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "L",
+   "quality_confidence": 0.7701738476753235
+  },
+  {
+   "bundle_id": "demo-601031007000-000",
+   "upload_mib": 13.606554985046387,
+   "round_trip_ms": 647.8261000011116,
+   "model_ms": 117.98466299933352,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "L",
+   "quality_confidence": 0.6274904012680054
+  },
+  {
+   "bundle_id": "demo-601143013000-000",
+   "upload_mib": 14.127080917358398,
+   "round_trip_ms": 1003.3256999886362,
+   "model_ms": 121.21899900012068,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "S",
+   "quality_confidence": 0.9469424486160278
+  },
+  {
+   "bundle_id": "demo-601141009000-000",
+   "upload_mib": 13.923418998718262,
+   "round_trip_ms": 729.1761999949813,
+   "model_ms": 120.79313699996419,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "L",
+   "quality_confidence": 0.5298974514007568
+  },
+  {
+   "bundle_id": "demo-601143028000-000",
+   "upload_mib": 14.039283752441406,
+   "round_trip_ms": 761.1000999895623,
+   "model_ms": 122.01921500036406,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "S",
+   "quality_confidence": 0.9283022880554199
+  },
+  {
+   "bundle_id": "demo-601031011000-000",
+   "upload_mib": 14.01258659362793,
+   "round_trip_ms": 741.5891000127885,
+   "model_ms": 116.14446699968539,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "L",
+   "quality_confidence": 0.6116673350334167
+  },
+  {
+   "bundle_id": "demo-601141006000-000",
+   "upload_mib": 12.420493125915527,
+   "round_trip_ms": 1152.0733000070322,
+   "model_ms": 118.3323819996076,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "L",
+   "quality_confidence": 0.5705074667930603
+  },
+  {
+   "bundle_id": "demo-601031005000-000",
+   "upload_mib": 13.157154083251953,
+   "round_trip_ms": 832.6882000110345,
+   "model_ms": 143.59362899995176,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "L",
+   "quality_confidence": 0.5632614493370056
+  },
+  {
+   "bundle_id": "demo-601031014000-000",
+   "upload_mib": 13.199118614196777,
+   "round_trip_ms": 657.9173000063747,
+   "model_ms": 116.41400600001361,
+   "model_version": "cqc-apple-separate12-focal-v2-candidate",
+   "grade": "L",
+   "quality_confidence": 0.5109063386917114
+  }
+ ]
+}

@@ -8,7 +8,7 @@
 
 - `src/inference/predictor.py`: 모델 패키지 로딩, 동일 전처리, 마스크 패딩, 확률·신뢰도 반환
 - `src/inference/api.py`: `/health`, `/v1/predict` FastAPI 어댑터
-- `src/inference/README.md`: 입력·응답과 책임 범위
+- 입력·응답과 책임 범위: `src/inference/api.py` 모듈 주석 (기존 `src/inference/README.md`를 2026-09-30 이전)
 - 가짜 예측기를 사용한 `/health`, multipart 반복 이미지, 415 오류 HTTP 계약 테스트 완료
 - PNG/JPEG multipart 입력만 허용하고 빈 그룹을 거부한다.
 - HTTP 입력 장수 초과는 413으로 거부하고 부족하면 0 텐서와 마스크로 패딩한다. Predictor 내부의 균등 선택은 공개 HTTP 계약이 아니다.
@@ -67,3 +67,25 @@ python -m scripts.verify_inference_http --package models/cqc-apple-separate12-fo
 ```
 
 Backend 계약도 검사하려면 원본 코드 스냅샷 루트를 `--backend-root`로, 커밋을 `--backend-revision`으로 전달한다. 결과 파일은 덮어쓰지 않으므로 매 실행에 새 경로를 지정한다. 이 도구는 테스트 환경의 `httpx`, Pillow, 추론 실행 의존성을 사용한다.
+
+## 2026-09-30: 동시 요청·지연 분해·보정 반영
+
+- `/v1/predict`의 추론을 `run_in_threadpool`로 옮겼다. 이전에는 추론이 이벤트 루프를 막아 추론 중 `/health`도 응답하지 못했다. 추론 중 `/health` 응답 시험을 추가했다(이전 코드에서 실패 확인).
+- 응답 헤더 `Server-Timing: decode;dur=…, model;dur=…, total;dur=…`로 사진 해제·모델·전체 시간을 나눠 준다. 본문 계약(`PredictionResponse`, Backend `InferenceResponse`의 `extra="forbid"`)은 바꾸지 않았다. `inference_time_ms`는 기존대로 모델 계산 시간만이다.
+- 사진 해제·크기 변환을 요청 안에서 병렬 처리한다(`--decode-workers`, 환경변수 `INFERENCE_DECODE_WORKERS`, 0=CPU 수 자동, 1=순차). 사진마다 같은 변환을 독립 적용하므로 결과 텐서는 순차 처리와 비트 단위로 같다(시험 추가).
+- manifest의 `quality_temperature`·`cultivar_temperature`(기본 1.0)를 읽어 softmax 전에 logits를 나눈다. 예측 등급은 그대로이고 신뢰도만 바뀐다. 0 이하·비정상 값은 로딩 시 거부한다.
+- `/health`에 `approval_status`, `threshold_status`, `checkpoint_sha256`, 두 temperature, `decode_workers`를 추가했다. 모두 기본값이 있는 선택 필드라 기존 소비자와 호환된다. `docs/contracts/inference-openapi.json`을 재생성했다.
+
+### 실제 시연 사진 지연 (클라우드 2 vCPU, 목표 장비 아님)
+
+시연 묶음 36개(1000×1000 PNG 12장, 요청당 평균 13.8MiB), `OMP_NUM_THREADS=1`(Compose와 같은 설정).
+
+| 구성 | 해제 p50 | 모델 p50 | 서버 전체 p95 | HTTP 왕복 p95 |
+|---|---:|---:|---:|---:|
+| 순차 해제 | 295ms | 84ms | 410ms | - |
+| 병렬 해제(2스레드) | 164ms | 82ms | 261ms | 295ms (loopback) |
+
+- 실제 PNG에서는 **해제가 모델보다 3~4배 오래 걸린다.** MO-06의 i7-4790 측정(합성 JPEG, HTTP p95 205.76ms)은 이 비용을 포함하지 않는다. 실제 시연 사진으로 i7-4790 재측정이 필요하다.
+- loopback 동시 요청 1·2·4의 처리량은 초당 3.45·4.10·3.97건(2 vCPU에서 CPU 포화). 초당 2건 요구는 만족하지만 동시 요청이 늘면 지연이 선형으로 늘어난다.
+- 요청당 13.8MiB라 100Mbps 망에서는 전송만 약 1.1초다. Backend·Inference가 같은 호스트(Compose 내부망)면 문제없지만, Simulator→Backend 구간이 실제 네트워크를 지나면 500ms 예산을 넘는다. JPEG·축소 전송은 학습 입력 분포(원본 PNG)가 바뀌므로 검증 없이 적용하지 않는다.
+- 원본: [v2 시연 드라이런](results/v2-demo-dry-run-20260930.json). 재현: `scripts/evaluate_demo_bundles.py` (local·http 모드, `--index`로 일부 묶음만 지정 가능).
