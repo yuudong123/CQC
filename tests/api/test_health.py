@@ -32,4 +32,6 @@ def test_openapi_exposes_current_backend_endpoints() -> None:
         "/v1/quality/statistics.csv",
         "/v1/quality/fault-images",
         "/v1/quality/previews/{id}",
+        "/v1/quality/simulator",
+        "/v1/quality/inspections/{id}/review",
     }

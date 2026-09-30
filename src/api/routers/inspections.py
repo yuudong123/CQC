@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
-from typing import Annotated
+from hmac import compare_digest
+from typing import Annotated, get_args
 
 from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile, status
 from pydantic import ValidationError
+
+from src.simulator.schemas import FaultType
 
 from ..core.config import Settings
 from ..repositories import BinMappingConfigurationError
@@ -146,12 +149,46 @@ async def _validate_and_inspect(
             detail="view_index는 현재 이미지 순서에 따라 0부터 연속되어야 합니다",
         )
 
+    token = request.headers.get("x-cqc-simulator-token")
+    raw_faults = request.headers.get("x-cqc-simulator-faults", "")
+    simulator_faults: tuple[FaultType, ...] = ()
+    source_reference: str | None = None
+    if token is not None or raw_faults:
+        expected_token = request.app.state.simulator_fault_token
+        if (
+            expected_token is None
+            or token is None
+            or not compare_digest(token, expected_token)
+        ):
+            raise HTTPException(status_code=403, detail="Simulator 인증에 실패했습니다")
+        parsed = tuple(raw_faults.split(",")) if raw_faults else ()
+        if (
+            len(parsed) > 5
+            or len(parsed) != len(set(parsed))
+            or any(value not in get_args(FaultType) for value in parsed)
+        ):
+            raise HTTPException(
+                status_code=422, detail="Simulator 장애 설정이 잘못되었습니다"
+            )
+        simulator_faults = parsed
+        source_reference = request.headers.get("x-cqc-simulator-bundle-id")
+        if source_reference is None or not 1 <= len(source_reference) <= 255:
+            raise HTTPException(
+                status_code=422, detail="Simulator 묶음 ID가 잘못되었습니다"
+            )
+
     try:
+        options = (
+            {"simulator_faults": simulator_faults, "source_reference": source_reference}
+            if source_reference is not None
+            else {}
+        )
         return await _service_from(request).inspect(
             inspection_id=inspection_id,
             images=images,
             metadata=metadata_items,
             virtual_brix=virtual_brix,
+            **options,
         )
     except BinMappingConfigurationError as exc:
         raise HTTPException(

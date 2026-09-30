@@ -50,7 +50,7 @@ class QualityCapabilities(BaseModel):
     faults: bool
     review: bool
     deleteImages: bool
-    concurrency: list[int] = Field(max_length=64)
+    concurrency: list[Literal[1, 2, 4]] = Field(max_length=3)
 
 
 class QualityComponents(BaseModel):
@@ -94,7 +94,7 @@ class QualityState(BaseModel):
 
     throughput: float = Field(ge=0)
     running: bool
-    concurrency: int | SkipJsonSchema[None] = Field(default=None, ge=1, le=64)
+    concurrency: Literal[1, 2, 4] | SkipJsonSchema[None] = None
     sequence: int | SkipJsonSchema[None] = Field(default=None, ge=0)
     tick: int | SkipJsonSchema[None] = Field(default=None, ge=0)
     faults: list[Fault] = Field(max_length=5)

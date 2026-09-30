@@ -197,6 +197,11 @@ def test_mysql_snapshot_statistics_and_both_csv_formats() -> None:
             assert snapshot_response.json()["source"] == "backend"
             assert snapshot_response.headers["cache-control"] == "no-store"
             assert "concurrency" not in snapshot_response.json()["state"]
+            assert snapshot_response.json()["capabilities"]["control"] is False
+            assert (
+                snapshot_response.json()["components"]["Simulator"]["status"]
+                == "unknown"
+            )
             assert "history" not in snapshot_response.json()["retention"]
             stats_response = client.get(
                 "/v1/quality/statistics",
