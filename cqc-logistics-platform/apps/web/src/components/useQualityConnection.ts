@@ -9,9 +9,13 @@ import {
   type QualitySnapshot,
   type SimulatorChange,
 } from "@/lib/quality-api";
+import { DemoFaultImageStore, parseFaultImages, type FaultImage } from "@/lib/quality-fault-images";
 import type { MisclassificationType } from "@/lib/quality-contract";
 
 export function useQualityConnection(mode: "demo" | "api") {
+  const imageStore = useRef(new DemoFaultImageStore());
+  const demoState = useRef(initialRuntime());
+  const [faultImages, setFaultImages] = useState<FaultImage[]>([]);
   const [state, update] = useState(initialRuntime);
   const [snapshot, setSnapshot] = useState<QualitySnapshot | null>(null);
   const [error, setError] = useState("");
@@ -37,7 +41,13 @@ export function useQualityConnection(mode: "demo" | "api") {
     const clockTimer = setInterval(() => setClock(Date.now()), 1000);
     if (mode === "demo") {
       const timer = setInterval(
-        () => update((current) => step(current, Date.now(), 500)),
+        () => {
+          const previous = demoState.current;
+          const next = step(previous, Date.now(), 500);
+          imageStore.current.advance(previous, next);
+          demoState.current = next; update(next);
+          setFaultImages([...imageStore.current.items]);
+        },
         500,
       );
       return () => {
@@ -53,7 +63,9 @@ export function useQualityConnection(mode: "demo" | "api") {
         const value = await getSnapshot(
           AbortSignal.any([controller.signal, AbortSignal.timeout(7000)]),
         );
+        const images = parseFaultImages(await (await qualityRequest("fault-images", { signal: controller.signal })).json());
         if (!disposed && version === generation.current && !busy.current) {
+          setFaultImages(images);
           accept(value);
           setError("");
         }
@@ -100,7 +112,8 @@ export function useQualityConnection(mode: "demo" | "api") {
   const configure = useCallback(
     async (change: SimulatorChange) => {
       if (mode === "demo") {
-        update((current) => ({ ...current, ...change }));
+        demoState.current = { ...demoState.current, ...change };
+        update(demoState.current);
         return;
       }
       await run(async (signal) => {
@@ -124,7 +137,8 @@ export function useQualityConnection(mode: "demo" | "api") {
   const classify = useCallback(
     async (id: string, value: MisclassificationType) => {
       if (mode === "demo") {
-        update((current) => classifyResult(current, id, value));
+        demoState.current = classifyResult(demoState.current, id, value);
+        update(demoState.current);
         return;
       }
       await run(async (signal) => {
@@ -138,10 +152,8 @@ export function useQualityConnection(mode: "demo" | "api") {
   const removeImages = useCallback(
     async (ids: string[]) => {
       if (mode === "demo") {
-        update((current) => ({
-          ...current,
-          images: current.images.filter((row) => !ids.includes(row.id)),
-        }));
+        imageStore.current.remove(ids);
+        setFaultImages([...imageStore.current.items]);
         return;
       }
       await run(async (signal) => {
@@ -161,16 +173,21 @@ export function useQualityConnection(mode: "demo" | "api") {
           throw new Error(
             "삭제 응답이 올바르지 않습니다. 목록에서 결과를 확인하세요.",
           );
-        if (mounted.current)
-          update((current) => ({
-            ...current,
-            images: current.images.filter((row) => !ids.includes(row.id)),
-          }));
+        if (mounted.current) {
+          setFaultImages(current => current.filter(row => !result.deletedIds.includes(row.id)));
+          const fresh = await getSnapshot(signal);
+          const images = parseFaultImages(await (await qualityRequest("fault-images", { signal })).json());
+          if (mounted.current) { accept(fresh); setFaultImages(images); }
+          if (images.some(row => ids.includes(row.id)))
+            throw new Error("일부 이미지가 삭제되지 않았습니다. 남은 목록을 확인하고 다시 시도하세요.");
+        }
       });
     },
-    [mode, run],
+    [mode, run, accept],
   );
   return {
+    faultImages,
+    faultImageSource: (id: string) => imageStore.current.source(id),
     state,
     snapshot,
     error,

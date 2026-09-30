@@ -7,6 +7,7 @@ import { Badge, Panel, Stats } from "./Dashboard";
 import QualityHistory from "./QualityHistory";
 import QualityStatistics from "./QualityStatistics";
 import { useDemo } from "./DemoProvider";
+import type { FaultImage } from "@/lib/quality-fault-images";
 import { downloadQualityCsv } from "@/lib/quality-api";
 import { sampleApples } from "@/lib/sample-apples";
 import {
@@ -80,7 +81,7 @@ function Modal({
   );
 }
 function FaultImages({
-  state,
+  state, images, imageSource, retained,
   classify,
   removeImages,
   remote,
@@ -89,6 +90,9 @@ function FaultImages({
   allowDelete,
 }: {
   state: Runtime;
+  images: FaultImage[];
+  imageSource: (id: string) => string | undefined;
+  retained: number;
   classify: (id: string, value: MisclassificationType) => Promise<void>;
   removeImages: (ids: string[]) => Promise<void>;
   remote: boolean;
@@ -100,10 +104,14 @@ function FaultImages({
   const [category, setCategory] = useState("ALL");
   const [confirmation, setConfirmation] = useState<string[] | null>(null);
   const [error, setError] = useState("");
-  const rows = state.images.filter(
+  const entries = images.map(image => {
+    const record = state.images.find(row => row.id === image.inspectionId) ?? state.history.find(row => row.id === image.inspectionId);
+    return { ...image, misclassification: record?.misclassification ?? "NONE", hasRecord: !!record };
+  });
+  const rows = entries.filter(
     (row) => category === "ALL" || row.misclassification === category,
   );
-  const preview = state.images.find((row) => row.id === selected);
+  const preview = entries.find((row) => row.id === selected);
   async function remove() {
     if (!confirmation) return;
     try {
@@ -133,11 +141,11 @@ function FaultImages({
           </select>
         </label>
         <span>
-          {rows.length} / {state.images.length}건 · 최대 100건
+          {rows.length}장 표시 · 실제 보존 {retained} / 100장
         </span>
         <button
-          disabled={!state.images.length || pending || !allowDelete}
-          onClick={() => setConfirmation(state.images.map((row) => row.id))}
+          disabled={!images.length || pending || !allowDelete}
+          onClick={() => setConfirmation(images.map((row) => row.id))}
         >
           전체 이미지 삭제
         </button>
@@ -156,7 +164,7 @@ function FaultImages({
       {confirmation && (
         <div className="qc-warning" role="alert">
           <span>
-            선택한 이미지 {confirmation.length}건을 삭제할까요? 확인 이후 새로
+            선택한 이미지 {confirmation.length}장을 삭제할까요? 확인 이후 새로
             들어온 이미지는 유지됩니다.
           </span>
           <button disabled={pending} onClick={remove}>
@@ -174,18 +182,14 @@ function FaultImages({
               key={preview.id}
               remote={remote}
               src={
-                remote
-                  ? preview.previewUrl
-                  : preview.imageIndex === null
-                    ? undefined
-                    : sampleApples[preview.imageIndex]?.images[0]
+                remote ? preview.previewUrl : imageSource(preview.id)
               }
               alt={`${preview.id} 장애 이미지`}
             />
           </div>
           <div>
             <h3>{preview.id}</h3>
-            <p>{preview.faults.map((code) => FAULTS[code]).join(" · ")}</p>
+            <p>{preview.inspectionId} · view {preview.imageIndex} · {preview.errorCode}</p>
             <button onClick={() => setSelected(null)}>미리보기 닫기</button>
           </div>
         </div>
@@ -203,17 +207,17 @@ function FaultImages({
         <tbody>
           {rows.map((row) => (
             <tr key={row.id}>
-              <td>{row.id}</td>
-              <td>{row.time}</td>
-              <td>{row.faults.map((code) => FAULTS[code]).join(" · ")}</td>
+              <td>{row.inspectionId}<br /><small>view {row.imageIndex} · {row.id}</small></td>
+              <td>{kst(row.createdAt).slice(11, 19)}</td>
+              <td>{row.errorCode}</td>
               <td>
                 <select
                   aria-label={`${row.id} 오판 의심`}
                   value={row.misclassification}
-                  disabled={pending || !allowReview}
+                  disabled={pending || !allowReview || !row.hasRecord}
                   onChange={(event) =>
                     void classify(
-                      row.id,
+                      row.inspectionId,
                       event.target.value as MisclassificationType,
                     ).catch((cause) => setError(cause.message))
                   }
@@ -262,7 +266,7 @@ export default function QualityConsole({
     stale,
     configure,
     classify,
-    removeImages,
+    removeImages, faultImages, faultImageSource,
   } = demo.connection;
   const [actionError, setActionError] = useState("");
   const action = (operation: Promise<void>) => {
@@ -415,7 +419,7 @@ export default function QualityConsole({
           <button onClick={() => setTab("history")}>검사 이력</button>
           <button onClick={() => setTab("statistics")}>기간 통계</button>
           <button onClick={() => setTab("images")}>
-            장애 이미지 {state.images.length}
+            장애 이미지 {remote ? (snapshot?.retention.images ?? 0) : faultImages.length}장
           </button>
           <button onClick={() => setTab("faults")}>시연 설정</button>
           <button
@@ -845,6 +849,9 @@ export default function QualityConsole({
           )}
           {tab === "images" && (
             <FaultImages
+              images={faultImages}
+              imageSource={faultImageSource}
+              retained={remote ? (snapshot?.retention.images ?? 0) : faultImages.length}
               state={state}
               remote={remote}
               pending={disabled}

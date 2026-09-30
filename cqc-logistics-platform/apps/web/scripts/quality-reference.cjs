@@ -14,9 +14,9 @@ require.extensions[".ts"] = (module, filename) =>
     filename,
   );
 const { QualityReferenceService } = require("../src/lib/quality-reference.ts");
-const service = new QualityReferenceService(Date.now, (index) =>
+const service = new QualityReferenceService(Date.now, (index, view = 0) =>
   fs.promises.readFile(
-    path.join(__dirname, `../public/apples/apple-${index}-0.webp`),
+    path.join(__dirname, `../public/apples/apple-${index}-${view}.webp`),
   ),
 );
 const server = http.createServer(async (req, res) => {

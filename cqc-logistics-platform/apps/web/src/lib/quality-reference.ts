@@ -17,19 +17,23 @@ import {
   type Runtime,
 } from "./quality-runtime";
 import { summarizeInspections } from "./quality-statistics";
+import { DemoFaultImageStore } from "./quality-fault-images";
 import type { QualitySnapshot } from "./quality-api";
 
 /** HTTP contract reference only: no MySQL, inference or physical control. */
 export class QualityReferenceService {
   state: Runtime = initialRuntime();
   revision = 0;
+  readonly faultImages = new DemoFaultImageStore();
   constructor(
     private readonly now = Date.now,
-    private readonly image?: (index: number) => Promise<Uint8Array>,
+    private readonly image?: (index: number, view?: number) => Promise<Uint8Array>,
   ) {}
   tick() {
     const before = this.state.faults.join();
+    const previous = this.state;
     this.state = step(this.state, this.now());
+    this.faultImages.advance(previous, this.state);
     if (before !== this.state.faults.join()) this.revision++;
   }
   snapshot(): QualitySnapshot {
@@ -61,7 +65,7 @@ export class QualityReferenceService {
         deleteImages: true,
         concurrency: [1, 2, 4],
       },
-      retention: { history: 2000, images: 100 },
+      retention: { history: 2000, images: this.faultImages.items.length },
       periodTotals: Object.fromEntries(
         [1, 5, 10, 30].map((n) => [
           String(n),
@@ -415,7 +419,7 @@ export class QualityReferenceService {
         });
       }
       if (path === "fault-images" && method === "GET")
-        return this.json({ items: this.snapshot().state.images });
+        return this.json({ items: this.faultImages.items });
       if (path === "fault-images" && method === "DELETE") {
         const body = await request.json();
         if (
@@ -426,22 +430,18 @@ export class QualityReferenceService {
           Object.keys(body).some((k) => k !== "ids")
         )
           return this.fail(422, "INVALID_IDS");
-        const deletedIds = this.state.images
-          .filter((r) => body.ids.includes(r.id))
-          .map((r) => r.id);
-        this.state = {
-          ...this.state,
-          images: this.state.images.filter((r) => !body.ids.includes(r.id)),
-        };
+        const deletedIds = this.faultImages.remove(body.ids);
         return this.json({ deletedIds });
       }
       const preview = path.match(/^previews\/([A-Za-z0-9_-]+)$/);
       if (preview && method === "GET") {
-        const item = this.state.images.find((r) => r.id === preview[1]),
+        const item = this.faultImages.items.find((r) => r.id === preview[1]),
           job = this.state.jobs.find((r) => r.id === preview[1]);
         if (!item && !job) return this.fail(410, "IMAGE_EXPIRED");
         if (!this.image) return this.fail(503, "IMAGE_UNAVAILABLE");
-        const bytes = await this.image(item?.imageIndex ?? job!.index % 6);
+        const source = item ? this.faultImages.source(item.id) : undefined;
+        const match = source?.match(/apple-(\d+)-(\d+)/);
+        const bytes = await this.image(match ? Number(match[1]) : job!.index % 6, item?.imageIndex ?? 0);
         return new Response(bytes as BodyInit, {
           headers: {
             "Content-Type": "image/webp",

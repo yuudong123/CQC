@@ -12,7 +12,7 @@ const { classifyResult } = require("../src/lib/quality-runtime.ts");
 const openapi = require("../scripts/quality-openapi.cjs");
 const Ajv = require("ajv");
 const ajv = new Ajv({ allErrors: true, strict: false });
-const validates = Object.fromEntries(["Snapshot", "HistoryPage", "Summary", "ReviewAck", "ImageDeleteAck"].map(name => [name, ajv.compile({ $ref: `#/components/schemas/${name}`, components: openapi.components })]));
+const validates = Object.fromEntries(["Snapshot", "HistoryPage", "Summary", "ReviewAck", "ImageDeleteAck", "FaultImages"].map(name => [name, ajv.compile({ $ref: `#/components/schemas/${name}`, components: openapi.components })]));
 const start = Date.parse("2026-09-28T00:00:00Z");
 function fixture() {
   let now = start;
@@ -114,11 +114,12 @@ test("temporary preview expires after completion; image deletion preserves histo
   assert.equal((await f.request(`previews/${id}`)).status, 200);
   f.tick(); assert.equal((await f.request(`previews/${id}`)).status, 410);
   f.service.state.faults = ["INFERENCE_ERROR"]; f.tick(2);
-  const captured = f.service.state.images.map(r => r.id); f.tick(2);
+  const listed = schema("FaultImages", await (await f.request("fault-images")).json());
+  const captured = listed.items.map(r => r.id); f.tick(2);
   const response = schema("ImageDeleteAck", await (await f.request("fault-images", "DELETE", { ids: captured })).json());
   assert.deepEqual(response.deletedIds, captured);
   assert.ok(f.service.state.images.length > 0);
-  assert.ok(f.service.state.history.some(r => captured.includes(r.id)));
+  assert.ok(f.service.state.history.some(r => listed.items.some(image => image.inspectionId === r.id)));
   assert.equal((await f.request(`previews/${captured[0]}`)).status, 410);
 });
 test("DB outage rejects history/review but snapshot keeps saved totals and control remains available", async () => {
@@ -166,4 +167,39 @@ test("proxy restricts routes, methods, origins, content types and sanitizes back
     global.fetch = async () => { throw new Error("private internal address"); };
     const failed = await proxyQuality(req(), "snapshot"); assert.equal(failed.status, 503); assert.ok(!(await failed.text()).includes("private"));
   } finally { global.fetch = original; if (previous === undefined) delete process.env.CQC_QUALITY_BACKEND_URL; else process.env.CQC_QUALITY_BACKEND_URL = previous; }
+});
+
+const { parseFaultImages } = require("../src/lib/quality-fault-images.ts");
+test("individual image IDs preserve sibling views and inspection records; retention counts files", async () => {
+  const f = fixture(); f.service.state.faults = ["INFERENCE_ERROR"]; f.tick(2);
+  const items = parseFaultImages(schema("FaultImages", await (await f.request("fault-images")).json()));
+  assert.ok(items.length > 1);
+  const first = items[0], sibling = items.find(r => r.inspectionId === first.inspectionId && r.id !== first.id);
+  assert.ok(sibling); assert.notEqual(first.id, first.inspectionId);
+  assert.deepEqual(await (await f.request("fault-images", "DELETE", { ids: [first.inspectionId] })).json(), { deletedIds: [] });
+  const historyBefore = JSON.stringify(f.service.state.history);
+  await f.request("fault-images", "DELETE", { ids: [first.id] });
+  assert.equal((await f.request(`previews/${first.id}`)).status, 410);
+  assert.equal((await f.request(`previews/${sibling.id}`)).status, 200);
+  assert.equal(JSON.stringify(f.service.state.history), historyBefore);
+  assert.equal(f.service.snapshot().retention.images, items.length - 1);
+  f.tick(30);
+  const retained = parseFaultImages(await (await f.request("fault-images")).json());
+  assert.equal(retained.length, 100);
+  assert.ok(!retained.some(r => r.id === sibling.id));
+  assert.equal(f.service.snapshot().retention.images, 100);
+  assert.ok(f.service.state.history.some(r => r.id === first.inspectionId));
+  assert.throws(() => parseFaultImages({ items: [{ ...retained[0], imageIndex: 12 }] }));
+  assert.throws(() => parseFaultImages({ items: [{ ...retained[0], previewUrl: `/api/quality/previews/${first.inspectionId}` }] }));
+  assert.throws(() => parseFaultImages({ items: f.service.state.images }));
+});
+
+test("fault image reference response validates against the Backend-published OpenAPI", async () => {
+  const published = JSON.parse(fs.readFileSync(require("node:path").resolve(__dirname, "../../../../docs/contracts/quality-operations.openapi.json"), "utf8"));
+  const validate = ajv.compile({ $ref: "#/components/schemas/FaultImages", components: published.components });
+  const f = fixture(); f.service.state.faults = ["INFERENCE_TIMEOUT"]; f.tick(2);
+  const response = await (await f.request("fault-images")).json();
+  assert.ok(response.items.length > 1);
+  assert.ok(validate(response), JSON.stringify(validate.errors));
+  assert.deepEqual(await (await f.request("fault-images", "DELETE", { ids: [] })).json(), { deletedIds: [] });
 });
