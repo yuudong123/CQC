@@ -27,7 +27,7 @@
 | 프론트엔드 | FE-01~10, [종합 정리](Frontend-작업-종합정리.md) | [프론트 스택](reference/FE/frontend-stack.md), [관제 API 인계](협업공지/Frontend-관제-API-계약-인계.md) |
 | MLOps | MO-01~06 | [MLOps 스택](reference/MO/mlops-stack.md) |
 | 물류 | [LOGISTICS](LOGISTICS.md) | [물류 명세 01~08](reference/LOGISTICS/01-product-scope.md), [QC·물류 연결](reference/ALL/qc-logistics-handoff.md) |
-| 통합·파트 간 전달 | [ALL-02](ALL-02.md)(09-23 기록), [ALL-03](ALL-03.md)(현재) | [협업 요청](협업공지/파트별-협업-요청.md), [12-bin 정책](협업공지/12-bin-가상당도-배차-인계.md) |
+| 통합·파트 간 전달 | [ALL-02](ALL-02.md)(09-23 기록), [ALL-03](ALL-03.md)(현재) | [협업 요청](협업공지/파트별-협업-요청.md), [12-bin 정책](협업공지/12-bin-가상당도-배차-인계.md), [확정 범위 QA 테스트 케이스](reference/ALL/qa-test-cases.md) |
 
 최신 후보 모델 상태는 DM-09 본문을 따른다. 과거 공지·v1 카드·실험 결과를 현재 승인 상태로 해석하지 않는다.
 

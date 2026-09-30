@@ -64,4 +64,5 @@ BE-07 Simulator → 루트 Compose에 FE·Simulator 연결, migration·장애 �
 | 문서 안내 | [README](README.md) |
 | 09-23 독립 실행 점검 기록 | [ALL-02](ALL-02.md) |
 | 파트 간 요청 | [파트별 협업 요청](협업공지/파트별-협업-요청.md) |
+| 확정 범위 QA (ALL-04 사전 점검) | [QA 테스트 케이스](reference/ALL/qa-test-cases.md) |
 | 기획·요구사항·결정 | [기획서](../project-plan.md), [요구사항](../planning/requirements.md), [결정 기록](../planning/decision-log.md) |
