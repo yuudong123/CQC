@@ -9,13 +9,27 @@ import {
   type QualitySnapshot,
   type SimulatorChange,
 } from "@/lib/quality-api";
-import { DemoFaultImageStore, parseFaultImages, type FaultImage } from "@/lib/quality-fault-images";
+import {
+  DemoFaultImageStore,
+  loadQualityPoll,
+  parseFaultImages,
+  type FaultImage,
+} from "@/lib/quality-fault-images";
 import type { MisclassificationType } from "@/lib/quality-contract";
+
+const REQUEST_TIMEOUT_MS = 7000;
+
+async function fetchFaultImages(signal: AbortSignal) {
+  return parseFaultImages(
+    await (await qualityRequest("fault-images", { signal })).json(),
+  );
+}
 
 export function useQualityConnection(mode: "demo" | "api") {
   const imageStore = useRef(new DemoFaultImageStore());
   const demoState = useRef(initialRuntime());
   const [faultImages, setFaultImages] = useState<FaultImage[]>([]);
+  const [faultImageError, setFaultImageError] = useState("");
   const [state, update] = useState(initialRuntime);
   const [snapshot, setSnapshot] = useState<QualitySnapshot | null>(null);
   const [error, setError] = useState("");
@@ -60,13 +74,21 @@ export function useQualityConnection(mode: "demo" | "api") {
       controller = new AbortController();
       const version = generation.current;
       try {
-        const value = await getSnapshot(
-          AbortSignal.any([controller.signal, AbortSignal.timeout(7000)]),
+        const signal = controller.signal;
+        const result = await loadQualityPoll(
+          () =>
+            getSnapshot(
+              AbortSignal.any([signal, AbortSignal.timeout(REQUEST_TIMEOUT_MS)]),
+            ),
+          () =>
+            fetchFaultImages(
+              AbortSignal.any([signal, AbortSignal.timeout(REQUEST_TIMEOUT_MS)]),
+            ),
         );
-        const images = parseFaultImages(await (await qualityRequest("fault-images", { signal: controller.signal })).json());
         if (!disposed && version === generation.current && !busy.current) {
-          setFaultImages(images);
-          accept(value);
+          if (result.images) setFaultImages(result.images);
+          setFaultImageError(result.imageError);
+          accept(result.snapshot);
           setError("");
         }
       } catch (cause) {
@@ -174,12 +196,22 @@ export function useQualityConnection(mode: "demo" | "api") {
             "삭제 응답이 올바르지 않습니다. 목록에서 결과를 확인하세요.",
           );
         if (mounted.current) {
-          setFaultImages(current => current.filter(row => !result.deletedIds.includes(row.id)));
-          const fresh = await getSnapshot(signal);
-          const images = parseFaultImages(await (await qualityRequest("fault-images", { signal })).json());
-          if (mounted.current) { accept(fresh); setFaultImages(images); }
-          if (images.some(row => ids.includes(row.id)))
-            throw new Error("일부 이미지가 삭제되지 않았습니다. 남은 목록을 확인하고 다시 시도하세요.");
+          setFaultImages((current) =>
+            current.filter((row) => !result.deletedIds.includes(row.id)),
+          );
+          const fresh = await loadQualityPoll(
+            () => getSnapshot(signal),
+            () => fetchFaultImages(signal),
+          );
+          if (mounted.current) {
+            accept(fresh.snapshot);
+            if (fresh.images) setFaultImages(fresh.images);
+            setFaultImageError(fresh.imageError);
+          }
+          if (fresh.images?.some((row) => ids.includes(row.id)))
+            throw new Error(
+              "일부 이미지가 삭제되지 않았습니다. 남은 목록을 확인하고 다시 시도하세요.",
+            );
         }
       });
     },
@@ -187,6 +219,7 @@ export function useQualityConnection(mode: "demo" | "api") {
   );
   return {
     faultImages,
+    faultImageError: mode === "api" ? faultImageError : "",
     faultImageSource: (id: string) => imageStore.current.source(id),
     state,
     snapshot,

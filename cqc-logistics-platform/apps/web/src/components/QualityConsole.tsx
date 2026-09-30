@@ -81,7 +81,11 @@ function Modal({
   );
 }
 function FaultImages({
-  state, images, imageSource, retained,
+  state,
+  images,
+  imageSource,
+  retained,
+  loadError,
   classify,
   removeImages,
   remote,
@@ -93,6 +97,7 @@ function FaultImages({
   images: FaultImage[];
   imageSource: (id: string) => string | undefined;
   retained: number;
+  loadError: string;
   classify: (id: string, value: MisclassificationType) => Promise<void>;
   removeImages: (ids: string[]) => Promise<void>;
   remote: boolean;
@@ -156,6 +161,11 @@ function FaultImages({
           : "예시 이미지 관리 · 삭제는 이 브라우저의 목록에만 적용됩니다."}{" "}
         검사 이력은 유지됩니다.
       </p>
+      {loadError && (
+        <p role="alert" className="qc-warning">
+          {loadError}
+        </p>
+      )}
       {error && (
         <p role="alert" className="qc-warning">
           {error}
@@ -266,7 +276,10 @@ export default function QualityConsole({
     stale,
     configure,
     classify,
-    removeImages, faultImages, faultImageSource,
+    removeImages,
+    faultImages,
+    faultImageError,
+    faultImageSource,
   } = demo.connection;
   const [actionError, setActionError] = useState("");
   const action = (operation: Promise<void>) => {
@@ -852,6 +865,7 @@ export default function QualityConsole({
               images={faultImages}
               imageSource={faultImageSource}
               retained={remote ? (snapshot?.retention.images ?? 0) : faultImages.length}
+              loadError={faultImageError}
               state={state}
               remote={remote}
               pending={disabled}

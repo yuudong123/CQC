@@ -83,3 +83,5 @@ Backend PR #24가 포함된 dev `b0b08dd`의 OpenAPI를 기준으로 FE를 수�
 - 기존 계약 schema는 Backend 변경을 그대로 사용한다. 프론트에서 Backend OpenAPI를 다시 정의하거나 덮어쓰지 않았다.
 
 검증: FE 자동 시험 33개 통과. 개별 삭제 후 같은 검사 나머지 view·이력 보존, 확인 후 새 이미지 보호, 100장 순환, preview 만료, 실제 보존 장수, Backend OpenAPI 응답 검증 포함. 실제 배포 Backend의 파일 시스템을 대상으로 한 브라우저 통합시험은 별도 확인이 필요하다.
+
+조회 실패 격리: `/fault-images` 실패는 snapshot 반영을 막지 않는다. FE는 두 요청을 병렬로 보내고 이미지 목록 오류는 장애 이미지 창에만 표시한다. 배포 시 Backend `FAULT_IMAGE_STORAGE_ROOT` Volume이 없으면 목록은 계속 503이므로 MO-05 설정이 필요하다.

@@ -203,3 +203,21 @@ test("fault image reference response validates against the Backend-published Ope
   assert.ok(validate(response), JSON.stringify(validate.errors));
   assert.deepEqual(await (await f.request("fault-images", "DELETE", { ids: [] })).json(), { deletedIds: [] });
 });
+
+const { loadQualityPoll } = require("../src/lib/quality-fault-images.ts");
+test("fault image inventory failure keeps the control snapshot; snapshot failure still fails the poll", async () => {
+  const snapshot = { revision: 7 };
+  const images = [{ id: "a_view_0" }];
+  const ok = await loadQualityPoll(async () => snapshot, async () => images);
+  assert.deepEqual(ok, { snapshot, images, imageError: "" });
+  const unavailable = await loadQualityPoll(async () => snapshot, async () => { throw new Error("서비스에 연결할 수 없습니다."); });
+  assert.equal(unavailable.snapshot, snapshot);
+  assert.equal(unavailable.images, null);
+  assert.match(unavailable.imageError, /장애 이미지 목록을 불러오지 못했습니다: 서비스에 연결할 수 없습니다\./);
+  let imagesStarted = false;
+  await assert.rejects(
+    loadQualityPoll(async () => { throw new Error("snapshot down"); }, async () => { imagesStarted = true; return images; }),
+    /snapshot down/,
+  );
+  assert.ok(imagesStarted, "both requests start in parallel");
+});

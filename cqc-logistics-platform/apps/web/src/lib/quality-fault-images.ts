@@ -49,3 +49,24 @@ export class DemoFaultImageStore {
     for (const id of this.sources.keys()) if (!kept.has(id)) this.sources.delete(id);
   }
 }
+export type QualityPoll<S> = { snapshot: S; images: FaultImage[] | null; imageError: string };
+/**
+ * Loads the control snapshot and the fault image inventory in parallel.
+ * A snapshot failure is fatal for the poll; an image inventory failure (e.g. Backend
+ * storage not configured → 503 IMAGE_UNAVAILABLE) keeps the snapshot and reports
+ * the image error separately so the control screen does not freeze.
+ */
+export async function loadQualityPoll<S>(
+  loadSnapshot: () => Promise<S>,
+  loadImages: () => Promise<FaultImage[]>,
+): Promise<QualityPoll<S>> {
+  const [snapshot, images] = await Promise.allSettled([loadSnapshot(), loadImages()]);
+  if (snapshot.status === "rejected") throw snapshot.reason;
+  if (images.status === "fulfilled") return { snapshot: snapshot.value, images: images.value, imageError: "" };
+  const reason = images.reason instanceof Error ? images.reason.message : "";
+  return {
+    snapshot: snapshot.value,
+    images: null,
+    imageError: `장애 이미지 목록을 불러오지 못했습니다${reason ? `: ${reason}` : "."} 관제 상태는 계속 갱신됩니다.`,
+  };
+}
