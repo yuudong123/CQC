@@ -34,6 +34,12 @@
 
 이 표는 저장소와 보존된 증거의 상태다. 이번 검토에서 서버에 접속해 재배포하거나 현재 운영 상태를 재측정하지 않았다.
 
+### BE-07 구현 완료 갱신 (2026-09-30)
+
+위 표는 2026-09-29 dev 기준 기록이다. 이후 확인한 **BE-07 Backend 구현 범위는 완료**됐다. Simulator는 독립 프로세스로 실행하며 상태·revision·동시성·장애·NEXT·runner·위치를 소유한다. Backend는 기존 관제 API를 내부 HTTP client로 연결한다. Backend·Simulator 테스트 214건과 MySQL 실DB 통합 테스트 4건이 통과했다. 완료 범위와 실행·설정 계약은 [BE-07 완료 문서](wbs/BE-07.md)를 따른다.
+
+`Dockerfile.simulator`, Compose 연결, dataset read-only·state writable Volume, 실제 시연 데이터의 컨테이너 통합, 재시작 후 위치 복구, 목표 CPU 처리량 및 Jenkins 배포 검증은 **후속 MLOps/공동 통합 범위**로 남는다. 이는 BE-07 Backend 미구현을 의미하지 않는다.
+
 ## 1. 프로젝트 효과 조사
 
 ### 1.1 해결하려는 문제

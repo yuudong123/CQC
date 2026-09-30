@@ -31,6 +31,12 @@ WBS의 ID·담당·일정은 바꾸지 않고 dev에 병합된 구현만 적는�
 | BE | BE-01~05 완료, BE-06 장애 이미지 저장 계층(PR #22) | 장애 이미지 트리거·관제 제어/검수/이미지 API, BE-07 Simulator, BE-08 이후 |
 | MO | 아래 표 | 아래 표 |
 
+### BE-07 현재 상태 (2026-09-30)
+
+**BE-07 Backend 구현 범위 완료.** 독립 Simulator 프로세스, Backend 관제 API adapter, 상태·revision·NEXT 단일 소유, 500ms 전송, 위치 저장·복구와 장애 시연 제어를 구현했다. Backend·Simulator 테스트 214건과 별도 MySQL 실DB 통합 테스트 4건이 통과했다. 위 2026-09-29 dev 현황은 당시 기록으로 유지한다. [BE-07 완료 문서](wbs/BE-07.md)를 따른다.
+
+`Dockerfile.simulator`, Compose 실제 연결, dataset read-only·state writable Volume, 실제 시연 데이터 컨테이너 통합, 재시작 위치 복구, 목표 CPU 처리량과 Jenkins 배포 검증은 **후속 MLOps/공동 통합 범위**다.
+
 ## MLOps 작업 상태 (2026-09-28, MO 작성)
 
 최신 `origin/dev` 반영 상태와 실제 구현을 대조해 완료 범위와 남은 범위를 갱신한다. 물류 API·웹 화면은 현재 dev에 반영된 범위까지만 완료로 표시하고, 서버 운영 설정과 전체 CQC 통합은 별도 확인 대상으로 둔다.
