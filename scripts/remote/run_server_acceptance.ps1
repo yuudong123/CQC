@@ -3,7 +3,7 @@
 param(
     [Parameter(Mandatory = $true)]
     [string]$Checkpoint,
-    [string]$OutputDirectory = "outputs\i7-4790-acceptance"
+    [string]$OutputDirectory = "outputs\server-acceptance"
 )
 
 $ErrorActionPreference = "Stop"
@@ -12,8 +12,10 @@ Set-Location -LiteralPath $repo
 
 # 다른 컴퓨터의 측정값이 목표 장비 승인으로 기록되지 않게 장비를 먼저 확인한다.
 $cpuNames = @(Get-CimInstance Win32_Processor | ForEach-Object { $_.Name.Trim() })
-if (-not ($cpuNames | Where-Object { $_ -match "i7-4790" })) {
-    throw "Target CPU mismatch. Required: i7-4790. Detected: $($cpuNames -join ', ')"
+# 서버컴(학원 배포 서버)의 CPU 모델명. 판별에만 쓴다.
+$serverCpuPattern = "i7-4790"
+if (-not ($cpuNames | Where-Object { $_ -match $serverCpuPattern })) {
+    throw "Target CPU mismatch. Required: 서버컴 CPU. Detected: $($cpuNames -join ', ')"
 }
 
 $memoryBytes = [int64](Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory
@@ -63,7 +65,7 @@ $accepted = (
 )
 # 장비·체크포인트 해시·측정값·통과 기준을 하나의 인계 증거로 저장한다.
 $result = [ordered]@{
-    target_cpu = "Intel Core i7-4790"
+    target_cpu = "서버컴"
     detected_cpu = $cpuNames
     memory_gb = [math]::Round($memoryBytes / 1GB, 1)
     checkpoint = $checkpointPath

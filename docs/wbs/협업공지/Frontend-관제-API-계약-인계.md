@@ -69,7 +69,7 @@ FE는 위 API 호출까지 구현되어 있어 다른 파트 완료 후 주소�
 
 PR #18이 dev `2fa187b`에 병합됐다. MLOps는 기존 `cqc-logistics-platform/apps/web/Dockerfile`을 루트 Compose의 frontend placeholder 대신 연결하고 포트 3000·healthcheck를 구성한다. `CQC_QUALITY_MODE=api`, `CQC_QUALITY_BACKEND_URL=http://backend:8000`을 서버 실행 환경에 제공한다. 2026-09-29 BE-05 병합으로 Backend에 조회 계약 5개(`snapshot`, `inspections`, `inspections.csv`, `statistics`, `statistics.csv`)가 구현됐다. 시연 제어(`PUT /simulator`), 검수(`PATCH /inspections/{id}/review`), 장애 이미지(`/fault-images`), 미리보기(`/previews/{id}`) 4개는 아직 Backend에 없으므로 해당 화면 기능은 API 모드에서 동작하지 않는다.
 
-참조 서버는 별도 개발/계약 검증용이다. 실제 Backend·Inference Compose 및 i7-4790 합성 입력 측정은 이미 존재하므로 이를 재구현 대상으로 요청하지 않는다. 실제 DB·Simulator 연결과 실제 사진 기반 통합시험은 남아 있다.
+참조 서버는 별도 개발/계약 검증용이다. 실제 Backend·Inference Compose 및 서버컴 합성 입력 측정은 이미 존재하므로 이를 재구현 대상으로 요청하지 않는다. 실제 DB·Simulator 연결과 실제 사진 기반 통합시험은 남아 있다.
 
 ## 2026-09-30 BE-06 개별 장애 이미지 계약 반영
 

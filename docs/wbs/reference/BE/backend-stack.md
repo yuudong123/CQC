@@ -354,7 +354,7 @@ Backend 설계·성능시험 단계:
 
 - late result 최종 구현, 동시 최대 개수와 lifecycle
 - HTTP transport timeout 구체값
-- i7-4790 CPU 최종 평균·최대·p95와 500ms 충족 여부
+- 서버컴 CPU 최종 평균·최대·p95와 500ms 충족 여부
 - dependency·lock 파일 형식
 - Alembic 디렉터리와 설정 위치
 

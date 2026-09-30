@@ -22,7 +22,7 @@
 - 최대 12파일·24MiB를 넘으면 HTTP 413 반환
 - PNG/JPEG 외 형식은 HTTP 415, 빈 요청·손상 이미지는 HTTP 422
 
-목표 i7-4790의 500ms 수용시험만 남는다. 최종 Test 품질 Macro F1이 승인 기준에 미달했으므로 현재 패키지는 기능 검증용이며 승인 모델이 아니다.
+목표 서버컴의 500ms 수용시험만 남는다. 최종 Test 품질 Macro F1이 승인 기준에 미달했으므로 현재 패키지는 기능 검증용이며 승인 모델이 아니다.
 
 ## 2026-09-23: 후속 후보 HTTP 계약·배포 인계
 
@@ -30,7 +30,7 @@
 - `scripts/verify_inference_http.py`가 임시 loopback Uvicorn 서버를 실행하고 종료 시 해당 자식 프로세스만 정리한다.
 - 합성 PNG 12장 정상 200, 누락 대응 8장 200, 13장 413, metadata 개수 불일치 422, 잘못된 MIME 415, 손상 이미지 422를 실제 HTTP로 확인했다.
 - `origin/dev`의 `2490cfe7f9a75fcbd75acb36ccf99aad758e45d9`에서 추출한 변경 없는 Backend `InferenceResponse`로 정상 응답 검증을 통과했다. 백엔드 소스는 수정하지 않았다.
-- 증거: `docs/wbs/results/candidate-v2-http.json`. 합성 입력·노트북 단발 측정이며 실사과 정확도나 i7-4790 성능 승인 근거가 아니다. 손상 이미지 첫 호출은 약 2.6초로 500ms를 초과했다. 정상 요청만으로 오류 경로 지연을 보장하면 안 된다.
+- 증거: `docs/wbs/results/candidate-v2-http.json`. 합성 입력·노트북 단발 측정이며 실사과 정확도나 서버컴 성능 승인 근거가 아니다. 손상 이미지 첫 호출은 약 2.6초로 500ms를 초과했다. 정상 요청만으로 오류 경로 지연을 보장하면 안 된다.
 - 실제 Backend Client는 Mock 상태이므로 Backend 검사→Inference→제어·저장 전체 통합과 transport timeout 검증은 남아 있다.
 
 ### 독립 배포 슬롯
@@ -58,7 +58,7 @@ docker compose -p cqc-inference-check -f compose.inference.yaml logs --tail 50
 - 시험 후 해당 프로젝트의 컨테이너·네트워크만 제거했다. 이미지와 모델 패키지는 보존했고 공용 서비스·운영 배포는 변경하지 않았다.
 - 로컬 회귀 테스트를 최종 학습 설정까지 포함해 재실행하여 16개 통과, Python 문법·diff 공백 검사 통과.
 
-남은 외부 의존 작업은 Backend 실제 HTTP Client 및 전체 검사 흐름, 신규 독립 평가 데이터, i7-4790 수용시험이다. 패키지 생성·컨테이너 정상 기동은 품질 승인을 의미하지 않는다.
+남은 외부 의존 작업은 Backend 실제 HTTP Client 및 전체 검사 흐름, 신규 독립 평가 데이터, 서버컴 수용시험이다. 패키지 생성·컨테이너 정상 기동은 품질 승인을 의미하지 않는다.
 
 ### HTTP 시험 재현
 
@@ -85,7 +85,7 @@ Backend 계약도 검사하려면 원본 코드 스냅샷 루트를 `--backend-r
 | 순차 해제 | 295ms | 84ms | 410ms | - |
 | 병렬 해제(2스레드) | 164ms | 82ms | 261ms | 295ms (loopback) |
 
-- 실제 PNG에서는 **해제가 모델보다 3~4배 오래 걸린다.** MO-06의 i7-4790 측정(합성 JPEG, HTTP p95 205.76ms)은 이 비용을 포함하지 않는다. 실제 시연 사진으로 i7-4790 재측정이 필요하다.
+- 실제 PNG에서는 **해제가 모델보다 3~4배 오래 걸린다.** MO-06의 서버컴 측정(합성 JPEG, HTTP p95 205.76ms)은 이 비용을 포함하지 않는다. 실제 시연 사진으로 서버컴 재측정이 필요하다.
 - loopback 동시 요청 1·2·4의 처리량은 초당 3.45·4.10·3.97건(2 vCPU에서 CPU 포화). 초당 2건 요구는 만족하지만 동시 요청이 늘면 지연이 선형으로 늘어난다.
 - 요청당 13.8MiB라 100Mbps 망에서는 전송만 약 1.1초다. Backend·Inference가 같은 호스트(Compose 내부망)면 문제없지만, Simulator→Backend 구간이 실제 네트워크를 지나면 500ms 예산을 넘는다. JPEG·축소 전송은 학습 입력 분포(원본 PNG)가 바뀌므로 검증 없이 적용하지 않는다.
 - 원본: [v2 시연 드라이런](results/v2-demo-dry-run-20260930.json). 재현: `scripts/evaluate_demo_bundles.py` (local·http 모드, `--index`로 일부 묶음만 지정 가능).

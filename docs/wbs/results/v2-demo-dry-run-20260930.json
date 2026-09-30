@@ -8,7 +8,7 @@
     "cultivar": 1.0
   },
   "selection": "기본 재생 12장 묶음 중 Test 사과 21개 전부(사과당 첫 묶음) + 개발 사과 15개(seed 7 무작위), 사과당 1묶음",
-  "environment": "클라우드 CPU 2 vCPU, torch 2.11 CPU. 목표 i7-4790 측정이 아니다.",
+  "environment": "클라우드 CPU 2 vCPU, torch 2.11 CPU. 목표 서버컴 측정이 아니다.",
   "note": "시연 묶음은 같은 실제 사과의 다른 사진이다. dev 사과는 v2 학습 사과라 정확도를 성능으로 인용하지 않는다. Test 사과도 기존 Test 27개를 반복 사용한 것이므로 독립 평가가 아니다.",
   "runs": {
     "dry-run-omp1-w1": {

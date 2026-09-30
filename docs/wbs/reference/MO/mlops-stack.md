@@ -328,7 +328,7 @@ Docker 재시작 후
 배포 기준 사양은 다음과 같다.
 
 ```text
-Intel Core i7-4790
+서버컴
 RAM 16GB
 CPU Docker 환경
 ```

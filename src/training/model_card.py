@@ -10,6 +10,10 @@ from typing import Any
 from src.data.multiview import CULTIVAR_CLASSES, QUALITY_CLASSES
 
 
+# 서버컴(학원 배포 서버)의 CPU 모델명. 벤치마크 CPU 문자열이 서버컴인지 판별하는 데만 쓴다.
+SERVER_CPU_MODEL = "i7-4790"
+
+
 def failure_cases(test_result: dict[str, Any]) -> list[dict[str, Any]]:
     predictions = test_result["test"].get("predictions", [])
     return [
@@ -39,7 +43,7 @@ def render_card(
         and test["quality"]["macro_f1"] >= 0.90
     )
     cpu = str(benchmark.get("cpu", "unknown"))
-    target_cpu_verified = "i7-4790" in cpu.lower()
+    target_cpu_verified = SERVER_CPU_MODEL in cpu.lower()
     benchmark_table = "\n".join(
         "| {concurrency} | {p95_ms:.1f}ms | {throughput_per_second:.2f} | {meets_500ms} | {meets_2_per_second} |".format(
             **row
@@ -82,7 +86,7 @@ def render_card(
 - 신뢰도 기준: `{json.dumps(threshold_selection, ensure_ascii=False)}`
 - 측정 CPU: `{cpu}`
 - 논리 CPU 수: `{benchmark.get('logical_cpu_count', 'unknown')}`
-- 목표 i7-4790 수용시험: {'완료' if target_cpu_verified else '미완료'}
+- 목표 서버컴 수용시험: {'완료' if target_cpu_verified else '미완료'}
 - inference는 예측만 담당하며 bin·재검사·DB 정책은 백엔드가 담당한다.
 
 | 동시 처리 | p95 | 처리량/초 | 500ms | 초당 2건 |
@@ -94,7 +98,7 @@ def render_card(
 - 사과 부사·양광과 L/M/S 품질 외 입력은 보장하지 않는다.
 - 촬영 환경과 품목 변화에 대한 일반화는 검증되지 않았다.
 - 중복 해시 이미지 5쌍은 원본에서 제거하지 않았다.
-- 목표 장비가 아닌 CPU 측정은 i7-4790 성능 승인 근거로 사용하지 않는다.
+- 목표 장비가 아닌 CPU 측정은 서버컴 성능 승인 근거로 사용하지 않는다.
 """
 
 

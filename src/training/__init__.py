@@ -21,7 +21,7 @@
     package_model / model_card
                           체크포인트 패키징(SHA-256)과 모델 카드 생성
     benchmark / benchmark_concurrency / acceptance_cpu
-                          CPU·GPU 지연·처리량 측정, i7-4790 합성 입력 수용시험
+                          CPU·GPU 지연·처리량 측정, 서버컴 합성 입력 수용시험
 
 실행 예:
     python -m src.data.virtual_brix                       # 가상 당도 CSV 생성

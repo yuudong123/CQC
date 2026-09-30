@@ -1,12 +1,12 @@
-# i7-4790 모델 성능 수용시험
+# 서버컴 모델 성능 수용시험
 
 ## 목적
 
-WBS의 DM-06·DM-08 완료 조건인 Intel Core i7-4790, RAM 16GB 환경의 평균·최대·p95 추론시간과 초당 처리량을 동일 명령으로 측정한다.
+WBS의 DM-06·DM-08 완료 조건인 서버컴(RAM 16GB) 환경의 평균·최대·p95 추론시간과 초당 처리량을 동일 명령으로 측정한다.
 
 ## 안전 조건
 
-- CPU 이름에 `i7-4790`이 없으면 실행을 거부한다.
+- CPU가 서버컴 CPU가 아니면 실행을 거부한다.
 - 물리 RAM이 15GiB 미만이면 실행을 거부한다.
 - 고정 Test가 아닌 validation 입력으로 모델 추론시간만 측정한다.
 - 체크포인트 SHA-256과 실제 CPU·RAM을 결과에 함께 기록한다.
@@ -14,7 +14,7 @@ WBS의 DM-06·DM-08 완료 조건인 Intel Core i7-4790, RAM 16GB 환경의 평�
 
 ## 2026-09-23 학원 Jenkins 서버 인계
 
-목표 장비는 학원 서버 `192.168.133.106`의 **i7-4790 / RAM 16GB**다. 이전 문서의 “장비가 없다”는 판단은 잘못됐다. Jenkins에 접속할 수 있다는 사실과 실제 성능 수용시험 완료는 구분한다. 시험 결과 파일이 생기기 전까지 WBS의 CPU 수용시험은 미완료다.
+목표 장비는 학원 서버 `192.168.133.106`의 **서버컴(RAM 16GB)**이다. 이전 문서의 “장비가 없다”는 판단은 잘못됐다. Jenkins에 접속할 수 있다는 사실과 실제 성능 수용시험 완료는 구분한다. 시험 결과 파일이 생기기 전까지 WBS의 CPU 수용시험은 미완료다.
 
 데이터·모델 담당이 제공한 실행 단위는 `src/training/acceptance_cpu.py`와 v2 모델 패키지다. 새 명령은 Linux Jenkins 에이전트에서도 실행되며 **원본 AI Hub 데이터가 필요하지 않다.** 모델 입력과 동일한 `[1, 12, 3, 224, 224]` 형태의 고정 합성 텐서를 사용하여 전처리 이후 모델 순수 추론시간을 잰다. Test 사과를 측정에 사용하지 않는다.
 
@@ -32,17 +32,17 @@ WBS의 DM-06·DM-08 완료 조건인 Intel Core i7-4790, RAM 16GB 환경의 평�
 
 ```sh
 docker build -f Dockerfile.inference -t cqc-inference-acceptance .
-mkdir -p "outputs/i7-4790-acceptance/${BUILD_NUMBER}"
+mkdir -p "outputs/server-acceptance/${BUILD_NUMBER}"
 docker run --rm --network none \
   -v "$PWD/models/cqc-apple-separate12-focal-v2-candidate:/app/model:ro" \
-  -v "$PWD/outputs/i7-4790-acceptance/${BUILD_NUMBER}:/app/output" \
+  -v "$PWD/outputs/server-acceptance/${BUILD_NUMBER}:/app/output" \
   cqc-inference-acceptance \
   python -m src.training.acceptance_cpu \
     --package-dir /app/model \
     --output /app/output/acceptance.json
 ```
 
-컨테이너에서 `/proc/cpuinfo`와 `/proc/meminfo`를 읽어 i7-4790과 15GiB 이상 RAM을 확인한다. 10회 준비 실행, 순차 100회, 동시 요청 1·2·4 각각 100회를 재현하고 평균·최대·p95·초당 처리량을 한 JSON에 저장한다. CPU나 RAM이 기준과 다르면 실제 수용시험을 실행하지 않는다. `--smoke`는 다른 장비에서 명령을 점검할 때만 사용하며 `accepted=false`로 기록된다.
+컨테이너에서 `/proc/cpuinfo`와 `/proc/meminfo`를 읽어 서버컴 CPU와 15GiB 이상 RAM을 확인한다. 10회 준비 실행, 순차 100회, 동시 요청 1·2·4 각각 100회를 재현하고 평균·최대·p95·초당 처리량을 한 JSON에 저장한다. CPU나 RAM이 기준과 다르면 실제 수용시험을 실행하지 않는다. `--smoke`는 다른 장비에서 명령을 점검할 때만 사용하며 `accepted=false`로 기록된다.
 
 실행 전 MLOps 담당 확인 항목: Jenkins 에이전트가 **학원 서버의 호스트 CPU**에서 Docker를 실행하는지, 다른 원격 Docker 데몬으로 명령을 전달하지 않는지, 모델 파일을 읽기 전용으로 마운트했는지. 동일 모델 버전과 체크섬으로 inference 컨테이너를 기동한 뒤 `/health`와 실제 Backend→Inference HTTP 지연도 별도 수용시험에서 확인한다.
 
@@ -51,11 +51,11 @@ docker run --rm --network none \
 Windows 호스트에서 원본 데이터와 가상환경이 준비돼 있을 경우 기존 PowerShell 스크립트를 계속 사용할 수 있다. 이는 위 Docker 합성 입력 경로와 측정 자료·실행환경이 다르므로 결과에 실행 방식을 함께 적는다.
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\remote\run_i7_4790_acceptance.ps1 `
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\remote\run_server_acceptance.ps1 `
   -Checkpoint models\<version>\model.pt
 ```
 
-다음 파일이 `outputs/i7-4790-acceptance/`에 생성된다.
+다음 파일이 `outputs/server-acceptance/`에 생성된다.
 
 - `latency.json`: 10회 준비 실행 후 100회 평균·최대·p95
 - `concurrency.json`: 동시 처리 1·2·4, 각 100회 p95·처리량
@@ -71,7 +71,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\remote\run_i7_4790_a
 
 ## 현재 상태
 
-2026-09-23 학원 i7-4790 Docker 환경에서 Jenkins 저장 볼륨 `jenkins_home`의 모델 패키지를 읽기 전용으로 연결해 모델 단독 수용시험을 완료했다. `model.pt` SHA-256은 위 패키지 식별값과 일치했고, 결과는 [`results/i7-4790-model-only-20260923.json`](results/i7-4790-model-only-20260923.json)에 보존했다. 컨테이너가 i7-4790과 RAM 15.5GiB를 확인했으며 `smoke=false`, `accepted=true`였다.
+2026-09-23 학원 서버컴 Docker 환경에서 Jenkins 저장 볼륨 `jenkins_home`의 모델 패키지를 읽기 전용으로 연결해 모델 단독 수용시험을 완료했다. `model.pt` SHA-256은 위 패키지 식별값과 일치했고, 결과는 [`results/server-model-only-20260923.json`](results/server-model-only-20260923.json)에 보존했다. 컨테이너가 서버컴과 RAM 15.5GiB를 확인했으며 `smoke=false`, `accepted=true`였다.
 
 | 측정 | 평균 | 최대 | p95 | 처리량 |
 |---|---:|---:|---:|---:|
@@ -84,7 +84,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\remote\run_i7_4790_a
 
 ### 별도 Inference HTTP 측정
 
-같은 i7-4790 환경에서 실제 모델 API를 별도 Docker 컨테이너로 실행했다. 고정된 224×224 JPEG 12장을 multipart로 전송해 10회 준비 실행 뒤 순차 100회를 측정했다. 요청 크기는 약 303KB이고 결과는 [`results/i7-4790-inference-http-20260923.json`](results/i7-4790-inference-http-20260923.json)에 보존했다.
+같은 서버컴 환경에서 실제 모델 API를 별도 Docker 컨테이너로 실행했다. 고정된 224×224 JPEG 12장을 multipart로 전송해 10회 준비 실행 뒤 순차 100회를 측정했다. 요청 크기는 약 303KB이고 결과는 [`results/server-inference-http-20260923.json`](results/server-inference-http-20260923.json)에 보존했다.
 
 | 측정 범위 | 평균 | 최대 | p95 | 처리량 |
 |---|---:|---:|---:|---:|
@@ -98,13 +98,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\remote\run_i7_4790_a
 ```powershell
 docker run -d --name cqc-inference-http-benchmark -p 127.0.0.1:18001:8001 -e OMP_NUM_THREADS=1 -e MKL_NUM_THREADS=1 --mount 'type=volume,source=jenkins_home,target=/jenkins,readonly' cqc-inference-acceptance python -m src.inference.api --model-dir /jenkins/workspace/CQC-CICD/models/cqc-apple-separate12-focal-v2-candidate --device cpu --host 0.0.0.0 --port 8001
 Invoke-RestMethod http://127.0.0.1:18001/health
-.\.venv\Scripts\python.exe scripts\benchmark_inference_http.py --output outputs\i7-4790-acceptance\new-run\inference-http.json
+.\.venv\Scripts\python.exe scripts\benchmark_inference_http.py --output outputs\server-acceptance\new-run\inference-http.json
 docker rm -f cqc-inference-http-benchmark
 ```
 
 ### Backend→Inference 실제 HTTP 연결 예비 측정
 
-Backend에 선택형 `HttpInferenceClient`를 추가했다. 기본값은 기존 Mock이며, `INFERENCE_CLIENT_MODE=http`와 `INFERENCE_URL`을 설정했을 때 실제 `/v1/predict`에 multipart 요청을 보낸다. 같은 i7-4790 장비에서 Backend를 Windows 프로세스(포트 18000), Inference를 별도 Docker 컨테이너(포트 18001)로 실행하고 호스트→Backend→Inference→Backend 응답을 측정했다. [결과 JSON](results/i7-4790-backend-inference-http-20260923.json)은 준비 실행 10회 뒤 순차 요청 100회다.
+Backend에 선택형 `HttpInferenceClient`를 추가했다. 기본값은 기존 Mock이며, `INFERENCE_CLIENT_MODE=http`와 `INFERENCE_URL`을 설정했을 때 실제 `/v1/predict`에 multipart 요청을 보낸다. 같은 서버컴 장비에서 Backend를 Windows 프로세스(포트 18000), Inference를 별도 Docker 컨테이너(포트 18001)로 실행하고 호스트→Backend→Inference→Backend 응답을 측정했다. [결과 JSON](results/server-backend-inference-http-20260923.json)은 준비 실행 10회 뒤 순차 요청 100회다.
 
 | 측정 범위 | 평균 | 최대 | p95 | 처리량 |
 |---|---:|---:|---:|---:|
@@ -123,12 +123,12 @@ $env:APP_PORT='18000'
 ```
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\benchmark_inference_http.py --url http://127.0.0.1:18000/v1/inspections --output outputs\i7-4790-acceptance\new-run\backend-inference-http.json
+.\.venv\Scripts\python.exe scripts\benchmark_inference_http.py --url http://127.0.0.1:18000/v1/inspections --output outputs\server-acceptance\new-run\backend-inference-http.json
 ```
 
 ### 별도 Compose의 컨테이너 간 HTTP 측정
 
-`Dockerfile.backend`와 `compose.integration.yaml`로 실제 Backend와 Inference를 같은 Docker 네트워크에서 실행했다. 모델 패키지를 읽기 전용으로 마운트했고 두 서비스의 healthcheck가 통과한 상태에서 호스트→Backend 컨테이너→Inference 컨테이너→Backend 응답을 100회 측정했다. [결과 JSON](results/i7-4790-compose-backend-inference-http-20260923.json)은 준비 실행 10회를 제외한 값이다.
+`Dockerfile.backend`와 `compose.integration.yaml`로 실제 Backend와 Inference를 같은 Docker 네트워크에서 실행했다. 모델 패키지를 읽기 전용으로 마운트했고 두 서비스의 healthcheck가 통과한 상태에서 호스트→Backend 컨테이너→Inference 컨테이너→Backend 응답을 100회 측정했다. [결과 JSON](results/server-compose-backend-inference-http-20260923.json)은 준비 실행 10회를 제외한 값이다.
 
 | 측정 범위 | 평균 | 최대 | p95 | 처리량 |
 |---|---:|---:|---:|---:|
@@ -141,7 +141,7 @@ $env:APP_PORT='18000'
 docker build -f Dockerfile.inference -t cqc-inference-acceptance .
 $env:INFERENCE_MODEL_DIR='C:\CQC\models\cqc-apple-separate12-focal-v2-candidate'
 docker compose -p cqc-integration -f compose.integration.yaml up -d --build
-.\.venv\Scripts\python.exe scripts\benchmark_inference_http.py --url http://127.0.0.1:18000/v1/inspections --output outputs\i7-4790-acceptance\new-run\compose-backend-inference-http.json
+.\.venv\Scripts\python.exe scripts\benchmark_inference_http.py --url http://127.0.0.1:18000/v1/inspections --output outputs\server-acceptance\new-run\compose-backend-inference-http.json
 docker compose -p cqc-integration -f compose.integration.yaml down
 ```
 

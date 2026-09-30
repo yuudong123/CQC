@@ -1,8 +1,8 @@
 {
  "date": "2026-09-30",
- "note": "학원 i7-4790 dev 배포본(병렬 사진 해제·Server-Timing 적용 전). model_ms는 모델 계산만, round_trip은 노트북→학원 서버 네트워크 포함",
+ "note": "학원 서버컴 dev 배포본(병렬 사진 해제·Server-Timing 적용 전). model_ms는 모델 계산만, round_trip은 노트북→학원 서버 네트워크 포함",
  "summary": {
-  "target": "192.168.133.106:8001 (i7-4790, dev 배포본)",
+  "target": "192.168.133.106:8001 (서버컴, dev 배포본)",
   "bundles": 36,
   "mean_upload_mib": 13.814379321204292,
   "model_ms": {

@@ -176,11 +176,11 @@ sweetness_band: &lt;12 | ≥12
     <div class="metric"><span class="name">v2 외관 품질</span><strong>CV 0.8844</strong><p>목표 0.90 미달. 독립 holdout 승인 필요</p></div>
     <div class="metric"><span class="name">가상 당도</span><strong>10.7-17.9</strong><p>평균 14.11. 측정값이 아닌 시연용 파생값</p></div>
     <div class="metric"><span class="name">v3 복합등급</span><strong>CV 0.6283</strong><p>합성 등급 모델은 배차 기준에서 제외</p></div>
-    <div class="metric"><span class="name">목표 장비</span><strong>i7-4790 통과</strong><p>Backend-Inference Compose p95 205.76ms</p></div>
+    <div class="metric"><span class="name">목표 장비</span><strong>서버컴 통과</strong><p>Backend-Inference Compose p95 205.76ms</p></div>
     <div class="metric"><span class="name">판매·물류</span><strong>로컬 MVP 구현</strong><p>입찰·배차·관제 흐름 구현, 통합 시연 대기</p></div>
   </div>
   <div class="warning">재사용 Test 1.0과 가상 당도는 현장 성능 증거가 아니다. 모델 승인과 전체 서비스 통합은 아직 완료되지 않았다.</div>
-  <div class="source">근거: project-plan.md, model-v2·v3 평가 문서, i7-4790-acceptance.md, logistics README</div><div class="footer"><span>CQC · 개발 계획</span><span>09</span></div>
+  <div class="source">근거: project-plan.md, model-v2·v3 평가 문서, server-acceptance.md, logistics README</div><div class="footer"><span>CQC · 개발 계획</span><span>09</span></div>
 </section>
 
 <section class="page">
@@ -189,7 +189,7 @@ sweetness_band: &lt;12 | ≥12
     <div class="lane"><div class="lane-name">데이터·모델</div><div class="lane-current"><div class="tag">현재</div><p>v2 선정 · 가상 당도 생성 · v3 제외</p></div><div class="lane-next"><div class="tag">다음</div><p>독립 holdout 개선 검증 · 목표 i7 수용시험</p></div></div>
     <div class="lane"><div class="lane-name">QC 프론트</div><div class="lane-current"><div class="tag">현재</div><p>필수 화면·상태 계약</p></div><div class="lane-next"><div class="tag">다음</div><p>12-bin 결과와 검사 이력 화면 연결</p></div></div>
     <div class="lane"><div class="lane-name">백엔드·DB</div><div class="lane-current"><div class="tag">현재</div><p>12-bin mock 경로 · 로컬 시험 98건</p></div><div class="lane-next"><div class="tag">다음</div><p>DB·Simulator·실제 추론·프론트 연결</p></div></div>
-    <div class="lane"><div class="lane-name">MLOps</div><div class="lane-current"><div class="tag">현재</div><p>i7-4790 모델·HTTP·Backend-Inference 통과</p></div><div class="lane-next"><div class="tag">다음</div><p>DB·Simulator·화면 포함 8서비스 실행 검증</p></div></div>
+    <div class="lane"><div class="lane-name">MLOps</div><div class="lane-current"><div class="tag">현재</div><p>서버컴 모델·HTTP·Backend-Inference 통과</p></div><div class="lane-next"><div class="tag">다음</div><p>DB·Simulator·화면 포함 8서비스 실행 검증</p></div></div>
     <div class="lane"><div class="lane-name">판매·물류</div><div class="lane-current"><div class="tag">현재</div><p>등록·입찰·배차·관제 MVP 구현</p></div><div class="lane-next"><div class="tag">다음</div><p>QC 결과 연결 · 5분 통합 시연 리허설</p></div></div>
   </div>
   <div class="closing-strip">다음 통합 기준: 12-bin 실제 경로 · DB/Simulator/화면 연결 · 8서비스 시연</div>
