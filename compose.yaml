@@ -162,6 +162,9 @@ services:
     # 서비스 비정상 종료 시 자동 재시작
     restart: unless-stopped
 
+    # DB 마이그레이션 적용 후 Backend 실행
+    command: ["sh", "-c", "alembic upgrade head && python -m src.api.main"]
+
     # ==========================================================
     # MO-04 기동 의존성
     # ==========================================================
@@ -177,6 +180,12 @@ services:
       INFERENCE_CLIENT_MODE: ${INFERENCE_CLIENT_MODE:-http}
       INFERENCE_URL: ${INFERENCE_URL:-http://inference:8001/v1/predict}
       DATABASE_URL: ${DATABASE_URL:-mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}}
+      FAULT_IMAGE_STORAGE_ROOT: /data/fault-images
+
+    # Alembic 설정 및 장애 이미지 저장
+    volumes:
+      - ./alembic.ini:/app/alembic.ini:ro
+      - fault_images:/data/fault-images
 
     ports:
       - "${BACKEND_PORT:-8000}:8000"
@@ -343,3 +352,4 @@ services:
 volumes:
   mysql_data:
   logistics_mongodb_data:
+  fault_images:
