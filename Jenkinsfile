@@ -373,11 +373,39 @@ pipeline {
 
                     backend_id="$(docker-compose -f compose.yaml ps -q backend)"
                     inference_id="$(docker-compose -f compose.yaml ps -q inference)"
+                    simulator_id="$(docker-compose -f compose.yaml ps -q simulator)"
 
                     docker exec "$inference_id" python -c \
                         "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=5)"
                     docker exec "$backend_id" python -c \
                         "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"
+
+                    echo "======================================"
+                    echo " Simulator Playback Verification"
+                    echo "======================================"
+
+                    # Simulator 실제 재생 상태 및 첫 검사 전송 성공 확인
+                    docker exec "$simulator_id" python -c "
+import json
+import time
+import urllib.request
+
+with urllib.request.urlopen(
+    'http://127.0.0.1:8002/health',
+    timeout=5
+) as response:
+    data = json.load(response)
+
+assert data['status'] == 'ok'
+assert data['running'] is True
+assert data['lastSeenAt'] is not None
+
+# 마지막 검사 성공 시각이 현재 기준 30초 이내인지 확인
+age_ms = time.time() * 1000 - data['lastSeenAt']
+assert 0 <= age_ms <= 30000, f'Simulator playback stale: {age_ms}ms'
+
+print('Simulator playback OK:', data)
+"
 
                     echo "======================================"
                     echo " MO-04 healthcheck + API verification OK"
