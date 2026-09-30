@@ -182,9 +182,8 @@ services:
       DATABASE_URL: ${DATABASE_URL:-mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}}
       FAULT_IMAGE_STORAGE_ROOT: /data/fault-images
 
-    # Alembic 설정 및 장애 이미지 저장
+    # 장애 이미지 저장
     volumes:
-      - ./alembic.ini:/app/alembic.ini:ro
       - fault_images:/data/fault-images
 
     ports:
