@@ -303,8 +303,9 @@ services:
       # Backend와 공유하는 내부 인증 토큰
       SIMULATOR_FAULT_TOKEN: ${SIMULATOR_FAULT_TOKEN:?SIMULATOR_FAULT_TOKEN is required}
 
-      # 기본 입력 간격: 500ms
-      SIMULATOR_INTERVAL_MS: "500"
+      # 입력 간격 (DM-08). 서버컴 동시 처리 1에서 한 건 처리 주기가 p90 약 1.8초라
+      # 500ms로는 요청이 밀려 실제 초당 0.63건에 그친다. 처리 주기보다 긴 2000ms로 맞춘다.
+      SIMULATOR_INTERVAL_MS: ${SIMULATOR_INTERVAL_MS:-2000}
 
     # ==========================================================
     # 시연 데이터 및 상태 저장 Volume
