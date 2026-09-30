@@ -111,21 +111,29 @@ class SimulatorRunner:
                 ("images", (name, content, mime))
                 for name, content, mime in bundle.images
             ]
-            result = await self._client.post(
-                f"{self._backend_url}/v1/inspections",
-                data={
-                    "inspection_id": inspection_id,
-                    "metadata": bundle.metadata_json,
-                    "virtual_brix": bundle.virtual_brix,
-                },
-                files=files,
-                headers={
-                    "X-CQC-Simulator-Token": self._fault_token,
-                    "X-CQC-Simulator-Faults": ",".join(faults),
-                    "X-CQC-Simulator-Bundle-ID": bundle.bundle_id,
-                },
-            )
-            result.raise_for_status()
+            try:
+                result = await self._client.post(
+                    f"{self._backend_url}/v1/inspections",
+                    data={
+                        "inspection_id": inspection_id,
+                        "metadata": bundle.metadata_json,
+                        "virtual_brix": bundle.virtual_brix,
+                    },
+                    files=files,
+                    headers={
+                        "X-CQC-Simulator-Token": self._fault_token,
+                        "X-CQC-Simulator-Faults": ",".join(faults),
+                        "X-CQC-Simulator-Bundle-ID": bundle.bundle_id,
+                    },
+                )
+                result.raise_for_status()
+            except httpx.HTTPError:
+                # 요청 한 건의 실패는 이미 시도한 위치로 기록하고 다음 묶음을 보낸다.
+                logger.exception(
+                    "Simulator 검사 전송 실패: inspection_id=%s bundle_id=%s",
+                    inspection_id,
+                    bundle.bundle_id,
+                )
             async with position_lock:
                 completed.add(sequence)
                 while committed in completed:

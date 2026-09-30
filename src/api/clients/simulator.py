@@ -24,9 +24,11 @@ class SimulatorClient:
         base_url: str,
         *,
         timeout_ms: int = 30_000,
+        state_timeout_ms: int = 1_500,
         client: httpx.AsyncClient | None = None,
     ) -> None:
         self._base_url = base_url.rstrip("/")
+        self._state_timeout = state_timeout_ms / 1000
         self._client = client or httpx.AsyncClient(
             timeout=httpx.Timeout(timeout_ms / 1000, connect=2.0)
         )
@@ -34,7 +36,9 @@ class SimulatorClient:
 
     async def get_status(self) -> SimulatorStatus:
         try:
-            response = await self._client.get(f"{self._base_url}/state")
+            response = await self._client.get(
+                f"{self._base_url}/state", timeout=self._state_timeout
+            )
             response.raise_for_status()
             return SimulatorStatus.model_validate(response.json())
         except (httpx.HTTPError, ValueError, ValidationError) as exc:

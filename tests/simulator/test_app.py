@@ -6,6 +6,7 @@ import asyncio
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from threading import Event
+from time import sleep
 
 import httpx
 from fastapi.testclient import TestClient
@@ -45,6 +46,8 @@ def test_internal_health_control_next_and_graceful_shutdown() -> None:
         with TestClient(app) as client:
             assert client.get("/health").json() == {"status": "ok"}
             assert client.get("/state").json()["revision"] == 0
+            assert client.get("/state").json()["running"] is True
+            assert received.wait(5)
             started = client.put(
                 "/state",
                 json={
@@ -57,7 +60,10 @@ def test_internal_health_control_next_and_graceful_shutdown() -> None:
             )
             assert started.status_code == 200
             assert started.json()["running"] is True
-            assert received.wait(5)
+            for _ in range(500):
+                if client.get("/state").json()["revision"] == 2:
+                    break
+                sleep(0.01)
             state = client.get("/state").json()
             assert state["revision"] == 2
             assert state["faults"] == []

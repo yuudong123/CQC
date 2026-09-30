@@ -108,7 +108,7 @@ class QualityOperationsService:
             "retention": {"images": image_count},
             "periodTotals": periods,
             "state": {
-                "throughput": points[-1]["count"] if points else 0,
+                "throughput": points[-2]["count"] if len(points) >= 2 else 0,
                 "running": False,
                 "faults": [],
                 "jobs": [],
@@ -188,6 +188,22 @@ class QualityOperationsService:
             else "검사 전송 중"
             if state.status == "healthy"
             else "정지",
+        }
+        return snapshot
+
+    def with_inference_health(
+        self, snapshot: dict[str, object], ready: bool
+    ) -> dict[str, object]:
+        """실제 Inference health를 공개 component 상태에 반영한다."""
+
+        components = snapshot["components"]
+        assert isinstance(components, dict)
+        components["Inference"] = {
+            "status": "healthy" if ready else "error",
+            "lastSeenAt": snapshot["capturedAt"] if ready else None,
+            "detail": "추론 서비스 준비 완료"
+            if ready
+            else "추론 서비스 연결 또는 준비 실패",
         }
         return snapshot
 

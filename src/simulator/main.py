@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -20,6 +21,8 @@ from .state import (
     RevisionMismatchError,
     SimulatorStateService,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def create_app(
@@ -44,6 +47,15 @@ def create_app(
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         try:
+            try:
+                prepared = await asyncio.to_thread(runner.prepare)
+            except (OSError, ValueError, SimulatorDatasetError, SimulatorPositionError):
+                logger.exception(
+                    "Simulator 자동 시작을 위한 dataset 또는 position 준비 실패"
+                )
+            else:
+                state.start_on_boot()
+                runner.start(prepared)
             yield
         finally:
             await runner.shutdown()

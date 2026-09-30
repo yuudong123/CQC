@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
@@ -9,9 +10,11 @@ from datetime import datetime
 from pathlib import Path
 from threading import Barrier
 
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 
+from src.api.clients.inference import HttpInferenceClient
 from src.api.clients.simulator import SimulatorRevisionConflict, SimulatorUnavailable
 from src.api.core.config import Settings
 from src.api.main import create_app
@@ -221,6 +224,39 @@ def test_unavailable_simulator_keeps_snapshot_available(client: TestClient) -> N
     )
     assert response.status_code == 503
     assert response.json() == {"code": "SIMULATOR_UNAVAILABLE"}
+
+
+@pytest.mark.parametrize(
+    ("health_response", "expected_status"),
+    [
+        (
+            httpx.Response(200, json={"status": "ready", "model_loaded": True}),
+            "healthy",
+        ),
+        (httpx.Response(503), "error"),
+        (None, "error"),
+    ],
+)
+def test_snapshot_reflects_inference_health_without_failing(
+    client: TestClient, health_response: httpx.Response | None, expected_status: str
+) -> None:
+    def respond(request: httpx.Request) -> httpx.Response:
+        if health_response is None:
+            raise httpx.ConnectError("refused", request=request)
+        return health_response
+
+    transport = httpx.AsyncClient(transport=httpx.MockTransport(respond))
+    client.app.state.inference_client = HttpInferenceClient(
+        "http://inference:8001/v1/predict", client=transport
+    )
+    try:
+        response = client.get("/v1/quality/snapshot")
+        assert response.status_code == 200
+        component = response.json()["components"]["Inference"]
+        assert component["status"] == expected_status
+        assert (component["lastSeenAt"] is not None) is (expected_status == "healthy")
+    finally:
+        asyncio.run(transport.aclose())
 
 
 def test_backend_without_internal_url_has_no_runner_or_state() -> None:

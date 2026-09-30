@@ -662,6 +662,8 @@ def _validate_inference_response(
 def _inference_failure_reason(exc: Exception) -> InspectionDecisionReason:
     if isinstance(exc, httpx.HTTPStatusError):
         return InspectionDecisionReason.INFERENCE_HTTP_ERROR
+    if isinstance(exc, httpx.TimeoutException):
+        return InspectionDecisionReason.INFERENCE_DEADLINE_EXCEEDED
     if isinstance(exc, httpx.RequestError):
         return InspectionDecisionReason.INFERENCE_CONNECTION_ERROR
     if isinstance(exc, (ValidationError, InferenceResponseMismatchError, ValueError)):
@@ -671,6 +673,9 @@ def _inference_failure_reason(exc: Exception) -> InspectionDecisionReason:
 
 def _safe_inference_error_message(reason: InspectionDecisionReason) -> str:
     messages = {
+        InspectionDecisionReason.INFERENCE_DEADLINE_EXCEEDED: (
+            "Inference 요청 시간이 초과되었습니다"
+        ),
         InspectionDecisionReason.INFERENCE_CONNECTION_ERROR: (
             "Inference 서비스 연결에 실패했습니다"
         ),

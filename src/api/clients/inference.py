@@ -57,7 +57,13 @@ class MockInferenceClient:
 class HttpInferenceClient:
     """Send the existing multipart contract to the real Inference API."""
 
-    def __init__(self, url: str, *, timeout_ms: int = 2000, client: httpx.AsyncClient | None = None) -> None:
+    def __init__(
+        self,
+        url: str,
+        *,
+        timeout_ms: int = 2000,
+        client: httpx.AsyncClient | None = None,
+    ) -> None:
         if not url.startswith(("http://", "https://")):
             raise ValueError("Inference URL must be HTTP or HTTPS")
         self._url = url
@@ -68,18 +74,35 @@ class HttpInferenceClient:
         files = []
         for index, content in enumerate(request.images):
             is_png = content.startswith(b"\x89PNG\r\n\x1a\n")
-            extension, media_type = ("png", "image/png") if is_png else ("jpg", "image/jpeg")
+            extension, media_type = (
+                ("png", "image/png") if is_png else ("jpg", "image/jpeg")
+            )
             files.append(("images", (f"view-{index}.{extension}", content, media_type)))
         response = await self._client.post(
             self._url,
             data={
                 "inspection_id": request.inspection_id,
-                "metadata": json.dumps([item.model_dump() for item in request.metadata]),
+                "metadata": json.dumps(
+                    [item.model_dump() for item in request.metadata]
+                ),
             },
             files=files,
         )
         response.raise_for_status()
         return InferenceResponse.model_validate(response.json())
+
+    async def check_health(self, *, timeout_ms: int = 1_500) -> bool:
+        """기존 공유 client로 Inference의 준비 상태를 조회한다."""
+
+        url = httpx.URL(self._url).copy_with(path="/health", query=None)
+        response = await self._client.get(url, timeout=timeout_ms / 1000)
+        response.raise_for_status()
+        payload = response.json()
+        return (
+            isinstance(payload, dict)
+            and payload.get("status") == "ready"
+            and payload.get("model_loaded") is True
+        )
 
     async def close(self) -> None:
         if self._owns_client:

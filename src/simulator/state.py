@@ -41,6 +41,13 @@ class SimulatorStateService:
         with self._lock:
             return self._state
 
+    def start_on_boot(self) -> SimulatorRuntimeState:
+        """초기 자동 실행은 사용자 설정 변경이 아니므로 revision 0을 유지한다."""
+
+        with self._lock:
+            self._state = replace(self._state, running=True)
+            return self._state
+
     def update_state(self, update: SimulatorSettingsUpdate) -> SimulatorRuntimeState:
         """revision을 비교한 뒤 모든 변경을 한 번에 적용한다."""
 

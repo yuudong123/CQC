@@ -48,6 +48,8 @@ def test_client_uses_internal_state_api_and_shared_transport() -> None:
             assert all(item.url.path == "/state" for item in seen)
             assert b'"expectedRevision":0' in seen[1].content
             assert b'"concurrency":2' in seen[1].content
+            assert seen[0].extensions["timeout"]["read"] == 1.5
+            assert seen[1].extensions["timeout"]["read"] != 1.5
 
     asyncio.run(exercise())
 
@@ -72,6 +74,24 @@ def test_client_maps_conflict_unavailable_and_invalid_payload() -> None:
                 await client.update(update)
             with pytest.raises(SimulatorUnavailable):
                 await client.update(update)
+            with pytest.raises(SimulatorUnavailable):
+                await client.get_status()
+
+    asyncio.run(exercise())
+
+
+def test_state_timeout_is_separate_and_unavailable_is_reported() -> None:
+    async def exercise() -> None:
+        def respond(request: httpx.Request) -> httpx.Response:
+            assert request.extensions["timeout"]["read"] == 0.2
+            raise httpx.ReadTimeout("state hung", request=request)
+
+        async with httpx.AsyncClient(
+            transport=httpx.MockTransport(respond)
+        ) as transport:
+            client = SimulatorClient(
+                "http://simulator:8002", state_timeout_ms=200, client=transport
+            )
             with pytest.raises(SimulatorUnavailable):
                 await client.get_status()
 

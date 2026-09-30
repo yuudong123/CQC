@@ -186,14 +186,21 @@ def test_runner_schedules_and_bounds_inflight(concurrency: int) -> None:
         asyncio.run(exercise(Path(temporary)))
 
 
-def test_runner_failure_stops_runtime_state() -> None:
+def test_runner_http_failure_continues_without_retry() -> None:
     async def exercise(root: Path) -> None:
         _dataset(root)
         state = SimulatorStateService()
         state.update_state(SimulatorSettingsUpdate(expectedRevision=0, running=True))
-        async with httpx.AsyncClient(
-            transport=httpx.MockTransport(lambda _: httpx.Response(500))
-        ) as client:
+        seen: list[str] = []
+        reached = asyncio.Event()
+
+        def respond(request: httpx.Request) -> httpx.Response:
+            seen.append(request.headers["x-cqc-simulator-bundle-id"])
+            if len(seen) >= 3:
+                reached.set()
+            return httpx.Response(500 if len(seen) == 1 else 200)
+
+        async with httpx.AsyncClient(transport=httpx.MockTransport(respond)) as client:
             runner = SimulatorRunner(
                 dataset_root=root,
                 position_path=root / "position.json",
@@ -205,11 +212,14 @@ def test_runner_failure_stops_runtime_state() -> None:
                 client=client,
             )
             runner.start(runner.prepare())
-            await asyncio.wait_for(runner._task, timeout=5)
-            assert runner.failed
-            assert not state.get_state().running
-            assert state.get_state().revision == 2
-            assert not (root / "position.json").exists()
+            await asyncio.wait_for(reached.wait(), timeout=5)
+            await runner.stop()
+            assert not runner.failed
+            assert state.get_state().running
+            assert seen[:3] == ["demo-0", "demo-1", "demo-0"]
+            assert SimulatorPositionStore(
+                root / "position.json", runner.prepare()[0]
+            ).load() == len(seen)
 
     with TemporaryDirectory(prefix="cqc-simulator-", dir=Path.cwd()) as temporary:
         asyncio.run(exercise(Path(temporary)))
