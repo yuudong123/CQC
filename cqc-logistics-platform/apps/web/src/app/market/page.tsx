@@ -5,6 +5,7 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 import { Badge, Empty, Icon, Panel, Stats } from "@/components/Dashboard";
 import { sampleApples } from "@/lib/sample-apples";
 import { AutoAuctionDemo, useDemo } from "@/components/DemoProvider";
+import { logisticsApiUrl, logisticsFetch, logisticsLive } from "@/lib/logistics-client";
 
 type Lot = {
   cqcId: string;
@@ -24,8 +25,6 @@ type Bid = {
   priceWon: number;
   placedAt: string;
 };
-const apiUrl =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
 const won = (value: number) => `${value.toLocaleString("ko-KR")}원`;
 const grade = (value: string) =>
   ({ SPECIAL: "특", PREMIUM: "상", STANDARD: "보통" })[value] ?? value;
@@ -78,7 +77,7 @@ export default function MarketPage() {
     const controller = new AbortController();
     async function refresh() {
       try {
-        const response = await fetch(`${apiUrl}/lots?auction_status=OPEN`, {
+        const response = await logisticsFetch("/lots?auction_status=OPEN", {
           cache: "no-store",
           signal: controller.signal,
         });
@@ -114,7 +113,7 @@ export default function MarketPage() {
     const controller = new AbortController();
     async function refreshBids() {
       try {
-        const response = await fetch(`${apiUrl}/lots/${selectedId}/bids`, {
+        const response = await logisticsFetch(`/lots/${selectedId}/bids`, {
           cache: "no-store",
           signal: controller.signal,
         });
@@ -128,17 +127,19 @@ export default function MarketPage() {
     }
     void refreshBids();
     const timer = window.setInterval(refreshBids, 2000);
-    const socket = new WebSocket(
-      `${apiUrl.replace(/^http/, "ws")}/ws/auctions/${selectedId}`,
-    );
-    socket.onmessage = () => {
-      void refreshBids();
-      setRevision((value) => value + 1);
-    };
+    // 가상 물류는 2초 조회만으로 갱신하고, 실제 물류 API에서만 경매 WebSocket을 연다.
+    const socket = logisticsLive
+      ? new WebSocket(`${logisticsApiUrl.replace(/^http/, "ws")}/ws/auctions/${selectedId}`)
+      : null;
+    if (socket)
+      socket.onmessage = () => {
+        void refreshBids();
+        setRevision((value) => value + 1);
+      };
     return () => {
       controller.abort();
       clearInterval(timer);
-      socket.close();
+      socket?.close();
     };
   }, [selectedId]);
 
@@ -154,7 +155,7 @@ export default function MarketPage() {
     if (!selected || !connected || !bidConnected || role !== "buyer") return;
     setBusy(true);
     try {
-      const response = await fetch(`${apiUrl}/lots/${selected.lotId}/bids`, {
+      const response = await logisticsFetch(`/lots/${selected.lotId}/bids`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -194,7 +195,7 @@ export default function MarketPage() {
     if (!selected || role !== "admin" || !connected) return;
     setBusy(true);
     try {
-      const response = await fetch(`${apiUrl}/lots/${selected.lotId}/close`, {
+      const response = await logisticsFetch(`/lots/${selected.lotId}/close`, {
         method: "POST",
       });
       if (!response.ok) throw new Error("경매 마감에 실패했습니다.");
@@ -247,7 +248,7 @@ export default function MarketPage() {
           <Icon name="market" /> B2B 사과 입찰 시장
         </h1>
         <Badge tone={connected ? "success" : "warning"}>
-          {connected ? "● 서버 연결됨" : "서버 연결 대기"}
+          {connected ? (logisticsLive ? "● 서버 연결됨" : "● 시연용 가상 물류") : "서버 연결 대기"}
         </Badge>
         <span className="muted toolbar-update">
           최종 업데이트 {updatedAt || "—"}
