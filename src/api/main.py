@@ -23,6 +23,7 @@ from .services.fault_image_storage import FaultImageStorage
 from .services.inspections import InspectionService
 from .services.late_results import LateResultManager
 from .services.quality_operations import QualityOperationsService
+from .services.simulator_state import SimulatorStateService
 
 
 def create_app(
@@ -101,6 +102,7 @@ def create_app(
     application.state.settings = runtime_settings
     application.state.inspection_service = runtime_inspection_service
     application.state.fault_image_storage = fault_image_storage
+    application.state.simulator_state_service = SimulatorStateService()
     application.state.quality_history_repository = (
         QualityHistoryRepository(session_factory)
         if session_factory is not None
