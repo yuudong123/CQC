@@ -1,7 +1,7 @@
 # ALL-03 전체 통합 현황
 
 - WBS 코드: `ALL-03` (전체 흐름 1차 통합, 예정 10-08)
-- 기준: dev `8f5eb5d` (2026-09-30 17시, PR #27~#32 병합 후). 학원 서버에서 Simulator 자동 재생 확인
+- 기준: dev (2026-10-01, PR #27~#33 병합 후). 학원 서버에서 Simulator 자동 재생 확인, 입력 간격 2000ms 배포 후 재측정은 서버 재가동 뒤
 - 역할: **프로젝트 작업 현황의 단일 원본.** 다른 문서에는 현황을 따로 적지 않고 이 문서를 링크한다. 파트별 상세는 각 WBS 문서(DM-xx, FE-xx, BE-xx, MO-xx)를 따른다.
 - WBS의 ID·담당·일정은 바꾸지 않는다.
 
@@ -27,7 +27,7 @@ Jenkins에는 아직 이 시험 단계가 없다. Compose 검사·빌드·기동
 | BE (홍준희) | BE-01~07: 검사 API, 실제 Inference 호출, 500ms 기한·지연 결과, 12-bin migration·13개 seed, 저장·이력·통계·CSV, 장애 이미지(최대 100장). 09-30 PR #30: 독립 Simulator(목록 순환·위치 복구·동시 처리 1·2·4·장애 6종·다음 1건), `PUT /simulator`, 검수 API | 검사 1건 실패 시 Simulator 전체 정지, 지연 결과 DB 저장, 이력 보존 삭제(86,400/8,640, 현재 DB 무한 증가), BE-08 이후 통합. 09-30 통합 점검 요청 4건: DB 중단 시 선별 중단, 처리량 0 표시, 연결 오류 코드, Inference 상태([협업 요청](협업공지/파트별-협업-요청.md)) |
 | MO (홍유나) | MO-01~06. Compose 8개 서비스(QC 5·물류 3), healthcheck·기동 순서, MySQL·Mongo Volume, Jenkins Credentials, 서버컴 합성 입력 측정. 09-30 PR #25: Backend 기동 시 `alembic upgrade head`, 장애 이미지 Volume. PR #31·#32: Simulator 이미지·데이터 볼륨·위치 볼륨, 자동 재생, 재생 여부 health·Jenkins 검증([배포 문서](reference/MO/simulator-deployment.md)) | frontend placeholder 교체, Jenkins 테스트 단계, 실패 시 이전 버전 유지(MO-07), MO-08~10 |
 | 물류 | LOGISTICS-01~06: 출품·입찰·배차·배송 API와 화면, Compose·Jenkins. FE-10이 정상 선별 결과를 브라우저에서 출품·입찰·배차까지 보냄 | MVP 포함 여부 미정, Backend 기반 출품 연결. 상세는 [LOGISTICS](LOGISTICS.md) |
-| 발표 | 최종발표 HTML(좌측 목차 바, MVP 04쪽)·대본, 로컬 `docs/최종발표/` | PDF 재출력, 실제 시연 캡처·단계별 소요시간·장애 복구 결과 추가 |
+| 발표 | `docs/최종발표/`: 최종 발표 초안 HTML(32쪽)·PDF·대본, 데이터 분석·모델 선정 근거, 개발 중 문제 해결 사례 (10-01 저장소 추가) | PDF 재출력, 실제 시연 캡처·단계별 소요시간·장애 복구 결과 추가 |
 
 ## 3. 관제 API 계약 대비 Backend 구현
 
@@ -64,6 +64,6 @@ Simulator 입력 간격 조정(PR #33) → 루트 Compose에 FE 연결(API 모�
 | 문서 안내 | [README](README.md) |
 | 09-23 독립 실행 점검 기록 | [ALL-02](ALL-02.md) |
 | 파트 간 요청 | [파트별 협업 요청](협업공지/파트별-협업-요청.md) |
-| 발표용 문제 해결 사례 | [개발 중 문제 해결 사례](../최종발표자료/개발%20중%20문제%20해결%20사례.md) |
+| 발표용 문제 해결 사례 | [개발 중 문제 해결 사례](../최종발표/개발%20중%20문제%20해결%20사례.md) |
 | 확정 범위 QA (ALL-04 사전 점검) | [QA 테스트 케이스](reference/ALL/qa-test-cases.md) |
 | 기획·요구사항·결정 | [기획서](../project-plan.md), [요구사항](../planning/requirements.md), [결정 기록](../planning/decision-log.md) |

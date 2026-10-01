@@ -381,7 +381,7 @@ docker compose down
 
 Docker Compose 서비스가 정상 기동되면 simulator의 입력과 검사 흐름을 자동으로 시작한다.
 
-simulator는 `data/processed/realtime-apple-arrival-demo/index.json`의 기본 12장 시연 묶음을 500ms 간격, 즉 초당 검사 2건을 목표로 지속적으로 입력한다. 사진 묶음은 Git 제외 자료이므로 배포 시 별도로 제공해야 한다.
+simulator는 `data/processed/realtime-apple-arrival-demo/index.json`의 기본 12장 시연 묶음을 지속적으로 입력한다. 목표는 500ms 간격(초당 2건)이지만 서버컴 실측에 맞춰 Compose 간격은 2000ms다(DM-08). 사진 묶음은 Git 제외 자료이므로 배포 시 별도로 제공해야 한다.
 
 웹 페이지 접속 여부와 관계없이 백그라운드에서 입력과 검사가 계속 진행되어야 한다.
 

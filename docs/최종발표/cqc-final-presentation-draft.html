@@ -159,10 +159,10 @@ body.nav-open .deck-nav{transform:none}
       <div><span>05 · 관제</span><h3>저장·조회</h3><p>MySQL 이력<br>처리 상태·통계 화면</p></div>
     </div>
     <div class="research-small">사용자: 선별 작업자·품질 관리자　/　거래·물류 연결: 포함 범위·시연 방식 협의 중<br>향후: 실물 카메라·PLC, 실측 당도, 두 번째 품목, 농가별 클라우드</div>
-    <table class="research-table"><thead><tr><th>완료 판단 기준</th><th>2026-09-29 확인 상태</th></tr></thead><tbody>
-      <tr><td>12장 입력 → 판정 → 재검사 → 12+1 목적지</td><td>Inference·Backend 분기 구현 / Simulator 자동 투입 연결 전</td></tr>
-      <tr><td>이력 저장·관제 화면</td><td>저장·조회 API와 화면 구현 / 전체 흐름 연결 전</td></tr>
-      <tr><td>500ms 간격 투입 · 응답 500ms 이내</td><td>자동 투입 구현 중 / 합성 JPEG HTTP p95 205.76ms, 실제 사진 시험 전</td></tr>
+    <table class="research-table"><thead><tr><th>완료 판단 기준</th><th>2026-10-01 확인 상태</th></tr></thead><tbody>
+      <tr><td>12장 입력 → 판정 → 재검사 → 12+1 목적지</td><td>Simulator 자동 투입 → Backend → Inference 분기 동작(학원 서버)</td></tr>
+      <tr><td>이력 저장·관제 화면</td><td>저장·조회 API와 화면 구현, 실제 Backend 연결 확인 / 학원 웹은 예시 모드</td></tr>
+      <tr><td>500ms 간격 투입 · 응답 500ms 이내</td><td>추론 서버 내부 p95 309ms / 전체 흐름 초당 0.63건으로 미달 → 시연 간격 2000ms</td></tr>
       <tr><td>정상 100건 · 장애 5종 반복 시연</td><td>10월 12일 수용시험 예정</td></tr>
       <tr><td>외관 Macro F1 ≥ 0.90</td><td>목표 미달: v1 Test 0.7778 / v2 개발 5-fold 0.8844</td></tr>
     </tbody></table>
@@ -381,7 +381,7 @@ sweetness_band: &lt;14 | ≥14
     <rect class="core-box" x="265" y="325" width="195" height="80" rx="5"/><text class="heading" x="362" y="356" text-anchor="middle">inference</text><text class="body" x="362" y="385" text-anchor="middle">CPU · 모델 내장 · :8001</text>
     <rect class="box" x="520" y="325" width="135" height="80" rx="5"/><text class="heading" x="587" y="356" text-anchor="middle">mysql</text><text class="body" x="587" y="385" text-anchor="middle">데이터 볼륨</text><path class="link" d="M205 365 H265" marker-end="url(#dep-a)"/><text class="label" x="245" y="317" text-anchor="middle">HTTP 추론</text>
     <rect class="pending-box" x="715" y="325" width="115" height="80" rx="5"/><text class="heading" x="772" y="356" text-anchor="middle">frontend</text><text class="body" x="772" y="385" text-anchor="middle">placeholder</text>
-    <rect class="pending-box" x="855" y="325" width="115" height="80" rx="5"/><text class="heading" x="912" y="356" text-anchor="middle">simulator</text><text class="body" x="912" y="385" text-anchor="middle">placeholder</text>
+    <rect class="box" x="855" y="325" width="115" height="80" rx="5"/><text class="heading" x="912" y="356" text-anchor="middle">simulator</text><text class="body" x="912" y="385" text-anchor="middle">자동 재생 · :8002</text>
     <text class="label" x="30" y="290">컨테이너 간 내부 통신 / 서비스 상태 확인(healthcheck) / restart: unless-stopped</text>
   </svg>
   <div class="architecture-note">모델 패키지 포함 이미지 / DB 데이터 볼륨 / healthcheck 기반 기동·복구</div>

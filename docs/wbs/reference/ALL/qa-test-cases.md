@@ -1,6 +1,6 @@
 # 확정 범위 QA 테스트 케이스
 
-- 기준: dev `6ec3e68` (2026-09-30). 학원 서버 모델 `cqc-apple-separate12-focal-v2-cal-20260930`, 임계값 품종 0.50·품질 0.60
+- 기준: dev `14eaa44` (2026-10-01, BE-07 Simulator·검수 API와 입력 간격 2000ms 반영). 학원 서버 모델 `cqc-apple-separate12-focal-v2-cal-20260930`, 임계값 품종 0.50·품질 0.60
 - 작성: 조현재 (2026-09-30). 상태: **실행 전 준비 문서**
 - 목적: 구현과 계약이 확정된 기능만 먼저 검증해 ALL-03 통합(10-08)과 ALL-04 수용시험(10-12) 전에 결함을 찾는다.
 - 진행 상태는 [ALL-03](../../ALL-03.md)에만 적는다. 이 문서에는 케이스와 실행 기록 칸만 둔다.
@@ -16,6 +16,7 @@
 | 검사 API | QA-INS | BE-04, FR-02·04·05·13·14·19·26·28·34·37·39·44·45·53·55, NFR-18·24 | `POST /v1/inspections`, 임계값, 12-bin seed, 500ms 기한이 구현됐다 |
 | 관제 조회 API | QA-OPS | BE-05, FR-07~10·21·22·29·31·32, NFR-14 | 관제 OpenAPI의 snapshot·이력·통계·CSV가 구현됐다 |
 | 장애 이미지 | QA-IMG | BE-06, FR-16·42, NFR-09 | 저장·목록·미리보기·선택 삭제·100장 순환이 구현됐다 |
+| Simulator·검수 | QA-SIM, QA-OPS-16 | BE-07, FR-15·18·23·24·33·46~49·54 | 독립 Simulator(자동 재생·정지/재개·위치 복구·장애 6종·다음 1건), `PUT /simulator`, 검수 API가 구현·배포됐다 |
 | 웹 관제 화면 | QA-WEB | FE-02~08, FR-06·20~22·35·36·41, NFR-11·12 | 실제 Backend 연결을 09-30에 확인했다 |
 | 자동 시험 | QA-AUTO | 전체 | 저장소 시험으로 재현할 수 있다 |
 
@@ -23,14 +24,11 @@
 
 | 제외 항목 | 이유 | 추가 시점 |
 |---|---|---|
-| Simulator 500ms 입력·시작/정지·위치 복구 (FR-01·17·18·23·24·25·33) | BE-07 미구현, 루트 Compose `simulator`는 placeholder | BE-07 병합 후 |
-| 장애 토글 5종·적용 범위·재시작 초기화·상단 경고 (FR-46~49·54) | `PUT /simulator` 미구현, snapshot `capabilities.faults=false` | BE-07 병합 후 |
-| 오판 의심 지정 API (FR-15) | `PATCH /inspections/{id}/review` 미구현 | 검수 API 병합 후 |
 | 지연 결과 DB 저장 (FR-27) | 지연 결과는 메모리 진단만 있다 | BE 구현 후 |
 | 이력 순환 삭제 86,400/8,640건 (FR-30) | 미구현 | BE-09 |
 | 로그 순환 (NFR-15), 실패 시 이전 버전 유지 (MO-07) | 미구현 | MO-07·08 |
-| Inference·Simulator 구성요소 상태 (FR-35 일부) | snapshot이 고정값을 준다 | BE 협업 요청 #4 반영 후 |
-| Backend→Inference 운영 경로 전체 500ms, 정상 100건·초당 2건 | Simulator가 있어야 잰다 | ALL-04 |
+| Inference 구성요소 상태 (FR-35 일부) | snapshot이 `unknown` 고정값을 준다 | BE 협업 요청 #4 반영 후 |
+| 정상 100건 연속·운영 경로 처리량 판정 | 초당 2건 목표는 서버컴 미달(결정 기록 09-30), 시연 간격 2000ms 적용 후 기준 재합의 필요 | ALL-04 |
 | 물류(출품·경매·배차) | 목요일(10-01) MVP 포함 여부 결정 | 포함이 결정되면 |
 | 루트 Compose `frontend` | placeholder. 웹은 `logistics-web`(3100)이 브라우저 예시 모드로 제공 | 실제 Backend 연결 배포 후 |
 
@@ -44,12 +42,13 @@
 | KI-2 | snapshot `throughput`이 진행 중인 1초 구간을 써서 실제보다 낮음 | QA-OPS-15 |
 | KI-3 | Inference 컨테이너 정지 시 오류 코드가 `INFERENCE_TIMEOUT`으로 기록 | QA-INS-11 |
 | KI-4 | snapshot `components.Inference`가 항상 `unknown` | QA-WEB-07 |
+| KI-5 | Simulator가 보낸 검사 1건이 2xx가 아니면 Simulator 전체가 정지(`실행 실패`)하고 자동으로 다시 켜지지 않음 | QA-SIM-09 |
 
 ## 2. 환경
 
 | 환경 | 구성 | 용도 | 주의 |
 |---|---|---|---|
-| E1 학원 서버 | `192.168.133.106` Backend 8000·Inference 8001·웹 3100. Jenkins가 dev를 자동 배포 | 기본 기능 확인 | 공용 MySQL에 기록이 남는다. `inspection_id`는 `qa-` 접두사를 붙인다. 재배포 중이면 기다린다 |
+| E1 학원 서버 | `192.168.133.106` Backend 8000·Inference 8001·웹 3100. Jenkins가 dev를 자동 배포 | 기본 기능 확인 | 공용 MySQL에 기록이 남는다. `inspection_id`는 `qa-` 접두사를 붙인다. 재배포 중이면 기다린다. **Simulator가 2초마다 검사를 넣고 있어** 오늘 집계 증가량은 E1에서 판정하지 않는다. Simulator 설정(정지·장애)도 E1에서 바꾸지 않는다 |
 | E2 로컬 Compose | dev 체크아웃, `.env`는 `.env.example` 복사, `INFERENCE_MODEL_DIR`에 보정 패키지 폴더 | 장애 주입(DB·Inference 정지, 기한·주소 변경) | 모델 폴더는 DM(조현재)에게 받는다. 학원 서버에서 장애 주입을 하지 않는다 |
 | E3 웹 API 모드 | `apps/web`을 E1 또는 E2 Backend에 연결해 로컬 실행 | 웹 화면 확인 | 배포된 3100 웹은 브라우저 예시 모드이므로 QA-WEB에 쓰지 않는다 |
 
@@ -190,7 +189,8 @@ sql "SELECT inspection_id, inspection_status, target_bin_code, error_code FROM i
   2. `docker inspect -f '{{.Name}} {{.HostConfig.RestartPolicy.Name}}' $(docker compose ps -q)`
 - 기대 결과:
   - 서비스 8개: `mysql`, `inference`, `backend`, `frontend`, `simulator`, `logistics-mongodb`, `logistics-api`, `logistics-web`
-  - `mysql`·`inference`·`backend`·`logistics-mongodb`·`logistics-api`·`logistics-web`은 `(healthy)`, `frontend`·`simulator`는 `Up`(placeholder)
+  - `mysql`·`inference`·`backend`·`simulator`·`logistics-mongodb`·`logistics-api`·`logistics-web`은 `(healthy)`, `frontend`는 `Up`(placeholder)
+  - `simulator`의 healthy는 재생 중이고 최근 30초 안에 검사 전송이 성공했다는 뜻이다
   - 모든 컨테이너의 재시작 정책이 `unless-stopped`
 
 #### QA-DEP-02 Inference 상태와 모델 버전 · P1
@@ -554,19 +554,20 @@ done
 - 환경: E1
 - 절차: `curl -s -D - $BE/v1/quality/snapshot`
 - 기대 결과:
-  - `contractVersion="1"`, `source="backend"`, `revision=0`
-  - `capabilities`: `control=false`, `faults=false`, `review=false`, `deleteImages=true`, `concurrency=[]`
-  - `components.Simulator.status=stopped`(`detail`: `Simulator 미구현`), `Backend`·`MySQL`은 `healthy`, `lastSeenAt`이 `capturedAt`과 같다
+  - `contractVersion="1"`, `source="backend"`, `revision`은 Simulator revision(기동 직후 1)
+  - `capabilities`: `control=true`, `faults=true`, `review=true`, `deleteImages=true`, `concurrency=[1,2,4]`
+  - `components.Simulator.status=healthy`(`detail`: `검사 전송 중`, `lastSeenAt` 30초 이내), `Backend`·`MySQL`은 `healthy`, `lastSeenAt`이 `capturedAt`과 같다
+  - `state.running=true`, `state.concurrency=1`, `state.faults=[]`, `state.scope=ALL`
   - `periodTotals` 키 `1`·`5`·`10`·`30`, 값은 1 ≤ 5 ≤ 10 ≤ 30 순서로 줄지 않는다
   - `state.points` 30개, `at`이 1000ms 간격으로 오름차순, 마지막 `at` ≤ `capturedAt`
-  - `state.history` ≤ 200건 최신순, `state.errors` ≤ 50건, `state.running=false`, `state.jobs=[]`, `state.dbDown=false`
+  - `state.history` ≤ 200건 최신순, `state.errors` ≤ 50건, `state.jobs=[]`, `state.dbDown=false`
   - `state.today.date`가 오늘 KST 날짜(`YYYY-MM-DD`)
   - `retention.images`가 QA-IMG-02 목록 수와 같다
 
 #### QA-OPS-02 오늘 집계 증가량 · P1
 
 - 근거: FR-21·28·29
-- 환경: E1
+- 환경: E2. 먼저 Simulator를 정지하고(QA-SIM-03 절차 1) 끝나면 재개한다.
 - 절차:
   1. snapshot `state.today`를 저장(전)
   2. 정상 2건(B-FL 13.9, B-YS 14.0), 품질 저신뢰 1건(B-LQ 15.0), 당도 누락 1건(B-FM), Inference 오류 1건(B-BROKEN 1장) 보낸다.
@@ -585,7 +586,7 @@ done
 | `bins.DEMO_BIN_01` / `DEMO_BIN_12` / `TEST_REINSPECTION_BIN` | 1 / 1 / 3 | 제어 성공 명령 기준 |
 | `inferenceCount` | 4 | 통계 포함 + 추론 시간 있음 |
 
-- 다른 사람이 동시에 보내면 결과가 흔들린다. 증가량이 크면 `$RUN` 이력만 세어 다시 판정한다.
+- Simulator가 돌고 있거나 다른 사람이 동시에 보내면 결과가 흔들린다. 증가량이 크면 `$RUN` 이력만 세어 다시 판정한다.
 
 #### QA-OPS-03 이력 목록과 표시값 변환 · P1
 
@@ -634,7 +635,7 @@ done
 | i | `errorCode=NONE` | 오류 기록이 있는 행 없음. 저신뢰·당도 누락 행은 포함 |
 | j | `errorCode=INFERENCE_ERROR` | `$RUN-ins08` 포함 |
 | k | `errorCode=INFERENCE_TIMEOUT` (E2) | `$RUN-ins12` 포함 |
-| l | `misclassification=NONE` | 모든 행 `NONE` (지정 API 미구현이므로 전체와 같은 수) |
+| l | `misclassification=NONE` / `OTHER` | `NONE`은 지정 안 한 행만, `OTHER`는 QA-OPS-16에서 지정한 행 포함 |
 | m | `from=2026-01-01&to=2026-01-01` | `total=0` |
 | n | `variety=부사&grade=특&bin=DEMO_BIN_01` | 세 조건 모두 만족하는 행만 |
 
@@ -748,6 +749,23 @@ done
 - 절차: B-FL을 1초 간격으로 10건 보내고 끝난 직후 snapshot을 받는다.
 - 기대 결과: `periodTotals["1"]`이 보내기 전보다 10 이상 크다. `points` 마지막 10초 `count` 합이 10 이상이다. `state.throughput`은 직전 완료 1초 구간 건수여야 한다(현재는 진행 중 구간이라 낮게 나온다, KI-2).
 
+#### QA-OPS-16 오판 의심 검수 API · P2
+
+- 근거: FR-15, BE-07 검수 API
+- 환경: E1 (본인 `$RUN` 기록만)
+- 절차와 기대 (`R=$RUN-ins01-FL-13.9`):
+
+| # | 요청 | 기대 |
+|---|---|---|
+| a | `curl -s -X PATCH $BE/v1/quality/inspections/$R/review -H "Content-Type: application/json" -d '{"misclassification":"OTHER"}'` | 200 `{"inspectionId":"<R>","misclassification":"OTHER"}`, `Cache-Control: no-store` |
+| b | a 뒤 이력 조회 | 해당 행 `misclassification=OTHER`. 품종·등급·bin·상태는 그대로(판정 결과를 바꾸지 않음) |
+| c | a 뒤 오늘 통계 `suspicions.OTHER` | 1 증가 |
+| d | `{"misclassification":"NONE"}` | 200, 행이 `NONE`으로 돌아가고 `suspicions.OTHER`가 다시 줄어든다 |
+| e | `{"misclassification":"WRONG"}` | 422 `INVALID_REVIEW` |
+| f | `{"misclassification":"OTHER","extra":1}` | 422 `INVALID_REVIEW` |
+| g | 없는 ID `qa-no-such-id` | 404 `INSPECTION_EXPIRED` |
+| h | ID에 허용 안 되는 문자 `qa.bad` | 422 `INVALID_REVIEW` |
+
 ### 5.5 장애 이미지 (QA-IMG)
 
 #### QA-IMG-01 저장 조건 · P1
@@ -856,6 +874,7 @@ E3에서 실행한다. 달리 적지 않으면 창 크기는 1600×900이다.
 #### QA-WEB-04 상단 요약 카드 · P1
 
 - 근거: FR-21·28, FE-05
+- 환경: E3 + E2(Simulator 정지)
 - 절차: QA-OPS-02의 5건을 보내기 전후 카드 값을 기록한다.
 - 기대 결과: `오늘 저장 검사` +5, `저신뢰 검수` +2, `통계 제외` +1. `진행 중` `0건`.
 
@@ -881,7 +900,7 @@ E3에서 실행한다. 달리 적지 않으면 창 크기는 1600×900이다.
 #### QA-WEB-07 시스템 상태 패널 · P2
 
 - 근거: FR-35 (알려진 결함 KI-4)
-- 기대 결과: `Simulator` `Simulator 미구현`, `Inference` `상태 확인 연동 전`(KI-4), `Backend` `관제 API 응답 중`과 `수신 HH:MM:SS`, `MySQL` `검사 이력 조회 성공`과 수신 시각. 수신 시각이 1초마다 바뀐다.
+- 기대 결과: `Simulator` `검사 전송 중`과 `수신 HH:MM:SS`(2초 안팎으로 갱신), `Inference` `상태 확인 연동 전`(KI-4), `Backend` `관제 API 응답 중`과 `수신 HH:MM:SS`, `MySQL` `검사 이력 조회 성공`과 수신 시각. 수신 시각이 1초마다 바뀐다.
 
 #### QA-WEB-08 최근 오류 목록 · P2
 
@@ -889,10 +908,17 @@ E3에서 실행한다. 달리 적지 않으면 창 크기는 1600×900이다.
 - 절차: QA-INS-08 이후 `최근 오류`를 본다.
 - 기대 결과: `$RUN-ins08`이 최대 8개 목록 안에 있고 장애 이름 `추론 오류`, 제어 `성공`, `저장: 완료`로 보인다. 오류가 없으면 `최근 오류 없음`.
 
-#### QA-WEB-09 서버가 허용하지 않은 조작 비활성 · P1
+#### QA-WEB-09 Simulator 조작 · P1
 
-- 근거: FE-04·06 capability 기반 조작
-- 기대 결과: `입력 정지` 버튼이 비활성이다. `시연 설정` 창의 동시 처리 수·장애 적용 범위·장애 체크박스가 모두 비활성이고 `서버가 허용한 설정만 조작할 수 있습니다. 응답 성공 후 적용됩니다.` 문구가 보인다. 비활성 버튼을 눌러도 요청이 나가지 않는다(Network).
+- 근거: FE-04·06 capability 기반 조작, FR-18·46·49·54
+- 환경: E3 + E2 (E1의 Simulator는 공용이라 조작하지 않는다)
+- 절차와 기대:
+  1. `입력 정지` 버튼과 `시연 설정`의 동시 처리 수·장애 적용 범위·장애 체크박스가 활성이고 `서버가 허용한 설정만 조작할 수 있습니다. 응답 성공 후 적용됩니다.` 문구가 보인다. 동시 처리 선택지는 `순차 1개`·`병렬 2개`·`병렬 4개`
+  2. `입력 정지` → 버튼이 `입력 재개`로 바뀌고 상단에 `입력 정지 · 진행 중 n건은 완료 후 종료`. Network에 `PUT /api/quality/simulator` 200
+  3. 장애 `추론 시간 초과` 체크, 범위 `다음 1건` → 상단 `장애 시연 중 · 추론 시간 초과 · 다음 1건 (접수 후 해제)`
+  4. `입력 재개` → 다음 검사 1건이 `시간 초과`로 기록되고 경고가 자동으로 사라진다
+  5. 다른 탭에서 먼저 설정을 바꾼 뒤 이 탭에서 조작 → 오류 경고(revision 충돌)가 뜨고 다음 snapshot에서 최신 설정으로 맞춰진다
+- 끝나면 장애 해제, 동시 처리 1, 입력 재개로 되돌린다.
 
 #### QA-WEB-10 DB 중단 표시와 복구 · P1
 
@@ -925,7 +951,7 @@ E3에서 실행한다. 달리 적지 않으면 창 크기는 1600×900이다.
   9. 시작일을 종료일보다 늦게 → `시작일은 종료일보다 늦을 수 없습니다.`, `CSV 내보내기` 비활성
   10. `초기화` → 모든 필터가 `전체`, 날짜 기본값
   11. 행 표시: 가상 °Brix 소수 첫째 자리(`13.9`), 추론/모델 칸에 추론 시간과 모델 버전, 제어 `성공`, 저장 `완료`, 저신뢰 행 상태 `처리 완료 · 검수`
-  12. 오판 의심 선택이 비활성(검수 API 미구현)
+  12. 오판 의심 선택 `기타` → `오판 의심 표시를 저장했습니다.`, 필터 오판 의심 `기타`로 그 행이 조회된다. `오판 의심 없음`으로 되돌리면 필터에서 빠진다(E1에서는 본인 `$RUN` 행만)
 
 #### QA-WEB-13 이력 CSV 내려받기 · P1
 
@@ -1001,7 +1027,127 @@ const d = document.documentElement;
 - 탭 전환: 다른 탭으로 5분 옮겼다 돌아와 1초 안에 최신 수치로 돌아오고 오류가 없다.
 - 비고: E1에서 하면 공용 DB에 수천 건이 쌓이므로 E2에서 한다.
 
-### 5.7 자동 시험 (QA-AUTO)
+### 5.7 Simulator (QA-SIM)
+
+Simulator는 독립 프로세스(포트 8002, 외부 비공개)이고 관제 API `PUT $BE/v1/quality/simulator`로 조작한다. 모든 변경 요청에는 현재 snapshot의 `revision`을 `expectedRevision`으로 넣는다.
+
+```bash
+rev() { curl -s $BE/v1/quality/snapshot | python -c "import json,sys;print(json.load(sys.stdin)['revision'])"; }
+sim() { curl -s -w " HTTP%{http_code}\n" -X PUT $BE/v1/quality/simulator -H "Content-Type: application/json" -d "$1"; }
+# 예: sim "{\"expectedRevision\":$(rev),\"running\":false}"
+```
+
+#### QA-SIM-01 기동 시 자동 재생 · P1
+
+- 근거: FR-18·25 (기본 ON, Docker 시작과 함께 실행), MO PR #32
+- 환경: E1 (읽기만)
+- 절차: Jenkins 배포 또는 `simulator` 재시작 직후 1분 안에 snapshot을 본다.
+- 기대 결과: `components.Simulator.status=healthy`, `state.running=true`, `state.concurrency=1`, `revision=1`. 아무도 켜지 않아도 오늘 검사 수가 늘어난다.
+
+#### QA-SIM-02 입력 간격 2000ms · P1
+
+- 근거: DM-08 운영 경로 처리량, 결정 기록 09-30
+- 환경: E1 (읽기만)
+- 절차: `curl -s "$BE/v1/quality/inspections?pageSize=200"`의 `timestamp`를 정렬해 이웃 간격을 계산한다(`qa-` 접두사 기록 제외).
+- 기대 결과: 간격 중앙값 2.0초 이상(±0.1초), 처리량 초당 약 0.5건으로 일정. 시간 초과 비율을 기록하고 09-30 기준(간격 500ms일 때 3%)과 비교한다.
+
+#### QA-SIM-03 정지와 재개 · P1
+
+- 근거: FR-18·23 (정지 시 새 입력만 막고 진행 중 요청은 완료, 재개 시 이어서)
+- 환경: E2
+- 절차:
+  1. `sim "{\"expectedRevision\":$(rev),\"running\":false}"`
+  2. 10초 동안 snapshot 오늘 검사 수를 2초마다 기록
+  3. `sim "{\"expectedRevision\":$(rev),\"running\":true}"`
+- 기대 결과:
+  1. 200, 응답 snapshot `state.running=false`, `components.Simulator.status=stopped`, `revision` 1 증가
+  2. 정지 응답 뒤 진행 중이던 최대 1건만 추가되고 이후 늘지 않는다. `simulator` 컨테이너는 unhealthy로 바뀐다(재생 중이 아니므로 정상)
+  3. 200, `running=true`, 검사 수가 다시 늘어난다. 재개 후 첫 묶음의 `source_reference`가 정지 전 마지막 묶음의 다음 순번이다(3.2 DB 조회)
+
+#### QA-SIM-04 revision 충돌 · P2
+
+- 근거: 관제 OpenAPI 409
+- 환경: E2
+- 절차: 현재 revision을 R로 기록 → `sim '{"expectedRevision":R,"concurrency":2}'` → 같은 R로 다시 `sim '{"expectedRevision":R,"concurrency":1}'`
+- 기대 결과: 첫 요청 200(`revision` R+1, `concurrency=2`), 두 번째 409 `{"code":"REVISION_CONFLICT"}`이고 설정은 2로 남는다. 끝나면 1로 되돌린다.
+
+#### QA-SIM-05 설정 입력 검증 · P2
+
+- 환경: E2. 모든 행 `expectedRevision`은 현재 값
+
+| # | 본문에 추가 | 기대 |
+|---|---|---|
+| a | `"concurrency":3` | 422 `INVALID_SETTINGS` |
+| b | `"concurrency":"2"` | 422 `INVALID_SETTINGS` |
+| c | `"faults":["DB_ERROR","DB_ERROR"]` | 422 `INVALID_SETTINGS` |
+| d | `"faults":["UNKNOWN"]` | 422 `INVALID_SETTINGS` |
+| e | `"running":null` | 422 `INVALID_SETTINGS` |
+| f | `"speed":1` | 422 `INVALID_SETTINGS` |
+| g | `expectedRevision` 없음 | 422 `INVALID_SETTINGS` |
+
+- 공통: 422 뒤 `revision`이 바뀌지 않는다.
+
+#### QA-SIM-06 장애 6종 · P1
+
+- 근거: FR-46·47, FR-14·44·45
+- 환경: E2. 장애마다 `sim '{"expectedRevision":R,"faults":["<장애>"],"scope":"NEXT"}'`로 다음 1건에만 건다.
+
+| 장애 | 다음 검사 기록 (이력 API) | 비고 |
+|---|---|---|
+| `INFERENCE_TIMEOUT` | `processingStatus=TIMEOUT`, `errorCode=INFERENCE_TIMEOUT`, `status=FAIL`, `bin=TEST_REINSPECTION_BIN` | 장애 이미지 12장 저장 |
+| `INFERENCE_ERROR` | `processingStatus=ERROR`, `errorCode=INFERENCE_ERROR`, `status=FAIL` | 장애 이미지 12장 저장 |
+| `DB_ERROR` | 이력에 남지 않는다(저장 실패, 유실 허용) | 바로 다음 정상 건은 저장된다 |
+| `CONTROL_REJECTED` | `control=FALLBACK`, `status=REVIEW`, `bin=TEST_REINSPECTION_BIN`, `faults`에 `CONTROL_REJECTED` | 정상 bin 거부 → 재검사 bin 1회 대체 |
+| `CONTROL_NO_RESPONSE` | `control=NO_RESPONSE`, `status=REVIEW`, `errorCode=CONTROL_NO_RESPONSE` | 재시도 없음, 성공 bin 통계에 안 셈 |
+| `CONTROL_FAILED` | `control=FAILED`, `status=REVIEW`, `errorCode=CONTROL_FAILED` | 재시도 없음 |
+
+- 공통: 장애가 걸린 1건 뒤 snapshot `state.faults=[]`, `revision` 1 증가(다음 1건 자동 해제). 그다음 검사는 정상 처리된다.
+
+#### QA-SIM-07 적용 범위 전체 · P2
+
+- 근거: FR-54
+- 환경: E2
+- 절차: `faults:["CONTROL_REJECTED","INFERENCE_TIMEOUT"]`, `scope:"ALL"` → 10초 관찰 → `faults:[]`
+- 기대 결과: 그 사이 모든 검사가 두 장애를 함께 받는다(시간 초과로 기록). 해제할 때까지 `state.faults`가 유지된다. 웹 상단 경고에 `추론 시간 초과 / 명령 거부 · 전체 신규 요청`이 보인다.
+
+#### QA-SIM-08 재시작 후 위치 복구와 장애 초기화 · P1
+
+- 근거: FR-33·48
+- 환경: E2
+- 절차:
+  1. 장애 `CONTROL_FAILED`·범위 `ALL`, 동시 처리 2로 바꾼다
+  2. 최근 저장 검사의 `source_reference`(묶음 ID)를 기록한다
+  3. `docker compose restart simulator`
+  4. 재기동 후 첫 검사 3건의 `source_reference`와 snapshot을 확인한다
+- 기대 결과: 첫 검사가 2의 묶음 바로 다음 순번부터 이어진다(미완료였던 1~2건은 다시 보낼 수 있음). snapshot `state.faults=[]`, `concurrency=1`, `running=true`, `revision=1`(장애·설정 초기화, 정상 모드).
+
+#### QA-SIM-09 검사 실패 후에도 입력 지속 · P1
+
+- 근거: FR-19·34 (알려진 결함 KI-5)
+- 환경: E2
+- 절차: `docker compose stop mysql` 20초 → `docker compose start mysql` → 30초 관찰
+- 기대 결과: MySQL 복구 뒤 Simulator가 스스로 다시 검사를 보내고 오늘 검사 수가 늘어난다. 현재는 Backend가 500을 주는 순간(KI-1) Simulator가 `실행 실패`로 멈추고 손으로 재개해야 한다(KI-5).
+
+#### QA-SIM-10 Simulator 전용 헤더 인증 · P2
+
+- 근거: BE-07 내부 토큰
+- 환경: E1 (B-FL 12장, 당도 13.9). `send`의 curl 인자에 헤더를 덧붙여 보낸다.
+
+| # | 추가 헤더 | 기대 |
+|---|---|---|
+| a | `X-CQC-Simulator-Faults: DB_ERROR` (토큰 없음) | 403 `Simulator 인증에 실패했습니다` |
+| b | `X-CQC-Simulator-Token: wrong` | 403 |
+| c | 헤더 없음 | 200 정상 판정(일반 검사는 장애를 받지 않는다) |
+
+- a·b는 DB·장애 이미지에 아무것도 남기지 않는다.
+
+#### QA-SIM-11 목록 끝에서 처음으로 · P3
+
+- 근거: FR-24
+- 환경: E2, 동시 처리 4로 약 30분(869묶음)
+- 기대 결과: 마지막 묶음 뒤 첫 묶음(`index.json`의 첫 `default_playback` 묶음)부터 다시 보낸다. 같은 묶음이 새 `inspection_id`로 기록된다.
+
+### 5.8 자동 시험 (QA-AUTO)
 
 #### QA-AUTO-01 Python 시험 · P1
 
@@ -1023,9 +1169,10 @@ const d = document.documentElement;
 학원 서버를 오염시키지 않도록 E1 읽기 케이스를 먼저, 장애 주입은 E2에서 나중에 한다.
 
 1. QA-AUTO-01·03
-2. E1: QA-DEP-02 → QA-INF 전체 → QA-INS-01~05·07·08 → QA-OPS-01~13·15 → QA-IMG-01~05
-3. E3(E1 연결): QA-WEB-01~09·12~18
-4. E2: QA-DEP-01·03~07 → QA-INS-06·10~17 → QA-OPS-14 → QA-IMG-06·07 → QA-WEB-10·11·19 → QA-AUTO-02
+2. E1: QA-DEP-02 → QA-INF 전체 → QA-INS-01~05·07·08 → QA-OPS-01·03~13·15 → QA-IMG-01~05
+3. E1: QA-OPS-16(본인 `$RUN` 행만), QA-SIM-01·02·10
+4. E3(E1 연결): QA-WEB-01~03·05~08·12~18
+5. E2: QA-DEP-01·03~07 → QA-INS-06·10~17 → QA-OPS-02·14 → QA-IMG-06·07 → QA-SIM-03~09·11 → QA-WEB-04·09~11·19 → QA-AUTO-02
 
 | 케이스 | 결과 (통과/실패/차단) | 실행자 | 일시 | 커밋·모델 | 비고·결함 번호 |
 |---|---|---|---|---|---|
@@ -1102,6 +1249,18 @@ const d = document.documentElement;
 | QA-WEB-17 | | | | | |
 | QA-WEB-18 | | | | | |
 | QA-WEB-19 | | | | | |
+| QA-OPS-16 | | | | | |
+| QA-SIM-01 | | | | | |
+| QA-SIM-02 | | | | | |
+| QA-SIM-03 | | | | | |
+| QA-SIM-04 | | | | | |
+| QA-SIM-05 | | | | | |
+| QA-SIM-06 | | | | | |
+| QA-SIM-07 | | | | | |
+| QA-SIM-08 | | | | | |
+| QA-SIM-09 | | | | | KI-5 |
+| QA-SIM-10 | | | | | |
+| QA-SIM-11 | | | | | |
 | QA-AUTO-01 | | | | | |
 | QA-AUTO-02 | | | | | |
 | QA-AUTO-03 | | | | | |
