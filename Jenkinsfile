@@ -156,7 +156,7 @@ pipeline {
 
                     export INFERENCE_CLIENT_MODE=http
                     export INFERENCE_URL=http://inference:8001/v1/predict
-                    export INFERENCE_MODEL_DIR="$PWD/models/cqc-apple-separate12-focal-v2-candidate"
+                    export INFERENCE_MODEL_DIR="$PWD/models/selected"
 
                     echo "======================================"
                     echo " Compose Validate"
@@ -184,7 +184,7 @@ pipeline {
 
                     export INFERENCE_CLIENT_MODE=http
                     export INFERENCE_URL=http://inference:8001/v1/predict
-                    export INFERENCE_MODEL_DIR="$PWD/models/cqc-apple-separate12-focal-v2-candidate"
+                    export INFERENCE_MODEL_DIR="$PWD/models/selected"
 
                     echo "======================================"
                     echo " Docker Build"
@@ -218,8 +218,8 @@ pipeline {
                     test -d src
                     test -d tests
                     test -d docs
-                    test -f models/cqc-apple-separate12-focal-v2-candidate/model.json
-                    test -f models/cqc-apple-separate12-focal-v2-candidate/model.pt
+                    test -f models/selected/model.json
+                    test -f models/selected/model.pt
                     test -d scripts
                     test -d cqc-logistics-platform/apps/api
                     test -d cqc-logistics-platform/apps/web
@@ -251,7 +251,7 @@ pipeline {
 
                     export INFERENCE_CLIENT_MODE=http
                     export INFERENCE_URL=http://inference:8001/v1/predict
-                    export INFERENCE_MODEL_DIR="$PWD/models/cqc-apple-separate12-focal-v2-candidate"
+                    export INFERENCE_MODEL_DIR="$PWD/models/selected"
 
                     echo "======================================"
                     echo " CQC Deploy"
@@ -284,7 +284,7 @@ pipeline {
 
                     export INFERENCE_CLIENT_MODE=http
                     export INFERENCE_URL=http://inference:8001/v1/predict
-                    export INFERENCE_MODEL_DIR="$PWD/models/cqc-apple-separate12-focal-v2-candidate"
+                    export INFERENCE_MODEL_DIR="$PWD/models/selected"
 
                     echo "======================================"
                     echo " CQC Container Status"
@@ -435,7 +435,7 @@ print('Simulator playback OK:', data)
 
             // 실패 시 원인 확인을 위해 현재 Compose 상태를 출력한다.
             sh '''
-                export INFERENCE_MODEL_DIR="$PWD/models/cqc-apple-separate12-focal-v2-candidate"
+                export INFERENCE_MODEL_DIR="$PWD/models/selected"
                 docker-compose -f compose.yaml ps || true
             '''
         }

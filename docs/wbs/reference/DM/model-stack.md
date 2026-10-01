@@ -25,7 +25,7 @@
 - 추론 서비스: `python -m src.inference.api --model-dir models/<version>`
 - 생성 위치: `data/processed/manifest.csv`, `data/processed/manifest-summary.json`
 - 무결성 결과: `data/processed/image-quality-report.json`
-- 모델 파일·체크포인트·생성 매니페스트는 Git에서 제외
+- 모델 패키지는 `models/`에서 Git 관리, 학습 체크포인트·생성 매니페스트는 Git에서 제외
 
 ## v2 후보 (현재 서비스 모델)
 
@@ -43,7 +43,7 @@
 - 입력: 동일 사과의 대표 12장, 224×224 RGB
 - 그룹 결합: 누락 뷰를 제외한 특징 평균
 - 최종 학습: Test 제외 152그룹, 19 epoch
-- 신뢰도 기준: 품종 0.50, 품질 0.50
+- 신뢰도 기준: 품종 0.50, 품질 0.50 (v1 기준. 현재 서비스 v2 보정본은 품종 0.50·품질 0.60)
 - 요청 제한: 1~12파일, multipart 전체 24MiB
 - 모델 버전: `cqc-apple-separate12-v1.0.0` (기능 검증용, 품질 승인 실패)
 - 운영 기본 동시 처리: 1

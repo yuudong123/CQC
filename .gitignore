@@ -1,6 +1,6 @@
 data/raw/*
 data/processed/*
-models/*
+models/*.zip
 outputs/*
 !*/.gitkeep
 __pycache__/

@@ -1,0 +1,32 @@
+{
+  "model_name": "mobilenet_v3_small_multiview",
+  "model_version": "cqc-apple-separate12-v1.0.0",
+  "model_kind": "separate",
+  "views": 12,
+  "image_size": 224,
+  "preprocessing_version": "rgb-resize-imagenet-v1",
+  "cultivar_classes": [
+    "fuji",
+    "yanggwang"
+  ],
+  "quality_classes": [
+    "L",
+    "M",
+    "S"
+  ],
+  "normalization": {
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "cultivar_threshold": 0.5,
+  "quality_threshold": 0.5,
+  "checkpoint_sha256": "7c2d68a9f56f6e00555bb5e79db5bd0881caa6e742ae5d04469525a89e8183a2"
+}

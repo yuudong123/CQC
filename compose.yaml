@@ -3,7 +3,7 @@
 # WBS: MO-04
 # 담당: 홍유나
 # 목적:
-# - CQC 프로젝트의 5개 실행 단위를 Docker Compose로 관리
+# - CQC 품질 검사 5개 서비스와 물류 3개 서비스를 Docker Compose로 관리
 # - 각 서비스의 healthcheck를 통해 정상 상태 확인
 # - 서비스 간 기동 순서를 service_healthy 기준으로 제어
 #
@@ -14,6 +14,7 @@
 # - backend는 mysql / inference가 healthy 상태 이후 기동
 # - frontend / simulator는 backend가 healthy 상태 이후 기동
 # - 모든 서비스에 restart: unless-stopped 유지
+# - simulator는 실제 이미지(Dockerfile.simulator)로 자동 재생, 재생 여부를 healthcheck로 확인
 #
 # 현재 기동 구조:
 #   MySQL ─────┐
@@ -21,8 +22,7 @@
 #   Inference ─┘          └→ Frontend
 #
 # 이후 작업:
-# - 기존 FE Dockerfile 배포 연결 및 Simulator 구현 후 placeholder command 교체
-# - Backend의 MySQL 저장·조회 연결 → BE 작업
+# - 기존 FE Dockerfile 배포 연결 후 frontend placeholder command 교체
 # ============================================================
 
 services:
@@ -303,8 +303,9 @@ services:
       # Backend와 공유하는 내부 인증 토큰
       SIMULATOR_FAULT_TOKEN: ${SIMULATOR_FAULT_TOKEN:?SIMULATOR_FAULT_TOKEN is required}
 
-      # 기본 입력 간격: 500ms
-      SIMULATOR_INTERVAL_MS: "500"
+      # 입력 간격 (DM-08). 서버컴 동시 처리 1에서 한 건 처리 주기가 p90 약 1.8초라
+      # 500ms로는 요청이 밀려 실제 초당 0.63건에 그친다. 처리 주기보다 긴 2000ms로 맞춘다.
+      SIMULATOR_INTERVAL_MS: ${SIMULATOR_INTERVAL_MS:-2000}
 
     # ==========================================================
     # 시연 데이터 및 상태 저장 Volume

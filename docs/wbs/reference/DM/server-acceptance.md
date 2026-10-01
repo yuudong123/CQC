@@ -23,18 +23,18 @@ WBS의 DM-06·DM-08 완료 조건인 서버컴(RAM 16GB) 환경의 평균·최�
 - 버전: `cqc-apple-separate12-focal-v2-candidate`
 - 필요 파일: `model.json`, `model.pt`를 **같은 디렉터리**에 둔다.
 - `model.pt` SHA-256: `b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a`.
-- 데이터 담당 보유 경로: 노트북 `C:\CQC\models\cqc-apple-separate12-focal-v2-candidate`, 집 PC `D:\Study\CQC\models\cqc-apple-separate12-focal-v2-candidate`.
-- 모델 바이너리는 Git에서 제외돼 있다. Jenkins 실행 전에 위 두 파일을 학원 서버의 Jenkins 작업공간 또는 별도 모델 디렉터리에 전달해야 한다. `model.json`의 해시와 실제 바이너리 해시가 다르면 시험이 중단된다. CI가 임의 체크포인트를 내려받거나 대체하지 않는다.
+- 데이터 담당 보유 경로: 노트북 `C:\CQC\models\model_v2-focal-uncalibrated` (보정 전). 현재 서비스 모델은 `models/selected`(보정본 `cal-20260930`)다.
+- 모델 패키지는 2026-10-01부터 Git으로 관리한다(`models/selected/`). Jenkins 작업공간에 별도로 전달하지 않는다. `model.json`의 해시와 실제 바이너리 해시가 다르면 시험이 중단된다. CI가 임의 체크포인트를 내려받거나 대체하지 않는다.
 
 ### Linux Jenkins 에이전트: Docker에서 모델 수용시험
 
-아래는 Jenkins 작업공간 루트에서 실행한다. 모델은 `models/cqc-apple-separate12-focal-v2-candidate`에 배치한 예시다. `BUILD_NUMBER`가 없는 수동 실행에서는 다른 고유한 출력 폴더명을 정한다.
+아래는 Jenkins 작업공간 루트에서 실행한다. 모델은 `models/selected`에 배치한 예시다. `BUILD_NUMBER`가 없는 수동 실행에서는 다른 고유한 출력 폴더명을 정한다.
 
 ```sh
 docker build -f Dockerfile.inference -t cqc-inference-acceptance .
 mkdir -p "outputs/server-acceptance/${BUILD_NUMBER}"
 docker run --rm --network none \
-  -v "$PWD/models/cqc-apple-separate12-focal-v2-candidate:/app/model:ro" \
+  -v "$PWD/models/selected:/app/model:ro" \
   -v "$PWD/outputs/server-acceptance/${BUILD_NUMBER}:/app/output" \
   cqc-inference-acceptance \
   python -m src.training.acceptance_cpu \
@@ -96,7 +96,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\remote\run_server_ac
 같은 시험을 다시 실행하려면 프로젝트 루트의 Windows PowerShell에서 아래 명령을 사용한다. `scripts/benchmark_inference_http.py` 실행 환경에는 Pillow가 필요하다. 출력 파일명은 실행마다 새로 지정한다.
 
 ```powershell
-docker run -d --name cqc-inference-http-benchmark -p 127.0.0.1:18001:8001 -e OMP_NUM_THREADS=1 -e MKL_NUM_THREADS=1 --mount 'type=volume,source=jenkins_home,target=/jenkins,readonly' cqc-inference-acceptance python -m src.inference.api --model-dir /jenkins/workspace/CQC-CICD/models/cqc-apple-separate12-focal-v2-candidate --device cpu --host 0.0.0.0 --port 8001
+docker run -d --name cqc-inference-http-benchmark -p 127.0.0.1:18001:8001 -e OMP_NUM_THREADS=1 -e MKL_NUM_THREADS=1 --mount 'type=volume,source=jenkins_home,target=/jenkins,readonly' cqc-inference-acceptance python -m src.inference.api --model-dir /jenkins/workspace/CQC-CICD/models/selected --device cpu --host 0.0.0.0 --port 8001
 Invoke-RestMethod http://127.0.0.1:18001/health
 .\.venv\Scripts\python.exe scripts\benchmark_inference_http.py --output outputs\server-acceptance\new-run\inference-http.json
 docker rm -f cqc-inference-http-benchmark
@@ -139,7 +139,7 @@ $env:APP_PORT='18000'
 
 ```powershell
 docker build -f Dockerfile.inference -t cqc-inference-acceptance .
-$env:INFERENCE_MODEL_DIR='C:\CQC\models\cqc-apple-separate12-focal-v2-candidate'
+$env:INFERENCE_MODEL_DIR='C:\CQC\models\selected'
 docker compose -p cqc-integration -f compose.integration.yaml up -d --build
 .\.venv\Scripts\python.exe scripts\benchmark_inference_http.py --url http://127.0.0.1:18000/v1/inspections --output outputs\server-acceptance\new-run\compose-backend-inference-http.json
 docker compose -p cqc-integration -f compose.integration.yaml down

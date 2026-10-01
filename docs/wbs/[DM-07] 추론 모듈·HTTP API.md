@@ -26,7 +26,7 @@
 
 ## 2026-09-23: 후속 후보 HTTP 계약·배포 인계
 
-- 후보 `cqc-apple-separate12-focal-v2-candidate`를 로컬에도 수집했다. 모델 바이너리는 Git 제외를 유지한다.
+- 후보 `cqc-apple-separate12-focal-v2-candidate`를 로컬에도 수집했다. 모델 패키지는 2026-10-01부터 `models/`에서 Git으로 관리한다.
 - `scripts/verify_inference_http.py`가 임시 loopback Uvicorn 서버를 실행하고 종료 시 해당 자식 프로세스만 정리한다.
 - 합성 PNG 12장 정상 200, 누락 대응 8장 200, 13장 413, metadata 개수 불일치 422, 잘못된 MIME 415, 손상 이미지 422를 실제 HTTP로 확인했다.
 - `origin/dev`의 `2490cfe7f9a75fcbd75acb36ccf99aad758e45d9`에서 추출한 변경 없는 Backend `InferenceResponse`로 정상 응답 검증을 통과했다. 백엔드 소스는 수정하지 않았다.
@@ -38,7 +38,7 @@
 팀 공용 `compose.yaml`, Jenkinsfile은 수정하지 않는다. `compose.inference.yaml`은 별도 프로젝트 이름으로 실행한다. 모델은 읽기 전용이고 localhost에만 포트를 연다. 후보 사용은 통합 시험 목적이며 운영 승인이 아니다.
 
 ```powershell
-$env:INFERENCE_MODEL_DIR = (Resolve-Path models/cqc-apple-separate12-focal-v2-candidate).Path
+$env:INFERENCE_MODEL_DIR = (Resolve-Path models/selected).Path
 $env:INFERENCE_PORT = '8001'
 docker compose -p cqc-inference-check -f compose.inference.yaml config --quiet
 docker compose -p cqc-inference-check -f compose.inference.yaml up -d --build
@@ -63,7 +63,7 @@ docker compose -p cqc-inference-check -f compose.inference.yaml logs --tail 50
 ### HTTP 시험 재현
 
 ```powershell
-python -m scripts.verify_inference_http --package models/cqc-apple-separate12-focal-v2-candidate --output outputs/inference-http-new.json
+python -m scripts.verify_inference_http --package models/selected --output outputs/inference-http-new.json
 ```
 
 Backend 계약도 검사하려면 원본 코드 스냅샷 루트를 `--backend-root`로, 커밋을 `--backend-revision`으로 전달한다. 결과 파일은 덮어쓰지 않으므로 매 실행에 새 경로를 지정한다. 이 도구는 테스트 환경의 `httpx`, Pillow, 추론 실행 의존성을 사용한다.

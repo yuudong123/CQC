@@ -8,6 +8,7 @@
 |---|---|
 | 모델명 | `mobilenet_v3_small_multiview` |
 | 모델 버전 | `cqc-apple-separate12-focal-v2-cal-20260930` (보정 전 `cqc-apple-separate12-focal-v2-candidate`) |
+| 모델 폴더 | 서비스 모델은 `models/selected/`(Docker `/app/models/approved`로 복사). 모든 버전은 `models/model_<버전·특징>/`에 두고, 선정한 것을 `selected`에 복사한다: `model_v2-focal-cal-20260930`(보정본, 현재 `selected`와 동일), `model_v2-focal-uncalibrated`(보정 전 v2), `model_v1.0.0-separate12`(v1) |
 | 체크포인트 SHA-256 | `b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a` |
 | 승인 상태 | `unverified_candidate` (독립 holdout 승인 없음) |
 | 신뢰도 보정 | `calibrated_dev_oof` (개발 5-fold OOF 152그룹 temperature scaling, Test 미사용) |

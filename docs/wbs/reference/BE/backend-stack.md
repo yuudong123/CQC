@@ -31,12 +31,12 @@ CQC/
 └─ tests/
 ```
 
-현재 Backend 구현은 시작 전이며 `src/api/`에는 placeholder만 있다. 데이터·모델·Inference 구현과 관련 테스트는 이미 존재하므로 Backend는 확정된 서비스 경계와 계약을 기준으로 연동한다.
+Backend는 `src/api/`에 BE-01~07까지 구현돼 있다(검사·관제·장애 이미지·Simulator 제어·검수 API). Simulator는 `src/simulator/`의 독립 프로세스다.
 
 - `src/api/`: README에서 Backend 영역으로 정의되어 있으므로 Backend 코드의 기준 위치로 사용한다.
 - `src/inference/`: 데이터·모델 담당자의 HTTP 추론 서비스 영역이다. Backend HTTP Client를 넣지 않는다.
 - `src/models/`: 시스템 모델 구조·코드 영역이다. SQLAlchemy DB Model을 넣지 않는다.
-- 루트 `models/`: 로컬 모델 파일·체크포인트 등 Git 제외 산출물 영역이다.
+- 루트 `models/`: 모델 패키지(Git 추적). 서비스 모델은 `models/selected/`.
 - `src/data/`, `src/training/`, `src/web/`: 기존 담당 영역을 유지한다.
 
 Backend 작업을 이유로 위 폴더를 이동·병합·변경하지 않는다.
@@ -117,7 +117,7 @@ Router
 - Repository: MySQL 저장·조회·수정·삭제와 통계·집계
 - Inference Client: multipart 호출, transport 처리와 응답 검증
 - Virtual Control: bin 명령과 성공·실패·거부·무응답 처리
-- Simulator: 시연 전용 `data/processed/realtime-apple-arrival-demo/index.json` 기본 12장 묶음 순회, `request.json` 순서·metadata 전송, 500ms 간격, 시작·정지·반복과 position 복구. 묶음 안에서 대표 이미지를 다시 고르지 않음
+- Simulator: 시연 전용 `data/processed/realtime-apple-arrival-demo/index.json` 기본 12장 묶음 순회, `request.json` 순서·metadata 전송, 설정 간격(코드 기본 500ms, Compose 2000ms), 시작·정지·반복과 position 복구. 묶음 안에서 대표 이미지를 다시 고르지 않음
 
 Router의 직접 SQL/httpx 호출, Repository의 Inference 호출, Inference Client의 bin 결정, Simulator의 DB 수정을 금지한다. Service·Repository·Client처럼 의존성·상태가 있는 곳에는 클래스를 사용할 수 있고 단순 계산·변환·CSV formatting은 함수로 작성할 수 있다.
 
