@@ -113,7 +113,9 @@ export function imageIndexForJob(index: number) {
   const sample = MOCK_INSPECTIONS[index % MOCK_INSPECTIONS.length];
   return Math.max(0, sampleApples.findIndex((apple) => apple.variety === sample.variety && apple.grade === sample.grade));
 }
-export function step(state: Runtime, now: number, intervalMs = 1000): Runtime {
+// 브라우저 예시의 사과 그룹 투입 간격. 상용 광학 선별기는 레인당 초당 1~3개라 그 하한인 초당 1개로 둔다.
+export const DEMO_INPUT_INTERVAL_MS = 1000;
+export function step(state: Runtime, now: number, intervalMs = 1000, singleInput = false): Runtime {
   const date = kst(now).slice(0, 10);
   const next: Runtime = {
     ...state,
@@ -242,8 +244,8 @@ export function step(state: Runtime, now: number, intervalMs = 1000): Runtime {
         faults: [...next.faults],
       });
       if (next.scope === "NEXT") next.faults = [];
-      // 병렬 슬롯을 늘려도 브라우저의 투입 간격은 사과 한 개당 500ms입니다.
-      if (intervalMs === 500) break;
+      // 병렬 슬롯을 늘려도 브라우저 예시는 한 번에 사과 한 그룹만 투입합니다.
+      if (singleInput) break;
     }
   }
   return next;
