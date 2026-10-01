@@ -228,6 +228,33 @@ def test_late_result_save_failure_does_not_change_original_response(
     assert "늦은 Inference 진단 저장 실패" in caplog.text
 
 
+def test_late_result_without_initial_db_row_skips_diagnostic_write() -> None:
+    persistence = RecordingPersistence(fail_create=True)
+
+    async def run() -> dict[str, object]:
+        manager = LateResultManager(hard_timeout_ms=200, max_tasks=4)
+        service, _ = _service(
+            manager,
+            response_delay_ms=30,
+            business_deadline_ms=1,
+            persistence=persistence,
+        )
+        response = await service.inspect(
+            inspection_id="late-no-initial-row",
+            images=_upload_files(),
+            metadata=_metadata_items(),
+            virtual_brix=12.0,
+        )
+        await manager.wait_until_idle()
+        assert len(manager.results) == 1
+        return response.model_dump()
+
+    response = asyncio.run(run())
+    assert response["decision_reason"] == "INFERENCE_DEADLINE_EXCEEDED"
+    assert response["persistence_status"] == "FAILED"
+    assert persistence.late_results == []
+
+
 def test_late_task_is_cancelled_at_hard_timeout() -> None:
     async def run() -> tuple[dict[str, object], LateResultManager]:
         manager = LateResultManager(hard_timeout_ms=10, max_tasks=4)

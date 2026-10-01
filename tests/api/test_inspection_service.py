@@ -6,9 +6,11 @@ from io import BytesIO
 import httpx
 import pytest
 from fastapi import UploadFile
+from sqlalchemy.exc import OperationalError
 
 from src.api.clients.inference import MockInferenceClient
 from src.api.control.virtual_control import MockVirtualControl
+from src.api.db.session import is_database_unavailable_error
 from src.api.repositories import (
     BinMappingConfigurationError,
     BinMappingUnavailableError,
@@ -74,7 +76,12 @@ class RecoveringMappingRepository(FakeBinMappingRepository):
     invalid = False
     suffix = ""
 
+    def __init__(self) -> None:
+        super().__init__()
+        self.load_attempts = 0
+
     def load_snapshot(self):
+        self.load_attempts += 1
         if self.unavailable:
             raise BinMappingUnavailableError("DB unavailable")
         if self.invalid:
@@ -86,6 +93,26 @@ class RecoveringMappingRepository(FakeBinMappingRepository):
             {key: f"{code}{self.suffix}" for key, code in snapshot.normal_bins.items()},
             f"{snapshot.reinspection_bin}{self.suffix}",
         )
+
+
+class ConnectionFailingPersistence(RecordingPersistence):
+    unavailable = False
+
+    def create_pending(self, values: dict[str, object]) -> None:
+        if self.unavailable:
+            raise OperationalError(
+                "INSERT inspections", {}, OSError(2003, "DB offline")
+            )
+        super().create_pending(values)
+
+
+def test_db_error_classification_keeps_non_connection_failures_distinct() -> None:
+    connection_failure = OperationalError("INSERT", {}, OSError(2003, "offline"))
+    lock_failure = OperationalError("INSERT", {}, OSError(1205, "lock timeout"))
+
+    assert is_database_unavailable_error(connection_failure) is True
+    assert is_database_unavailable_error(lock_failure) is False
+    assert is_database_unavailable_error(RuntimeError("write failed")) is False
 
 
 def _images(count: int) -> list[UploadFile]:
@@ -524,6 +551,152 @@ def test_db_outage_uses_lkg_for_decision_control_and_recovery() -> None:
         "TEST_REINSPECTION_BIN",
         "DEMO_BIN_01-NEW",
     ]
+
+
+def test_pending_connection_failure_skips_mapping_retry_for_one_inspection() -> None:
+    mappings = RecoveringMappingRepository()
+    persistence = ConnectionFailingPersistence()
+    control = MockVirtualControl()
+    service = InspectionService(
+        MockInferenceClient(),
+        control,
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.60,
+        inference_business_deadline_ms=500,
+        late_result_manager=_late_result_manager(),
+        bin_mapping_repository=mappings,
+        persistence=persistence,
+    )
+
+    async def inspect(inspection_id: str):
+        return await service.inspect(
+            inspection_id=inspection_id,
+            images=_images(1),
+            metadata=_metadata(1),
+            virtual_brix=11.9,
+        )
+
+    async def run():
+        first = await inspect("pending-online")
+        persistence.unavailable = True
+        mappings.unavailable = True
+        outage = await inspect("pending-offline")
+        calls_during_outage = mappings.load_attempts
+        persistence.unavailable = False
+        mappings.unavailable = False
+        mappings.suffix = "-NEW"
+        recovered = await inspect("pending-recovered")
+        return first, outage, calls_during_outage, recovered
+
+    first, outage, calls_during_outage, recovered = asyncio.run(run())
+    assert first.target_bin_code == "DEMO_BIN_01"
+    assert outage.target_bin_code == "DEMO_BIN_01"
+    assert outage.control_status == "SUCCEEDED"
+    assert outage.persistence_status == "FAILED"
+    assert calls_during_outage == 1  # LKG를 읽고 DB mapping은 재조회하지 않는다.
+    assert len(persistence.pending_values) == 2
+    assert len(persistence.final_values) == 2
+    assert recovered.target_bin_code == "DEMO_BIN_01-NEW"
+    assert recovered.persistence_status == "SUCCEEDED"
+    assert mappings.load_attempts == 2
+    assert len(control.requests) == 3
+
+
+def test_mapping_connection_failure_skips_final_persistence_retry() -> None:
+    mappings = RecoveringMappingRepository()
+    persistence = RecordingPersistence()
+    control = MockVirtualControl()
+    service = InspectionService(
+        MockInferenceClient(),
+        control,
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.60,
+        inference_business_deadline_ms=500,
+        late_result_manager=_late_result_manager(),
+        bin_mapping_repository=mappings,
+        persistence=persistence,
+    )
+
+    async def run():
+        await service.inspect(
+            inspection_id="mapping-online",
+            images=_images(1),
+            metadata=_metadata(1),
+            virtual_brix=11.9,
+        )
+        mappings.unavailable = True
+        return await service.inspect(
+            inspection_id="mapping-offline",
+            images=_images(1),
+            metadata=_metadata(1),
+            virtual_brix=11.9,
+        )
+
+    response = asyncio.run(run())
+    assert response.target_bin_code == "DEMO_BIN_01"
+    assert response.control_status == "SUCCEEDED"
+    assert response.persistence_status == "FAILED"
+    assert len(persistence.pending_values) == 2
+    assert len(persistence.final_values) == 1
+    assert persistence.failed_ids == []
+    assert len(control.requests) == 2
+
+
+def test_cold_start_pending_connection_failure_does_not_query_or_control() -> None:
+    mappings = RecoveringMappingRepository()
+    persistence = ConnectionFailingPersistence()
+    persistence.unavailable = True
+    control = MockVirtualControl()
+    service = InspectionService(
+        MockInferenceClient(),
+        control,
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.60,
+        inference_business_deadline_ms=500,
+        late_result_manager=_late_result_manager(),
+        bin_mapping_repository=mappings,
+        persistence=persistence,
+    )
+
+    with pytest.raises(BinMappingUnavailableError):
+        asyncio.run(
+            service.inspect(
+                inspection_id="cold-pending-offline",
+                images=_images(1),
+                metadata=_metadata(1),
+                virtual_brix=11.9,
+            )
+        )
+    assert mappings.load_attempts == 0
+    assert control.requests == []
+
+
+def test_non_connection_pending_failure_does_not_hide_mapping_error() -> None:
+    mappings = RecoveringMappingRepository()
+    mappings.invalid = True
+    control = MockVirtualControl()
+    service = InspectionService(
+        MockInferenceClient(),
+        control,
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.60,
+        inference_business_deadline_ms=500,
+        late_result_manager=_late_result_manager(),
+        bin_mapping_repository=mappings,
+        persistence=RecordingPersistence(fail_create=True),
+    )
+
+    with pytest.raises(BinMappingConfigurationError):
+        asyncio.run(
+            service.inspect(
+                inspection_id="pending-failed-mapping-invalid",
+                images=_images(1),
+                metadata=_metadata(1),
+                virtual_brix=11.9,
+            )
+        )
+    assert mappings.load_attempts == 1
+    assert control.requests == []
 
 
 def test_cold_start_db_outage_does_not_control() -> None:

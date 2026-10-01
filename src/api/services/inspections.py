@@ -17,6 +17,7 @@ from src.simulator.schemas import FaultType
 from ..clients.inference import HttpInferenceClient, MockInferenceClient
 from ..control.virtual_control import MockVirtualControl
 from ..core.datetime import utc_now
+from ..db.session import is_database_unavailable_error
 from ..repositories import (
     BinMappingConfigurationError,
     BinMappingRepository,
@@ -113,6 +114,7 @@ class InspectionService:
         sweetness_band = _classify_sweetness(virtual_brix)
         created_at = utc_now()
         row_created = False
+        db_unavailable = False
         persistence_status = PersistenceStatus.NOT_ATTEMPTED
         if "DB_ERROR" in simulator_faults:
             persistence_status = PersistenceStatus.FAILED
@@ -128,7 +130,9 @@ class InspectionService:
                         created_at=created_at,
                     ),
                 )
-            except Exception:
+            except Exception as exc:
+                # DB 단절 판단은 이 검사에만 적용하고 다음 검사는 다시 접속을 시도한다.
+                db_unavailable = is_database_unavailable_error(exc)
                 persistence_status = PersistenceStatus.FAILED
                 logger.exception("검사 초기 행 저장에 실패했습니다: %s", inspection_id)
             else:
@@ -151,7 +155,9 @@ class InspectionService:
         elif "INFERENCE_ERROR" in simulator_faults:
             injected_reason = InspectionDecisionReason.INFERENCE_HTTP_ERROR
         inference_response, decision, processing_errors = await self._infer(
-            inference_request, injected_reason=injected_reason
+            inference_request,
+            injected_reason=injected_reason,
+            persist_late_result=row_created,
         )
 
         if (
@@ -166,10 +172,15 @@ class InspectionService:
             )
 
         try:
-            target_bin_code, reinspection_bin_code = await self._find_target_bins(
+            (
+                target_bin_code,
+                reinspection_bin_code,
+                mapping_db_available,
+            ) = await self._find_target_bins(
                 inference_response=inference_response,
                 decision=decision,
                 sweetness_band=sweetness_band,
+                skip_db=db_unavailable,
             )
         except (BinMappingConfigurationError, BinMappingUnavailableError) as exc:
             processing_errors.append(
@@ -179,7 +190,7 @@ class InspectionService:
                     message=str(exc),
                 )
             )
-            if row_created:
+            if row_created and isinstance(exc, BinMappingConfigurationError):
                 persistence_status = await self._persist_without_control(
                     inspection_id=inspection_id,
                     inference_response=inference_response,
@@ -222,7 +233,7 @@ class InspectionService:
         processing_errors.extend(_control_error_records(control_result))
         final_control_response = control_result.final_response
 
-        if row_created:
+        if row_created and mapping_db_available:
             persistence_status = await self._persist_final(
                 inspection_id=inspection_id,
                 inference_response=inference_response,
@@ -234,6 +245,9 @@ class InspectionService:
                 control_attempts=control_attempts,
                 errors=processing_errors,
             )
+        elif row_created:
+            # Mapping 조회에서 DB 단절이 확인되면 같은 검사의 저장 재시도를 생략한다.
+            persistence_status = PersistenceStatus.FAILED
 
         if decision.reason in _FAULT_IMAGE_REASONS and self._fault_image_storage:
             try:
@@ -274,6 +288,7 @@ class InspectionService:
         self,
         request: InferenceRequest,
         *,
+        persist_late_result: bool,
         injected_reason: InspectionDecisionReason | None = None,
     ) -> tuple[
         InferenceResponse | None,
@@ -315,13 +330,20 @@ class InspectionService:
         )
         if inference_task not in completed:
             frame_count = len(request.images)
+            on_result = (
+                (
+                    lambda result: self._persist_late_result(
+                        result, expected_frame_count=frame_count
+                    )
+                )
+                if persist_late_result
+                else None
+            )
             self._late_result_manager.track(
                 inspection_id=request.inspection_id,
                 inference_task=inference_task,
                 started_at=inference_started_at,
-                on_result=lambda result: self._persist_late_result(
-                    result, expected_frame_count=frame_count
-                ),
+                on_result=on_result,
             )
             decision = decide_inference_timeout(
                 cultivar_confidence_threshold=self._cultivar_confidence_threshold,
@@ -400,17 +422,20 @@ class InspectionService:
         inference_response: InferenceResponse | None,
         decision: InspectionDecision,
         sweetness_band: str | None,
-    ) -> tuple[str, str]:
+        skip_db: bool,
+    ) -> tuple[str, str, bool]:
         lkg = self._bin_mapping_lkg
         if lkg is None:
             raise BinMappingConfigurationError(
                 "bin mapping Repository가 설정되지 않았습니다"
             )
 
-        snapshot = await asyncio.to_thread(lkg.resolve)
+        snapshot, db_available = await asyncio.to_thread(
+            lkg.resolve_for_inspection, skip_db=skip_db
+        )
         reinspection_bin = snapshot.reinspection_bin
         if decision.inspection_status is InspectionStatus.REINSPECTION_REQUIRED:
-            return reinspection_bin, reinspection_bin
+            return reinspection_bin, reinspection_bin, db_available
         if inference_response is None or sweetness_band is None:
             raise BinMappingConfigurationError("정상 배차에 필요한 판정값이 없습니다")
 
@@ -420,7 +445,7 @@ class InspectionService:
             quality_grade=inference_response.predicted_grade,
             sweetness_band=sweetness_band,
         )
-        return normal_bin, reinspection_bin
+        return normal_bin, reinspection_bin, db_available
 
     async def _persist_final(
         self,

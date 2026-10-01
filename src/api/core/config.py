@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     app_host: str = "0.0.0.0"
     app_port: int = Field(default=8000, ge=1, le=65535)
     database_url: str | None = None
+    db_connect_timeout_seconds: int = Field(default=1, ge=1)
     inference_client_mode: Literal["mock", "http"] = "mock"
     inference_url: str = "http://inference:8001/v1/predict"
     inference_max_files: int = Field(default=12, ge=1)

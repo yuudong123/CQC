@@ -112,6 +112,27 @@ def test_sync_engine_and_session_factory_use_configured_mysql_url() -> None:
     engine.dispose()
 
 
+def test_engine_passes_configured_connection_timeout_to_pymysql(monkeypatch) -> None:
+    from src.api.db import session as db_session
+
+    captured = {}
+
+    def fake_create_engine(url, **kwargs):
+        captured.update(kwargs)
+        return object()
+
+    monkeypatch.setattr(db_session, "create_engine", fake_create_engine)
+    db_session.create_db_engine(
+        Settings(
+            database_url="mysql+pymysql://backend@127.0.0.1:3306/cqc_test",
+            db_connect_timeout_seconds=3,
+        )
+    )
+
+    assert captured["connect_args"] == {"connect_timeout": 3}
+    assert captured["pool_pre_ping"] is True
+
+
 def test_engine_requires_mysql_pymysql_database_url() -> None:
     with pytest.raises(RuntimeError, match="DATABASE_URL"):
         create_db_engine(Settings(database_url=None))
