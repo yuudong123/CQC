@@ -35,6 +35,12 @@ CQC_QUALITY_BACKEND_URL=http://127.0.0.1:8101
 | GET, DELETE | /fault-images | 목록 및 지정 ID 삭제 |
 | GET | /previews/{id} | 진행 중 또는 장애 이미지 |
 
+### 현재 Simulator 라인 속도 계약 (2026-10-01)
+
+`PUT /v1/quality/simulator`는 기존 부분 변경 요청에 `intervalMs`를 추가한다. `expectedRevision`은 필수이며 `intervalMs`는 1000·2000·3000 중 하나다. 성공하면 revision이 증가하고 전체 snapshot을 반환한다. 실행 중에도 변경할 수 있으며 다음 검사 투입 예약부터 적용된다. FE는 `GET /v1/quality/snapshot` 또는 PUT 응답의 `state.intervalMs`에서 현재 값을, `capabilities.intervals`에서 선택 목록을 읽는다. Simulator 연결이 없으면 선택 목록은 빈 배열이며 기존 제어 불가 상태를 유지한다. `intervalMs`는 이전 검사 완료 후 대기 시간이 아닌 검사 투입 **시작 시점 간격**이다.
+
+Simulator 프로세스 재시작 시 현재 값은 `SIMULATOR_INTERVAL_MS`에서 다시 읽는다. 런타임 변경은 저장하지 않는다. 공개 필드와 허용값은 [OpenAPI 계약](../../contracts/quality-operations.openapi.json)의 `Settings`, `Snapshot` 정의를 따른다.
+
 ## 서버가 지켜야 할 동작
 
 - 계약 버전은 `1`. 실제 연결만 `source=backend`로 응답한다. 4개 구성요소 상태는 실제 상태 확인 결과를 사용한다. 미구현 기능은 capabilities에서 비활성화한다.

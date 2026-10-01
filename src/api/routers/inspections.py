@@ -11,7 +11,7 @@ from pydantic import ValidationError
 from src.simulator.schemas import FaultType
 
 from ..core.config import Settings
-from ..repositories import BinMappingConfigurationError
+from ..repositories import BinMappingConfigurationError, BinMappingUnavailableError
 from ..schemas.inspection_results import InspectionResponse
 from ..schemas.inspections import InspectionImageMetadata, InspectionMetadata
 from ..services.inspections import InspectionService
@@ -190,7 +190,7 @@ async def _validate_and_inspect(
             virtual_brix=virtual_brix,
             **options,
         )
-    except BinMappingConfigurationError as exc:
+    except (BinMappingConfigurationError, BinMappingUnavailableError) as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="활성 bin mapping 설정을 확인할 수 없습니다",

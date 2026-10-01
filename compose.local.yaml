@@ -1,0 +1,9 @@
+# Local BE-08 verification: use the existing dataset without copying it into a Docker volume.
+# Run with: docker compose -f compose.yaml -f compose.local.yaml up -d mysql inference backend simulator
+services:
+  simulator:
+    volumes:
+      - type: bind
+        source: ${SIMULATOR_DATASET_HOST_PATH:?Set SIMULATOR_DATASET_HOST_PATH to the local dataset directory}
+        target: /data/dataset
+        read_only: true

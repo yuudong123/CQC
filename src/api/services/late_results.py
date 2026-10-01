@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Awaitable, Callable
 
 from ..schemas.inference import InferenceResponse
 from ..schemas.late_results import LateInferenceResult
@@ -36,6 +37,7 @@ class LateResultManager:
         inspection_id: str,
         inference_task: asyncio.Task[InferenceResponse],
         started_at: float,
+        on_result: Callable[[LateInferenceResult], Awaitable[None]] | None = None,
     ) -> bool:
         """한도 안의 task만 hard timeout까지 추적한다."""
 
@@ -52,6 +54,7 @@ class LateResultManager:
                 inspection_id=inspection_id,
                 inference_task=inference_task,
                 remaining_seconds=remaining_seconds,
+                on_result=on_result,
             )
         )
         self._watchers.add(watcher)
@@ -80,6 +83,7 @@ class LateResultManager:
         inspection_id: str,
         inference_task: asyncio.Task[InferenceResponse],
         remaining_seconds: float,
+        on_result: Callable[[LateInferenceResult], Awaitable[None]] | None,
     ) -> None:
         try:
             if remaining_seconds <= 0:
@@ -97,12 +101,13 @@ class LateResultManager:
             await asyncio.gather(inference_task, return_exceptions=True)
             raise
         else:
-            self.results.append(
-                LateInferenceResult(
-                    inspection_id=inspection_id,
-                    inference_response=inference_response,
-                )
+            result = LateInferenceResult(
+                inspection_id=inspection_id,
+                inference_response=inference_response,
             )
+            self.results.append(result)
+            if on_result is not None:
+                await on_result(result)
 
     @staticmethod
     def _consume_task_result(task: asyncio.Task[InferenceResponse]) -> None:

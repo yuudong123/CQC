@@ -93,6 +93,7 @@ def create_app(
         SimulatorClient(
             runtime_settings.simulator_internal_url,
             timeout_ms=runtime_settings.simulator_internal_timeout_ms,
+            state_timeout_ms=runtime_settings.simulator_state_timeout_ms,
         )
         if runtime_settings.simulator_internal_url
         else None
@@ -117,6 +118,7 @@ def create_app(
     application.state.fault_image_storage = fault_image_storage
     application.state.simulator_fault_token = runtime_settings.simulator_fault_token
     application.state.simulator_client = simulator_client
+    application.state.inference_client = inference_client
     application.state.quality_history_repository = (
         QualityHistoryRepository(session_factory)
         if session_factory is not None

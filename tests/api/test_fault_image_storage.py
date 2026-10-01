@@ -556,7 +556,7 @@ def test_non_inference_failures_do_not_store_fault_images(
     fault_root: Path, excluded_case: str
 ) -> None:
     class BrokenMapping(FakeBinMappingRepository):
-        def find_normal_bin(self, **kwargs):
+        def load_snapshot(self):
             raise BinMappingConfigurationError("missing mapping")
 
     control_outcomes = {

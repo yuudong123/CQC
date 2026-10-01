@@ -20,6 +20,7 @@ from ..core.datetime import utc_now
 from ..repositories import (
     BinMappingConfigurationError,
     BinMappingRepository,
+    BinMappingUnavailableError,
     InspectionPersistence,
 )
 from ..repositories.records import ControlAttemptRecord, InspectionErrorRecord
@@ -34,6 +35,8 @@ from ..schemas.inspection_results import (
     PersistenceStatus,
 )
 from ..schemas.inspections import InspectionImageMetadata
+from ..schemas.late_results import LateInferenceResult
+from .bin_mapping_lkg import LkgBinMapping
 from .bin_policy import DEMO_SWEETNESS_THRESHOLD_BRIX
 from .control_policy import execute_virtual_control
 from .fault_image_storage import FaultImage, FaultImageStorage
@@ -81,7 +84,11 @@ class InspectionService:
         self._quality_confidence_threshold = quality_confidence_threshold
         self._inference_business_deadline_ms = inference_business_deadline_ms
         self._late_result_manager = late_result_manager
-        self._bin_mapping_repository = bin_mapping_repository
+        self._bin_mapping_lkg = (
+            LkgBinMapping(bin_mapping_repository)
+            if bin_mapping_repository is not None
+            else None
+        )
         self._persistence = persistence
         self._fault_image_storage = fault_image_storage
 
@@ -164,7 +171,7 @@ class InspectionService:
                 decision=decision,
                 sweetness_band=sweetness_band,
             )
-        except BinMappingConfigurationError as exc:
+        except (BinMappingConfigurationError, BinMappingUnavailableError) as exc:
             processing_errors.append(
                 _error_record(
                     component="bin_mapping",
@@ -307,10 +314,14 @@ class InspectionService:
             timeout=self._inference_business_deadline_ms / 1000,
         )
         if inference_task not in completed:
+            frame_count = len(request.images)
             self._late_result_manager.track(
                 inspection_id=request.inspection_id,
                 inference_task=inference_task,
                 started_at=inference_started_at,
+                on_result=lambda result: self._persist_late_result(
+                    result, expected_frame_count=frame_count
+                ),
             )
             decision = decide_inference_timeout(
                 cultivar_confidence_threshold=self._cultivar_confidence_threshold,
@@ -359,6 +370,30 @@ class InspectionService:
         )
         return response, decision, []
 
+    async def _persist_late_result(
+        self, result: LateInferenceResult, *, expected_frame_count: int
+    ) -> None:
+        """늦은 응답은 확정 판정과 분리해 기존 검사 행에만 기록한다."""
+
+        response = result.inference_response
+        if (
+            response.inspection_id != result.inspection_id
+            or response.used_frame_count != expected_frame_count
+        ):
+            logger.warning("늦은 Inference 응답 계약 불일치: %s", result.inspection_id)
+            return
+        if self._persistence is None:
+            return
+        try:
+            await asyncio.to_thread(
+                self._persistence.save_late_result,
+                inspection_id=result.inspection_id,
+                received_at=utc_now(),
+                payload=response.model_dump(mode="json"),
+            )
+        except Exception:
+            logger.exception("늦은 Inference 진단 저장 실패: %s", result.inspection_id)
+
     async def _find_target_bins(
         self,
         *,
@@ -366,20 +401,20 @@ class InspectionService:
         decision: InspectionDecision,
         sweetness_band: str | None,
     ) -> tuple[str, str]:
-        repository = self._bin_mapping_repository
-        if repository is None:
+        lkg = self._bin_mapping_lkg
+        if lkg is None:
             raise BinMappingConfigurationError(
                 "bin mapping Repository가 설정되지 않았습니다"
             )
 
-        reinspection_bin = await asyncio.to_thread(repository.find_reinspection_bin)
+        snapshot = await asyncio.to_thread(lkg.resolve)
+        reinspection_bin = snapshot.reinspection_bin
         if decision.inspection_status is InspectionStatus.REINSPECTION_REQUIRED:
             return reinspection_bin, reinspection_bin
         if inference_response is None or sweetness_band is None:
             raise BinMappingConfigurationError("정상 배차에 필요한 판정값이 없습니다")
 
-        normal_bin = await asyncio.to_thread(
-            repository.find_normal_bin,
+        normal_bin = snapshot.normal_bin(
             crop_type=inference_response.crop_type,
             cultivar=inference_response.predicted_cultivar,
             quality_grade=inference_response.predicted_grade,
@@ -633,6 +668,8 @@ def _validate_inference_response(
 def _inference_failure_reason(exc: Exception) -> InspectionDecisionReason:
     if isinstance(exc, httpx.HTTPStatusError):
         return InspectionDecisionReason.INFERENCE_HTTP_ERROR
+    if isinstance(exc, httpx.TimeoutException):
+        return InspectionDecisionReason.INFERENCE_DEADLINE_EXCEEDED
     if isinstance(exc, httpx.RequestError):
         return InspectionDecisionReason.INFERENCE_CONNECTION_ERROR
     if isinstance(exc, (ValidationError, InferenceResponseMismatchError, ValueError)):
@@ -642,6 +679,9 @@ def _inference_failure_reason(exc: Exception) -> InspectionDecisionReason:
 
 def _safe_inference_error_message(reason: InspectionDecisionReason) -> str:
     messages = {
+        InspectionDecisionReason.INFERENCE_DEADLINE_EXCEEDED: (
+            "Inference 요청 시간이 초과되었습니다"
+        ),
         InspectionDecisionReason.INFERENCE_CONNECTION_ERROR: (
             "Inference 서비스 연결에 실패했습니다"
         ),

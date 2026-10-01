@@ -20,7 +20,7 @@ class SimulatorSettings(BaseSettings):
     simulator_position_path: Path
     simulator_backend_url: str
     simulator_fault_token: str = Field(min_length=1)
-    simulator_interval_ms: int = Field(default=500, ge=1)
+    simulator_interval_ms: int = Field(default=2000, ge=1)
     simulator_bind_host: str = "0.0.0.0"
     simulator_bind_port: int = Field(default=8002, ge=1, le=65535)
     simulator_max_request_bytes: int = Field(default=24 * 1024 * 1024, ge=1)

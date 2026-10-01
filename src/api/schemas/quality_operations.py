@@ -11,7 +11,7 @@ from .quality_history import Fault, QualityResult
 
 
 def _omit_unset_defaults(schema: dict[str, object]) -> None:
-    for field in ("history", "concurrency", "sequence", "tick", "scope"):
+    for field in ("history", "concurrency", "intervalMs", "sequence", "tick", "scope"):
         property_schema = schema.get("properties", {}).get(field)
         if isinstance(property_schema, dict):
             property_schema.pop("default", None)
@@ -51,6 +51,7 @@ class QualityCapabilities(BaseModel):
     review: bool
     deleteImages: bool
     concurrency: list[Literal[1, 2, 4]] = Field(max_length=3)
+    intervals: list[Literal[1000, 2000, 3000]] = Field(max_length=3)
 
 
 class QualityComponents(BaseModel):
@@ -95,6 +96,7 @@ class QualityState(BaseModel):
     throughput: float = Field(ge=0)
     running: bool
     concurrency: Literal[1, 2, 4] | SkipJsonSchema[None] = None
+    intervalMs: int | SkipJsonSchema[None] = Field(default=None, ge=1)
     sequence: int | SkipJsonSchema[None] = Field(default=None, ge=0)
     tick: int | SkipJsonSchema[None] = Field(default=None, ge=0)
     faults: list[Fault] = Field(max_length=5)

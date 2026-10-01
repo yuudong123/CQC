@@ -12,11 +12,36 @@ from src.api.clients.inference import MockInferenceClient
 from src.api.control.virtual_control import MockVirtualControl
 from src.api.core.config import Settings
 from src.api.main import create_app
+from src.api.schemas.inference import (
+    InferenceRequest,
+    InferenceResponse,
+    QualityProbabilities,
+)
 from src.api.schemas.inspections import InspectionImageMetadata
 from src.api.services.inspections import InspectionService
 from src.api.services.late_results import LateResultManager
 
 from .fakes import FakeBinMappingRepository, RecordingPersistence
+
+
+class ConfidenceInferenceClient(MockInferenceClient):
+    def __init__(self, *, response_delay_ms: int, quality_confidence: float) -> None:
+        super().__init__(response_delay_ms=response_delay_ms)
+        self._quality_confidence = quality_confidence
+
+    async def predict(self, request: InferenceRequest) -> InferenceResponse:
+        response = await super().predict(request)
+        confidence = self._quality_confidence
+        return response.model_copy(
+            update={
+                "quality_confidence": confidence,
+                "quality_probabilities": QualityProbabilities(
+                    L=confidence,
+                    M=(1 - confidence) / 2,
+                    S=(1 - confidence) / 2,
+                ),
+            }
+        )
 
 
 def _upload_files() -> list[UploadFile]:
@@ -40,18 +65,23 @@ def _service(
     response_delay_ms: int,
     business_deadline_ms: int,
     cultivar_threshold: float = 0.50,
+    quality_confidence: float = 0.80,
+    persistence: RecordingPersistence | None = None,
 ) -> tuple[InspectionService, MockVirtualControl]:
     control = MockVirtualControl()
     return (
         InspectionService(
-            MockInferenceClient(response_delay_ms=response_delay_ms),
+            ConfidenceInferenceClient(
+                response_delay_ms=response_delay_ms,
+                quality_confidence=quality_confidence,
+            ),
             control,
             cultivar_confidence_threshold=cultivar_threshold,
-            quality_confidence_threshold=0.50,
+            quality_confidence_threshold=0.60,
             inference_business_deadline_ms=business_deadline_ms,
             late_result_manager=manager,
             bin_mapping_repository=FakeBinMappingRepository(),
-            persistence=RecordingPersistence(),
+            persistence=persistence or RecordingPersistence(),
         ),
         control,
     )
@@ -61,25 +91,29 @@ def _service(
 def test_response_before_business_deadline_creates_no_late_task(
     cultivar_threshold: float,
 ) -> None:
-    async def run() -> tuple[int, int]:
+    persistence = RecordingPersistence()
+
+    async def run() -> tuple[int, int, int]:
         manager = LateResultManager(hard_timeout_ms=200, max_tasks=4)
         service, _ = _service(
             manager,
             response_delay_ms=1,
             business_deadline_ms=100,
             cultivar_threshold=cultivar_threshold,
+            persistence=persistence,
         )
         await service.inspect(
             inspection_id="inspection-in-deadline",
             images=_upload_files(),
             metadata=_metadata_items(),
         )
-        return manager.active_count, len(manager.results)
+        return manager.active_count, len(manager.results), len(persistence.late_results)
 
-    active_count, result_count = asyncio.run(run())
+    active_count, result_count, saved_count = asyncio.run(run())
 
     assert active_count == 0
     assert result_count == 0
+    assert saved_count == 0
 
 
 @pytest.mark.parametrize("cultivar_threshold", [0.50, 0.95])
@@ -118,6 +152,80 @@ def test_late_result_is_diagnostic_only_and_does_not_change_decision(
     assert manager.results[0].inspection_id == "inspection-late-result"
     assert manager.results[0].is_late is True
     assert manager.results[0].inference_response.cultivar_confidence == 0.9
+
+
+@pytest.mark.parametrize("quality_confidence", [0.59, 0.60, 0.80])
+def test_late_result_save_keeps_timeout_decision_and_control(
+    quality_confidence: float,
+) -> None:
+    persistence = RecordingPersistence()
+
+    async def run() -> tuple[dict[str, object], int]:
+        manager = LateResultManager(hard_timeout_ms=200, max_tasks=4)
+        service, control = _service(
+            manager,
+            response_delay_ms=30,
+            business_deadline_ms=1,
+            quality_confidence=quality_confidence,
+            persistence=persistence,
+        )
+        response = await service.inspect(
+            inspection_id="late-diagnostic-only",
+            images=_upload_files(),
+            metadata=_metadata_items(),
+            virtual_brix=12.0,
+        )
+        fixed_response = response.model_dump()
+        await manager.wait_until_idle()
+        assert response.model_dump() == fixed_response
+        return fixed_response, len(control.requests)
+
+    response, control_calls = asyncio.run(run())
+
+    assert response["inspection_status"] == "REINSPECTION_REQUIRED"
+    assert response["decision_reason"] == "INFERENCE_DEADLINE_EXCEEDED"
+    assert response["target_bin_code"] == "TEST_REINSPECTION_BIN"
+    assert control_calls == 1
+    assert len(persistence.final_values) == 1
+    assert persistence.final_values[0]["predicted_grade"] is None
+    assert "late_result_payload" not in persistence.final_values[0]
+    assert len(persistence.late_results) == 1
+    inspection_id, received_at, payload = persistence.late_results[0]
+    assert inspection_id == "late-diagnostic-only"
+    assert received_at.tzinfo is not None
+    assert payload["inspection_id"] == inspection_id
+    assert payload["quality_confidence"] == quality_confidence
+
+
+def test_late_result_save_failure_does_not_change_original_response(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    persistence = RecordingPersistence(fail_late=True)
+
+    async def run() -> tuple[dict[str, object], int]:
+        manager = LateResultManager(hard_timeout_ms=200, max_tasks=4)
+        service, control = _service(
+            manager,
+            response_delay_ms=30,
+            business_deadline_ms=1,
+            persistence=persistence,
+        )
+        response = await service.inspect(
+            inspection_id="late-save-failure",
+            images=_upload_files(),
+            metadata=_metadata_items(),
+            virtual_brix=12.0,
+        )
+        await manager.wait_until_idle()
+        return response.model_dump(), len(control.requests)
+
+    response, control_calls = asyncio.run(run())
+
+    assert response["decision_reason"] == "INFERENCE_DEADLINE_EXCEEDED"
+    assert response["target_bin_code"] == "TEST_REINSPECTION_BIN"
+    assert control_calls == 1
+    assert persistence.late_results == []
+    assert "늦은 Inference 진단 저장 실패" in caplog.text
 
 
 def test_late_task_is_cancelled_at_hard_timeout() -> None:

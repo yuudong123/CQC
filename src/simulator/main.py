@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -22,13 +23,15 @@ from .state import (
     SimulatorStateService,
 )
 
+logger = logging.getLogger(__name__)
+
 
 def create_app(
     settings: SimulatorSettings, *, inspection_client: httpx.AsyncClient | None = None
 ) -> FastAPI:
     """상태·runner·내부 제어 API를 한 Simulator 프로세스에 묶는다."""
 
-    state = SimulatorStateService()
+    state = SimulatorStateService(settings.simulator_interval_ms)
     runner = SimulatorRunner(
         dataset_root=settings.simulator_dataset_root,
         brix_csv_path=settings.simulator_brix_csv_path,
@@ -36,7 +39,6 @@ def create_app(
         backend_url=settings.simulator_backend_url,
         state=state,
         max_bytes=settings.simulator_max_request_bytes,
-        interval_ms=settings.simulator_interval_ms,
         fault_token=settings.simulator_fault_token,
         client=inspection_client,
     )
@@ -45,20 +47,15 @@ def create_app(
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         try:
-            # 서버 시작 시 Dataset 및 저장된 재생 위치 검증
-            prepared = await asyncio.to_thread(runner.prepare)
-
-            # 최초 실행 상태를 running=True로 설정
-            state.update_state(
-                SimulatorSettingsUpdate(
-                    expectedRevision=0,
-                    running=True,
+            try:
+                prepared = await asyncio.to_thread(runner.prepare)
+            except (OSError, ValueError, SimulatorDatasetError, SimulatorPositionError):
+                logger.exception(
+                    "Simulator 자동 시작을 위한 dataset 또는 position 준비 실패"
                 )
-            )
-
-            # Simulator 자동 재생 시작
-            runner.start(prepared)
-
+            else:
+                state.start_on_boot()
+                runner.start(prepared)
             yield
         finally:
             await runner.shutdown()
@@ -73,6 +70,7 @@ def create_app(
             revision=current.revision,
             running=current.running,
             concurrency=current.concurrency,
+            intervalMs=current.interval_ms,
             faults=list(current.faults),
             scope=current.scope,
             status="error"
@@ -91,8 +89,7 @@ def create_app(
         now_ms = time.time() * 1000
 
         playback_recent = (
-            current.lastSeenAt is not None
-            and 0 <= now_ms - current.lastSeenAt <= 30000
+            current.lastSeenAt is not None and 0 <= now_ms - current.lastSeenAt <= 30000
         )
 
         # 실행 중이 아니거나 최근 검사 성공 기록이 없으면 실패
@@ -151,6 +148,7 @@ def create_app(
                 return JSONResponse(
                     status_code=409, content={"code": "REVISION_CONFLICT"}
                 )
+            runner.notify_settings_changed()
             if prepared is not None:
                 runner.start(prepared)
             if update.running is False and runner.active:

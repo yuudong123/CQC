@@ -19,7 +19,7 @@ FaultScope = Literal["ALL", "NEXT"]
 
 
 def _omit_unset_defaults(schema: dict[str, object]) -> None:
-    for field in ("running", "concurrency", "faults", "scope"):
+    for field in ("running", "concurrency", "faults", "scope", "intervalMs"):
         property_schema = schema.get("properties", {}).get(field)
         if isinstance(property_schema, dict):
             property_schema.pop("default", None)
@@ -35,12 +35,15 @@ class SimulatorSettingsUpdate(BaseModel):
     expected_revision: int = Field(alias="expectedRevision", ge=0)
     running: bool | SkipJsonSchema[None] = None
     concurrency: Literal[1, 2, 4] | SkipJsonSchema[None] = None
+    interval_ms: Literal[1000, 2000, 3000] | SkipJsonSchema[None] = Field(
+        default=None, alias="intervalMs"
+    )
     faults: list[FaultType] | SkipJsonSchema[None] = Field(
         default=None, json_schema_extra={"maxItems": 5, "uniqueItems": True}
     )
     scope: FaultScope | SkipJsonSchema[None] = None
 
-    @field_validator("concurrency", mode="before")
+    @field_validator("concurrency", "interval_ms", mode="before")
     @classmethod
     def integer_concurrency(cls, value: object) -> object:
         if type(value) is not int:
@@ -56,7 +59,7 @@ class SimulatorSettingsUpdate(BaseModel):
             raise ValueError("faults must be unique")
         return value
 
-    @field_validator("running", "concurrency", "faults", "scope")
+    @field_validator("running", "concurrency", "interval_ms", "faults", "scope")
     @classmethod
     def no_explicit_null(cls, value: object) -> object:
         if value is None:
@@ -72,6 +75,7 @@ class SimulatorStatus(BaseModel):
     revision: int = Field(ge=0)
     running: bool
     concurrency: Literal[1, 2, 4]
+    interval_ms: int = Field(alias="intervalMs", ge=1)
     faults: list[FaultType] = Field(max_length=5)
     scope: FaultScope
     status: Literal["healthy", "stopped", "error"]

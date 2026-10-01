@@ -9,6 +9,7 @@ from datetime import date, datetime, timezone
 from enum import IntEnum
 from typing import Annotated, Literal
 
+import httpx
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
@@ -158,9 +159,22 @@ async def snapshot(
             state = await simulator.get_status()
         except SimulatorUnavailable:
             logger.warning("Simulator 상태 조회 실패")
-    return request.app.state.quality_operations_service.with_simulator_state(
+    result = request.app.state.quality_operations_service.with_simulator_state(
         result, state
     )
+    inference = getattr(request.app.state, "inference_client", None)
+    if inference is not None and hasattr(inference, "check_health"):
+        try:
+            ready = await inference.check_health(
+                timeout_ms=request.app.state.settings.inference_health_timeout_ms
+            )
+        except (httpx.HTTPError, ValueError):
+            logger.warning("Inference 상태 조회 실패")
+            ready = False
+        result = request.app.state.quality_operations_service.with_inference_health(
+            result, ready
+        )
+    return result
 
 
 @router.get(

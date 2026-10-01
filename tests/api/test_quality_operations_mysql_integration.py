@@ -145,6 +145,7 @@ def test_mysql_snapshot_statistics_and_both_csv_formats() -> None:
         empty = service.snapshot(datetime(1970, 1, 1))  # noqa: DTZ001 - DB UTC naive
         assert empty["state"]["today"]["total"] == 0
         assert empty["state"]["history"] == []
+        assert empty["state"]["throughput"] == 0
 
         snapshot = service.snapshot(boundary)
         assert snapshot["source"] == "backend"
@@ -157,6 +158,11 @@ def test_mysql_snapshot_statistics_and_both_csv_formats() -> None:
         assert snapshot["state"]["today"]["grades"] == {"특": 1, "상": 1, "보통": 1}
         assert snapshot["state"]["today"]["reinspection"] == 3
         assert snapshot["state"]["points"][-1]["count"] == 5
+        assert snapshot["state"]["throughput"] == 1
+        completed_bucket = service.snapshot(boundary + timedelta(seconds=1))
+        assert completed_bucket["state"]["throughput"] == 5
+        stopped_input = service.snapshot(boundary + timedelta(seconds=30))
+        assert stopped_input["state"]["throughput"] == 0
         assert len(snapshot["state"]["history"]) == 6
         assert len(snapshot["state"]["errors"]) == 2
         assert "concurrency" not in snapshot["state"]

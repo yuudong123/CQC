@@ -210,7 +210,7 @@ Endpoint는 `POST /v1/predict`, Content-Type은 `multipart/form-data`다.
 
 Backend는 응답의 `inspection_id`가 요청과 같은지 검증하고, 확률 객체의 class index나 순서를 추측하지 않는다. 정상 응답의 `used_frame_count`는 `1..12` 범위이며 padding을 제외한 요청 이미지 수와 같아야 한다.
 
-최신 모델 설정은 `separate` 구조, 대표 12장, 품종·품질 confidence threshold 각각 0.50, 기능 통합용 모델 버전 `cqc-apple-separate12-v1.0.0`이다. 다만 최종 Test 품질 Macro F1이 승인 기준에 미달했으므로 이 패키지를 승인·운영 배포 모델로 표현하지 않는다.
+기능 통합용 v1 모델 `cqc-apple-separate12-v1.0.0`은 `separate` 구조와 대표 12장, 품종·품질 confidence threshold 각각 0.50을 사용한 과거 검증 기준이다. 최종 Test 품질 Macro F1이 승인 기준에 미달했으므로 이 패키지를 승인·운영 배포 모델로 표현하지 않는다. BE-08의 v2 보정 모델 적용 후 Backend 기준은 품종 0.50·품질 0.60이다.
 
 현재 `src/inference/api.py`는 `images`만 받고 `src/inference/schemas.py` 응답에는 `inspection_id`와 `used_frame_count`가 없다. 따라서 Backend 통합 전에 실제 Inference 구현과 생성 OpenAPI를 위 확정 계약에 맞추고 계약 테스트를 통과해야 한다.
 
@@ -247,7 +247,7 @@ Backend는 응답의 `inspection_id`가 요청과 같은지 검증하고, 확률
 | `INFERENCE_MAX_FILES` | Inference 요청 최대 이미지 수 | 확정값 12 |
 | `INFERENCE_MAX_REQUEST_BYTES` | multipart 전체 이미지 최대 크기 | 확정값 25,165,824 bytes(24MiB) |
 | `CULTIVAR_CONFIDENCE_THRESHOLD` | 품종 저신뢰 기준 | 확정값 0.50 |
-| `QUALITY_CONFIDENCE_THRESHOLD` | 품질 저신뢰 기준 | 확정값 0.50 |
+| `QUALITY_CONFIDENCE_THRESHOLD` | 보정 모델 적용 후 품질 저신뢰 기준 | 확정값 0.60 |
 | `INSPECTION_HISTORY_LIMIT` | 이력 상한 | 확정값 86,400 |
 | `INSPECTION_HISTORY_DELETE_BATCH` | 상한 도달 시 삭제량 | 확정값 8,640 |
 | `FAILURE_IMAGE_PATH` | 장애 이미지 경로 | 경로·Volume 미정 |
@@ -266,7 +266,7 @@ pytest를 기본 runner로 사용한다. 기존 `unittest.TestCase`는 pytest가
 2. confidence·bin 정책
 3. 최대 12장 이미지와 metadata의 `view_index` 순서·개수 대응 및 변경 없는 중계
 4. 응답 `inspection_id` 일치와 `used_frame_count` 범위·요청 이미지 수 이하 검증
-5. 정상 Inference와 두 threshold 0.50 기준의 저신뢰
+5. 정상 Inference와 보정 모델 적용 후 품종 0.50·품질 0.60 기준의 저신뢰
 6. 500ms timeout, 연결 오류와 잘못된 응답
 7. DB 저장과 DB 실패 시 선별 유지
 8. Virtual Control 성공·거부·무응답과 대체 명령

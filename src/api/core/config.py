@@ -29,14 +29,16 @@ class Settings(BaseSettings):
     inference_max_files: int = Field(default=12, ge=1)
     inference_max_request_bytes: int = Field(default=24 * 1024 * 1024, ge=1)
     cultivar_confidence_threshold: float = Field(default=0.50, ge=0, le=1)
-    quality_confidence_threshold: float = Field(default=0.50, ge=0, le=1)
+    quality_confidence_threshold: float = Field(default=0.60, ge=0, le=1)
     inference_business_deadline_ms: int = Field(default=500, ge=1)
     inference_hard_timeout_ms: int = Field(default=2000, ge=1)
+    inference_health_timeout_ms: int = Field(default=1_500, ge=1)
     max_late_tasks: int = Field(default=4, ge=0)
     fault_image_storage_root: Path | None = None
     fault_image_limit: int = Field(default=100, ge=1)
     simulator_internal_url: str | None = None
     simulator_internal_timeout_ms: int = Field(default=30_000, ge=1)
+    simulator_state_timeout_ms: int = Field(default=1_500, ge=1)
     simulator_fault_token: str | None = None
 
     @model_validator(mode="after")

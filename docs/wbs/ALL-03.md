@@ -29,6 +29,8 @@ Jenkins에는 아직 이 시험 단계가 없다. Compose 검사·빌드·기동
 | 물류 | LOGISTICS-01~06: 출품·입찰·배차·배송 API와 화면, Compose·Jenkins. FE-10이 정상 선별 결과를 브라우저에서 출품·입찰·배차까지 보냄 | MVP 포함 여부 미정, Backend 기반 출품 연결. 상세는 [LOGISTICS](LOGISTICS.md) |
 | 발표 | `docs/최종발표/`: 최종 발표 초안 HTML(32쪽)·PDF·대본, 데이터 분석·모델 선정 근거, 개발 중 문제 해결 사례 (10-01 저장소 추가) | PDF 재출력, 실제 시연 캡처·단계별 소요시간·장애 복구 결과 추가 |
 
+2026-09-30 Backend 후속 확인: BE-07 Backend 구현은 완료됐고, BE-08 1/4 기준선과 2/4 late result DB 진단 저장을 완료했다. 늦은 응답은 기존 검사 행의 진단 필드에만 저장하며 확정 판정·bin·제어·통계를 바꾸지 않는다. Backend·Simulator 219건 통과·MySQL 실DB 5건 통과(조건부 테스트는 별도 실행). 위 dev 기준 표의 당시 기록은 유지한다. 실제 Inference·MySQL 수직 통합 검증(3/4)과 MLOps E2E(4/4)는 이후 범위다.
+
 ## 3. 관제 API 계약 대비 Backend 구현
 
 | FE 계약 (`docs/contracts/quality-operations.openapi.json`) | Backend |

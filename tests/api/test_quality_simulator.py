@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
@@ -9,9 +10,11 @@ from datetime import datetime
 from pathlib import Path
 from threading import Barrier
 
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 
+from src.api.clients.inference import HttpInferenceClient
 from src.api.clients.simulator import SimulatorRevisionConflict, SimulatorUnavailable
 from src.api.core.config import Settings
 from src.api.main import create_app
@@ -36,6 +39,7 @@ def _base_snapshot() -> dict[str, object]:
             "review": True,
             "deleteImages": False,
             "concurrency": [],
+            "intervals": [],
         },
         "components": {
             name: dict(component)
@@ -99,6 +103,7 @@ class _FakeSimulatorClient:
             revision=current.revision,
             running=current.running,
             concurrency=current.concurrency,
+            intervalMs=current.interval_ms,
             faults=list(current.faults),
             scope=current.scope,
             status="healthy" if current.running else "stopped",
@@ -130,6 +135,8 @@ def test_partial_update_and_revision_conflict_are_forwarded(client: TestClient) 
     assert initial.status_code == 200
     assert initial.json()["revision"] == 0
     assert initial.json()["capabilities"]["control"] is True
+    assert initial.json()["state"]["intervalMs"] == 2000
+    assert initial.json()["capabilities"]["intervals"] == [1000, 2000, 3000]
     assert initial.json()["components"]["Simulator"]["status"] == "stopped"
     changed = client.put(
         "/v1/quality/simulator",
@@ -146,6 +153,43 @@ def test_partial_update_and_revision_conflict_are_forwarded(client: TestClient) 
     assert stale.status_code == 409
     assert stale.json() == {"code": "REVISION_CONFLICT"}
     assert client.get("/v1/quality/snapshot").json()["revision"] == 1
+
+
+@pytest.mark.parametrize("interval_ms", [1000, 2000, 3000])
+def test_interval_update_reaches_simulator_and_snapshot(
+    client: TestClient, interval_ms: int
+) -> None:
+    response = client.put(
+        "/v1/quality/simulator",
+        json={"expectedRevision": 0, "intervalMs": interval_ms, "faults": ["DB_ERROR"]},
+    )
+    assert response.status_code == 200
+    assert response.json()["revision"] == 1
+    assert response.json()["state"]["intervalMs"] == interval_ms
+    assert response.json()["state"]["faults"] == ["DB_ERROR"]
+    assert response.json()["capabilities"]["intervals"] == [1000, 2000, 3000]
+    assert client.app.state.simulator_client.updates[0].interval_ms == interval_ms
+    stale = client.put(
+        "/v1/quality/simulator",
+        json={"expectedRevision": 0, "intervalMs": 1000},
+    )
+    assert stale.status_code == 409
+    assert (
+        client.get("/v1/quality/snapshot").json()["state"]["intervalMs"] == interval_ms
+    )
+
+
+@pytest.mark.parametrize("interval_ms", [500, 4000, True, 2000.0, None])
+def test_public_interval_rejects_values_outside_choices(
+    client: TestClient, interval_ms: object
+) -> None:
+    response = client.put(
+        "/v1/quality/simulator",
+        json={"expectedRevision": 0, "intervalMs": interval_ms},
+    )
+    assert response.status_code == 422
+    assert response.json() == {"code": "INVALID_SETTINGS"}
+    assert client.app.state.simulator_client.updates == []
 
 
 @pytest.mark.parametrize("concurrency", [1, 2, 4])
@@ -216,11 +260,45 @@ def test_unavailable_simulator_keeps_snapshot_available(client: TestClient) -> N
     assert snapshot.status_code == 200
     assert snapshot.json()["components"]["Simulator"]["status"] == "unknown"
     assert snapshot.json()["capabilities"]["control"] is False
+    assert snapshot.json()["capabilities"]["intervals"] == []
     response = client.put(
         "/v1/quality/simulator", json={"expectedRevision": 0, "running": True}
     )
     assert response.status_code == 503
     assert response.json() == {"code": "SIMULATOR_UNAVAILABLE"}
+
+
+@pytest.mark.parametrize(
+    ("health_response", "expected_status"),
+    [
+        (
+            httpx.Response(200, json={"status": "ready", "model_loaded": True}),
+            "healthy",
+        ),
+        (httpx.Response(503), "error"),
+        (None, "error"),
+    ],
+)
+def test_snapshot_reflects_inference_health_without_failing(
+    client: TestClient, health_response: httpx.Response | None, expected_status: str
+) -> None:
+    def respond(request: httpx.Request) -> httpx.Response:
+        if health_response is None:
+            raise httpx.ConnectError("refused", request=request)
+        return health_response
+
+    transport = httpx.AsyncClient(transport=httpx.MockTransport(respond))
+    client.app.state.inference_client = HttpInferenceClient(
+        "http://inference:8001/v1/predict", client=transport
+    )
+    try:
+        response = client.get("/v1/quality/snapshot")
+        assert response.status_code == 200
+        component = response.json()["components"]["Inference"]
+        assert component["status"] == expected_status
+        assert (component["lastSeenAt"] is not None) is (expected_status == "healthy")
+    finally:
+        asyncio.run(transport.aclose())
 
 
 def test_backend_without_internal_url_has_no_runner_or_state() -> None:
@@ -251,6 +329,18 @@ def test_shared_openapi_keeps_public_simulator_contract() -> None:
     actual = create_app(Settings()).openapi()
     settings = contract["components"]["schemas"]["Settings"]
     assert settings["properties"]["concurrency"]["enum"] == [1, 2, 4]
+    assert settings["properties"]["intervalMs"]["enum"] == [1000, 2000, 3000]
+    snapshot_schema = contract["components"]["schemas"]["Snapshot"]
+    assert snapshot_schema["properties"]["capabilities"]["properties"]["intervals"][
+        "items"
+    ]["enum"] == [1000, 2000, 3000]
+    assert (
+        snapshot_schema["properties"]["state"]["properties"]["intervalMs"]["minimum"]
+        == 1
+    )
+    assert actual["components"]["schemas"]["SimulatorSettingsUpdate"]["properties"][
+        "intervalMs"
+    ]["enum"] == [1000, 2000, 3000]
     assert set(actual["paths"]["/v1/quality/simulator"]["put"]["responses"]) == set(
         contract["paths"]["/simulator"]["put"]["responses"]
     )

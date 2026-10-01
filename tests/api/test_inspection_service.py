@@ -9,7 +9,11 @@ from fastapi import UploadFile
 
 from src.api.clients.inference import MockInferenceClient
 from src.api.control.virtual_control import MockVirtualControl
-from src.api.repositories import BinMappingConfigurationError
+from src.api.repositories import (
+    BinMappingConfigurationError,
+    BinMappingUnavailableError,
+)
+from src.api.repositories.bin_mappings import BinMappingSnapshot
 from src.api.schemas.inference import InferenceRequest, InferenceResponse
 from src.api.schemas.inspection_results import ControlStatus
 from src.api.schemas.inspections import InspectionImageMetadata
@@ -52,17 +56,36 @@ class ConnectionFailureClient(MockInferenceClient):
         )
 
 
+class TimeoutFailureClient(MockInferenceClient):
+    async def predict(self, request: InferenceRequest) -> InferenceResponse:
+        raise httpx.ConnectTimeout(
+            "connect timed out",
+            request=httpx.Request("POST", "http://inference/v1/predict"),
+        )
+
+
 class MissingMappingRepository(FakeBinMappingRepository):
-    def find_normal_bin(
-        self,
-        *,
-        crop_type: str,
-        cultivar: str,
-        quality_grade: str,
-        sweetness_band: str,
-    ) -> str:
-        del crop_type, cultivar, quality_grade, sweetness_band
+    def load_snapshot(self):
         raise BinMappingConfigurationError("활성 정상 mapping 없음")
+
+
+class RecoveringMappingRepository(FakeBinMappingRepository):
+    unavailable = False
+    invalid = False
+    suffix = ""
+
+    def load_snapshot(self):
+        if self.unavailable:
+            raise BinMappingUnavailableError("DB unavailable")
+        if self.invalid:
+            raise BinMappingConfigurationError("invalid mapping")
+        snapshot = super().load_snapshot()
+        if not self.suffix:
+            return snapshot
+        return BinMappingSnapshot(
+            {key: f"{code}{self.suffix}" for key, code in snapshot.normal_bins.items()},
+            f"{snapshot.reinspection_bin}{self.suffix}",
+        )
 
 
 def _images(count: int) -> list[UploadFile]:
@@ -344,8 +367,7 @@ def test_missing_virtual_brix_uses_reinspection_mapping() -> None:
 
     assert response.decision_reason == "VIRTUAL_BRIX_MISSING"
     assert response.target_bin_code == "TEST_REINSPECTION_BIN"
-    assert mappings.normal_calls == []
-    assert mappings.reinspection_calls == 1
+    assert mappings.snapshot_calls == 1
 
 
 @pytest.mark.parametrize("invalid", [8.9, 18.1, float("nan"), float("inf")])
@@ -398,6 +420,30 @@ def test_connection_error_uses_reinspection_and_records_error() -> None:
     assert persistence.errors[0].error_code == "INFERENCE_CONNECTION_ERROR"
 
 
+def test_transport_timeout_is_recorded_as_timeout() -> None:
+    persistence = RecordingPersistence()
+    service = InspectionService(
+        TimeoutFailureClient(),
+        MockVirtualControl(),
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.60,
+        inference_business_deadline_ms=500,
+        late_result_manager=_late_result_manager(),
+        bin_mapping_repository=FakeBinMappingRepository(),
+        persistence=persistence,
+    )
+    response = asyncio.run(
+        service.inspect(
+            inspection_id="inspection-transport-timeout",
+            images=_images(1),
+            metadata=_metadata(1),
+            virtual_brix=11.9,
+        )
+    )
+    assert response.decision_reason == "INFERENCE_DEADLINE_EXCEEDED"
+    assert persistence.errors[0].error_code == "INFERENCE_DEADLINE_EXCEEDED"
+
+
 def test_mapping_error_is_recorded_without_control_fallback() -> None:
     persistence = RecordingPersistence()
     control = MockVirtualControl()
@@ -424,6 +470,124 @@ def test_mapping_error_is_recorded_without_control_fallback() -> None:
 
     assert control.requests == []
     assert persistence.errors[0].error_code == "BIN_MAPPING_CONFIGURATION_ERROR"
+
+
+def test_db_outage_uses_lkg_for_decision_control_and_recovery() -> None:
+    mappings = RecoveringMappingRepository()
+    persistence = RecordingPersistence()
+    control = MockVirtualControl()
+    service = InspectionService(
+        MockInferenceClient(),
+        control,
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.60,
+        inference_business_deadline_ms=500,
+        late_result_manager=_late_result_manager(),
+        bin_mapping_repository=mappings,
+        persistence=persistence,
+    )
+
+    async def inspect(inspection_id: str, *, reinspection: bool = False):
+        return await service.inspect(
+            inspection_id=inspection_id,
+            images=_images(1),
+            metadata=_metadata(1),
+            virtual_brix=None if reinspection else 11.9,
+        )
+
+    async def run():
+        first = await inspect("lkg-first")
+        mappings.unavailable = True
+        persistence.fail_create = True
+        normal_outage = await inspect("lkg-outage-normal")
+        review_outage = await inspect("lkg-outage-review", reinspection=True)
+        mappings.unavailable = False
+        mappings.suffix = "-NEW"
+        persistence.fail_create = False
+        recovered = await inspect("lkg-recovered")
+        return first, normal_outage, review_outage, recovered
+
+    first, normal_outage, review_outage, recovered = asyncio.run(run())
+
+    assert first.target_bin_code == "DEMO_BIN_01"
+    assert normal_outage.target_bin_code == "DEMO_BIN_01"
+    assert normal_outage.control_status == "SUCCEEDED"
+    assert normal_outage.persistence_status == "FAILED"
+    assert review_outage.target_bin_code == "TEST_REINSPECTION_BIN"
+    assert review_outage.control_status == "SUCCEEDED"
+    assert review_outage.persistence_status == "FAILED"
+    assert recovered.target_bin_code == "DEMO_BIN_01-NEW"
+    assert recovered.persistence_status == "SUCCEEDED"
+    assert [request.target_bin_code for request in control.requests] == [
+        "DEMO_BIN_01",
+        "DEMO_BIN_01",
+        "TEST_REINSPECTION_BIN",
+        "DEMO_BIN_01-NEW",
+    ]
+
+
+def test_cold_start_db_outage_does_not_control() -> None:
+    mappings = RecoveringMappingRepository()
+    mappings.unavailable = True
+    control = MockVirtualControl()
+    service = InspectionService(
+        MockInferenceClient(),
+        control,
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.60,
+        inference_business_deadline_ms=500,
+        late_result_manager=_late_result_manager(),
+        bin_mapping_repository=mappings,
+        persistence=RecordingPersistence(fail_create=True),
+    )
+
+    with pytest.raises(BinMappingUnavailableError):
+        asyncio.run(
+            service.inspect(
+                inspection_id="lkg-cold-outage",
+                images=_images(1),
+                metadata=_metadata(1),
+                virtual_brix=11.9,
+            )
+        )
+    assert control.requests == []
+
+
+def test_low_confidence_during_db_outage_uses_cached_reinspection_bin() -> None:
+    mappings = RecoveringMappingRepository()
+    control = MockVirtualControl()
+    service = InspectionService(
+        MockInferenceClient(),
+        control,
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.95,
+        inference_business_deadline_ms=500,
+        late_result_manager=_late_result_manager(),
+        bin_mapping_repository=mappings,
+        persistence=RecordingPersistence(fail_create=True),
+    )
+
+    async def run():
+        await service.inspect(
+            inspection_id="lkg-low-confidence-warmup",
+            images=_images(1),
+            metadata=_metadata(1),
+            virtual_brix=11.9,
+        )
+        mappings.unavailable = True
+        return await service.inspect(
+            inspection_id="lkg-low-confidence-outage",
+            images=_images(1),
+            metadata=_metadata(1),
+            virtual_brix=11.9,
+        )
+
+    response = asyncio.run(run())
+    assert response.review_required is True
+    assert response.target_bin_code == "TEST_REINSPECTION_BIN"
+    assert response.control_status == "SUCCEEDED"
+    assert response.persistence_status == "FAILED"
+    assert control.requests[-1].target_bin_code == "TEST_REINSPECTION_BIN"
 
 
 def test_rejected_normal_control_saves_two_attempts_in_order() -> None:

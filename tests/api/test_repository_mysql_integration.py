@@ -44,8 +44,9 @@ def test_mysql_repository_vertical_flow_and_all_seed_mappings() -> None:
     inspection_id = f"repository-integration-{uuid4()}"
 
     try:
+        snapshot = mappings.load_snapshot()
         actual_mapping = {
-            (cultivar, grade, sweetness): mappings.find_normal_bin(
+            (cultivar, grade, sweetness): snapshot.normal_bin(
                 crop_type="apple",
                 cultivar=cultivar,
                 quality_grade=grade,
@@ -56,7 +57,7 @@ def test_mysql_repository_vertical_flow_and_all_seed_mappings() -> None:
             for sweetness in ("less_sweet", "sweet")
         }
         assert actual_mapping == DEMO_NORMAL_BIN_MAPPING
-        assert mappings.find_reinspection_bin() == "TEST_REINSPECTION_BIN"
+        assert snapshot.reinspection_bin == "TEST_REINSPECTION_BIN"
 
         service = InspectionService(
             MockInferenceClient(),
