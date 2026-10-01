@@ -20,6 +20,7 @@ def _status(revision: int = 1) -> dict[str, object]:
         "revision": revision,
         "running": True,
         "concurrency": 2,
+        "intervalMs": 2000,
         "faults": [],
         "scope": "ALL",
         "status": "healthy",

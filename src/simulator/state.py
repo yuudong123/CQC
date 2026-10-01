@@ -15,6 +15,7 @@ class SimulatorRuntimeState:
     revision: int = 0
     running: bool = False
     concurrency: int = 1
+    interval_ms: int = 2000
     faults: tuple[FaultType, ...] = ()
     scope: FaultScope = "ALL"
 
@@ -31,8 +32,10 @@ class RevisionMismatchError(ValueError):
 class SimulatorStateService:
     """Simulator 프로세스 안에서 상태 변경과 NEXT claim을 원자 적용한다."""
 
-    def __init__(self) -> None:
-        self._state = SimulatorRuntimeState()
+    def __init__(self, interval_ms: int = 2000) -> None:
+        if interval_ms < 1:
+            raise ValueError("Simulator interval must be positive")
+        self._state = SimulatorRuntimeState(interval_ms=interval_ms)
         self._lock = Lock()
 
     def get_state(self) -> SimulatorRuntimeState:

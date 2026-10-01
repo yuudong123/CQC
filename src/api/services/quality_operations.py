@@ -86,6 +86,7 @@ class QualityOperationsService:
                 "review": True,
                 "deleteImages": self._fault_image_storage is not None,
                 "concurrency": [],
+                "intervals": [],
             },
             "components": {
                 "Simulator": {
@@ -167,13 +168,21 @@ class QualityOperationsService:
         snapshot["revision"] = state.revision
         capabilities = snapshot["capabilities"]
         assert isinstance(capabilities, dict)
-        capabilities.update({"control": True, "faults": True, "concurrency": [1, 2, 4]})
+        capabilities.update(
+            {
+                "control": True,
+                "faults": True,
+                "concurrency": [1, 2, 4],
+                "intervals": [1000, 2000, 3000],
+            }
+        )
         simulator = snapshot["state"]
         assert isinstance(simulator, dict)
         simulator.update(
             {
                 "running": state.running,
                 "concurrency": state.concurrency,
+                "intervalMs": state.interval_ms,
                 "faults": state.faults,
                 "scope": state.scope,
             }

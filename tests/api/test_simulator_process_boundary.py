@@ -40,11 +40,14 @@ def test_backend_control_reaches_independent_simulator_app() -> None:
         assert initial.json()["revision"] == 0
         changed = client.put(
             "/v1/quality/simulator",
-            json={"expectedRevision": 0, "concurrency": 2},
+            json={"expectedRevision": 0, "concurrency": 2, "intervalMs": 3000},
         )
         assert changed.status_code == 200
         assert changed.json()["revision"] == 1
         assert changed.json()["state"]["concurrency"] == 2
+        assert changed.json()["state"]["intervalMs"] == 3000
+        assert changed.json()["capabilities"]["intervals"] == [1000, 2000, 3000]
+        assert simulator.state.simulator_state_service.get_state().interval_ms == 3000
         assert simulator.state.simulator_state_service.get_state().revision == 1
         assert not hasattr(backend.state, "simulator_state_service")
     asyncio.run(transport.aclose())

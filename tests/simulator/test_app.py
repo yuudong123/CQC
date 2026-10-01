@@ -51,6 +51,7 @@ def test_internal_health_control_next_and_graceful_shutdown() -> None:
                 initial = client.get("/state").json()
                 assert initial["revision"] == 0
                 assert initial["running"] is True
+                assert initial["intervalMs"] == 10
                 assert initial["lastSeenAt"] is None
                 assert client.get("/health").status_code == 503
             finally:
@@ -108,6 +109,7 @@ def test_internal_health_control_next_and_graceful_shutdown() -> None:
             assert restarted.status_code == 200
             assert restarted.json()["revision"] == 4
             assert restarted.json()["running"] is True
+            assert restarted.json()["intervalMs"] == 10
             deadline = monotonic() + 5
             while client.get("/health").status_code != 200 and monotonic() < deadline:
                 sleep(0.01)

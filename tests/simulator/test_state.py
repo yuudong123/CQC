@@ -32,6 +32,7 @@ def test_initial_state_is_stopped_and_has_no_fake_position() -> None:
     assert state.revision == 0
     assert state.running is False
     assert state.concurrency == 1
+    assert state.interval_ms == 2000
     assert state.faults == ()
     assert state.scope == "ALL"
     assert not hasattr(state, "sequence")
@@ -60,6 +61,26 @@ def test_updates_increment_revision_and_stale_revision_preserves_state() -> None
     assert original.running is False
 
 
+@pytest.mark.parametrize("interval_ms", [1000, 2000, 3000])
+def test_interval_update_is_independent_and_revisioned(interval_ms: int) -> None:
+    service = SimulatorStateService(interval_ms=2000)
+    initial = service.start_on_boot()
+    assert initial.revision == 0
+    changed = service.update_state(_update(0, intervalMs=interval_ms))
+    assert changed.interval_ms == interval_ms
+    assert changed.running is True
+    assert changed.revision == 1
+    with pytest.raises(RevisionMismatchError):
+        service.update_state(_update(0, intervalMs=1000))
+    assert service.get_state() == changed
+    stopped = service.update_state(_update(1, running=False))
+    assert stopped.interval_ms == interval_ms
+    assert stopped.revision == 2
+    restarted = SimulatorStateService(interval_ms=2000).get_state()
+    assert restarted.interval_ms == 2000
+    assert restarted.revision == 0
+
+
 def test_simultaneous_updates_with_same_revision_have_one_winner() -> None:
     service = SimulatorStateService()
     barrier = Barrier(2)
@@ -85,6 +106,11 @@ def test_simultaneous_updates_with_same_revision_have_one_winner() -> None:
         {"concurrency": 65},
         {"concurrency": True},
         {"concurrency": 1.5},
+        {"intervalMs": 500},
+        {"intervalMs": 4000},
+        {"intervalMs": True},
+        {"intervalMs": 2000.0},
+        {"intervalMs": None},
         {"running": 1},
         {"scope": "OFF"},
         {"faults": ["NONE"]},
@@ -114,6 +140,18 @@ def test_snapshot_is_immutable_and_only_simulator_owns_runtime_service() -> None
         state.running = True  # type: ignore[misc]
     assert service.get_state().running is False
     assert "put" in app.openapi()["paths"]["/state"]
+    assert service.get_state().interval_ms == 2000
+    service.update_state(_update(0, intervalMs=3000))
+    restarted_app = create_simulator_app(
+        SimulatorSettings(
+            simulator_dataset_root=Path("."),
+            simulator_position_path=Path("position.json"),
+            simulator_backend_url="http://backend",
+            simulator_fault_token="test-token",
+            simulator_interval_ms=2000,
+        )
+    )
+    assert restarted_app.state.simulator_state_service.get_state().interval_ms == 2000
     backend = create_app(Settings())
     assert not hasattr(backend.state, "simulator_state_service")
     assert not hasattr(backend.state, "simulator_runner")

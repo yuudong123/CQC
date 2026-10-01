@@ -31,7 +31,7 @@ def create_app(
 ) -> FastAPI:
     """상태·runner·내부 제어 API를 한 Simulator 프로세스에 묶는다."""
 
-    state = SimulatorStateService()
+    state = SimulatorStateService(settings.simulator_interval_ms)
     runner = SimulatorRunner(
         dataset_root=settings.simulator_dataset_root,
         brix_csv_path=settings.simulator_brix_csv_path,
@@ -39,7 +39,6 @@ def create_app(
         backend_url=settings.simulator_backend_url,
         state=state,
         max_bytes=settings.simulator_max_request_bytes,
-        interval_ms=settings.simulator_interval_ms,
         fault_token=settings.simulator_fault_token,
         client=inspection_client,
     )
@@ -71,6 +70,7 @@ def create_app(
             revision=current.revision,
             running=current.running,
             concurrency=current.concurrency,
+            intervalMs=current.interval_ms,
             faults=list(current.faults),
             scope=current.scope,
             status="error"
@@ -148,6 +148,7 @@ def create_app(
                 return JSONResponse(
                     status_code=409, content={"code": "REVISION_CONFLICT"}
                 )
+            runner.notify_settings_changed()
             if prepared is not None:
                 runner.start(prepared)
             if update.running is False and runner.active:

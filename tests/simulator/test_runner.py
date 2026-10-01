@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import csv
 import json
+from itertools import pairwise
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from time import monotonic
@@ -109,7 +110,7 @@ def test_dataset_and_position_contract() -> None:
 def test_runner_schedules_and_bounds_inflight(concurrency: int) -> None:
     async def exercise(root: Path) -> None:
         _dataset(root)
-        state = SimulatorStateService()
+        state = SimulatorStateService(interval_ms=10)
         state.update_state(
             SimulatorSettingsUpdate(
                 expectedRevision=0,
@@ -150,7 +151,6 @@ def test_runner_schedules_and_bounds_inflight(concurrency: int) -> None:
                 backend_url="http://backend",
                 state=state,
                 max_bytes=24 * 1024 * 1024,
-                interval_ms=10,
                 fault_token="test-token",
                 client=client,
             )
@@ -189,7 +189,7 @@ def test_runner_schedules_and_bounds_inflight(concurrency: int) -> None:
 def test_runner_http_failure_continues_without_retry() -> None:
     async def exercise(root: Path) -> None:
         _dataset(root)
-        state = SimulatorStateService()
+        state = SimulatorStateService(interval_ms=1)
         state.update_state(SimulatorSettingsUpdate(expectedRevision=0, running=True))
         seen: list[str] = []
         reached = asyncio.Event()
@@ -207,7 +207,6 @@ def test_runner_http_failure_continues_without_retry() -> None:
                 backend_url="http://backend",
                 state=state,
                 max_bytes=24 * 1024 * 1024,
-                interval_ms=1,
                 fault_token="test-token",
                 client=client,
             )
@@ -220,6 +219,124 @@ def test_runner_http_failure_continues_without_retry() -> None:
             assert SimulatorPositionStore(
                 root / "position.json", runner.prepare()[0]
             ).load() == len(seen)
+
+    with TemporaryDirectory(prefix="cqc-simulator-", dir=Path.cwd()) as temporary:
+        asyncio.run(exercise(Path(temporary)))
+
+
+def test_runner_uses_start_spacing_and_runtime_interval_changes() -> None:
+    async def exercise(root: Path) -> None:
+        _dataset(root)
+        state = SimulatorStateService(interval_ms=2000)
+        state.start_on_boot()
+        starts: list[float] = []
+        reached = asyncio.Event()
+        runner: SimulatorRunner
+
+        async def respond(request: httpx.Request) -> httpx.Response:
+            del request
+            starts.append(monotonic())
+            if len(starts) == 2:
+                state.update_state(
+                    SimulatorSettingsUpdate(expectedRevision=0, intervalMs=3000)
+                )
+                runner.notify_settings_changed()
+            elif len(starts) == 3:
+                state.update_state(
+                    SimulatorSettingsUpdate(expectedRevision=1, intervalMs=1000)
+                )
+                runner.notify_settings_changed()
+            if len(starts) in (4, 6):
+                reached.set()
+            return httpx.Response(200)
+
+        async with httpx.AsyncClient(transport=httpx.MockTransport(respond)) as client:
+            runner = SimulatorRunner(
+                dataset_root=root,
+                position_path=root / "position.json",
+                backend_url="http://backend",
+                state=state,
+                max_bytes=24 * 1024 * 1024,
+                fault_token="test-token",
+                client=client,
+            )
+            runner.start(runner.prepare())
+            await asyncio.wait_for(reached.wait(), timeout=12)
+            await runner.stop()
+            gaps = [right - left for left, right in pairwise(starts)]
+            assert 1.7 <= gaps[0] <= 2.5
+            assert 2.7 <= gaps[1] <= 3.5
+            assert 0.75 <= gaps[2] <= 1.5
+            assert state.get_state().interval_ms == 1000
+
+            state.update_state(
+                SimulatorSettingsUpdate(expectedRevision=2, running=False)
+            )
+            state.update_state(
+                SimulatorSettingsUpdate(expectedRevision=3, running=True)
+            )
+            reached.clear()
+            runner.start(runner.prepare())
+            await asyncio.wait_for(reached.wait(), timeout=4)
+            await runner.stop()
+            assert 0.75 <= starts[5] - starts[4] <= 1.5
+            assert not runner.failed
+            assert (
+                SimulatorPositionStore(
+                    root / "position.json", runner.prepare()[0]
+                ).load()
+                == 6
+            )
+
+    with TemporaryDirectory(prefix="cqc-simulator-", dir=Path.cwd()) as temporary:
+        asyncio.run(exercise(Path(temporary)))
+
+
+@pytest.mark.parametrize(
+    "response_delay, lower, upper", [(0.01, 0.03, 0.12), (0.14, 0.12, 0.27)]
+)
+def test_runner_does_not_accumulate_drift_or_unbounded_backlog(
+    response_delay: float, lower: float, upper: float
+) -> None:
+    async def exercise(root: Path) -> None:
+        _dataset(root)
+        state = SimulatorStateService(interval_ms=50)
+        state.start_on_boot()
+        starts: list[float] = []
+        in_flight = 0
+        peak = 0
+        reached = asyncio.Event()
+
+        async def respond(request: httpx.Request) -> httpx.Response:
+            nonlocal in_flight, peak
+            del request
+            starts.append(monotonic())
+            in_flight += 1
+            peak = max(peak, in_flight)
+            if len(starts) >= 5:
+                reached.set()
+            await asyncio.sleep(response_delay)
+            in_flight -= 1
+            return httpx.Response(200)
+
+        async with httpx.AsyncClient(transport=httpx.MockTransport(respond)) as client:
+            runner = SimulatorRunner(
+                dataset_root=root,
+                position_path=root / "position.json",
+                backend_url="http://backend",
+                state=state,
+                max_bytes=24 * 1024 * 1024,
+                fault_token="test-token",
+                client=client,
+            )
+            runner.start(runner.prepare())
+            await asyncio.wait_for(reached.wait(), timeout=4)
+            await runner.stop()
+            assert peak == 1
+            gaps = [right - left for left, right in pairwise(starts)]
+            assert all(lower <= gap <= upper for gap in gaps[:4])
+            assert len(starts) <= 6
+            assert not runner.failed
 
     with TemporaryDirectory(prefix="cqc-simulator-", dir=Path.cwd()) as temporary:
         asyncio.run(exercise(Path(temporary)))

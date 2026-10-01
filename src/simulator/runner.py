@@ -1,4 +1,4 @@
-"""선정된 시연 묶음을 500ms 시작 간격으로 검사 API에 보낸다."""
+"""선정된 시연 묶음을 설정된 시작 간격으로 검사 API에 보낸다."""
 
 from __future__ import annotations
 
@@ -29,7 +29,6 @@ class SimulatorRunner:
         backend_url: str,
         state: SimulatorStateService,
         max_bytes: int,
-        interval_ms: int = 500,
         fault_token: str,
         client: httpx.AsyncClient | None = None,
     ) -> None:
@@ -39,12 +38,12 @@ class SimulatorRunner:
         self._backend_url = backend_url.rstrip("/")
         self._state = state
         self._max_bytes = max_bytes
-        self._interval = interval_ms / 1000
         self._fault_token = fault_token
         self._client = client or httpx.AsyncClient(timeout=30)
         self._owns_client = client is None
         self._task: asyncio.Task[None] | None = None
         self._stop = asyncio.Event()
+        self._settings_changed = asyncio.Event()
         self._failed = False
         self._last_seen_ms: int | None = None
 
@@ -79,14 +78,21 @@ class SimulatorRunner:
         if self.active:
             return
         self._stop = asyncio.Event()
+        self._settings_changed = asyncio.Event()
         self._failed = False
         self._last_seen_ms = None  # 재시작 시 이전 검사 성공 기록 초기화
         self._task = asyncio.create_task(self._run(*prepared), name="simulator-runner")
 
     async def stop(self) -> None:
         self._stop.set()
+        self._settings_changed.set()
         if self._task is not None:
             await self._task
+
+    def notify_settings_changed(self) -> None:
+        """Wake the scheduler so a runtime interval change applies to the next start."""
+
+        self._settings_changed.set()
 
     async def shutdown(self) -> None:
         await self.stop()
@@ -97,7 +103,9 @@ class SimulatorRunner:
         self, dataset: SimulatorDataset, store: SimulatorPositionStore, position: int
     ) -> None:
         loop = asyncio.get_running_loop()
-        next_due = loop.time()
+        last_started: float | None = None
+        next_due: float | None = None
+        scheduled_interval_ms: int | None = None
         next_position = position
         committed = position
         completed: set[int] = set()
@@ -158,11 +166,20 @@ class SimulatorRunner:
                         workers.remove(worker)
                         worker.result()
                     continue
-                delay = next_due - loop.time()
+                # Recalculate from the previous request start, including runtime changes.
+                self._settings_changed.clear()
+                interval_ms = self._state.get_state().interval_ms
+                interval = interval_ms / 1000
+                if last_started is not None and interval_ms != scheduled_interval_ms:
+                    next_due = last_started + interval
+                scheduled_interval_ms = interval_ms
+                delay = next_due - loop.time() if next_due is not None else 0
                 if delay > 0:
                     try:
-                        await asyncio.wait_for(self._stop.wait(), timeout=delay)
-                        break
+                        await asyncio.wait_for(
+                            self._settings_changed.wait(), timeout=delay
+                        )
+                        continue
                     except TimeoutError:
                         pass
                 if self._stop.is_set():
@@ -170,8 +187,14 @@ class SimulatorRunner:
                 bundle = await asyncio.to_thread(dataset.load, next_position)
                 worker = asyncio.create_task(send(next_position, bundle))
                 workers.add(worker)
+                started = loop.time()
+                if next_due is None or started - next_due >= interval:
+                    # After a long overrun, resume from the actual start without backlog.
+                    next_due = started + interval
+                else:
+                    next_due += interval
+                last_started = started
                 next_position += 1
-                next_due = max(next_due + self._interval, loop.time() + self._interval)
         except Exception:
             self._failed = True
             logger.exception("Simulator 실행 루프가 중단되었습니다")
