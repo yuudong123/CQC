@@ -5,7 +5,7 @@ const fs = require("node:fs");
 const ts = require("typescript");
 require.extensions[".ts"] = (module, filename) => module._compile(ts.transpileModule(fs.readFileSync(filename, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, filename);
 const { collectBatches, advanceTask } = require("../src/lib/auction-demo.ts");
-const { step, initialRuntime } = require("../src/lib/quality-runtime.ts");
+const { step, initialRuntime, DEMO_INPUT_INTERVAL_MS } = require("../src/lib/quality-runtime.ts");
 const { sampleApples } = require("../src/lib/sample-apples.ts");
 const base = Date.parse("2026-09-29T00:00:00Z");
 const result = step(step(initialRuntime(), base), base + 1000).history[0];
@@ -24,16 +24,18 @@ test("당도 구간과 품종·등급을 섞지 않음", () => {
   assert.equal(collectBatches(split, new Set(), buckets).length, 0);
   assert.equal(buckets.size, 2);
 });
-test("500ms 재생은 초당 2개이고 통계는 초 단위로 합침", () => {
+test("시연 재생은 1초에 사과 한 그룹이고 병렬 설정과 무관", () => {
+  const ms = DEMO_INPUT_INTERVAL_MS;
+  assert.equal(ms, 1000);
   let state = initialRuntime();
-  for (let i = 0; i < 8; i++) state = step(state, base + i * 500, 500);
+  for (let i = 0; i < 8; i++) state = step(state, base + i * ms, ms, true);
   assert.equal(state.sequence, 8);
   assert.equal(state.today.total, 7);
-  assert.equal(state.throughput, 2);
+  assert.equal(state.throughput, 1);
   assert.equal(new Set(state.points.map((p) => p.at)).size, state.points.length);
-  assert.equal(state.points.at(-1).count, 2);
+  assert.equal(state.points.at(-1).count, 1);
   let parallel = { ...initialRuntime(), concurrency: 4 };
-  for (let i = 0; i < 8; i++) parallel = step(parallel, base + i * 500, 500);
+  for (let i = 0; i < 8; i++) parallel = step(parallel, base + i * ms, ms, true);
   assert.equal(parallel.sequence, 8);
 });
 test("모든 시연 사과는 실제 12장의 독립 파일을 제공", () => {

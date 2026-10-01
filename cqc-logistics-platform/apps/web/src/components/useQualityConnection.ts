@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { initialRuntime, step, classifyResult } from "@/lib/quality-runtime";
+import { DEMO_INPUT_INTERVAL_MS, initialRuntime, step, classifyResult } from "@/lib/quality-runtime";
 import {
   getSnapshot,
   parseSnapshot,
@@ -57,12 +57,12 @@ export function useQualityConnection(mode: "demo" | "api") {
       const timer = setInterval(
         () => {
           const previous = demoState.current;
-          const next = step(previous, Date.now(), 500);
+          const next = step(previous, Date.now(), DEMO_INPUT_INTERVAL_MS, true);
           imageStore.current.advance(previous, next);
           demoState.current = next; update(next);
           setFaultImages([...imageStore.current.items]);
         },
-        500,
+        DEMO_INPUT_INTERVAL_MS,
       );
       return () => {
         mounted.current = false;
