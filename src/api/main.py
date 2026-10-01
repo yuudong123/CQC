@@ -83,7 +83,11 @@ def create_app(
             else None
         ),
         persistence=(
-            InspectionPersistence(session_factory)
+            InspectionPersistence(
+                session_factory,
+                history_limit=runtime_settings.inspection_history_limit,
+                history_delete_batch=runtime_settings.inspection_history_delete_batch,
+            )
             if session_factory is not None
             else None
         ),

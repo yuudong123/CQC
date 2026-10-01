@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     app_port: int = Field(default=8000, ge=1, le=65535)
     database_url: str | None = None
     db_connect_timeout_seconds: int = Field(default=1, ge=1)
+    inspection_history_limit: int = Field(default=86_400, ge=2)
+    inspection_history_delete_batch: int = Field(default=8_640, ge=1)
     inference_client_mode: Literal["mock", "http"] = "mock"
     inference_url: str = "http://inference:8001/v1/predict"
     inference_max_files: int = Field(default=12, ge=1)
@@ -50,6 +52,10 @@ class Settings(BaseSettings):
             raise ValueError(
                 "INFERENCE_HARD_TIMEOUT_MS는 "
                 "INFERENCE_BUSINESS_DEADLINE_MS보다 커야 합니다"
+            )
+        if self.inspection_history_delete_batch >= self.inspection_history_limit:
+            raise ValueError(
+                "INSPECTION_HISTORY_DELETE_BATCH는 INSPECTION_HISTORY_LIMIT보다 작아야 합니다"
             )
         return self
 

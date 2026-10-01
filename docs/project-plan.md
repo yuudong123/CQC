@@ -289,7 +289,7 @@ AI Hub 원본 이미지·라벨
 
 Backend는 **Python + FastAPI**, QC 이력은 **MySQL**, 판매·물류 데이터는 **MongoDB**, 공통 웹 구현은 **Next.js·React·TypeScript**를 사용한다. QC의 ORM·마이그레이션(초기 스키마, 12-bin seed)은 `src/api/db/`에 있고 검사 결과 저장·이력·통계 조회는 연결됐다.
 
-QC 이력 보존 목표는 상한 86,400건 도달 시 오래된 8,640건 삭제다. 초당 2그룹이면 약 10.8~12시간을 보존한다. DB 장애에도 유효한 선별 명령은 계속 처리하고 저장 실패를 별도 상태로 표시하는 것이 목표다. 보존·삭제·장애 요구사항을 구현 완료로 표시하지 않는다.
+QC 이력 보존 정책은 상한 86,400건 도달 시 오래된 8,640건 삭제다. 초당 2그룹이면 약 10.8~12시간을 보존한다. Backend는 DB 장애 중 마지막 정상 bin mapping으로 선별을 계속하고 저장 실패를 별도 상태로 표시한다. BE-09의 순환 삭제와 DB 중단·복구는 격리 MySQL에서 검증했으며, 전체 배포 환경 수용시험은 별도 단계다.
 
 품질 화면은 `cqc-logistics-platform/apps/web`의 `/`에 구현돼 있다. 기본 모드는 브라우저 데모이며 `CQC_QUALITY_MODE=api`에서 관제 HTTP 계약을 호출한다. 독립 참조 서버는 계약 검증용이고 실제 MySQL·Inference·설비 연결의 증거가 아니다.
 
@@ -593,7 +593,7 @@ MLOps·CI/CD: 기본 실행 환경 → 영역별 자동 검사 → 통합 배포
 | 모델 프레임워크 | PyTorch·torchvision 확정 | Python 3.11, 원격 CUDA 학습과 CPU 추론 |
 | Backend 기술 | FastAPI·Pydantic·SQLAlchemy·Alembic 확정 | 실제 의존성 파일과 Backend 코드 기준 |
 | 웹 기술·화면 | Next.js·React·TypeScript 확정, 현재 화면으로 마무리 | 실제 관제 API 연결과 배포·장시간 시험 |
-| 데이터베이스 | QC MySQL·물류 MongoDB 확정 | 저장·조회·당도 컬럼 구현; 보존 삭제(86,400/8,640)와 배포 시 migration 적용 필요 |
+| 데이터베이스 | QC MySQL·물류 MongoDB 확정 | 저장·조회·당도 컬럼과 보존 삭제(86,400/8,640) Backend 구현·격리 검증 완료; 배포 시 migration 적용과 전체 수용시험 필요 |
 | 저신뢰 임계값 | 확정: 품종 0.50·품질 0.60 (09-30 v2 온도 보정 후 재결정) | 학원 서버 배포 반영 완료 |
 | bin 코드·매핑 구조 | 12-bin·재검사 1개 seed(`DEMO_BIN_01~12`, 재검사 bin) migration 구현 | FE 표시 매핑 대조 |
 | 모델 성능 승인값 | 확정 | 품종·품질 Macro F1 각각 0.90 이상 |
