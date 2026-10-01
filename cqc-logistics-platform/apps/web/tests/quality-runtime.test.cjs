@@ -19,6 +19,8 @@ const {
   step,
   periodPoints,
   csvCell,
+  recentThroughput,
+  DEMO_INPUT_INTERVAL_MS,
 } = require("../src/lib/quality-runtime.ts");
 const start = Date.parse("2026-09-28T00:00:00Z");
 function complete(overrides = {}) {
@@ -134,4 +136,19 @@ test("8-hour accelerated run bounds all retained data", () => {
 test("CSV escapes quotes and guards spreadsheet formulas", () => {
   assert.equal(csvCell('a"b'), '"a""b"');
   assert.equal(csvCell("=1+1"), '"\'=1+1"');
+});
+test("recent throughput averages the last ten completed seconds", () => {
+  const at = (s) => start + s * 1000;
+  // 2초 간격 투입: 1초 단위로는 0과 1이 번갈아 나오지만 평균은 0.5건/초
+  const every2s = Array.from({ length: 30 }, (_, i) => ({ at: at(i), count: i % 2 ? 0 : 1, review: 0, excluded: 0 }));
+  assert.equal(recentThroughput(every2s), 0.5);
+  // 진행 중인 마지막 구간은 빼고 계산
+  const inProgress = [...every2s.slice(0, -1), { at: at(29), count: 5, review: 0, excluded: 0 }];
+  assert.equal(recentThroughput(inProgress), 0.5);
+  // 수집 구간이 짧으면 있는 구간으로 평균, 비어 있으면 0
+  assert.equal(recentThroughput([{ at: at(0), count: 2, review: 0, excluded: 0 }, { at: at(2), count: 0, review: 0, excluded: 0 }]), 1);
+  assert.equal(recentThroughput([]), 0);
+});
+test("demo runtime starts with the default line speed", () => {
+  assert.equal(initialRuntime().intervalMs, DEMO_INPUT_INTERVAL_MS);
 });

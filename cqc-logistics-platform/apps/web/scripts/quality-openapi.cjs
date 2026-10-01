@@ -97,7 +97,8 @@ const today = object({
 const runtimeProperties = {
   throughput: num,
   running: bool,
-  concurrency: { type: "integer", minimum: 1, maximum: 64 },
+  concurrency: { type: "integer", minimum: 1, maximum: 4, enum: [1, 2, 4] },
+  intervalMs: { type: "integer", minimum: 1 },
   sequence: integer,
   tick: integer,
   faults: array(fault, 5),
@@ -114,7 +115,7 @@ const runtimeProperties = {
 const runtime = object(
   runtimeProperties,
   Object.keys(runtimeProperties).filter(
-    (key) => !["concurrency", "sequence", "tick", "scope"].includes(key),
+    (key) => !["concurrency", "intervalMs", "sequence", "tick", "scope"].includes(key),
   ),
 );
 const schemas = {
@@ -154,7 +155,8 @@ const schemas = {
       faults: bool,
       review: bool,
       deleteImages: bool,
-      concurrency: array({ type: "integer", minimum: 1, maximum: 64 }, 64),
+      concurrency: array({ type: "integer", minimum: 1, maximum: 4, enum: [1, 2, 4] }, 3),
+      intervals: array({ type: "integer", enum: [1000, 2000, 3000] }, 3),
     }),
     components: object(
       Object.fromEntries(
@@ -194,7 +196,8 @@ const schemas = {
     {
       expectedRevision: integer,
       running: bool,
-      concurrency: { type: "integer", minimum: 1, maximum: 64 },
+      concurrency: { type: "integer", minimum: 1, maximum: 4, enum: [1, 2, 4] },
+      intervalMs: { type: "integer", enum: [1000, 2000, 3000] },
       scope: enumeration(["ALL", "NEXT"]),
       faults: { ...array(fault, 5), uniqueItems: true },
     },

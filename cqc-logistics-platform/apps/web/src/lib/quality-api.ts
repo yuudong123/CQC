@@ -23,6 +23,7 @@ export type QualitySnapshot = {
     review: boolean;
     deleteImages: boolean;
     concurrency: number[];
+    intervals?: number[];
   };
   components: Record<
     "Simulator" | "Inference" | "Backend" | "MySQL",
@@ -33,7 +34,7 @@ export type QualitySnapshot = {
   state: Runtime;
 };
 export type SimulatorChange = Partial<
-  Pick<Runtime, "running" | "concurrency"> & { scope: Scope; faults: Fault[] }
+  Pick<Runtime, "running" | "concurrency" | "intervalMs"> & { scope: Scope; faults: Fault[] }
 >;
 export type HistoryPage = {
   items: Result[];
@@ -146,7 +147,7 @@ export function parseSnapshot(value: unknown): QualitySnapshot {
     !["throughput"].every((key) =>
       finite(s[key]),
     ) ||
-    !["sequence", "tick", "concurrency"].every(
+    !["sequence", "tick", "concurrency", "intervalMs"].every(
       (key) => s[key] === undefined || finite(s[key]),
     ) ||
     !(s.scope === undefined || ["ALL", "NEXT"].includes(String(s.scope))) ||
@@ -200,6 +201,13 @@ export function parseSnapshot(value: unknown): QualitySnapshot {
     !Array.isArray(v.capabilities.concurrency) ||
     !v.capabilities.concurrency.every(
       (n) => finite(n) && Number.isInteger(n) && n > 0 && n <= 64,
+    ) ||
+    !(
+      v.capabilities.intervals === undefined ||
+      (Array.isArray(v.capabilities.intervals) &&
+        v.capabilities.intervals.every(
+          (n) => finite(n) && Number.isInteger(n) && n >= 100,
+        ))
     ) ||
     !["Simulator", "Inference", "Backend", "MySQL"].every((key) => {
       const c = (v.components as Record<string, unknown>)[key];

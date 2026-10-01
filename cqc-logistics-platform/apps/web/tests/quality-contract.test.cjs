@@ -54,6 +54,14 @@ test("backend snapshot may omit unavailable Simulator settings and history reten
   assert.equal(backend.state.sequence, undefined);
   assert.equal(backend.retention.history, undefined);
 });
+test("snapshot accepts line speed settings and rejects malformed intervals", async () => {
+  const f = fixture(); f.tick(1);
+  const snapshot = await (await f.request("snapshot")).json();
+  const withSpeed = { ...snapshot, capabilities: { ...snapshot.capabilities, intervals: [1000, 2000, 3000] }, state: { ...snapshot.state, intervalMs: 2000 } };
+  assert.equal(parseSnapshot(withSpeed).state.intervalMs, 2000);
+  assert.throws(() => parseSnapshot({ ...withSpeed, capabilities: { ...withSpeed.capabilities, intervals: ["2000"] } }));
+  assert.throws(() => parseSnapshot({ ...withSpeed, state: { ...withSpeed.state, intervalMs: -1 } }));
+});
 test("history accepts unavailable image index and an explicit control failure", async () => {
   const f = fixture(); f.tick(2);
   const history = await (await f.request("inspections?pageSize=50")).json();
