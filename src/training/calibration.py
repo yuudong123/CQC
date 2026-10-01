@@ -17,7 +17,7 @@ apply:
     python -m src.training.calibration fit --predictions outputs/v2-calibration/oof-fold-*.csv \\
         --output outputs/v2-calibration/calibration.json --table outputs/v2-calibration/threshold-table.csv
     python -m src.training.calibration apply --calibration outputs/v2-calibration/calibration.json \\
-        --package models/cqc-apple-separate12-focal-v2-candidate --model-version <새 버전명>
+        --package models/model_v2-focal-uncalibrated --model-version <새 버전명>
 """
 
 from __future__ import annotations

@@ -38,7 +38,7 @@
 팀 공용 `compose.yaml`, Jenkinsfile은 수정하지 않는다. `compose.inference.yaml`은 별도 프로젝트 이름으로 실행한다. 모델은 읽기 전용이고 localhost에만 포트를 연다. 후보 사용은 통합 시험 목적이며 운영 승인이 아니다.
 
 ```powershell
-$env:INFERENCE_MODEL_DIR = (Resolve-Path models/cqc-apple-separate12-focal-v2-candidate).Path
+$env:INFERENCE_MODEL_DIR = (Resolve-Path models/selected).Path
 $env:INFERENCE_PORT = '8001'
 docker compose -p cqc-inference-check -f compose.inference.yaml config --quiet
 docker compose -p cqc-inference-check -f compose.inference.yaml up -d --build
@@ -63,7 +63,7 @@ docker compose -p cqc-inference-check -f compose.inference.yaml logs --tail 50
 ### HTTP 시험 재현
 
 ```powershell
-python -m scripts.verify_inference_http --package models/cqc-apple-separate12-focal-v2-candidate --output outputs/inference-http-new.json
+python -m scripts.verify_inference_http --package models/selected --output outputs/inference-http-new.json
 ```
 
 Backend 계약도 검사하려면 원본 코드 스냅샷 루트를 `--backend-root`로, 커밋을 `--backend-revision`으로 전달한다. 결과 파일은 덮어쓰지 않으므로 매 실행에 새 경로를 지정한다. 이 도구는 테스트 환경의 `httpx`, Pillow, 추론 실행 의존성을 사용한다.
