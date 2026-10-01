@@ -45,6 +45,8 @@ export type Runtime = {
   throughput: number;
   running: boolean;
   concurrency?: number;
+  /** 사과 묶음 투입 시작 간격(라인 속도). 서버가 제공하지 않으면 없다. */
+  intervalMs?: number;
   sequence?: number;
   tick?: number;
   faults: Fault[];
@@ -92,6 +94,7 @@ export function initialRuntime(): Runtime {
     throughput: 0,
     running: true,
     concurrency: 1,
+    intervalMs: DEMO_INPUT_INTERVAL_MS,
     sequence: 0,
     tick: 0,
     faults: [],
@@ -115,6 +118,17 @@ export function imageIndexForJob(index: number) {
 }
 // 브라우저 예시의 사과 그룹 투입 간격. 상용 광학 선별기는 레인당 초당 1~3개라 그 하한인 초당 1개로 둔다.
 export const DEMO_INPUT_INTERVAL_MS = 1000;
+/** 라인 속도 선택지. Backend `capabilities.intervals`와 같은 값이다. */
+export const LINE_INTERVALS = [1000, 2000, 3000];
+/** 진행 중인 마지막 1초 구간을 뺀 최근 `seconds`초의 초당 평균 처리량. 간격이 1초보다 길어도 0으로 떨어지지 않는다. */
+export function recentThroughput(points: Point[], seconds = 10): number {
+  const end = points.at(-1)?.at;
+  if (end === undefined) return 0;
+  const done = points.filter((point) => point.at >= end - seconds * 1000 && point.at < end);
+  if (!done.length) return 0;
+  const span = Math.min(seconds, Math.max(1, (end - Math.min(...done.map((point) => point.at))) / 1000));
+  return done.reduce((sum, point) => sum + point.count, 0) / span;
+}
 export function step(state: Runtime, now: number, intervalMs = 1000, singleInput = false): Runtime {
   const date = kst(now).slice(0, 10);
   const next: Runtime = {

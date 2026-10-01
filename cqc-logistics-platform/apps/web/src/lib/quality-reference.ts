@@ -15,6 +15,7 @@ import {
   kst,
   FAULTS,
   type Runtime,
+  LINE_INTERVALS,
 } from "./quality-runtime";
 import { summarizeInspections } from "./quality-statistics";
 import { DemoFaultImageStore } from "./quality-fault-images";
@@ -64,6 +65,7 @@ export class QualityReferenceService {
         review: true,
         deleteImages: true,
         concurrency: [1, 2, 4],
+        intervals: LINE_INTERVALS,
       },
       retention: { history: 2000, images: this.faultImages.items.length },
       periodTotals: Object.fromEntries(
@@ -370,6 +372,7 @@ export class QualityReferenceService {
                 "expectedRevision",
                 "running",
                 "concurrency",
+                "intervalMs",
                 "scope",
                 "faults",
               ].includes(k),
@@ -382,6 +385,8 @@ export class QualityReferenceService {
           (body.running !== undefined && typeof body.running !== "boolean") ||
           (body.concurrency !== undefined &&
             ![1, 2, 4].includes(body.concurrency)) ||
+          (body.intervalMs !== undefined &&
+            !LINE_INTERVALS.includes(body.intervalMs)) ||
           (body.scope !== undefined && !["ALL", "NEXT"].includes(body.scope)) ||
           (body.faults !== undefined &&
             (!Array.isArray(body.faults) ||
