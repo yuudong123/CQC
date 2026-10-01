@@ -18,7 +18,7 @@ pipeline {
     // - mysql
     // - 실제 inference
     // - 실제 backend
-    // - frontend
+    // - logistics-web
     // - simulator
     //
     // Healthcheck 대상:
@@ -29,7 +29,7 @@ pipeline {
     // 기동 의존성:
     //   MySQL ─────┐
     //              ├→ Backend → Simulator
-    //   Inference ─┘          └→ Frontend
+    //   Inference ─┘          └→ logistics-web
     // ========================================================
 
     // ========================================================
@@ -173,7 +173,7 @@ pipeline {
         // Compose의 build 설정이 존재하는 서비스를 빌드한다.
         //
         // Backend / Inference / Simulator는 실제 Dockerfile로 빌드된다.
-        // Frontend는 기존 apps/web/Dockerfile 배포 연결 전까지 placeholder를 유지한다.
+        // logistics-web은 apps/web/Dockerfile로 빌드한다.
         // ====================================================
         stage('Docker Build') {
 
@@ -240,7 +240,8 @@ pipeline {
         //
         // compose.yaml의 depends_on + service_healthy 설정에 따라
         // MySQL / Inference가 healthy 상태가 된 뒤 Backend가 기동되고,
-        // Backend가 healthy 상태가 된 뒤 Frontend / Simulator가 기동된다.
+        // Backend가 healthy 상태가 된 뒤 logistics-web / Simulator가 기동된다.
+        // 이전 frontend placeholder 컨테이너는 orphan으로 제거한다.
         // ====================================================
         stage('Deploy') {
 
@@ -257,7 +258,7 @@ pipeline {
                     echo " CQC Deploy"
                     echo "======================================"
 
-                    docker-compose -f compose.yaml up -d --no-build
+                    docker-compose -f compose.yaml up -d --no-build --remove-orphans
                 '''
             }
         }
@@ -270,7 +271,7 @@ pipeline {
         // 1) 전체 서비스 상태 출력
         // 2) mysql / inference / backend 컨테이너 존재 여부 확인
         // 3) 각 컨테이너의 Health.Status가 healthy인지 확인
-        // 4) frontend / simulator가 실행 중인지 확인
+        // 4) logistics-web / simulator 상태 확인
         //
         // healthcheck가 아직 완료되지 않은 경우를 고려해
         // 최대 60초 동안 반복 확인한다.
@@ -342,43 +343,20 @@ pipeline {
                     done
 
                     echo "======================================"
-                    echo " Runtime Verification"
-                    echo "======================================"
-
-                    # Healthcheck가 없는 placeholder 서비스만 실행 상태 확인
-                    for service in frontend; do
-
-                        container_id="$(docker-compose -f compose.yaml ps -q "$service")"
-
-                        if [ -z "$container_id" ]; then
-                            echo "[ERROR] $service container not found"
-                            exit 1
-                        fi
-
-                        running="$(docker inspect \
-                            --format='{{.State.Running}}' \
-                            "$container_id")"
-
-                        echo "$service running: $running"
-
-                        if [ "$running" != "true" ]; then
-                            echo "[ERROR] $service is not running"
-                            exit 1
-                        fi
-                    done
-
-                    echo "======================================"
                     echo " API Smoke Verification"
                     echo "======================================"
 
                     backend_id="$(docker-compose -f compose.yaml ps -q backend)"
                     inference_id="$(docker-compose -f compose.yaml ps -q inference)"
                     simulator_id="$(docker-compose -f compose.yaml ps -q simulator)"
+                    logistics_web_id="$(docker-compose -f compose.yaml ps -q logistics-web)"
 
                     docker exec "$inference_id" python -c \
                         "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=5)"
                     docker exec "$backend_id" python -c \
                         "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"
+                    docker exec "$logistics_web_id" node -e \
+                        "fetch('http://127.0.0.1:3000/api/quality/health').then(async response => { const body = await response.json(); if (!response.ok || body.status !== 'ok') throw new Error(JSON.stringify(body)); console.log('Quality backend proxy OK:', body); }).catch(error => { console.error(error); process.exit(1); })"
 
                     echo "======================================"
                     echo " Simulator Playback Verification"
