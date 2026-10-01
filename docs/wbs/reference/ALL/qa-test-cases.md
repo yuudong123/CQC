@@ -1,6 +1,6 @@
 # 확정 범위 QA 테스트 케이스
 
-- 기준: dev `14eaa44` (2026-10-01, BE-07 Simulator·검수 API와 입력 간격 2000ms 반영). 학원 서버 모델 `cqc-apple-separate12-focal-v2-cal-20260930`, 임계값 품종 0.50·품질 0.60
+- 기준: dev `077d02c` (2026-10-01, PR #37 BE-08·BE-09 LKG·라인 속도 `intervalMs` 반영). 학원 서버 모델 `cqc-apple-separate12-focal-v2-cal-20260930`, 임계값 품종 0.50·품질 0.60
 - 작성: 조현재 (2026-09-30). 상태: **실행 전 준비 문서**
 - 목적: 구현과 계약이 확정된 기능만 먼저 검증해 ALL-03 통합(10-08)과 ALL-04 수용시험(10-12) 전에 결함을 찾는다.
 - 진행 상태는 [ALL-03](../../ALL-03.md)에만 적는다. 이 문서에는 케이스와 실행 기록 칸만 둔다.
@@ -16,7 +16,7 @@
 | 검사 API | QA-INS | BE-04, FR-02·04·05·13·14·19·26·28·34·37·39·44·45·53·55, NFR-18·24 | `POST /v1/inspections`, 임계값, 12-bin seed, 500ms 기한이 구현됐다 |
 | 관제 조회 API | QA-OPS | BE-05, FR-07~10·21·22·29·31·32, NFR-14 | 관제 OpenAPI의 snapshot·이력·통계·CSV가 구현됐다 |
 | 장애 이미지 | QA-IMG | BE-06, FR-16·42, NFR-09 | 저장·목록·미리보기·선택 삭제·100장 순환이 구현됐다 |
-| Simulator·검수 | QA-SIM, QA-OPS-16 | BE-07, FR-15·18·23·24·33·46~49·54 | 독립 Simulator(자동 재생·정지/재개·위치 복구·장애 6종·다음 1건), `PUT /simulator`, 검수 API가 구현·배포됐다 |
+| Simulator·검수 | QA-SIM, QA-OPS-16 | BE-07, FR-15·18·23·24·33·46~49·54 | 독립 Simulator(자동 재생·정지/재개·위치 복구·장애 6종·다음 1건·라인 속도 1·2·3초), `PUT /simulator`, 검수 API가 구현·배포됐다 |
 | 웹 관제 화면 | QA-WEB | FE-02~08, FR-06·20~22·35·36·41, NFR-11·12 | 실제 Backend 연결을 09-30에 확인했다 |
 | 자동 시험 | QA-AUTO | 전체 | 저장소 시험으로 재현할 수 있다 |
 
@@ -27,22 +27,22 @@
 | 지연 결과 DB 저장 (FR-27) | 지연 결과는 메모리 진단만 있다 | BE 구현 후 |
 | 이력 순환 삭제 86,400/8,640건 (FR-30) | 미구현 | BE-09 |
 | 로그 순환 (NFR-15), 실패 시 이전 버전 유지 (MO-07) | 미구현 | MO-07·08 |
-| Inference 구성요소 상태 (FR-35 일부) | snapshot이 `unknown` 고정값을 준다 | BE 협업 요청 #4 반영 후 |
 | 정상 100건 연속·운영 경로 처리량 판정 | 초당 2건 목표는 서버컴 미달(결정 기록 09-30), 시연 간격 2000ms 적용 후 기준 재합의 필요 | ALL-04 |
-| 물류(출품·경매·배차) | 목요일(10-01) MVP 포함 여부 결정 | 포함이 결정되면 |
+| 물류(출품·경매·배차) | MVP 제외 확정(10-01, #48). 시연 목업만 유지 | 범위에 다시 넣기로 하면 |
 | 루트 Compose `frontend` | placeholder. 웹은 `logistics-web`(3100)이 브라우저 예시 모드로 제공 | 실제 Backend 연결 배포 후 |
 
 ### 1.3 이미 알려진 결함
 
-아래 케이스는 요구사항 기준 기대 결과를 적었으므로 현재는 실패가 정상이다. 실패하면 새 결함으로 올리지 말고 해당 번호를 적는다. 출처는 [파트별 협업 요청](../../협업공지/파트별-협업-요청.md) 09-30 절이다.
+아래 표는 통합 점검에서 나온 결함과 현재 상태다. **열림** 상태인 결함 때문에 케이스가 실패하면 새 결함으로 올리지 말고 번호를 적는다. 출처는 [파트별 협업 요청](../../협업공지/파트별-협업-요청.md) 09-30 절과 PR #37이다.
 
-| 번호 | 현상 | 관련 케이스 |
-|---|---|---|
-| KI-1 | MySQL 중단 중 `POST /v1/inspections`가 7~8초 뒤 HTTP 500(`활성 bin mapping 설정을 확인할 수 없습니다`)으로 선별이 멈춤 | QA-INS-13 |
-| KI-2 | snapshot `throughput`이 진행 중인 1초 구간을 써서 실제보다 낮음 | QA-OPS-15 |
-| KI-3 | Inference 컨테이너 정지 시 오류 코드가 `INFERENCE_TIMEOUT`으로 기록 | QA-INS-11 |
-| KI-4 | snapshot `components.Inference`가 항상 `unknown` | QA-WEB-07 |
-| KI-5 | Simulator가 보낸 검사 1건이 2xx가 아니면 Simulator 전체가 정지(`실행 실패`)하고 자동으로 다시 켜지지 않음 | QA-SIM-09 |
+| 번호 | 현상 | 상태 (10-01) | 관련 케이스 |
+|---|---|---|---|
+| KI-1 | MySQL 중단 중 `POST /v1/inspections`가 HTTP 500으로 선별이 멈춤 | 코드 반영(#37 LKG: 마지막 정상 bin mapping 사용). 실제 MySQL 중단 검증은 #45 | QA-INS-13, QA-SIM-09 |
+| KI-2 | snapshot `throughput`이 진행 중인 1초 구간을 써서 낮게 나옴 | 해결(#37, 직전 완료 구간). 단 KI-6 참고 | QA-OPS-15 |
+| KI-3 | Inference 컨테이너 정지 시 오류 코드가 `INFERENCE_TIMEOUT`으로 기록 | 열림 (연결 실패가 500ms 안에 나지 않으면 시간 초과로 분류) | QA-INS-11 |
+| KI-4 | snapshot `components.Inference`가 항상 `unknown` | 해결(#37, Inference `/health` 확인. 학원 서버 `healthy` 확인) | QA-WEB-07 |
+| KI-5 | Simulator가 보낸 검사 1건이 실패하면 Simulator 전체가 정지 | 해결(#37, 실패 건만 기록하고 계속 전송) | QA-SIM-09 |
+| KI-6 | 입력 간격 2초에서 1초 단위 `throughput`이 0 또는 1만 나와 `현재 처리량`이 0건/초로 자주 보임 | 열림 (최근 10초 평균으로 표시, #49) | QA-OPS-15, QA-WEB-05 |
 
 ## 2. 환경
 
@@ -515,7 +515,7 @@ done
   2. `send $BE/v1/inspections $RUN-ins13-a $DEMO/demo-601031008000-000 15.0`, 응답 시간 기록
   3. `docker compose start mysql`, healthy 후 `send ... $RUN-ins13-b ...`
 - 기대 결과:
-  2. HTTP 200, 모델 판정대로 `COMPLETED`·`DEMO_BIN_02`·`control_status=SUCCEEDED`, `persistence_status=FAILED`. 응답이 500ms 기준 흐름을 막지 않는다. 현재는 7~8초 뒤 HTTP 500이다(KI-1).
+  2. HTTP 200, 모델 판정대로 `COMPLETED`·`DEMO_BIN_02`·`control_status=SUCCEEDED`, `persistence_status=FAILED`. 응답이 500ms 기준 흐름을 막지 않는다(#37 LKG, 실제 검증은 #45).
   3. `$RUN-ins13-b`는 `persistence_status=SUCCEEDED`. `$RUN-ins13-a`는 이력에 없어도 된다(유실 허용).
 
 #### QA-INS-14 제어 명령 기록과 응답 시간 · P2
@@ -554,10 +554,10 @@ done
 - 환경: E1
 - 절차: `curl -s -D - $BE/v1/quality/snapshot`
 - 기대 결과:
-  - `contractVersion="1"`, `source="backend"`, `revision`은 Simulator revision(기동 직후 1)
-  - `capabilities`: `control=true`, `faults=true`, `review=true`, `deleteImages=true`, `concurrency=[1,2,4]`
-  - `components.Simulator.status=healthy`(`detail`: `검사 전송 중`, `lastSeenAt` 30초 이내), `Backend`·`MySQL`은 `healthy`, `lastSeenAt`이 `capturedAt`과 같다
-  - `state.running=true`, `state.concurrency=1`, `state.faults=[]`, `state.scope=ALL`
+  - `contractVersion="1"`, `source="backend"`, `revision`은 Simulator revision(기동 직후 0. 자동 시작은 revision을 올리지 않는다)
+  - `capabilities`: `control=true`, `faults=true`, `review=true`, `deleteImages=true`, `concurrency=[1,2,4]`, `intervals=[1000,2000,3000]`
+  - `components.Simulator.status=healthy`(`detail`: `검사 전송 중`, `lastSeenAt` 30초 이내), `Inference`는 `healthy`(`detail`: `추론 서비스 준비 완료`), `Backend`·`MySQL`은 `healthy`, `lastSeenAt`이 `capturedAt`과 같다
+  - `state.running=true`, `state.concurrency=1`, `state.intervalMs=2000`, `state.faults=[]`, `state.scope=ALL`
   - `periodTotals` 키 `1`·`5`·`10`·`30`, 값은 1 ≤ 5 ≤ 10 ≤ 30 순서로 줄지 않는다
   - `state.points` 30개, `at`이 1000ms 간격으로 오름차순, 마지막 `at` ≤ `capturedAt`
   - `state.history` ≤ 200건 최신순, `state.errors` ≤ 50건, `state.jobs=[]`, `state.dbDown=false`
@@ -747,7 +747,7 @@ done
 - 근거: FR-22, FE-05 (알려진 결함 KI-2)
 - 환경: E1
 - 절차: B-FL을 1초 간격으로 10건 보내고 끝난 직후 snapshot을 받는다.
-- 기대 결과: `periodTotals["1"]`이 보내기 전보다 10 이상 크다. `points` 마지막 10초 `count` 합이 10 이상이다. `state.throughput`은 직전 완료 1초 구간 건수여야 한다(현재는 진행 중 구간이라 낮게 나온다, KI-2).
+- 기대 결과: `periodTotals["1"]`이 보내기 전보다 10 이상 크다. `points` 마지막 10초 `count` 합이 10 이상이다. `state.throughput`은 직전 완료 1초 구간 건수다(#37). 간격 2초에서는 0 또는 1이라 처리량 판단에는 `periodTotals`를 쓴다(KI-6).
 
 #### QA-OPS-16 오판 의심 검수 API · P2
 
@@ -899,8 +899,8 @@ E3에서 실행한다. 달리 적지 않으면 창 크기는 1600×900이다.
 
 #### QA-WEB-07 시스템 상태 패널 · P2
 
-- 근거: FR-35 (알려진 결함 KI-4)
-- 기대 결과: `Simulator` `검사 전송 중`과 `수신 HH:MM:SS`(2초 안팎으로 갱신), `Inference` `상태 확인 연동 전`(KI-4), `Backend` `관제 API 응답 중`과 `수신 HH:MM:SS`, `MySQL` `검사 이력 조회 성공`과 수신 시각. 수신 시각이 1초마다 바뀐다.
+- 근거: FR-35 (KI-4는 #37에서 해결)
+- 기대 결과: `Simulator` `검사 전송 중`과 `수신 HH:MM:SS`(2초 안팎으로 갱신), `Inference` `추론 서비스 준비 완료`와 수신 시각, `Backend` `관제 API 응답 중`과 `수신 HH:MM:SS`, `MySQL` `검사 이력 조회 성공`과 수신 시각. 수신 시각이 1초마다 바뀐다.
 
 #### QA-WEB-08 최근 오류 목록 · P2
 
@@ -1042,14 +1042,15 @@ sim() { curl -s -w " HTTP%{http_code}\n" -X PUT $BE/v1/quality/simulator -H "Con
 - 근거: FR-18·25 (기본 ON, Docker 시작과 함께 실행), MO PR #32
 - 환경: E1 (읽기만)
 - 절차: Jenkins 배포 또는 `simulator` 재시작 직후 1분 안에 snapshot을 본다.
-- 기대 결과: `components.Simulator.status=healthy`, `state.running=true`, `state.concurrency=1`, `revision=1`. 아무도 켜지 않아도 오늘 검사 수가 늘어난다.
+- 기대 결과: `components.Simulator.status=healthy`, `state.running=true`, `state.concurrency=1`, `state.intervalMs=2000`, `revision=0`. 아무도 켜지 않아도 오늘 검사 수가 늘어난다.
 
 #### QA-SIM-02 입력 간격 2000ms · P1
 
 - 근거: DM-08 운영 경로 처리량, 결정 기록 09-30
 - 환경: E1 (읽기만)
 - 절차: `curl -s "$BE/v1/quality/inspections?pageSize=200"`의 `timestamp`를 정렬해 이웃 간격을 계산한다(`qa-` 접두사 기록 제외).
-- 기대 결과: 간격 중앙값 2.0초 이상(±0.1초), 처리량 초당 약 0.5건으로 일정. 시간 초과 비율을 기록하고 09-30 기준(간격 500ms일 때 3%)과 비교한다.
+- 기대 결과: 간격 중앙값 2.0초(±0.1초), p90 2.2초 이하, 처리량 초당 약 0.5건, 시간 초과 1% 이하. 10-01 기준값: 중앙값 2.003초·p90 2.111초·0.5건/초·시간 초과 0/152([원본](../../results/server-simulator-throughput-20261001.json)).
+- 주의: Jenkins 배포(이미지 빌드)가 같은 서버에서 도는 동안은 한 건에 5~9초가 걸린다. dev 푸시 직후 10분은 측정하지 않는다.
 
 #### QA-SIM-03 정지와 재개 · P1
 
@@ -1084,6 +1085,9 @@ sim() { curl -s -w " HTTP%{http_code}\n" -X PUT $BE/v1/quality/simulator -H "Con
 | e | `"running":null` | 422 `INVALID_SETTINGS` |
 | f | `"speed":1` | 422 `INVALID_SETTINGS` |
 | g | `expectedRevision` 없음 | 422 `INVALID_SETTINGS` |
+| h | `"intervalMs":1500` | 422 `INVALID_SETTINGS` (1000·2000·3000만 허용) |
+| i | `"intervalMs":"2000"` | 422 `INVALID_SETTINGS` (정수만) |
+| j | `"intervalMs":null` | 422 `INVALID_SETTINGS` |
 
 - 공통: 422 뒤 `revision`이 바뀌지 않는다.
 
@@ -1119,14 +1123,14 @@ sim() { curl -s -w " HTTP%{http_code}\n" -X PUT $BE/v1/quality/simulator -H "Con
   2. 최근 저장 검사의 `source_reference`(묶음 ID)를 기록한다
   3. `docker compose restart simulator`
   4. 재기동 후 첫 검사 3건의 `source_reference`와 snapshot을 확인한다
-- 기대 결과: 첫 검사가 2의 묶음 바로 다음 순번부터 이어진다(미완료였던 1~2건은 다시 보낼 수 있음). snapshot `state.faults=[]`, `concurrency=1`, `running=true`, `revision=1`(장애·설정 초기화, 정상 모드).
+- 기대 결과: 첫 검사가 2의 묶음 바로 다음 순번부터 이어진다(미완료였던 1~2건은 다시 보낼 수 있음). snapshot `state.faults=[]`, `concurrency=1`, `intervalMs=2000`(환경변수 기본값), `running=true`, `revision=0`(장애·설정 초기화, 정상 모드).
 
 #### QA-SIM-09 검사 실패 후에도 입력 지속 · P1
 
-- 근거: FR-19·34 (알려진 결함 KI-5)
+- 근거: FR-19·34 (KI-5는 #37에서 해결, KI-1 실제 검증은 #45)
 - 환경: E2
 - 절차: `docker compose stop mysql` 20초 → `docker compose start mysql` → 30초 관찰
-- 기대 결과: MySQL 복구 뒤 Simulator가 스스로 다시 검사를 보내고 오늘 검사 수가 늘어난다. 현재는 Backend가 500을 주는 순간(KI-1) Simulator가 `실행 실패`로 멈추고 손으로 재개해야 한다(KI-5).
+- 기대 결과: MySQL이 멈춘 동안에도 Simulator가 계속 보내고 검사는 정상 bin으로 판정된다(저장만 실패). MySQL 복구 뒤 Backend·Simulator 재시작 없이 저장이 다시 늘어난다. `components.Simulator.status`가 `error`로 바뀌지 않는다.
 
 #### QA-SIM-10 Simulator 전용 헤더 인증 · P2
 
@@ -1146,6 +1150,22 @@ sim() { curl -s -w " HTTP%{http_code}\n" -X PUT $BE/v1/quality/simulator -H "Con
 - 근거: FR-24
 - 환경: E2, 동시 처리 4로 약 30분(869묶음)
 - 기대 결과: 마지막 묶음 뒤 첫 묶음(`index.json`의 첫 `default_playback` 묶음)부터 다시 보낸다. 같은 묶음이 새 `inspection_id`로 기록된다.
+
+#### QA-SIM-12 라인 속도 변경 · P1
+
+- 근거: #37 Simulator `intervalMs`, 관제 화면 라인 속도(#42)
+- 환경: E2
+- 절차:
+  1. `sim "{\"expectedRevision\":$(rev),\"intervalMs\":3000}"`
+  2. 1분 동안 저장 검사의 `timestamp` 간격을 계산한다
+  3. `sim "{\"expectedRevision\":$(rev),\"intervalMs\":1000}"` → 1분 관찰
+  4. `docker compose restart simulator` → snapshot 확인
+- 기대 결과:
+  1. 200, 응답 snapshot `state.intervalMs=3000`, `revision` 1 증가. 실행을 멈추지 않고 바로 적용된다
+  2. 간격 중앙값 3.0초(±0.1초), 초당 약 0.33건
+  3. 간격 중앙값은 `max(1초, 한 건 처리 시간)`이다. 서버컴 한 건 처리 약 1.4~2초라 1초보다 길게 나오고, 요청이 쌓이지 않는다(무한 대기열 없음)
+  4. 재시작 뒤 `intervalMs`가 환경변수 기본값 2000으로 돌아온다
+- 끝나면 2000으로 되돌린다.
 
 ### 5.8 자동 시험 (QA-AUTO)
 
@@ -1172,7 +1192,7 @@ sim() { curl -s -w " HTTP%{http_code}\n" -X PUT $BE/v1/quality/simulator -H "Con
 2. E1: QA-DEP-02 → QA-INF 전체 → QA-INS-01~05·07·08 → QA-OPS-01·03~13·15 → QA-IMG-01~05
 3. E1: QA-OPS-16(본인 `$RUN` 행만), QA-SIM-01·02·10
 4. E3(E1 연결): QA-WEB-01~03·05~08·12~18
-5. E2: QA-DEP-01·03~07 → QA-INS-06·10~17 → QA-OPS-02·14 → QA-IMG-06·07 → QA-SIM-03~09·11 → QA-WEB-04·09~11·19 → QA-AUTO-02
+5. E2: QA-DEP-01·03~07 → QA-INS-06·10~17 → QA-OPS-02·14 → QA-IMG-06·07 → QA-SIM-03~09·11·12 → QA-WEB-04·09~11·19 → QA-AUTO-02
 
 | 케이스 | 결과 (통과/실패/차단) | 실행자 | 일시 | 커밋·모델 | 비고·결함 번호 |
 |---|---|---|---|---|---|
@@ -1203,7 +1223,7 @@ sim() { curl -s -w " HTTP%{http_code}\n" -X PUT $BE/v1/quality/simulator -H "Con
 | QA-INS-10 | | | | | |
 | QA-INS-11 | | | | | KI-3 |
 | QA-INS-12 | | | | | |
-| QA-INS-13 | | | | | KI-1 |
+| QA-INS-13 | | | | | KI-1 (#45) |
 | QA-INS-14 | | | | | |
 | QA-INS-15 | | | | | |
 | QA-INS-16 | | | | | |
@@ -1222,7 +1242,7 @@ sim() { curl -s -w " HTTP%{http_code}\n" -X PUT $BE/v1/quality/simulator -H "Con
 | QA-OPS-12 | | | | | |
 | QA-OPS-13 | | | | | |
 | QA-OPS-14 | | | | | |
-| QA-OPS-15 | | | | | KI-2 |
+| QA-OPS-15 | | | | | KI-6 |
 | QA-IMG-01 | | | | | |
 | QA-IMG-02 | | | | | |
 | QA-IMG-03 | | | | | |
@@ -1236,7 +1256,7 @@ sim() { curl -s -w " HTTP%{http_code}\n" -X PUT $BE/v1/quality/simulator -H "Con
 | QA-WEB-04 | | | | | |
 | QA-WEB-05 | | | | | |
 | QA-WEB-06 | | | | | |
-| QA-WEB-07 | | | | | KI-4 |
+| QA-WEB-07 | | | | | |
 | QA-WEB-08 | | | | | |
 | QA-WEB-09 | | | | | |
 | QA-WEB-10 | | | | | |
@@ -1258,9 +1278,10 @@ sim() { curl -s -w " HTTP%{http_code}\n" -X PUT $BE/v1/quality/simulator -H "Con
 | QA-SIM-06 | | | | | |
 | QA-SIM-07 | | | | | |
 | QA-SIM-08 | | | | | |
-| QA-SIM-09 | | | | | KI-5 |
+| QA-SIM-09 | | | | | #45 |
 | QA-SIM-10 | | | | | |
 | QA-SIM-11 | | | | | |
+| QA-SIM-12 | | | | | |
 | QA-AUTO-01 | | | | | |
 | QA-AUTO-02 | | | | | |
 | QA-AUTO-03 | | | | | |

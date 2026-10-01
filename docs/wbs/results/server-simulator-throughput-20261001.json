@@ -1,0 +1,55 @@
+{
+ "date": "2026-10-01 15:34",
+ "target": "http://192.168.133.106:8000 (서버컴)",
+ "build": "dev 3a0b6e7 배포본 (PR #33 간격 2000ms + PR #37)",
+ "method": "운영 중인 Simulator 결과를 관제 이력 API로 읽기만 함 (최근 200건). 설정 변경 없음",
+ "simulator": {
+  "interval_ms": 2000,
+  "concurrency": 1
+ },
+ "stable_window": {
+  "from_kst": "15:24:57.979",
+  "to_kst": "15:29:59.997",
+  "inspections": 152,
+  "per_s": 0.5,
+  "start_to_start_ms": {
+   "p10": 1885.0,
+   "p50": 2003.0,
+   "p90": 2111.0,
+   "max": 2281.0
+  },
+  "timeouts": 0,
+  "errors": 0,
+  "model_ms": {
+   "p50": 139.4,
+   "p95": 159.4
+  }
+ },
+ "jenkins_deploy_window": {
+  "from_kst": "15:30:02.089",
+  "to_kst": "15:34:45.847",
+  "inspections": 48,
+  "per_s": 0.166,
+  "start_to_start_ms": {
+   "p10": 2310.0,
+   "p50": 5849.0,
+   "p90": 8561.0,
+   "max": 35770.0
+  },
+  "timeouts": 1,
+  "errors": 1,
+  "model_ms": {
+   "p50": 159.0,
+   "p95": 243.2
+  },
+  "note": "15:29 dev 푸시(077d02c)로 Jenkins가 같은 서버에서 이미지 빌드·재배포. 모델 계산은 그대로인데 한 건 왕복이 5~9초, 재기동 공백 36초"
+ },
+ "baseline_20260930": {
+  "interval_ms": 500,
+  "per_s": 0.627,
+  "start_to_start_p50_ms": 1389,
+  "start_to_start_p90_ms": 1795,
+  "timeout_rate": 0.03
+ },
+ "snapshot_throughput_note": "간격 2초에서 1초 단위 throughput은 0 또는 1 (측정 시 0.0)"
+}

@@ -137,13 +137,13 @@ body.nav-open .deck-nav{transform:none}
 </section>
 
 <section class="page">
-  <div class="kicker">03 · SOLUTION</div><h2>목표 서비스 흐름</h2><p class="subtitle">품질 판정·선별·관제 중심 / 거래·물류 연결 방식 협의 중</p>
+  <div class="kicker">03 · SOLUTION</div><h2>목표 서비스 흐름</h2><p class="subtitle">MVP: 품질 판정·선별·관제 / 거래·물류는 확장 시연(목업)</p>
   <table class="stack-table"><thead><tr><th>구간</th><th>입력</th><th>처리</th><th>출력</th></tr></thead><tbody>
     <tr><td>품질 검사</td><td>사과별 다각도 이미지 12장</td><td>품종·외관 등급과 신뢰도 판정</td><td class="status">검사 결과</td></tr>
     <tr><td>선별</td><td>외관 판정·가상 당도</td><td>12개 목적지 또는 재검사 결정</td><td class="status">선별 신호</td></tr>
     <tr><td>관제</td><td>검사·오류·처리 이력</td><td>현재 상태와 기간 통계 확인</td><td class="status">운영 화면</td></tr>
-    <tr><td>거래</td><td>품종·등급·수량·농가</td><td>출품·입찰·낙찰 연결 방식 검토</td><td class="status">범위 협의 중</td></tr>
-    <tr><td>물류</td><td>주문·차량 용량·위치·상태</td><td>차량 배정·배송 시연 방식 검토</td><td class="status">범위 협의 중</td></tr>
+    <tr><td>거래</td><td>품종·등급·수량·농가</td><td>출품·입찰·낙찰 시연</td><td class="status">MVP 제외 · 시연 목업</td></tr>
+    <tr><td>물류</td><td>주문·차량 용량·위치·상태</td><td>차량 배정·배송 시연</td><td class="status">MVP 제외 · 시연 목업</td></tr>
   </tbody></table>
   <div class="source">근거: project-plan.md 3.1·3.7</div><div class="footer"><span>CQC · 최종 발표 초안</span><span>04</span></div>
 </section>
@@ -158,7 +158,7 @@ body.nav-open .deck-nav{transform:none}
       <div><span>04 · 선별</span><h3>12 + 1</h3><p>품종 2 × 외관 3 ×<br>가상 당도 14° 2구간</p></div>
       <div><span>05 · 관제</span><h3>저장·조회</h3><p>MySQL 이력<br>처리 상태·통계 화면</p></div>
     </div>
-    <div class="research-small">사용자: 선별 작업자·품질 관리자　/　거래·물류 연결: 포함 범위·시연 방식 협의 중<br>향후: 실물 카메라·PLC, 실측 당도, 두 번째 품목, 농가별 클라우드</div>
+    <div class="research-small">사용자: 선별 작업자·품질 관리자　/　거래·물류 연결: MVP 제외, 확장 방향 시연(목업)<br>향후: 실물 카메라·PLC, 실측 당도, 두 번째 품목, 농가별 클라우드</div>
     <table class="research-table"><thead><tr><th>완료 판단 기준</th><th>2026-10-01 확인 상태</th></tr></thead><tbody>
       <tr><td>12장 입력 → 판정 → 재검사 → 12+1 목적지</td><td>Simulator 자동 투입 → Backend → Inference 분기 동작(학원 서버)</td></tr>
       <tr><td>이력 저장·관제 화면</td><td>저장·조회 API와 화면 구현, 실제 Backend 연결 확인 / 학원 웹은 예시 모드</td></tr>
@@ -389,16 +389,16 @@ sweetness_band: &lt;14 | ≥14
 </section>
 
 <section class="page">
-  <div class="kicker">28 · DEMO</div><h2>최종 시연 구성</h2><p class="subtitle">사과 입력·판정·선별·관제 / 거래·물류는 협의 중</p>
+  <div class="kicker">28 · DEMO</div><h2>최종 시연 구성</h2><p class="subtitle">사과 입력·판정·선별·관제 / 거래·물류는 확장 시연(목업)</p>
   <div class="timeline ripening">
     <div class="mile"><div class="mile-head"><div class="mile-id">01</div><div class="mile-date">입력</div></div><div class="dot"></div><h3>사과 유입</h3><p>12장 묶음과 가상 당도</p></div>
     <div class="mile"><div class="mile-head"><div class="mile-id">02</div><div class="mile-date">판정</div></div><div class="dot"></div><h3>품종·외관</h3><p>신뢰도와 처리시간</p></div>
     <div class="mile"><div class="mile-head"><div class="mile-id">03</div><div class="mile-date">선별</div></div><div class="dot"></div><h3>정상 12-bin</h3><p>목적지 분류</p><small class="review-branch">예외 · 재검사 분기</small></div>
     <div class="mile"><div class="mile-head"><div class="mile-id">04</div><div class="mile-date">관제</div></div><div class="dot"></div><h3>이력·통계</h3><p>상태와 장애 확인</p></div>
-    <div class="mile"><div class="mile-head"><div class="mile-id">05</div><div class="mile-date">거래</div></div><div class="dot"></div><h3>출품·입찰</h3><p>연계 방식 협의 중</p></div>
-    <div class="mile"><div class="mile-head"><div class="mile-id">06</div><div class="mile-date">물류</div></div><div class="dot"></div><h3>배차·배송</h3><p>시연 범위 협의 중</p></div>
+    <div class="mile"><div class="mile-head"><div class="mile-id">05</div><div class="mile-date">거래</div></div><div class="dot"></div><h3>출품·입찰</h3><p>확장 시연(목업)</p></div>
+    <div class="mile"><div class="mile-head"><div class="mile-id">06</div><div class="mile-date">물류</div></div><div class="dot"></div><h3>배차·배송</h3><p>확장 시연(목업)</p></div>
   </div>
-  <div class="today">시연 캡처<br>추가 예정</div><div class="timeline-note">정상 선별 · 재검사 분기 · 관제<br>거래·물류 연결 범위 결정 대기</div>
+  <div class="today">시연 캡처<br>추가 예정</div><div class="timeline-note">정상 선별 · 재검사 분기 · 관제<br>거래·물류는 MVP 제외, 확장 시연(목업)</div>
   <div class="source">근거: project-plan.md 6.3</div><div class="footer"><span>CQC · 최종 발표 초안</span><span>29</span></div>
 </section>
 
