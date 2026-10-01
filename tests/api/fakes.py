@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
+from src.api.repositories.bin_mappings import BinMappingSnapshot
 from src.api.repositories.records import ControlAttemptRecord, InspectionErrorRecord
 from src.api.services.bin_policy import (
     DEMO_NORMAL_BIN_MAPPING,
@@ -15,8 +16,23 @@ class FakeBinMappingRepository:
     """12-bin seed와 동일한 값을 반환하는 Repository test double."""
 
     def __init__(self) -> None:
+        self.snapshot_calls = 0
         self.normal_calls: list[dict[str, str]] = []
         self.reinspection_calls = 0
+
+    def load_snapshot(self) -> BinMappingSnapshot:
+        self.snapshot_calls += 1
+        return BinMappingSnapshot(
+            {
+                ("apple", cultivar, grade, sweetness): code
+                for (
+                    cultivar,
+                    grade,
+                    sweetness,
+                ), code in DEMO_NORMAL_BIN_MAPPING.items()
+            },
+            TEMPORARY_REINSPECTION_BIN_CODE,
+        )
 
     def find_normal_bin(
         self,

@@ -20,6 +20,7 @@ from ..core.datetime import utc_now
 from ..repositories import (
     BinMappingConfigurationError,
     BinMappingRepository,
+    BinMappingUnavailableError,
     InspectionPersistence,
 )
 from ..repositories.records import ControlAttemptRecord, InspectionErrorRecord
@@ -35,6 +36,7 @@ from ..schemas.inspection_results import (
 )
 from ..schemas.inspections import InspectionImageMetadata
 from ..schemas.late_results import LateInferenceResult
+from .bin_mapping_lkg import LkgBinMapping
 from .bin_policy import DEMO_SWEETNESS_THRESHOLD_BRIX
 from .control_policy import execute_virtual_control
 from .fault_image_storage import FaultImage, FaultImageStorage
@@ -82,7 +84,11 @@ class InspectionService:
         self._quality_confidence_threshold = quality_confidence_threshold
         self._inference_business_deadline_ms = inference_business_deadline_ms
         self._late_result_manager = late_result_manager
-        self._bin_mapping_repository = bin_mapping_repository
+        self._bin_mapping_lkg = (
+            LkgBinMapping(bin_mapping_repository)
+            if bin_mapping_repository is not None
+            else None
+        )
         self._persistence = persistence
         self._fault_image_storage = fault_image_storage
 
@@ -165,7 +171,7 @@ class InspectionService:
                 decision=decision,
                 sweetness_band=sweetness_band,
             )
-        except BinMappingConfigurationError as exc:
+        except (BinMappingConfigurationError, BinMappingUnavailableError) as exc:
             processing_errors.append(
                 _error_record(
                     component="bin_mapping",
@@ -395,20 +401,20 @@ class InspectionService:
         decision: InspectionDecision,
         sweetness_band: str | None,
     ) -> tuple[str, str]:
-        repository = self._bin_mapping_repository
-        if repository is None:
+        lkg = self._bin_mapping_lkg
+        if lkg is None:
             raise BinMappingConfigurationError(
                 "bin mapping Repository가 설정되지 않았습니다"
             )
 
-        reinspection_bin = await asyncio.to_thread(repository.find_reinspection_bin)
+        snapshot = await asyncio.to_thread(lkg.resolve)
+        reinspection_bin = snapshot.reinspection_bin
         if decision.inspection_status is InspectionStatus.REINSPECTION_REQUIRED:
             return reinspection_bin, reinspection_bin
         if inference_response is None or sweetness_band is None:
             raise BinMappingConfigurationError("정상 배차에 필요한 판정값이 없습니다")
 
-        normal_bin = await asyncio.to_thread(
-            repository.find_normal_bin,
+        normal_bin = snapshot.normal_bin(
             crop_type=inference_response.crop_type,
             cultivar=inference_response.predicted_cultivar,
             quality_grade=inference_response.predicted_grade,
