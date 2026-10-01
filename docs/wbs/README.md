@@ -22,6 +22,7 @@
 | 학습·모델 비교 | DM-05~06 | [모델 스택](reference/DM/model-stack.md), [가상 당도 조사](reference/DM/virtual-brix-plan.md) |
 | 추론·배포 | DM-07 | [연동 계약 공지](협업공지/모델-추론-계약-공지.md) |
 | 신뢰도·성능 | DM-08 | [목표 CPU 시험 절차](reference/DM/server-acceptance.md) |
+| 품질 추세 통계(제안) | DM | [지표 정의](reference/DM/quality-trend-metrics.md) |
 | 최종 평가·모델 카드 | DM-09 | [v2 카드(현재 서비스 모델)](reference/DM/model-card-v2.md), [v1 카드](reference/DM/model-card.md), [카드 양식](reference/DM/model-card-template.md) |
 | 백엔드 | BE-01~06 | [백엔드 스택](reference/BE/backend-stack.md) |
 | 프론트엔드 | FE-01~10, [종합 정리](Frontend-작업-종합정리.md) | [프론트 스택](reference/FE/frontend-stack.md), [관제 API 인계](협업공지/Frontend-관제-API-계약-인계.md) |
