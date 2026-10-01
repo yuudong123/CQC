@@ -11,7 +11,7 @@ Test 사과(가중치가 학습하지 않은 사과)에서 나온 묶음을 나�
 
 사용:
     python scripts/evaluate_demo_bundles.py --mode local \\
-        --model-dir models/cqc-apple-separate12-focal-v2-candidate --output-dir outputs/demo-dry-run
+        --model-dir models/selected --output-dir outputs/demo-dry-run
     python scripts/evaluate_demo_bundles.py --mode http --url http://127.0.0.1:8001/v1/predict \\
         --output-dir outputs/demo-dry-run-http --limit 100
 """

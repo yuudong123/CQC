@@ -181,7 +181,7 @@ DM-09의 최종 학습, Test 1회, 실패 분석, 모델 카드와 패키지 기
 
 ```python
 # notebooks/04_model_verification.ipynb에서 실행
-verify_candidate_package(package=Path("models/cqc-apple-separate12-focal-v2-candidate"), output=Path("outputs/candidate-v2-smoke.json"))
+verify_candidate_package(package=Path("models/selected"), output=Path("outputs/candidate-v2-smoke.json"))
 ```
 
 백엔드 담당자는 후보 버전을 명시해 연동 시험에 사용할 수 있다. 입력 계약은 기존 대표 12장·inspection_id·metadata를 유지한다. 서버 상시 실행·운영 모델 교체는 이번 작업에서 하지 않았다.

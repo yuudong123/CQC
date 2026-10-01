@@ -4,8 +4,8 @@ __pycache__
 data
 
 models/*
-!models/cqc-apple-separate12-focal-v2-candidate/
-!models/cqc-apple-separate12-focal-v2-candidate/**
+!models/selected/
+!models/selected/**
 
 outputs
 notebooks

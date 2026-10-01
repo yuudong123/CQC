@@ -44,7 +44,7 @@ web (입찰·배송 관제) → logistics-api → MongoDB
 | `tests/` | 데이터·모델·API·통합 흐름 검증 코드 |
 | `configs/` | 분할, 전처리, 모델과 실행 설정 |
 | `scripts/` | 데이터 준비, 학습, 평가와 실행 보조 스크립트 |
-| `models/` | 로컬 모델 파일과 체크포인트. Git 제외 |
+| `models/` | 모델 패키지(`selected`=서비스 모델, `model_<버전·특징>`=버전별). Git 추적. 학습 체크포인트는 `outputs/`(Git 제외) |
 | `outputs/` | 로컬 평가표, 그래프와 실험 산출물. Git 제외 |
 
 ## 현재 상태와 문서
