@@ -18,6 +18,8 @@ import {
 import {
   FAULTS,
   imageIndexForJob,
+  LINE_INTERVALS,
+  recentThroughput,
   csvCell,
   kst,
   periodPoints,
@@ -292,6 +294,11 @@ export default function QualityConsole({
   const disabled = pending || (remote && (stale || !snapshot));
   const allowControl =
     !remote || (!!snapshot?.capabilities.control && state.concurrency !== undefined);
+  const intervalOptions = remote
+    ? (snapshot?.capabilities.intervals ?? [])
+    : LINE_INTERVALS;
+  const allowSpeed =
+    !remote || (intervalOptions.length > 0 && state.intervalMs !== undefined);
   const allowFaults =
     !remote || (!!snapshot?.capabilities.faults && state.scope !== undefined);
   const [tab, setTab] = useState<Tab>(null);
@@ -507,7 +514,7 @@ export default function QualityConsole({
           },
           {
             label: "현재 처리량",
-            value: `${state.throughput ?? 0}건/초`,
+            value: `${recentThroughput(state.points).toFixed(1)}건/초`,
             icon: "clock",
           },
           { label: "진행 중", value: `${state.jobs.length}건`, icon: "camera" },
@@ -520,7 +527,7 @@ export default function QualityConsole({
           action={
             <Badge tone={state.running ? "success" : "warning"}>
               {state.running ? "입력 중" : "정지"}
-              {!remote && " · 2개/초"}
+              {state.intervalMs !== undefined && ` · ${state.intervalMs / 1000}초 간격`}
               {remote && state.concurrency !== undefined && (
                 <> · {state.concurrency === 1 ? "순차" : `${state.concurrency}개 병렬`}</>
               )}
@@ -885,6 +892,26 @@ export default function QualityConsole({
               </p>
               <div className="qc-actions">
                 <label>
+                  라인 속도{" "}
+                  <select
+                    aria-label="라인 속도"
+                    value={state.intervalMs ?? ""}
+                    disabled={disabled || !allowSpeed}
+                    onChange={(event) =>
+                      action(
+                        configure({ intervalMs: Number(event.target.value) }),
+                      )
+                    }
+                  >
+                    {!allowSpeed && <option value="">제공 안 됨</option>}
+                    {intervalOptions.map((value) => (
+                      <option key={value} value={value}>
+                        {value / 1000}초마다 1묶음
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
                   처리 방식{" "}
                   <select
                     aria-label="동시 처리 수"
@@ -946,7 +973,9 @@ export default function QualityConsole({
               </button>
               <p className="qc-muted">
                 진행 중인 요청은 접수 당시 설정으로 완료됩니다. 실제 서비스의
-                동시 처리 수는 서버가 제공한 허용 목록을 따릅니다.
+                동시 처리 수는 서버가 제공한 허용 목록을 따릅니다. 라인 속도는
+                사과 묶음 투입을 시작하는 간격이며, 한 건 처리가 더 오래 걸리면
+                끝나는 대로 다음 묶음을 넣습니다.
               </p>
             </>
           )}

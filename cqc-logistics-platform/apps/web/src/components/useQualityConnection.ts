@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { initialRuntime, step, classifyResult } from "@/lib/quality-runtime";
+import { DEMO_INPUT_INTERVAL_MS, initialRuntime, step, classifyResult } from "@/lib/quality-runtime";
 import {
   getSnapshot,
   parseSnapshot,
@@ -54,19 +54,21 @@ export function useQualityConnection(mode: "demo" | "api") {
     let controller: AbortController | undefined;
     const clockTimer = setInterval(() => setClock(Date.now()), 1000);
     if (mode === "demo") {
-      const timer = setInterval(
-        () => {
-          const previous = demoState.current;
-          const next = step(previous, Date.now(), 500);
-          imageStore.current.advance(previous, next);
-          demoState.current = next; update(next);
-          setFaultImages([...imageStore.current.items]);
-        },
-        500,
-      );
+      // 라인 속도가 바뀌면 다음 투입부터 새 간격을 쓰도록 매번 다시 예약한다.
+      const interval = () => demoState.current.intervalMs ?? DEMO_INPUT_INTERVAL_MS;
+      let timer: ReturnType<typeof setTimeout>;
+      const tick = () => {
+        const previous = demoState.current;
+        const next = step(previous, Date.now(), interval(), true);
+        imageStore.current.advance(previous, next);
+        demoState.current = next; update(next);
+        setFaultImages([...imageStore.current.items]);
+        timer = setTimeout(tick, interval());
+      };
+      timer = setTimeout(tick, interval());
       return () => {
         mounted.current = false;
-        clearInterval(timer);
+        clearTimeout(timer);
         clearInterval(clockTimer);
       };
     }
