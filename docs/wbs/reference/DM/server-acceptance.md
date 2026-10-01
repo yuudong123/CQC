@@ -24,7 +24,7 @@ WBS의 DM-06·DM-08 완료 조건인 서버컴(RAM 16GB) 환경의 평균·최�
 - 필요 파일: `model.json`, `model.pt`를 **같은 디렉터리**에 둔다.
 - `model.pt` SHA-256: `b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a`.
 - 데이터 담당 보유 경로: 노트북 `C:\CQC\models\model_v2-focal-uncalibrated` (보정 전). 현재 서비스 모델은 `models/selected`(보정본 `cal-20260930`)다.
-- 모델 바이너리는 Git에서 제외돼 있다. Jenkins 실행 전에 위 두 파일을 학원 서버의 Jenkins 작업공간 또는 별도 모델 디렉터리에 전달해야 한다. `model.json`의 해시와 실제 바이너리 해시가 다르면 시험이 중단된다. CI가 임의 체크포인트를 내려받거나 대체하지 않는다.
+- 모델 패키지는 2026-10-01부터 Git으로 관리한다(`models/selected/`). Jenkins 작업공간에 별도로 전달하지 않는다. `model.json`의 해시와 실제 바이너리 해시가 다르면 시험이 중단된다. CI가 임의 체크포인트를 내려받거나 대체하지 않는다.
 
 ### Linux Jenkins 에이전트: Docker에서 모델 수용시험
 

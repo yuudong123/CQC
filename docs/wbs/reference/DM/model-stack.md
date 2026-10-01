@@ -25,7 +25,7 @@
 - 추론 서비스: `python -m src.inference.api --model-dir models/<version>`
 - 생성 위치: `data/processed/manifest.csv`, `data/processed/manifest-summary.json`
 - 무결성 결과: `data/processed/image-quality-report.json`
-- 모델 파일·체크포인트·생성 매니페스트는 Git에서 제외
+- 모델 패키지는 `models/`에서 Git 관리, 학습 체크포인트·생성 매니페스트는 Git에서 제외
 
 ## v2 후보 (현재 서비스 모델)
 

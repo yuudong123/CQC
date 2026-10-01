@@ -36,7 +36,7 @@ CQC/
 - `src/api/`: README에서 Backend 영역으로 정의되어 있으므로 Backend 코드의 기준 위치로 사용한다.
 - `src/inference/`: 데이터·모델 담당자의 HTTP 추론 서비스 영역이다. Backend HTTP Client를 넣지 않는다.
 - `src/models/`: 시스템 모델 구조·코드 영역이다. SQLAlchemy DB Model을 넣지 않는다.
-- 루트 `models/`: 로컬 모델 파일·체크포인트 등 Git 제외 산출물 영역이다.
+- 루트 `models/`: 모델 패키지(Git 추적). 서비스 모델은 `models/selected/`.
 - `src/data/`, `src/training/`, `src/web/`: 기존 담당 영역을 유지한다.
 
 Backend 작업을 이유로 위 폴더를 이동·병합·변경하지 않는다.

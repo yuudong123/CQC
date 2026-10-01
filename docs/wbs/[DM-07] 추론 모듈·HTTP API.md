@@ -26,7 +26,7 @@
 
 ## 2026-09-23: 후속 후보 HTTP 계약·배포 인계
 
-- 후보 `cqc-apple-separate12-focal-v2-candidate`를 로컬에도 수집했다. 모델 바이너리는 Git 제외를 유지한다.
+- 후보 `cqc-apple-separate12-focal-v2-candidate`를 로컬에도 수집했다. 모델 패키지는 2026-10-01부터 `models/`에서 Git으로 관리한다.
 - `scripts/verify_inference_http.py`가 임시 loopback Uvicorn 서버를 실행하고 종료 시 해당 자식 프로세스만 정리한다.
 - 합성 PNG 12장 정상 200, 누락 대응 8장 200, 13장 413, metadata 개수 불일치 422, 잘못된 MIME 415, 손상 이미지 422를 실제 HTTP로 확인했다.
 - `origin/dev`의 `2490cfe7f9a75fcbd75acb36ccf99aad758e45d9`에서 추출한 변경 없는 Backend `InferenceResponse`로 정상 응답 검증을 통과했다. 백엔드 소스는 수정하지 않았다.
