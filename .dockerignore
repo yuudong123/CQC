@@ -1,4 +1,5 @@
 .git
+.cqc-deploy-state
 .venv
 __pycache__
 data
