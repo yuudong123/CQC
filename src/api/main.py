@@ -75,6 +75,7 @@ def create_app(
     live_inspections = LiveInspectionStore(
         limit=runtime_settings.live_preview_limit,
         max_age_seconds=runtime_settings.live_preview_max_age_seconds,
+        grace_seconds=runtime_settings.live_preview_grace_seconds,
     )
     runtime_inspection_service = inspection_service or InspectionService(
         inference_client,
@@ -101,6 +102,8 @@ def create_app(
         ),
         fault_image_storage=fault_image_storage,
         live_inspections=live_inspections,
+        live_preview_max_dimension=runtime_settings.live_preview_max_dimension,
+        live_preview_jpeg_quality=runtime_settings.live_preview_jpeg_quality,
     )
     simulator_client = (
         SimulatorClient(
