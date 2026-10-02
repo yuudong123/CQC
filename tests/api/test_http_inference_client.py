@@ -7,6 +7,15 @@ from src.api.schemas.inference import InferenceRequest
 from src.api.schemas.inspections import InspectionImageMetadata
 
 
+def test_http_client_has_separate_connect_timeout() -> None:
+    client = HttpInferenceClient(
+        "http://inference:8001/v1/predict", timeout_ms=2000, connect_timeout_ms=200
+    )
+    assert client._client.timeout.connect == 0.2
+    assert client._client.timeout.read == 2.0
+    asyncio.run(client.close())
+
+
 def test_http_client_sends_multipart_and_validates_response() -> None:
     png = b"\x89PNG\r\n\x1a\nexample"
 

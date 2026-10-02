@@ -753,6 +753,8 @@ def _validate_inference_response(
 def _inference_failure_reason(exc: Exception) -> InspectionDecisionReason:
     if isinstance(exc, httpx.HTTPStatusError):
         return InspectionDecisionReason.INFERENCE_HTTP_ERROR
+    if isinstance(exc, (httpx.ConnectError, httpx.ConnectTimeout)):
+        return InspectionDecisionReason.INFERENCE_CONNECTION_ERROR
     if isinstance(exc, httpx.TimeoutException):
         return InspectionDecisionReason.INFERENCE_DEADLINE_EXCEEDED
     if isinstance(exc, httpx.RequestError):

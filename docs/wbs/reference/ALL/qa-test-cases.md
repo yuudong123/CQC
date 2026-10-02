@@ -39,7 +39,7 @@
 |---|---|---|---|
 | KI-1 | MySQL 중단 중 `POST /v1/inspections`가 HTTP 500으로 선별이 멈춤 | 코드 반영(#37 LKG: 마지막 정상 bin mapping 사용). 실제 MySQL 중단 검증은 #45 | QA-INS-13, QA-SIM-09 |
 | KI-2 | snapshot `throughput`이 진행 중인 1초 구간을 써서 낮게 나옴 | 해결(#37, 직전 완료 구간). 단 KI-6 참고 | QA-OPS-15 |
-| KI-3 | Inference 컨테이너 정지 시 오류 코드가 `INFERENCE_TIMEOUT`으로 기록 | 열림 (연결 실패가 500ms 안에 나지 않으면 시간 초과로 분류) | QA-INS-11 |
+| KI-3 | Inference 컨테이너 정지 시 오류 코드가 `INFERENCE_TIMEOUT`으로 기록 | 해결(#67, 연결 단계 timeout 기본 200ms 및 연결 실패 분류 적용; 10-02 로컬 Compose 재검증) | QA-INS-11 |
 | KI-4 | snapshot `components.Inference`가 항상 `unknown` | 해결(#37, Inference `/health` 확인. 학원 서버 `healthy` 확인) | QA-WEB-07 |
 | KI-5 | Simulator가 보낸 검사 1건이 실패하면 Simulator 전체가 정지 | 해결(#37, 실패 건만 기록하고 계속 전송) | QA-SIM-09 |
 | KI-6 | 입력 간격 2초에서 1초 단위 `throughput`이 0 또는 1만 나와 `현재 처리량`이 0건/초로 자주 보임 | 열림 (최근 10초 평균으로 표시, #49) | QA-OPS-15, QA-WEB-05 |
@@ -487,10 +487,10 @@ done
 
 #### QA-INS-11 Inference 컨테이너 정지 · P1
 
-- 근거: FR-39 (알려진 결함 KI-3)
+- 근거: FR-39 (KI-3 해결, #67)
 - 환경: E2
 - 절차: `docker compose stop inference` → `send $BE/v1/inspections $RUN-ins11 $DEMO/demo-601031008000-000 15.0` → `docker compose start inference`
-- 기대 결과: 재검사 bin, `exclude_from_normal_stats=true`, 이력 `errorCode=INFERENCE_ERROR`·`processingStatus=ERROR`. 현재는 `INFERENCE_TIMEOUT`으로 기록될 수 있다(KI-3).
+- 기대 결과: HTTP 200, `decision_reason=INFERENCE_CONNECTION_ERROR`, 재검사 bin, `exclude_from_normal_stats=true`, 이력 `errorCode=INFERENCE_ERROR`·`processingStatus=ERROR`·`excluded=true`. TCP 연결 실패 또는 연결 단계 timeout은 `INFERENCE_ERROR`로, 연결 후 응답 지연과 500ms 업무 기한 초과는 `INFERENCE_TIMEOUT`으로 분류한다.
 - 추가 확인: Inference 재시작 후 healthy가 되면 Backend 재시작 없이 다음 정상 요청이 `COMPLETED`.
 
 #### QA-INS-12 Inference 시간 초과 · P1
