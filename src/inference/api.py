@@ -19,6 +19,8 @@ import time
 from pathlib import Path
 from typing import Any
 
+from src.logging_config import configure_service_logging
+
 from .predictor import Predictor
 from .schemas import HealthResponse, PredictionResponse
 
@@ -159,7 +161,19 @@ def main(argv: list[str] | None = None) -> int:
         import uvicorn
     except ImportError as exc:
         raise RuntimeError("uvicorn 실행 의존성을 설치해야 합니다") from exc
-    uvicorn.run(create_app(Predictor(args.model_dir, device=args.device, decode_workers=args.decode_workers)), host=args.host, port=args.port)
+    configure_service_logging()
+    uvicorn.run(
+        create_app(
+            Predictor(
+                args.model_dir,
+                device=args.device,
+                decode_workers=args.decode_workers,
+            )
+        ),
+        host=args.host,
+        port=args.port,
+        log_config=None,
+    )
     return 0
 
 
