@@ -49,6 +49,7 @@ from .inspection_policy import (
 )
 from .late_results import LateResultManager
 from .live_inspections import LiveInspectionStore
+from .live_preview_images import build_live_previews
 
 logger = logging.getLogger(__name__)
 _FAULT_IMAGE_REASONS = frozenset(
@@ -81,6 +82,8 @@ class InspectionService:
         persistence: InspectionPersistence | None = None,
         fault_image_storage: FaultImageStorage | None = None,
         live_inspections: LiveInspectionStore | None = None,
+        live_preview_max_dimension: int = 240,
+        live_preview_jpeg_quality: int = 90,
     ) -> None:
         self._inference_client = inference_client
         self._virtual_control = virtual_control
@@ -96,6 +99,8 @@ class InspectionService:
         self._persistence = persistence
         self._fault_image_storage = fault_image_storage
         self._live_inspections = live_inspections
+        self._live_preview_max_dimension = live_preview_max_dimension
+        self._live_preview_jpeg_quality = live_preview_jpeg_quality
 
     async def shutdown(self) -> None:
         """서버 종료 시 남아 있는 late Inference task를 정리한다."""
@@ -130,7 +135,7 @@ class InspectionService:
         finally:
             if self._live_inspections is not None:
                 try:
-                    self._live_inspections.remove(preview_token)
+                    self._live_inspections.complete(preview_token)
                 except Exception:
                     logger.exception("처리 중 이미지 정리 실패: %s", inspection_id)
 
@@ -183,13 +188,16 @@ class InspectionService:
 
         if self._live_inspections is not None and image_payloads:
             try:
+                previews = await asyncio.to_thread(
+                    build_live_previews,
+                    image_payloads,
+                    max_dimension=self._live_preview_max_dimension,
+                    jpeg_quality=self._live_preview_jpeg_quality,
+                )
                 self._live_inspections.publish(
                     preview_token,
                     inspection_id=inspection_id,
-                    images=[
-                        (content, image.content_type or "")
-                        for content, image in zip(image_payloads, images, strict=True)
-                    ],
+                    images=previews,
                     started_ms=int(created_at.timestamp() * 1000),
                 )
             except Exception:

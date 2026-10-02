@@ -41,6 +41,9 @@ class Settings(BaseSettings):
     fault_image_limit: int = Field(default=100, ge=1)
     live_preview_limit: int = Field(default=64, ge=1, le=64)
     live_preview_max_age_seconds: int = Field(default=60, ge=1)
+    live_preview_grace_seconds: int = Field(default=3, ge=0)
+    live_preview_max_dimension: int = Field(default=240, ge=1, le=1024)
+    live_preview_jpeg_quality: int = Field(default=90, ge=1, le=95)
     simulator_internal_url: str | None = None
     simulator_internal_timeout_ms: int = Field(default=30_000, ge=1)
     simulator_state_timeout_ms: int = Field(default=1_500, ge=1)

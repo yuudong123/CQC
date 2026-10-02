@@ -52,6 +52,9 @@ def test_policy_settings_use_confirmed_defaults() -> None:
     assert settings.inference_business_deadline_ms == 500
     assert settings.inference_hard_timeout_ms == 2000
     assert settings.max_late_tasks == 4
+    assert settings.live_preview_grace_seconds == 3
+    assert settings.live_preview_max_dimension == 240
+    assert settings.live_preview_jpeg_quality == 90
 
 
 def test_history_delete_batch_must_be_below_limit() -> None:
