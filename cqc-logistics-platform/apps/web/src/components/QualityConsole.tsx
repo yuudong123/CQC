@@ -610,321 +610,332 @@ export default function QualityConsole({
           },
         ]}
       />
-      <div className="qc-main">
-        <Panel
-          title={remote ? "처리 중 사과" : "사과 그룹 · 12장 동시 촬영"}
-          icon="camera"
-          action={
-            <Badge tone={state.running ? "success" : "warning"}>
-              {state.running ? "입력 중" : "정지"}
-              {state.intervalMs !== undefined && ` · ${state.intervalMs / 1000}초 간격`}
-              {remote && state.concurrency !== undefined && (
-                <> · {state.concurrency === 1 ? "순차" : `${state.concurrency}개 병렬`}</>
-              )}
-            </Badge>
-          }
-        >
-          <div className="qc-scroll qc-jobs">
-            {state.jobs.map((job) => (
-              <article key={job.id} className="qc-job">
-                {remote && job.previews?.length ? (
-                  <div className="qc-frame-grid" aria-label={`${job.id} 처리 중 이미지 ${job.previews.length}장`}>
-                    {job.previews.map((frame) => (
-                      <div className="qc-live-frame" key={frame.index}>
-                        <QualityImage
-                          remote
-                          src={frame.previewUrl}
-                          alt={`${job.id} 프레임 ${frame.index + 1}`}
-                        />
-                        <span>{String(frame.index + 1).padStart(2, "0")}</span>
-                      </div>
-                    ))}
+      <div className="qc-body">
+        <div className="qc-col">
+          <Panel
+            title={remote ? "처리 중 사과" : "사과 그룹 · 12장 동시 촬영"}
+            className="qc-jobs-panel"
+            icon="camera"
+            action={
+              <Badge tone={state.running ? "success" : "warning"}>
+                {state.running ? "입력 중" : "정지"}
+                {state.intervalMs !== undefined && ` · ${state.intervalMs / 1000}초 간격`}
+                {remote && state.concurrency !== undefined && (
+                  <> · {state.concurrency === 1 ? "순차" : `${state.concurrency}개 병렬`}</>
+                )}
+              </Badge>
+            }
+          >
+            <div className="qc-scroll qc-jobs">
+              {state.jobs.map((job) => (
+                <article key={job.id} className="qc-job">
+                  {remote && job.previews?.length ? (
+                    <div className="qc-frame-area"><div className="qc-frame-grid" aria-label={`${job.id} 처리 중 이미지 ${job.previews.length}장`}>
+                      {job.previews.map((frame) => (
+                        <div className="qc-live-frame" key={frame.index}>
+                          <QualityImage
+                            remote
+                            src={frame.previewUrl}
+                            alt={`${job.id} 프레임 ${frame.index + 1}`}
+                          />
+                          <span>{String(frame.index + 1).padStart(2, "0")}</span>
+                        </div>
+                      ))}
+                    </div></div>
+                  ) : remote && <div className="qc-job-image">
+                    <QualityImage
+                      key={job.id}
+                      remote={remote}
+                      src={
+                        remote
+                          ? job.previewUrl
+                          : sampleApples[imageIndexForJob(job.index)]
+                              .images[0]
+                      }
+                      alt={`${job.id} 처리 중 이미지`}
+                    />
+                  </div>}
+                  {!remote && <div className="qc-frame-area"><div className="qc-frame-grid" aria-label={`${job.id} 동일 사과 12장`}>
+                    {sampleApples[imageIndexForJob(job.index)].images.map((src, frame) => <div key={src}>
+                      <Image src={src} alt={`${job.id} 프레임 ${frame + 1}`} width={120} height={120} unoptimized />
+                      <span>{String(frame + 1).padStart(2, "0")}</span>
+                    </div>)}
+                  </div></div>}
+                  <div className="qc-job-info">
+                    <strong title={job.id}>{job.id}</strong>
+                    {!remote && <small>그룹 {sampleApples[imageIndexForJob(job.index)].group}</small>}
+                    <span>{remote ? "추론 처리 중" : "12장 입력 · 판정 시연"}</span>
+                    <small>
+                      {job.faults.length
+                        ? job.faults.map((code) => FAULTS[code]).join(" · ")
+                        : remote && snapshot?.source === "backend"
+                          ? "처리 중"
+                          : "정상 시연"}
+                    </small>
                   </div>
-                ) : remote && <div className="qc-job-image">
-                  <QualityImage
-                    key={job.id}
-                    remote={remote}
-                    src={
-                      remote
-                        ? job.previewUrl
-                        : sampleApples[imageIndexForJob(job.index)]
-                            .images[0]
-                    }
-                    alt={`${job.id} 처리 중 이미지`}
-                  />
-                </div>}
-                {!remote && <div className="qc-frame-grid" aria-label={`${job.id} 동일 사과 12장`}>
-                  {sampleApples[imageIndexForJob(job.index)].images.map((src, frame) => <div key={src}>
-                    <Image src={src} alt={`${job.id} 프레임 ${frame + 1}`} width={120} height={120} unoptimized />
-                    <span>{String(frame + 1).padStart(2, "0")}</span>
-                  </div>)}
-                </div>}
-                <div>
-                  <strong>{job.id}</strong>
-                  {!remote && <small> · 그룹 {sampleApples[imageIndexForJob(job.index)].group}</small>}
-                  <p>{remote ? "추론 처리 중" : "12장 입력 · 판정 시연"}</p>
+                </article>
+              ))}
+              {!state.jobs.length && (
+                <p className="qc-empty">처리 중인 사과가 없습니다.</p>
+              )}
+            </div>
+          </Panel>
+          <Panel
+            title="재검사·오류 사과"
+            className="qc-exception-panel"
+            icon="alert"
+            action={
+              <div className="qc-segment" role="group" aria-label="재검사·오류 구분">
+                {(
+                  [
+                    ["all", "전체"],
+                    ["reinspection", "재검사"],
+                    ["error", "오류"],
+                  ] as const
+                ).map(([key, label]) => (
+                  <button
+                    key={key}
+                    aria-pressed={exceptionKind === key}
+                    onClick={() => setExceptionKind(key)}
+                  >
+                    {label} {exceptionCount[key]}
+                  </button>
+                ))}
+              </div>
+            }
+          >
+            <div className="qc-scroll">
+              <p className="qc-muted qc-exception-note">
+                최근 판정 {state.history.length}건 중 · 신뢰도 기준 품종{" "}
+                {CONFIDENCE_MIN.cultivar}% / 품질 {CONFIDENCE_MIN.quality}% 미만은
+                재검사 · 전체 기간은 검사 이력
+              </p>
+              <table>
+                <thead>
+                  <tr>
+                    <th>시각</th>
+                    <th>구분</th>
+                    <th>사유</th>
+                    <th>품종 / 등급</th>
+                    <th>품종 / 품질 신뢰도</th>
+                    <th>검사 ID</th>
+                    <th>목적지</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {shownExceptions.slice(0, 50).map(({ row, kind, reason, lowCultivar, lowQuality }) => (
+                    <tr key={row.id}>
+                      <td>{row.time}</td>
+                      <td>
+                        <Badge tone={kind === "error" ? "danger" : "warning"}>
+                          {kind === "error" ? "오류" : "재검사"}
+                        </Badge>
+                      </td>
+                      <td>{reason}</td>
+                      <td>
+                        {row.excluded ? "—" : `${row.variety} / ${row.grade}`}
+                      </td>
+                      <td>
+                        {row.excluded ? (
+                          "—"
+                        ) : (
+                          <>
+                            <span className={lowCultivar ? "qc-low" : undefined}>
+                              {formatPercent(row.cultivarConfidence)}
+                            </span>
+                            {" / "}
+                            <span className={lowQuality ? "qc-low" : undefined}>
+                              {formatPercent(row.confidence)}
+                            </span>
+                          </>
+                        )}
+                      </td>
+                      <td title={row.id}>{shortId(row.id)}</td>
+                      <td>{row.bin}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {!shownExceptions.length && (
+                <p className="qc-empty">
+                  {state.history.length
+                    ? `최근 판정 ${state.history.length}건 중 ${exceptionKind === "error" ? "오류" : exceptionKind === "reinspection" ? "재검사" : "재검사·오류"} 없음`
+                    : "저장된 판정이 없습니다."}
+                </p>
+              )}
+            </div>
+          </Panel>
+        </div>
+        <div className="qc-col">
+          <Panel title="시스템 상태" className="qc-status-panel" icon="box" action={<small>1초 갱신</small>}>
+            <div className="qc-scroll">
+              <div className="qc-components">
+                {(remote && snapshot
+                  ? Object.entries(snapshot.components).map(
+                      ([name, component]) => [
+                        name,
+                        component.detail || component.status,
+                      ],
+                    )
+                  : [
+                      [
+                        "Simulator",
+                        state.running ? "예시 입력 중" : "예시 입력 정지",
+                      ],
+                      [
+                        "Inference",
+                        activeFaults.some((code) => code.startsWith("INFERENCE"))
+                          ? "장애 시연"
+                          : "예시 응답",
+                      ],
+                      ["Backend", health],
+                      ["MySQL", state.dbDown ? "저장 실패 시연" : "미연결"],
+                    ]
+                ).map(([name, status]) => (
+                  <div key={name}>
+                    <strong>{name}</strong>
+                    <Badge
+                      tone={
+                        status.includes("실패") || status.includes("장애")
+                          ? "danger"
+                          : "neutral"
+                      }
+                    >
+                      {status}
+                    </Badge>
+                    {remote &&
+                      snapshot?.components[
+                        name as keyof typeof snapshot.components
+                      ].lastSeenAt && (
+                        <small>
+                          수신{" "}
+                          {kst(
+                            snapshot.components[
+                              name as keyof typeof snapshot.components
+                            ].lastSeenAt!,
+                          ).slice(11, 19)}
+                        </small>
+                      )}
+                  </div>
+                ))}
+              </div>
+              <h3>설비·연동 오류</h3>
+              <p className="qc-muted">
+                추론·제어·저장 결과 기준 · 사과별 재검사는 아래 목록
+              </p>
+              {state.errors.slice(0, 8).map((row) => (
+                <div className="qc-error" key={row.id}>
+                  <strong>{row.id}</strong>
+                  <time>{row.time}</time>
+                  <p>{row.faults.map((code) => FAULTS[code]).join(" · ")}</p>
                   <small>
-                    {job.faults.length
-                      ? job.faults.map((code) => FAULTS[code]).join(" · ")
-                      : remote && snapshot?.source === "backend"
-                        ? "처리 중"
-                        : "정상 시연"}
+                    제어:{" "}
+                    {row.control === "NO_RESPONSE"
+                      ? "전송 실패"
+                      : row.control === "NOT_REQUESTED"
+                        ? "미요청"
+                      : row.control === "FALLBACK"
+                        ? "재검사 대체 1회"
+                        : row.control === "REJECTED"
+                          ? "거부"
+                          : row.control === "FAILED"
+                            ? "실패"
+                            : "성공"}{" "}
+                    · 저장: {row.persistence === "SAVED" ? "완료" : "실패"}
                   </small>
                 </div>
-              </article>
-            ))}
-            {!state.jobs.length && (
-              <p className="qc-empty">처리 중인 사과가 없습니다.</p>
-            )}
-          </div>
-        </Panel>
-        <Panel title="시스템 상태" icon="box" action={<small>1초 갱신</small>}>
-          <div className="qc-scroll">
-            <div className="qc-components">
-              {(remote && snapshot
-                ? Object.entries(snapshot.components).map(
-                    ([name, component]) => [
-                      name,
-                      component.detail || component.status,
-                    ],
-                  )
-                : [
-                    [
-                      "Simulator",
-                      state.running ? "예시 입력 중" : "예시 입력 정지",
-                    ],
-                    [
-                      "Inference",
-                      activeFaults.some((code) => code.startsWith("INFERENCE"))
-                        ? "장애 시연"
-                        : "예시 응답",
-                    ],
-                    ["Backend", health],
-                    ["MySQL", state.dbDown ? "저장 실패 시연" : "미연결"],
-                  ]
-              ).map(([name, status]) => (
-                <div key={name}>
-                  <strong>{name}</strong>
-                  <Badge
-                    tone={
-                      status.includes("실패") || status.includes("장애")
-                        ? "danger"
-                        : "neutral"
-                    }
-                  >
-                    {status}
-                  </Badge>
-                  {remote &&
-                    snapshot?.components[
-                      name as keyof typeof snapshot.components
-                    ].lastSeenAt && (
-                      <small>
-                        수신{" "}
-                        {kst(
-                          snapshot.components[
-                            name as keyof typeof snapshot.components
-                          ].lastSeenAt!,
-                        ).slice(11, 19)}
-                      </small>
-                    )}
-                </div>
               ))}
+              {!state.errors.length && <p className="qc-muted">설비·연동 오류 없음</p>}
             </div>
-            <h3>설비·연동 오류</h3>
-            <p className="qc-muted">
-              추론·제어·저장 결과 기준 · 사과별 재검사는 아래 목록
-            </p>
-            {state.errors.slice(0, 8).map((row) => (
-              <div className="qc-error" key={row.id}>
-                <strong>{row.id}</strong>
-                <time>{row.time}</time>
-                <p>{row.faults.map((code) => FAULTS[code]).join(" · ")}</p>
-                <small>
-                  제어:{" "}
-                  {row.control === "NO_RESPONSE"
-                    ? "전송 실패"
-                    : row.control === "NOT_REQUESTED"
-                      ? "미요청"
-                    : row.control === "FALLBACK"
-                      ? "재검사 대체 1회"
-                      : row.control === "REJECTED"
-                        ? "거부"
-                        : row.control === "FAILED"
-                          ? "실패"
-                          : "성공"}{" "}
-                  · 저장: {row.persistence === "SAVED" ? "완료" : "실패"}
-                </small>
-              </div>
-            ))}
-            {!state.errors.length && <p className="qc-muted">설비·연동 오류 없음</p>}
-          </div>
-        </Panel>
-      </div>
-      <div className="qc-bottom">
-        <Panel
-          title="재검사·오류 사과"
-          icon="alert"
-          action={
-            <div className="qc-segment" role="group" aria-label="재검사·오류 구분">
-              {(
-                [
-                  ["all", "전체"],
-                  ["reinspection", "재검사"],
-                  ["error", "오류"],
-                ] as const
-              ).map(([key, label]) => (
-                <button
-                  key={key}
-                  aria-pressed={exceptionKind === key}
-                  onClick={() => setExceptionKind(key)}
+          </Panel>
+          <Panel
+            title="처리 현황"
+            className="qc-trend-panel"
+            icon="market"
+            action={
+              <label>
+                기간{" "}
+                <select
+                  aria-label="통계 기간"
+                  value={minutes}
+                  onChange={(event) => setMinutes(Number(event.target.value))}
                 >
-                  {label} {exceptionCount[key]}
-                </button>
-              ))}
-            </div>
-          }
-        >
-          <div className="qc-scroll">
-            <p className="qc-muted qc-exception-note">
-              최근 판정 {state.history.length}건 중 · 신뢰도 기준 품종{" "}
-              {CONFIDENCE_MIN.cultivar}% / 품질 {CONFIDENCE_MIN.quality}% 미만은
-              재검사 · 전체 기간은 검사 이력
-            </p>
-            <table>
-              <thead>
-                <tr>
-                  <th>시각</th>
-                  <th>구분</th>
-                  <th>사유</th>
-                  <th>품종 / 등급</th>
-                  <th>품종 / 품질 신뢰도</th>
-                  <th>검사 ID</th>
-                  <th>목적지</th>
-                </tr>
-              </thead>
-              <tbody>
-                {shownExceptions.slice(0, 50).map(({ row, kind, reason, lowCultivar, lowQuality }) => (
-                  <tr key={row.id}>
-                    <td>{row.time}</td>
-                    <td>
-                      <Badge tone={kind === "error" ? "danger" : "warning"}>
-                        {kind === "error" ? "오류" : "재검사"}
-                      </Badge>
-                    </td>
-                    <td>{reason}</td>
-                    <td>
-                      {row.excluded ? "—" : `${row.variety} / ${row.grade}`}
-                    </td>
-                    <td>
-                      {row.excluded ? (
-                        "—"
-                      ) : (
-                        <>
-                          <span className={lowCultivar ? "qc-low" : undefined}>
-                            {formatPercent(row.cultivarConfidence)}
-                          </span>
-                          {" / "}
-                          <span className={lowQuality ? "qc-low" : undefined}>
-                            {formatPercent(row.confidence)}
-                          </span>
-                        </>
+                  {[1, 5, 10, 30].map((value) => (
+                    <option key={value} value={value}>
+                      {value}분
+                    </option>
+                  ))}
+                </select>
+              </label>
+            }
+          >
+            <div className="qc-scroll qc-trend-body">
+              <div className="qc-trend-main">
+                <div className="qc-period">
+                  <strong>{count}건</strong>
+                  <span>최근 {minutes}분 저장 · 수집된 구간 기준</span>
+                </div>
+                <ThroughputChart
+                  series={trend}
+                  end={trendEnd}
+                  minutes={5}
+                  target={state.intervalMs ? 1000 / state.intervalMs : null}
+                  events={exceptions.map(({ row, kind, reason }) => ({
+                    at: row.timestamp,
+                    kind,
+                    reason,
+                  }))}
+                />
+                <div className="qc-chart-label">
+                  <span>최근 5분 · 20초 이동평균 · 점은 재검사·오류 시점</span>
+                </div>
+              </div>
+              <div className="qc-trend-side">
+                <p>
+                  오늘 품종·품질 집계 대상 {state.today.normal}건 · 시간 초과·추론
+                  오류 제외
+                </p>
+                <div className="qc-distributions">
+                  <RatioBar
+                    label="등급"
+                    values={state.today.grades ?? {}}
+                    total={state.today.normal}
+                  />
+                  <RatioBar
+                    label="품종"
+                    values={state.today.varieties ?? {}}
+                    total={state.today.normal}
+                  />
+                  <div className="qc-trend-foot">
+                    <span>
+                      오늘 재검사 {state.today.reinspection}건 · {reinspectionRatio}% ·
+                      오판 의심{" "}
+                      {Object.values(state.today.suspicions).reduce(
+                        (sum, value) => sum + value,
+                        0,
                       )}
-                    </td>
-                    <td title={row.id}>{shortId(row.id)}</td>
-                    <td>{row.bin}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {!shownExceptions.length && (
-              <p className="qc-empty">
-                {state.history.length
-                  ? `최근 판정 ${state.history.length}건 중 ${exceptionKind === "error" ? "오류" : exceptionKind === "reinspection" ? "재검사" : "재검사·오류"} 없음`
-                  : "저장된 판정이 없습니다."}
-              </p>
-            )}
-          </div>
-        </Panel>
-        <Panel
-          title="처리 현황"
-          icon="market"
-          action={
-            <label>
-              기간{" "}
-              <select
-                aria-label="통계 기간"
-                value={minutes}
-                onChange={(event) => setMinutes(Number(event.target.value))}
-              >
-                {[1, 5, 10, 30].map((value) => (
-                  <option key={value} value={value}>
-                    {value}분
-                  </option>
-                ))}
-              </select>
-            </label>
-          }
-        >
-          <div className="qc-scroll">
-            <div className="qc-period">
-              <strong>{count}건</strong>
-              <span>최근 {minutes}분 저장 · 수집된 구간 기준</span>
+                      건
+                    </span>
+                    <details>
+                      <summary>선별 목적지별 성공 명령</summary>
+                      {Object.entries(state.today.bins ?? {}).map(([key, value]) => (
+                        <p key={key}>
+                          {key} · {value}건
+                        </p>
+                      ))}
+                    </details>
+                    <button onClick={exportStats}>통계 CSV</button>
+                  </div>
+                </div>
+                <p className="qc-muted">
+                  {!remote || snapshot?.source === "reference"
+                    ? "참조 시연 수치이며 실제 모델 성능이 아닙니다."
+                    : "서버 저장 결과 기준 · 시간 초과와 추론 오류는 품종·품질 집계에서 제외"}
+                </p>
+              </div>
             </div>
-            <ThroughputChart
-              series={trend}
-              end={trendEnd}
-              minutes={5}
-              target={state.intervalMs ? 1000 / state.intervalMs : null}
-              events={exceptions.map(({ row, kind, reason }) => ({
-                at: row.timestamp,
-                kind,
-                reason,
-              }))}
-            />
-            <div className="qc-chart-label">
-              <span>최근 5분 · 20초 이동평균 · 점은 재검사·오류 시점</span>
-            </div>
-            <p>
-              오늘 품종·품질 집계 대상 {state.today.normal}건 · 시간 초과·추론
-              오류 제외
-            </p>
-            <div className="qc-distributions">
-              <RatioBar
-                label="등급"
-                values={state.today.grades ?? {}}
-                total={state.today.normal}
-              />
-              <RatioBar
-                label="품종"
-                values={state.today.varieties ?? {}}
-                total={state.today.normal}
-              />
-              <span>
-                오늘 재검사 {state.today.reinspection}건 · {reinspectionRatio}% ·
-                오판 의심{" "}
-                {Object.values(state.today.suspicions).reduce(
-                  (sum, value) => sum + value,
-                  0,
-                )}
-                건
-              </span>
-              <details>
-                <summary>선별 목적지별 성공 명령</summary>
-                {Object.entries(state.today.bins ?? {}).map(([key, value]) => (
-                  <p key={key}>
-                    {key} · {value}건
-                  </p>
-                ))}
-              </details>
-              <button onClick={exportStats}>통계 CSV</button>
-            </div>
-            <p className="qc-muted">
-              {!remote || snapshot?.source === "reference"
-                ? "참조 시연 수치이며 실제 모델 성능이 아닙니다."
-                : "서버 저장 결과 기준 · 시간 초과와 추론 오류는 품종·품질 집계에서 제외"}
-            </p>
-          </div>
-        </Panel>
+          </Panel>
+        </div>
       </div>
       {tab && (
         <Modal
