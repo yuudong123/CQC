@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import csv
 import json
+import selectors
 from itertools import pairwise
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -293,11 +294,31 @@ def test_runner_uses_start_spacing_and_runtime_interval_changes() -> None:
 
 
 @pytest.mark.parametrize(
-    "response_delay, lower, upper", [(0.01, 0.03, 0.12), (0.14, 0.12, 0.27)]
+    "response_delay, expected_gaps",
+    [(0.01, [0.06, 0.05, 0.05, 0.05]), (0.14, [0.15, 0.15, 0.15, 0.15])],
 )
 def test_runner_does_not_accumulate_drift_or_unbounded_backlog(
-    response_delay: float, lower: float, upper: float
+    response_delay: float, expected_gaps: list[float], monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    class SchedulerClock(selectors.SelectSelector):
+        # Advance timer deadlines without waiting for the host's wall clock.
+        now = 0.0
+
+        def select(self, timeout: float | None = None):
+            if timeout is not None:
+                self.now += max(timeout, 0)
+            return super().select(0)
+
+    clock = SchedulerClock()
+    loop = asyncio.SelectorEventLoop(clock)
+    monkeypatch.setattr(loop, "time", lambda: clock.now)
+
+    async def run_inline(function, /, *args, **kwargs):
+        # Disk and executor latency are covered elsewhere, not by this clock test.
+        return function(*args, **kwargs)
+
+    monkeypatch.setattr(asyncio, "to_thread", run_inline)
+
     async def exercise(root: Path) -> None:
         _dataset(root)
         state = SimulatorStateService(interval_ms=50)
@@ -310,7 +331,7 @@ def test_runner_does_not_accumulate_drift_or_unbounded_backlog(
         async def respond(request: httpx.Request) -> httpx.Response:
             nonlocal in_flight, peak
             del request
-            starts.append(monotonic())
+            starts.append(loop.time())
             in_flight += 1
             peak = max(peak, in_flight)
             if len(starts) >= 5:
@@ -329,14 +350,27 @@ def test_runner_does_not_accumulate_drift_or_unbounded_backlog(
                 fault_token="test-token",
                 client=client,
             )
-            runner.start(runner.prepare())
+            prepared = runner.prepare()
+            dataset = prepared[0]
+            original_load = dataset.load
+
+            def load_with_cost(position: int):
+                # A fixed load cost exposes drift from scheduling each interval anew.
+                clock.now += 0.01
+                return original_load(position)
+
+            monkeypatch.setattr(dataset, "load", load_with_cost)
+            runner.start(prepared)
             await asyncio.wait_for(reached.wait(), timeout=4)
             await runner.stop()
             assert peak == 1
             gaps = [right - left for left, right in pairwise(starts)]
-            assert all(lower <= gap <= upper for gap in gaps[:4])
+            assert gaps[:4] == pytest.approx(expected_gaps)
             assert len(starts) <= 6
             assert not runner.failed
 
-    with TemporaryDirectory(prefix="cqc-simulator-", dir=Path.cwd()) as temporary:
-        asyncio.run(exercise(Path(temporary)))
+    with (
+        asyncio.Runner(loop_factory=lambda: loop) as event_runner,
+        TemporaryDirectory(prefix="cqc-simulator-", dir=Path.cwd()) as temporary,
+    ):
+        event_runner.run(exercise(Path(temporary)))
