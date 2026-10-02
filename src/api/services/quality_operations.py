@@ -56,9 +56,7 @@ class QualityOperationsService:
         return self._statistics.summary(filters, snapshot_at)
 
     def snapshot(self, captured_at: datetime) -> dict[str, object]:
-        rows = self._history.list_page(
-            HistoryFilters(), snapshot_at=captured_at, page=1, page_size=200
-        )
+        rows = self._history.recent_rows(captured_at, limit=200)
         today_date, today_summary = self._statistics.today(captured_at)
         day = captured_at.replace(tzinfo=timezone.utc).astimezone(KST).date()
         today_review = self._statistics.review_count(
@@ -122,12 +120,12 @@ class QualityOperationsService:
                 "faults": [],
                 "jobs": jobs,
                 "recentCompletedJobs": recent_completed_jobs,
-                "history": [to_quality_result(row) for row in rows.items],
+                "history": [to_quality_result(row) for row in rows],
                 "images": [],
                 "points": points,
                 "errors": [
                     to_quality_result(row)
-                    for row in self._history.recent_errors(captured_at)
+                    for row in self._history.recent_errors(captured_at, limit=8)
                 ],
                 "today": {
                     "date": today_date,

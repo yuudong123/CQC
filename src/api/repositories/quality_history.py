@@ -53,6 +53,21 @@ class QualityHistoryRepository:
     def __init__(self, session_factory: sessionmaker) -> None:
         self._session_factory = session_factory
 
+    def recent_rows(self, snapshot_at: datetime, limit: int = 200) -> list[Inspection]:
+        """Return snapshot history without page totals or filter metadata queries."""
+
+        i = Inspection
+        with self._session_factory() as session:
+            return list(
+                session.scalars(
+                    select(i)
+                    .where(*history_clauses(HistoryFilters(), snapshot_at))
+                    .options(selectinload(i.control_attempts), selectinload(i.errors))
+                    .order_by(i.completed_at.desc(), i.inspection_id.desc())
+                    .limit(limit)
+                )
+            )
+
     def list_page(
         self,
         filters: HistoryFilters,

@@ -5,7 +5,6 @@ from __future__ import annotations
 import asyncio
 import json
 from io import BytesIO
-from types import SimpleNamespace
 
 import httpx
 import pytest
@@ -39,8 +38,8 @@ class _BlockingInference(MockInferenceClient):
 
 
 class _History:
-    def list_page(self, *args: object, **kwargs: object) -> SimpleNamespace:
-        return SimpleNamespace(items=[])
+    def recent_rows(self, *args: object, **kwargs: object) -> list:
+        return []
 
     def recent_errors(self, *args: object, **kwargs: object) -> list:
         return []
@@ -366,13 +365,8 @@ async def _parallel_inspections_keep_previews_separate(clock: list[float]) -> No
         inference.release["inspection-a"].set()
         assert (await pending_a).status_code == 200
         state_a = (await client.get("/v1/quality/snapshot")).json()["state"]
-        assert [
-            job["id"]
-            for job in state_a["jobs"]
-        ] == ["inspection-b"]
-        assert [job["id"] for job in state_a["recentCompletedJobs"]] == [
-            "inspection-a"
-        ]
+        assert [job["id"] for job in state_a["jobs"]] == ["inspection-b"]
+        assert [job["id"] for job in state_a["recentCompletedJobs"]] == ["inspection-a"]
         assert (await client.get(paths["inspection-a"])).status_code == 200
         assert (await client.get(paths["inspection-b"])).status_code == 200
         clock[0] += 1
@@ -385,8 +379,7 @@ async def _parallel_inspections_keep_previews_separate(clock: list[float]) -> No
             "inspection-b",
         }
         assert {
-            job["id"]: len(job["previews"])
-            for job in state_b["recentCompletedJobs"]
+            job["id"]: len(job["previews"]) for job in state_b["recentCompletedJobs"]
         } == {"inspection-a": 12, "inspection-b": 3}
         clock[0] += 2
         assert [
