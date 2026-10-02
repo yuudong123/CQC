@@ -5,6 +5,7 @@
 .market-page .apple-thumbs img { height: 54px; object-fit: contain; }
 .qc-frame-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 5px; margin-bottom: 8px; }
 .qc-frame-grid > div { position: relative; overflow: hidden; border-radius: 5px; background: #f8f5f5; }
+.qc-frame-grid .qc-live-frame { height: clamp(36px, 6vh, 72px); }
 .qc-frame-grid img { width: 100%; height: clamp(36px, 6vh, 72px); object-fit: contain; }
 .qc-frame-grid span { position: absolute; bottom: 1px; right: 3px; color: #7d4750; background: #ffffffdf; border-radius: 3px; font-size: 9px; padding: 0 3px; }
 .auto-auction-demo { background: linear-gradient(110deg, #f8ecee, #fff); border: 1px solid #e7ccd1; border-radius: 12px; padding: 18px 22px; margin-bottom: 18px; }

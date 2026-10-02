@@ -22,12 +22,14 @@ from .repositories.quality_statistics import QualityStatisticsRepository
 from .routers.inspections import router as inspections_router
 from .routers.quality_fault_images import router as quality_fault_images_router
 from .routers.quality_history import router as quality_history_router
+from .routers.quality_live_images import router as quality_live_images_router
 from .routers.quality_operations import router as quality_operations_router
 from .routers.quality_review import router as quality_review_router
 from .routers.quality_simulator import router as quality_simulator_router
 from .services.fault_image_storage import FaultImageStorage
 from .services.inspections import InspectionService
 from .services.late_results import LateResultManager
+from .services.live_inspections import LiveInspectionStore
 from .services.quality_operations import QualityOperationsService
 
 
@@ -70,6 +72,10 @@ def create_app(
         if runtime_settings.fault_image_storage_root is not None
         else None
     )
+    live_inspections = LiveInspectionStore(
+        limit=runtime_settings.live_preview_limit,
+        max_age_seconds=runtime_settings.live_preview_max_age_seconds,
+    )
     runtime_inspection_service = inspection_service or InspectionService(
         inference_client,
         MockVirtualControl(),
@@ -94,6 +100,7 @@ def create_app(
             else None
         ),
         fault_image_storage=fault_image_storage,
+        live_inspections=live_inspections,
     )
     simulator_client = (
         SimulatorClient(
@@ -110,6 +117,7 @@ def create_app(
         try:
             yield
         finally:
+            live_inspections.clear()
             await runtime_inspection_service.shutdown()
             if simulator_client is not None:
                 await simulator_client.close()
@@ -122,6 +130,7 @@ def create_app(
     application.state.settings = runtime_settings
     application.state.inspection_service = runtime_inspection_service
     application.state.fault_image_storage = fault_image_storage
+    application.state.live_inspections = live_inspections
     application.state.simulator_fault_token = runtime_settings.simulator_fault_token
     application.state.simulator_client = simulator_client
     application.state.inference_client = inference_client
@@ -140,12 +149,14 @@ def create_app(
             application.state.quality_history_repository,
             QualityStatisticsRepository(session_factory),
             fault_image_storage,
+            live_inspections,
         )
         if session_factory is not None
         else None
     )
     application.include_router(inspections_router)
     application.include_router(quality_history_router)
+    application.include_router(quality_live_images_router)
     application.include_router(quality_fault_images_router)
     application.include_router(quality_operations_router)
     application.include_router(quality_simulator_router)

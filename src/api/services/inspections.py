@@ -7,6 +7,7 @@ import logging
 import math
 from datetime import datetime
 from decimal import Decimal
+from uuid import uuid4
 
 import httpx
 from fastapi import UploadFile
@@ -47,6 +48,7 @@ from .inspection_policy import (
     decide_reinspection,
 )
 from .late_results import LateResultManager
+from .live_inspections import LiveInspectionStore
 
 logger = logging.getLogger(__name__)
 _FAULT_IMAGE_REASONS = frozenset(
@@ -78,6 +80,7 @@ class InspectionService:
         bin_mapping_repository: BinMappingRepository | None = None,
         persistence: InspectionPersistence | None = None,
         fault_image_storage: FaultImageStorage | None = None,
+        live_inspections: LiveInspectionStore | None = None,
     ) -> None:
         self._inference_client = inference_client
         self._virtual_control = virtual_control
@@ -92,6 +95,7 @@ class InspectionService:
         )
         self._persistence = persistence
         self._fault_image_storage = fault_image_storage
+        self._live_inspections = live_inspections
 
     async def shutdown(self) -> None:
         """서버 종료 시 남아 있는 late Inference task를 정리한다."""
@@ -110,6 +114,39 @@ class InspectionService:
         source_reference: str | None = None,
     ) -> InspectionResponse:
         """검사 요청을 판정·제어하고 가능한 결과를 DB에 기록한다."""
+
+        preview_token = uuid4().hex
+        try:
+            return await self._inspect(
+                inspection_id=inspection_id,
+                images=images,
+                metadata=metadata,
+                virtual_brix=virtual_brix,
+                simulator_faults=simulator_faults,
+                injected_inference_reason=injected_inference_reason,
+                source_reference=source_reference,
+                preview_token=preview_token,
+            )
+        finally:
+            if self._live_inspections is not None:
+                try:
+                    self._live_inspections.remove(preview_token)
+                except Exception:
+                    logger.exception("처리 중 이미지 정리 실패: %s", inspection_id)
+
+    async def _inspect(
+        self,
+        *,
+        inspection_id: str,
+        images: list[UploadFile],
+        metadata: list[InspectionImageMetadata],
+        virtual_brix: float | None,
+        simulator_faults: tuple[FaultType, ...],
+        injected_inference_reason: InspectionDecisionReason | None,
+        source_reference: str | None,
+        preview_token: str,
+    ) -> InspectionResponse:
+        """기존 검사 흐름을 수행하며 입력을 읽은 뒤 임시 이미지를 게시한다."""
 
         sweetness_band = _classify_sweetness(virtual_brix)
         created_at = utc_now()
@@ -143,6 +180,21 @@ class InspectionService:
         for image in images:
             image_payloads.append(await image.read())
             await image.seek(0)
+
+        if self._live_inspections is not None and image_payloads:
+            try:
+                self._live_inspections.publish(
+                    preview_token,
+                    inspection_id=inspection_id,
+                    images=[
+                        (content, image.content_type or "")
+                        for content, image in zip(image_payloads, images, strict=True)
+                    ],
+                    started_ms=int(created_at.timestamp() * 1000),
+                )
+            except Exception:
+                # 미리보기 장애가 검사 판정·제어·저장 경로에 영향을 주지 않도록 한다.
+                logger.exception("처리 중 이미지 게시 실패: %s", inspection_id)
 
         inference_request = InferenceRequest(
             inspection_id=inspection_id,

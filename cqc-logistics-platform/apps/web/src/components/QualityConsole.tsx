@@ -627,7 +627,20 @@ export default function QualityConsole({
           <div className="qc-scroll qc-jobs">
             {state.jobs.map((job) => (
               <article key={job.id} className="qc-job">
-                {remote && <div className="qc-job-image">
+                {remote && job.previews?.length ? (
+                  <div className="qc-frame-grid" aria-label={`${job.id} 처리 중 이미지 ${job.previews.length}장`}>
+                    {job.previews.map((frame) => (
+                      <div className="qc-live-frame" key={frame.index}>
+                        <QualityImage
+                          remote
+                          src={frame.previewUrl}
+                          alt={`${job.id} 프레임 ${frame.index + 1}`}
+                        />
+                        <span>{String(frame.index + 1).padStart(2, "0")}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : remote && <div className="qc-job-image">
                   <QualityImage
                     key={job.id}
                     remote={remote}

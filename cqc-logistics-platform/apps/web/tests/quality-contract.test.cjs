@@ -32,6 +32,20 @@ test("reference snapshot and OpenAPI match; invalid versions and malformed data 
   assert.throws(() => parseSnapshot({ ...value, state: { ...value.state, history: [{ id: "bad" }] } }));
   assert.throws(() => parseSnapshot({ ...value, state: { ...value.state, history: [{ ...value.state.history[0], previewUrl: "https://untrusted.test/image" }] } }));
 });
+test("backend job accepts twelve ordered live previews and rejects malformed frame lists", async () => {
+  const f = fixture(); f.tick();
+  const snapshot = await (await f.request("snapshot")).json();
+  const previews = Array.from({ length: 12 }, (_, index) => ({
+    index,
+    previewUrl: `/api/quality/previews/live_${"a".repeat(32)}_${String(index).padStart(2, "0")}`,
+  }));
+  const job = { ...snapshot.state.jobs[0], previewUrl: previews[0].previewUrl, previews };
+  const withJob = (replacement) => ({ ...snapshot, state: { ...snapshot.state, jobs: [replacement] } });
+  schema("Snapshot", parseSnapshot(withJob(job)));
+  assert.throws(() => parseSnapshot(withJob({ ...job, previews: previews.slice(0, 11).concat(previews[11], previews[11]) })));
+  assert.throws(() => parseSnapshot(withJob({ ...job, previews: previews.map((frame, index) => index === 1 ? { ...frame, index: 0 } : frame) })));
+  assert.throws(() => parseSnapshot(withJob({ ...job, previews: previews.map((frame, index) => index === 1 ? { ...frame, previewUrl: "https://untrusted.test/frame" } : frame) })));
+});
 test("history pagination stays anchored while new input arrives and CSV exports every match", async () => {
   const f = fixture(); f.tick(121);
   const first = schema("HistoryPage", parseHistory(await (await f.request("inspections?pageSize=50")).json()));

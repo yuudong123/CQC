@@ -116,6 +116,16 @@ const validFault = (v: unknown) =>
   ].includes(String(v));
 const validPreview = (v: unknown) =>
   typeof v === "string" && /^\/api\/quality\/previews\/[A-Za-z0-9_-]+$/.test(v);
+const validJobPreviews = (v: unknown) =>
+  Array.isArray(v) &&
+  v.length >= 1 &&
+  v.length <= 12 &&
+  v.every(
+    (frame, index) =>
+      object(frame) &&
+      frame.index === index &&
+      validPreview(frame.previewUrl),
+  );
 const resultList = (v: unknown, max: number) =>
   Array.isArray(v) && v.length <= max && v.every(validResult);
 
@@ -189,7 +199,8 @@ export function parseSnapshot(value: unknown): QualitySnapshot {
         finite(j.finish) &&
         Array.isArray(j.faults) &&
         j.faults.every(validFault) &&
-        (j.previewUrl === undefined || validPreview(j.previewUrl)),
+        (j.previewUrl === undefined || validPreview(j.previewUrl)) &&
+        (j.previews === undefined || validJobPreviews(j.previews)),
     )
   )
     throw new QualityApiError("관제 데이터 형식이 올바르지 않습니다.");

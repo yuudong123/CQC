@@ -39,6 +39,8 @@ class Settings(BaseSettings):
     max_late_tasks: int = Field(default=4, ge=0)
     fault_image_storage_root: Path | None = None
     fault_image_limit: int = Field(default=100, ge=1)
+    live_preview_limit: int = Field(default=64, ge=1, le=64)
+    live_preview_max_age_seconds: int = Field(default=60, ge=1)
     simulator_internal_url: str | None = None
     simulator_internal_timeout_ms: int = Field(default=30_000, ge=1)
     simulator_state_timeout_ms: int = Field(default=1_500, ge=1)

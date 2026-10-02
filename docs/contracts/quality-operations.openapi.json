@@ -1418,6 +1418,25 @@
         ],
         "additionalProperties": false
       },
+      "JobPreview": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 11
+          },
+          "previewUrl": {
+            "type": "string",
+            "pattern": "^/api/quality/previews/[A-Za-z0-9_-]+$"
+          }
+        },
+        "required": [
+          "index",
+          "previewUrl"
+        ],
+        "additionalProperties": false
+      },
       "Job": {
         "type": "object",
         "properties": {
@@ -1457,6 +1476,15 @@
           "previewUrl": {
             "type": "string",
             "pattern": "^/api/quality/previews/[A-Za-z0-9_-]+$"
+          },
+          "previews": {
+            "type": "array",
+            "description": "Live inspection images in input order; index is zero-based. URLs expire when processing ends.",
+            "minItems": 1,
+            "maxItems": 12,
+            "items": {
+              "$ref": "#/components/schemas/JobPreview"
+            }
           }
         },
         "required": [

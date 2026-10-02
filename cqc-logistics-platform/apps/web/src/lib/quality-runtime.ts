@@ -22,6 +22,7 @@ export type Job = {
   finish: number;
   faults: Fault[];
   previewUrl?: string;
+  previews?: { index: number; previewUrl: string }[];
 };
 export type Result = InspectionRecord & {
   inferenceMs: number | null;

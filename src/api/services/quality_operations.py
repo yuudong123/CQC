@@ -11,6 +11,7 @@ from src.simulator.schemas import SimulatorStatus
 from ..repositories.quality_history import HistoryFilters, QualityHistoryRepository
 from ..repositories.quality_statistics import QualityStatisticsRepository
 from .fault_image_storage import FaultImageStorage
+from .live_inspections import LiveInspectionStore
 from .quality_history import KST, to_quality_result
 
 _INSPECTION_COLUMNS = [
@@ -42,10 +43,12 @@ class QualityOperationsService:
         history: QualityHistoryRepository,
         statistics: QualityStatisticsRepository,
         fault_image_storage: FaultImageStorage | None = None,
+        live_inspections: LiveInspectionStore | None = None,
     ) -> None:
         self._history = history
         self._statistics = statistics
         self._fault_image_storage = fault_image_storage
+        self._live_inspections = live_inspections
 
     def statistics(
         self, filters: HistoryFilters, snapshot_at: datetime
@@ -112,7 +115,11 @@ class QualityOperationsService:
                 "throughput": points[-2]["count"] if len(points) >= 2 else 0,
                 "running": False,
                 "faults": [],
-                "jobs": [],
+                "jobs": (
+                    self._live_inspections.jobs()
+                    if self._live_inspections is not None
+                    else []
+                ),
                 "history": [to_quality_result(row) for row in rows.items],
                 "images": [],
                 "points": points,
