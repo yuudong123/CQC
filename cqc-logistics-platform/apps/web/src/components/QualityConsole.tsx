@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Badge, Panel, Stats } from "./Dashboard";
 import QualityHistory from "./QualityHistory";
 import QualityStatistics from "./QualityStatistics";
+import ThroughputChart from "./ThroughputChart";
 import { useDemo } from "./DemoProvider";
 import type { FaultImage } from "@/lib/quality-fault-images";
 import { downloadQualityCsv } from "@/lib/quality-api";
@@ -23,7 +24,11 @@ import {
   csvCell,
   kst,
   periodPoints,
+  throughputSeries,
+  exceptionOf,
+  CONFIDENCE_MIN,
   type Fault,
+  type Result,
   type Runtime,
 } from "@/lib/quality-runtime";
 
@@ -263,6 +268,117 @@ function FaultImages({
     </>
   );
 }
+function verdict(row: Result) {
+  return row.excluded
+    ? { tone: "danger", label: "오류" }
+    : row.status === "REVIEW"
+      ? { tone: "warning", label: "검수" }
+      : { tone: "success", label: "통과" };
+}
+// 서버 검사 ID(UUID)만 앞 8자리로 줄이고 시연 ID는 그대로 둔다.
+const shortId = (id: string) => (id.length > 12 ? id.slice(0, 8) : id);
+const percent = (value: number, total: number) =>
+  total ? ((value / total) * 100).toFixed(1) : "0.0";
+function RatioBar({
+  label,
+  values,
+  total,
+}: {
+  label: string;
+  values: Record<string, number>;
+  total: number;
+}) {
+  const entries = Object.entries(values);
+  return (
+    <div className="qc-ratio">
+      <strong>{label}</strong>
+      <div
+        className="qc-ratio-bar"
+        role="img"
+        aria-label={`${label} ${entries.map(([key, value]) => `${key} ${percent(value, total)}%`).join(", ")}`}
+      >
+        {entries.map(
+          ([key, value], index) =>
+            value > 0 && (
+              <span
+                key={key}
+                data-index={index}
+                style={{ flexGrow: value }}
+                title={`${key} ${value}건`}
+              />
+            ),
+        )}
+      </div>
+      <div className="qc-ratio-legend">
+        {entries.map(([key, value], index) => (
+          <span key={key} data-index={index}>
+            {key} {value}건 ({percent(value, total)}%)
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+function LatestApple({ rows }: { rows: Result[] }) {
+  const [latest, ...previous] = rows;
+  if (!latest) return <p className="qc-empty">처리 중인 사과가 없습니다.</p>;
+  const { tone, label } = verdict(latest);
+  return (
+    <div className="qc-latest">
+      <p className="qc-muted">처리 중인 사과 없음 · 마지막으로 처리한 사과</p>
+      <article className="qc-latest-card">
+        <div className="qc-latest-grade">
+          <Badge tone={tone}>{label}</Badge>
+          <strong>
+            {latest.excluded ? "판정 제외" : `${latest.variety} · ${latest.grade}`}
+          </strong>
+          <small>
+            {latest.time} · {shortId(latest.id)}
+          </small>
+        </div>
+        <dl>
+          <div>
+            <dt>품종 / 품질 신뢰도</dt>
+            <dd>
+              {latest.excluded
+                ? "—"
+                : `${formatPercent(latest.cultivarConfidence)} / ${formatPercent(latest.confidence)}`}
+            </dd>
+          </div>
+          <div>
+            <dt>추론</dt>
+            <dd>{formatMs(latest.inferenceMs)}</dd>
+          </div>
+          <div>
+            <dt>가상 당도</dt>
+            <dd>
+              {latest.virtualBrix === null
+                ? "—"
+                : `${latest.virtualBrix.toFixed(1)} Brix`}
+            </dd>
+          </div>
+          <div>
+            <dt>목적지</dt>
+            <dd>{latest.bin}</dd>
+          </div>
+        </dl>
+      </article>
+      {previous.length > 0 && (
+        <ol className="qc-latest-list" aria-label="직전에 처리한 사과">
+          {previous.slice(0, 6).map((row) => (
+            <li key={row.id}>
+              <Badge tone={verdict(row).tone}>{verdict(row).label}</Badge>
+              <span>
+                {row.excluded ? "판정 제외" : `${row.variety} · ${row.grade}`}
+              </span>
+              <small>{row.time.slice(0, 8)}</small>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  );
+}
 export default function QualityConsole({
   mode = "demo",
 }: {
@@ -302,6 +418,9 @@ export default function QualityConsole({
   const allowFaults =
     !remote || (!!snapshot?.capabilities.faults && state.scope !== undefined);
   const [tab, setTab] = useState<Tab>(null);
+  const [exceptionKind, setExceptionKind] = useState<
+    "all" | "reinspection" | "error"
+  >("all");
   const [minutes, setMinutes] = useState(1);
   const [health, setHealth] = useState("확인 중");
   useEffect(() => {
@@ -339,9 +458,37 @@ export default function QualityConsole({
     };
   }, [remote]);
   const lastPoint = state.points.at(-1);
-  const recent = state.points.filter(
-    (point) => point.at > (lastPoint?.at ?? 0) - 30_000,
+  const trendEnd = Math.max(
+    snapshot?.capturedAt ?? 0,
+    lastPoint?.at ?? 0,
+    state.history[0]?.timestamp ?? 0,
   );
+  // 서버 이력은 최근 200건, 브라우저 예시는 2,000건까지 들고 있다.
+  const trend = throughputSeries(
+    state.history,
+    trendEnd,
+    5,
+    20,
+    2,
+    remote ? 200 : 2000,
+  );
+  // 정상 통과는 처리 중 사과 패널과 검사 이력에서 보고, 여기는 다시 볼 사과만 남긴다.
+  const exceptions = state.history.flatMap((row) => {
+    const exception = exceptionOf(row);
+    return exception ? [{ row, ...exception }] : [];
+  });
+  const exceptionCount = {
+    all: exceptions.length,
+    reinspection: exceptions.filter((item) => item.kind === "reinspection").length,
+    error: exceptions.filter((item) => item.kind === "error").length,
+  };
+  const shownExceptions = exceptions.filter(
+    (item) => exceptionKind === "all" || item.kind === exceptionKind,
+  );
+  const reinspectionRatio = percent(state.today.reinspection, state.today.total);
+  const averageInference = state.today.inferenceCount
+    ? `${(state.today.inferenceTotalMs / state.today.inferenceCount).toFixed(1)}ms`
+    : "—";
   const period = periodPoints(state.points, minutes, lastPoint?.at ?? 0);
   const count = remote
     ? (snapshot?.periodTotals[String(minutes) as "1" | "5" | "10" | "30"] ?? 0)
@@ -501,10 +648,27 @@ export default function QualityConsole({
             icon: "document",
           },
           {
-            label: "저신뢰 검수",
-            value: `${state.today.review}건`,
+            label: "오늘 재검사율",
+            value: (
+              <>
+                {reinspectionRatio}%<small> {state.today.reinspection}건</small>
+              </>
+            ),
             icon: "alert",
             tone: "warning",
+          },
+          {
+            label:
+              !remote || snapshot?.source === "reference"
+                ? "평균 추론 · 예시"
+                : "평균 추론",
+            value: averageInference,
+            icon: "check",
+          },
+          {
+            label: "현재 처리량",
+            value: `${recentThroughput(state.points).toFixed(1)}건/초`,
+            icon: "clock",
           },
           {
             label: "통계 제외",
@@ -512,12 +676,6 @@ export default function QualityConsole({
             icon: "alert",
             tone: "danger",
           },
-          {
-            label: "현재 처리량",
-            value: `${recentThroughput(state.points).toFixed(1)}건/초`,
-            icon: "clock",
-          },
-          { label: "진행 중", value: `${state.jobs.length}건`, icon: "camera" },
         ]}
       />
       <div className="qc-main">
@@ -570,9 +728,7 @@ export default function QualityConsole({
                 </div>
               </article>
             ))}
-            {!state.jobs.length && (
-              <p className="qc-empty">처리 중인 사과가 없습니다.</p>
-            )}
+            {!state.jobs.length && <LatestApple rows={state.history} />}
           </div>
         </Panel>
         <Panel title="시스템 상태" icon="box" action={<small>1초 갱신</small>}>
@@ -627,7 +783,10 @@ export default function QualityConsole({
                 </div>
               ))}
             </div>
-            <h3>최근 오류</h3>
+            <h3>설비·연동 오류</h3>
+            <p className="qc-muted">
+              추론·제어·저장 결과 기준 · 사과별 재검사는 아래 목록
+            </p>
             {state.errors.slice(0, 8).map((row) => (
               <div className="qc-error" key={row.id}>
                 <strong>{row.id}</strong>
@@ -650,69 +809,92 @@ export default function QualityConsole({
                 </small>
               </div>
             ))}
-            {!state.errors.length && <p className="qc-muted">최근 오류 없음</p>}
+            {!state.errors.length && <p className="qc-muted">설비·연동 오류 없음</p>}
           </div>
         </Panel>
       </div>
       <div className="qc-bottom">
         <Panel
-          title="최근 판정"
-          icon="clock"
-          action={<small>저장 이력 · 최근 200건</small>}
+          title="재검사·오류 사과"
+          icon="alert"
+          action={
+            <div className="qc-segment" role="group" aria-label="재검사·오류 구분">
+              {(
+                [
+                  ["all", "전체"],
+                  ["reinspection", "재검사"],
+                  ["error", "오류"],
+                ] as const
+              ).map(([key, label]) => (
+                <button
+                  key={key}
+                  aria-pressed={exceptionKind === key}
+                  onClick={() => setExceptionKind(key)}
+                >
+                  {label} {exceptionCount[key]}
+                </button>
+              ))}
+            </div>
+          }
         >
           <div className="qc-scroll">
+            <p className="qc-muted qc-exception-note">
+              최근 판정 {state.history.length}건 중 · 신뢰도 기준 품종{" "}
+              {CONFIDENCE_MIN.cultivar}% / 품질 {CONFIDENCE_MIN.quality}% 미만은
+              재검사 · 전체 기간은 검사 이력
+            </p>
             <table>
               <thead>
                 <tr>
                   <th>시각</th>
-                  <th>검사 ID</th>
-                  <th>판정</th>
+                  <th>구분</th>
+                  <th>사유</th>
                   <th>품종 / 등급</th>
                   <th>품종 / 품질 신뢰도</th>
-                  <th>추론</th>
+                  <th>검사 ID</th>
                   <th>목적지</th>
                 </tr>
               </thead>
               <tbody>
-                {state.history.slice(0, 200).map((row) => (
+                {shownExceptions.slice(0, 50).map(({ row, kind, reason, lowCultivar, lowQuality }) => (
                   <tr key={row.id}>
                     <td>{row.time}</td>
-                    <td>{row.id}</td>
                     <td>
-                      <Badge
-                        tone={
-                          row.excluded
-                            ? "danger"
-                            : row.status === "REVIEW"
-                              ? "warning"
-                              : "success"
-                        }
-                      >
-                        {row.excluded
-                          ? "오류"
-                          : row.status === "REVIEW"
-                            ? "검수"
-                            : "통과"}
+                      <Badge tone={kind === "error" ? "danger" : "warning"}>
+                        {kind === "error" ? "오류" : "재검사"}
                       </Badge>
                     </td>
+                    <td>{reason}</td>
                     <td>
                       {row.excluded ? "—" : `${row.variety} / ${row.grade}`}
                     </td>
                     <td>
-                      {row.excluded
-                        ? "—"
-                        : `${formatPercent(row.cultivarConfidence)} / ${formatPercent(row.confidence)}`}
+                      {row.excluded ? (
+                        "—"
+                      ) : (
+                        <>
+                          <span className={lowCultivar ? "qc-low" : undefined}>
+                            {formatPercent(row.cultivarConfidence)}
+                          </span>
+                          {" / "}
+                          <span className={lowQuality ? "qc-low" : undefined}>
+                            {formatPercent(row.confidence)}
+                          </span>
+                        </>
+                      )}
                     </td>
-                    <td>
-                      {formatMs(row.inferenceMs)}
-                    </td>
+                    <td title={row.id}>{shortId(row.id)}</td>
                     <td>{row.bin}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            {!state.history.length && (
-              <p className="qc-empty">저장된 판정이 없습니다.</p>
+            {!shownExceptions.length && (
+              <p className="qc-empty">
+                {state.history.length
+                  ? `최근 판정 ${state.history.length}건 중 ${exceptionKind === "error" ? "오류" : exceptionKind === "reinspection" ? "재검사" : "재검사·오류"} 없음`
+                  : "저장된 판정이 없습니다."}
+              </p>
             )}
           </div>
         </Panel>
@@ -741,85 +923,43 @@ export default function QualityConsole({
               <strong>{count}건</strong>
               <span>최근 {minutes}분 저장 · 수집된 구간 기준</span>
             </div>
-            <div
-              className="qc-chart"
-              role="img"
-              aria-label={`최근 30초 처리량, 왼쪽부터 ${recent.map((point) => point.count).join(", ")}건`}
-            >
-              {Array.from({ length: 30 }, (_, index) => {
-                const point = recent.find(
-                  (value) =>
-                    value.at === (lastPoint?.at ?? 0) - (29 - index) * 1000,
-                );
-                return (
-                  <div
-                    key={index}
-                    title={
-                      point
-                        ? `${kst(point.at).slice(11, 19)} ${point.count}건`
-                        : "수집 전"
-                    }
-                  >
-                    <span
-                      style={{ height: `${((point?.count ?? 0) / 4) * 100}%` }}
-                    />
-                  </div>
-                );
-              })}
-            </div>
+            <ThroughputChart
+              series={trend}
+              end={trendEnd}
+              minutes={5}
+              target={state.intervalMs ? 1000 / state.intervalMs : null}
+              events={exceptions.map(({ row, kind, reason }) => ({
+                at: row.timestamp,
+                kind,
+                reason,
+              }))}
+            />
             <div className="qc-chart-label">
-              <span>30초 전</span>
-              <span>1초 단위 · 최대 4건/초</span>
-              <span>현재</span>
+              <span>최근 5분 · 20초 이동평균 · 점은 재검사·오류 시점</span>
             </div>
             <p>
               오늘 품종·품질 집계 대상 {state.today.normal}건 · 시간 초과·추론
               오류 제외
             </p>
             <div className="qc-distributions">
+              <RatioBar
+                label="등급"
+                values={state.today.grades ?? {}}
+                total={state.today.normal}
+              />
+              <RatioBar
+                label="품종"
+                values={state.today.varieties ?? {}}
+                total={state.today.normal}
+              />
               <span>
-                오늘 재검사 {state.today.reinspection}건 ·{" "}
-                {state.today.total
-                  ? (
-                      (state.today.reinspection / state.today.total) *
-                      100
-                    ).toFixed(1)
-                  : "0.0"}
-                %
-              </span>
-              <span>
-                평균 추론{" "}
-                {state.today.inferenceCount
-                  ? `${(state.today.inferenceTotalMs / state.today.inferenceCount).toFixed(1)}ms`
-                  : "—"}
-                {(!remote || snapshot?.source === "reference") &&
-                  " · 예시 시간"}
-              </span>
-              <span>
+                오늘 재검사 {state.today.reinspection}건 · {reinspectionRatio}% ·
                 오판 의심{" "}
                 {Object.values(state.today.suspicions).reduce(
                   (sum, value) => sum + value,
                   0,
                 )}
                 건
-              </span>
-              <span>
-                품종{" "}
-                {Object.entries(state.today.varieties ?? {})
-                  .map(
-                    ([key, value]) =>
-                      `${key} ${value}건 (${state.today.normal ? ((value / state.today.normal) * 100).toFixed(1) : "0.0"}%)`,
-                  )
-                  .join(" · ")}
-              </span>
-              <span>
-                등급{" "}
-                {Object.entries(state.today.grades ?? {})
-                  .map(
-                    ([key, value]) =>
-                      `${key} ${value}건 (${state.today.normal ? ((value / state.today.normal) * 100).toFixed(1) : "0.0"}%)`,
-                  )
-                  .join(" · ")}
               </span>
               <details>
                 <summary>선별 목적지별 성공 명령</summary>
