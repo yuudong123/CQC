@@ -196,7 +196,7 @@ pipeline {
                     container_id="$(docker create \
                         -w /app \
                         python:3.11-slim \
-                        sh -c "pip install --disable-pip-version-check -r requirements-backend-dev.txt && pytest -q tests/api tests/simulator tests/ci tests/test_service_logging.py")"
+                        sh -c "pip install --disable-pip-version-check -r requirements-backend-dev.txt && python -m pytest -q tests/api tests/simulator tests/ci tests/test_service_logging.py")"
                     trap 'docker rm -f "$container_id" >/dev/null' EXIT
                     docker cp . "$container_id:/app"
                     docker start "$container_id" >/dev/null
