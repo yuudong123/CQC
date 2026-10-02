@@ -119,6 +119,12 @@ services:
     environment:
       OMP_NUM_THREADS: "1"
       MKL_NUM_THREADS: "1"
+      LOG_DIR: /var/log/cqc
+      LOG_MAX_BYTES: ${LOG_MAX_BYTES:-10485760}
+      LOG_BACKUP_COUNT: ${LOG_BACKUP_COUNT:-5}
+
+    volumes:
+      - inference_logs:/var/log/cqc
 
     ports:
       - "${INFERENCE_PORT:-8001}:8001"
@@ -183,6 +189,9 @@ services:
       # DM-08 v2 보정 모델(cal-20260930) 기준 신뢰도 임계값. 보정 전 model.json에서는 품질 0.60을 쓰지 않는다.
       CULTIVAR_CONFIDENCE_THRESHOLD: ${CULTIVAR_CONFIDENCE_THRESHOLD:-0.50}
       QUALITY_CONFIDENCE_THRESHOLD: ${QUALITY_CONFIDENCE_THRESHOLD:-0.60}
+      LOG_DIR: /var/log/cqc
+      LOG_MAX_BYTES: ${LOG_MAX_BYTES:-10485760}
+      LOG_BACKUP_COUNT: ${LOG_BACKUP_COUNT:-5}
 
       # ==========================================================
       # BE-07 독립 Simulator 연동
@@ -196,6 +205,7 @@ services:
     # 장애 이미지 저장
     volumes:
       - fault_images:/data/fault-images
+      - backend_logs:/var/log/cqc
 
     ports:
       - "${BACKEND_PORT:-8000}:8000"
@@ -265,6 +275,9 @@ services:
       # 입력 간격 (DM-08). 서버컴 동시 처리 1에서 한 건 처리 주기가 p90 약 1.8초라
       # 500ms로는 요청이 밀려 실제 초당 0.63건에 그친다. 처리 주기보다 긴 2000ms로 맞춘다.
       SIMULATOR_INTERVAL_MS: ${SIMULATOR_INTERVAL_MS:-2000}
+      LOG_DIR: /var/log/cqc
+      LOG_MAX_BYTES: ${LOG_MAX_BYTES:-10485760}
+      LOG_BACKUP_COUNT: ${LOG_BACKUP_COUNT:-5}
 
     # ==========================================================
     # 시연 데이터 및 상태 저장 Volume
@@ -278,6 +291,7 @@ services:
 
       # 재생 위치를 별도 Docker Volume에 영구 저장
       - simulator_state:/data/state
+      - simulator_logs:/var/log/cqc
 
     # ==========================================================
     # MO-04 기동 의존성
@@ -374,6 +388,9 @@ volumes:
   mysql_data:
   logistics_mongodb_data:
   fault_images:
+  backend_logs:
+  inference_logs:
+  simulator_logs:
 
   # 기존 Windows D드라이브 Dataset 연결
   simulator_dataset:
