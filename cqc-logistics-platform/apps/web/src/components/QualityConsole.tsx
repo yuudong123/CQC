@@ -11,7 +11,7 @@ import { useDemo } from "./DemoProvider";
 import type { FaultImage } from "@/lib/quality-fault-images";
 import { downloadQualityCsv } from "@/lib/quality-api";
 import { sampleApples } from "@/lib/sample-apples";
-import { formatMs, formatPercent } from "@/lib/quality-format";
+import { formatPercent } from "@/lib/quality-format";
 import {
   MISCLASSIFICATION_LABEL,
   type MisclassificationType,
@@ -28,7 +28,6 @@ import {
   exceptionOf,
   CONFIDENCE_MIN,
   type Fault,
-  type Result,
   type Runtime,
 } from "@/lib/quality-runtime";
 
@@ -268,13 +267,6 @@ function FaultImages({
     </>
   );
 }
-function verdict(row: Result) {
-  return row.excluded
-    ? { tone: "danger", label: "오류" }
-    : row.status === "REVIEW"
-      ? { tone: "warning", label: "검수" }
-      : { tone: "success", label: "통과" };
-}
 // 서버 검사 ID(UUID)만 앞 8자리로 줄이고 시연 ID는 그대로 둔다.
 const shortId = (id: string) => (id.length > 12 ? id.slice(0, 8) : id);
 const percent = (value: number, total: number) =>
@@ -316,66 +308,6 @@ function RatioBar({
           </span>
         ))}
       </div>
-    </div>
-  );
-}
-function LatestApple({ rows }: { rows: Result[] }) {
-  const [latest, ...previous] = rows;
-  if (!latest) return <p className="qc-empty">처리 중인 사과가 없습니다.</p>;
-  const { tone, label } = verdict(latest);
-  return (
-    <div className="qc-latest">
-      <p className="qc-muted">처리 중인 사과 없음 · 마지막으로 처리한 사과</p>
-      <article className="qc-latest-card">
-        <div className="qc-latest-grade">
-          <Badge tone={tone}>{label}</Badge>
-          <strong>
-            {latest.excluded ? "판정 제외" : `${latest.variety} · ${latest.grade}`}
-          </strong>
-          <small>
-            {latest.time} · {shortId(latest.id)}
-          </small>
-        </div>
-        <dl>
-          <div>
-            <dt>품종 / 품질 신뢰도</dt>
-            <dd>
-              {latest.excluded
-                ? "—"
-                : `${formatPercent(latest.cultivarConfidence)} / ${formatPercent(latest.confidence)}`}
-            </dd>
-          </div>
-          <div>
-            <dt>추론</dt>
-            <dd>{formatMs(latest.inferenceMs)}</dd>
-          </div>
-          <div>
-            <dt>가상 당도</dt>
-            <dd>
-              {latest.virtualBrix === null
-                ? "—"
-                : `${latest.virtualBrix.toFixed(1)} Brix`}
-            </dd>
-          </div>
-          <div>
-            <dt>목적지</dt>
-            <dd>{latest.bin}</dd>
-          </div>
-        </dl>
-      </article>
-      {previous.length > 0 && (
-        <ol className="qc-latest-list" aria-label="직전에 처리한 사과">
-          {previous.slice(0, 6).map((row) => (
-            <li key={row.id}>
-              <Badge tone={verdict(row).tone}>{verdict(row).label}</Badge>
-              <span>
-                {row.excluded ? "판정 제외" : `${row.variety} · ${row.grade}`}
-              </span>
-              <small>{row.time.slice(0, 8)}</small>
-            </li>
-          ))}
-        </ol>
-      )}
     </div>
   );
 }
@@ -728,7 +660,9 @@ export default function QualityConsole({
                 </div>
               </article>
             ))}
-            {!state.jobs.length && <LatestApple rows={state.history} />}
+            {!state.jobs.length && (
+              <p className="qc-empty">처리 중인 사과가 없습니다.</p>
+            )}
           </div>
         </Panel>
         <Panel title="시스템 상태" icon="box" action={<small>1초 갱신</small>}>
