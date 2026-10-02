@@ -31,8 +31,14 @@ def main():
             else:
                 print(json.dumps([containers[key] for key in args[1:]]))
         elif args[0] == "run":
+            if os.environ.get("MOCK_HOST_WORKSPACE_UNAVAILABLE") == "1" and any(
+                argument in {"-v", "--volume", "--mount"} for argument in args
+            ):
+                print("Host Docker cannot mount the client workspace", file=sys.stderr)
+                return 1
+            python_args = args[args.index("python") + 1 :]
             completed = subprocess.run(
-                [sys.executable, os.environ["MOCK_SNAPSHOT_SCRIPT"]],
+                [sys.executable, *python_args],
                 input=sys.stdin.read(),
                 text=True,
                 capture_output=True,

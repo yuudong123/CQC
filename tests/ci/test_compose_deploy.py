@@ -134,7 +134,6 @@ def runtime(tmp_path):
         MOCK_PYTHON=shell_path(sys.executable),
         MOCK_TOOL=str(ROOT / "tests/ci/fake_docker.py"),
         MOCK_STATE_FILE=str(state),
-        MOCK_SNAPSHOT_SCRIPT=str(ROOT / "scripts/ci/snapshot-compose.py"),
         COMPOSE_FILE=str(candidate),
         CQC_DEPLOY_STATE_DIR=str(tmp_path / "deploy-state"),
         HEALTH_SERVICES="backend logistics-web",
@@ -185,6 +184,19 @@ def test_health_failure_restores_old_image_and_runtime_configuration(runtime):
             restored["HostConfig"]["PortBindings"] == old["HostConfig"]["PortBindings"]
         )
     assert not (directory / "pending").exists()
+
+
+def test_deploy_snapshot_works_without_host_workspace_mount(runtime):
+    run, _, directory, initial = runtime
+    deployed = run("compose-deploy.sh", MOCK_HOST_WORKSPACE_UNAVAILABLE="1")
+    assert deployed.returncode == 0, deployed.stderr
+    assert (directory / "pending").exists()
+    spec = json.loads((directory / "rollback.json").read_text())
+    for service in ("backend", "logistics-web"):
+        assert spec["services"][service]["image"] == initial[f"old-{service}"]["Image"]
+    assert (
+        run("compose-rollback.sh", MOCK_HOST_WORKSPACE_UNAVAILABLE="1").returncode == 0
+    )
 
 
 def test_interrupted_deploy_is_recoverable_without_verify(runtime):

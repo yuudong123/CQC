@@ -22,11 +22,12 @@ if [ -n "$container_ids" ]; then
     container_ids="$(docker ps -aq --filter "label=com.docker.compose.project=$project")"
     test -n "$container_ids"
     printf '%s\n' "$project" > "$state_dir/project"
+    # Send code from the client; the host daemon cannot mount Jenkins's workspace.
+    snapshot_script="$(cat scripts/ci/snapshot-compose.py)"
     # Intentional splitting: Docker IDs cannot contain spaces.
     docker inspect $container_ids > "$state_dir/inspect.json"
-    if ! docker run --rm -i \
-        -v "$PWD/scripts/ci:/ci:ro" python:3.11-slim \
-        python /ci/snapshot-compose.py \
+    if ! docker run --rm -i python:3.11-slim \
+        python -c "$snapshot_script" \
         < "$state_dir/inspect.json" > "$state_dir/rollback.json.tmp"; then
         rm -f "$state_dir/inspect.json" "$state_dir/rollback.json.tmp"
         exit 1
