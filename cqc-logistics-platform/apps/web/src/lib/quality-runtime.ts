@@ -122,6 +122,15 @@ export const DEMO_INPUT_INTERVAL_MS = 1000;
 /** 라인 속도 선택지. Backend `capabilities.intervals`와 같은 값이다. */
 export const LINE_INTERVALS = [1000, 2000, 3000];
 /** 진행 중인 마지막 1초 구간을 뺀 최근 `seconds`초의 초당 평균 처리량. 간격이 1초보다 길어도 0으로 떨어지지 않는다. */
+/** 관제 조회 주기. 처리 중 사과가 jobs에 약 1~1.3초 머물러서 이보다 짧아야 놓치지 않는다. */
+export const POLL_INTERVAL_MS = 1000;
+/**
+ * 다음 조회까지 기다릴 시간. 응답 시간을 빼서 조회가 시작 기준 일정 간격으로 돌게 한다.
+ * 응답이 주기보다 길면 바로 다시 조회한다(요청은 겹치지 않는다).
+ */
+export function nextPollDelay(elapsedMs: number, intervalMs = POLL_INTERVAL_MS): number {
+  return Math.max(0, intervalMs - Math.max(0, elapsedMs));
+}
 /** 처리 중 사과 패널에 보일 사과. 처리 중인 사과가 없으면 마지막 사과를 다음 사과가 들어올 때까지 남긴다. */
 export function displayedJobs(current: Job[], last: Job[]): { jobs: Job[]; held: boolean } {
   if (current.length || !last.length) return { jobs: current, held: false };
