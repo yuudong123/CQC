@@ -47,6 +47,7 @@ def snapshot(containers):
 
         entry = {
             "image": container["Image"],
+            "pull_policy": "never",
             "environment": config.get("Env") or [],
             "command": config.get("Cmd") or [],
             "entrypoint": config.get("Entrypoint") or [],
