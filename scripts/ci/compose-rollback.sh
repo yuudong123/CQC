@@ -14,7 +14,7 @@ fi
 
 export COMPOSE_PROJECT_NAME="$(cat "$state_dir/project")"
 export COMPOSE_FILE="$state_dir/rollback.json"
-# Pinned image IDs and old runtime configuration; no retagging of candidate images.
+# Pinned local images preserved before Build, with the old runtime configuration.
 docker-compose -f "$COMPOSE_FILE" up -d --no-build --remove-orphans
 export HEALTH_SERVICES="$(docker-compose -f "$COMPOSE_FILE" config --services)"
 CQC_FORCE_HEALTH_FAILURE=0 sh scripts/ci/verify-compose-health.sh

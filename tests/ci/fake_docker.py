@@ -24,12 +24,22 @@ def main():
                 record = containers[args[2]]
                 if "com.docker.compose.project" in args[1]:
                     print(record["Config"]["Labels"]["com.docker.compose.project"])
+                elif "com.docker.compose.service" in args[1]:
+                    print(record["Config"]["Labels"]["com.docker.compose.service"])
+                elif args[1] == "--format={{.Image}}":
+                    print(record["Image"])
                 elif "State.Health" in args[1]:
                     print(record["State"]["Health"]["Status"])
                 else:
                     raise AssertionError(args)
             else:
                 print(json.dumps([containers[key] for key in args[1:]]))
+        elif args[:2] == ["image", "tag"]:
+            image, tag = args[2:]
+            if os.environ.get("MOCK_IMAGE_TAG_FAIL") == "1":
+                return 1
+            state.setdefault("image_tags", {})[tag] = image
+            state_path.write_text(json.dumps(state))
         elif args[0] == "run":
             if os.environ.get("MOCK_HOST_WORKSPACE_UNAVAILABLE") == "1" and any(
                 argument in {"-v", "--volume", "--mount"} for argument in args
@@ -67,6 +77,14 @@ def main():
         )
         return 0
     if command == ["build"]:
+        if os.environ.get("MOCK_BUILD_DROPS_UNTAGGED_IMAGES") == "1":
+            protected = set(state.get("image_tags", {}).values())
+            state["missing_images"] = [
+                item["Image"]
+                for item in containers.values()
+                if item["Image"] not in protected
+            ]
+            state_path.write_text(json.dumps(state))
         return 1 if os.environ.get("MOCK_BUILD_FAILURE") == "1" else 0
     spec = json.loads(spec_path.read_text())
     if command == ["config", "--services"]:
@@ -74,6 +92,12 @@ def main():
         return 0
     assert command == ["up", "-d", "--no-build", "--remove-orphans"]
     rollback = spec_path.name == "rollback.json"
+    if rollback and any(
+        entry["image"] in state.get("missing_images", [])
+        for entry in spec["services"].values()
+    ):
+        print("Previous image is missing from the local image store", file=sys.stderr)
+        return 1
     if rollback and os.environ.get("MOCK_ROLLBACK_UP_FAIL") == "1":
         return 1
     previous = list(containers.values()) or list(state["templates"].values())
