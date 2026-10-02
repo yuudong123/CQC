@@ -80,7 +80,7 @@ export default function DemoProvider({ mode, children }: { mode: "demo" | "api";
 export function AutoAuctionDemo() {
   const demo = useDemo();
   return <section className="auto-auction-demo" aria-label="자동 경매 시연">
-    <div className="auto-demo-heading"><div><strong>검사부터 자동배차까지</strong><p>선별 라인 1 · 같은 분류 4개 → 시연 1kg 출품 → 12초 경매 → 배차</p></div>
+    <div className="auto-demo-heading"><div><strong>검사부터 자동배차까지</strong><p>선별 라인 1 · 같은 분류 4개 → 시연 1kg 출품 → 12초 경매 → 결제(가상) → 배차</p></div>
       <button className="outline-button" onClick={demo.toggle} disabled={demo.count >= DEMO_LOT_LIMIT}>{demo.enabled ? "자동 시연 일시정지" : demo.error ? "자동 시연 재개" : demo.count >= DEMO_LOT_LIMIT ? "시연 완료" : "자동 시연 시작"}</button></div>
     <small>가상 구매자·물량·최저가 5,000원 · 실결제 없음 · 최대 3건 · 새로고침은 새 시연 · 한 탭에서만 실행하세요.</small>
     <p role="status">{demo.enabled ? "자동 진행 중" : "자동 동작 정지"} · 분류별 대기 {demo.buffered}개 · 완료 {demo.count}/3건</p>

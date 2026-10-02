@@ -202,7 +202,7 @@ export default function MarketPage() {
       const result = (await response.json()) as { winningBid?: Bid };
       setMessage(
         result.winningBid
-          ? `${result.winningBid.buyerId} 낙찰로 경매를 마감했습니다.`
+          ? `${result.winningBid.buyerId} 낙찰로 경매를 마감했습니다. 결제 완료(가상) · 실결제 없음 · 배차 대기`
           : "입찰 없이 경매를 마감했습니다.",
       );
       setPrice("");
