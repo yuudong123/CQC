@@ -20,6 +20,8 @@ const {
   periodPoints,
   csvCell,
   recentThroughput,
+  throughputSeries,
+  exceptionOf,
   DEMO_INPUT_INTERVAL_MS,
 } = require("../src/lib/quality-runtime.ts");
 const start = Date.parse("2026-09-28T00:00:00Z");
@@ -151,4 +153,29 @@ test("recent throughput averages the last ten completed seconds", () => {
 });
 test("demo runtime starts with the default line speed", () => {
   assert.equal(initialRuntime().intervalMs, DEMO_INPUT_INTERVAL_MS);
+});
+test("throughput series is a moving average over saved history and leaves uncollected spans empty", () => {
+  // 2초 간격 투입 5분: 20초 창에는 10건 → 0.5건/초
+  const history = Array.from({ length: 150 }, (_, i) => ({ timestamp: start + 300_000 - i * 2000 }));
+  const series = throughputSeries(history, start + 300_000);
+  assert.equal(series.length, 151);
+  assert.equal(series.at(-1).at, start + 300_000);
+  assert.equal(series.at(-1).value, 0.5);
+  // 투입이 멈춘 구간은 0
+  assert.equal(throughputSeries(history, start + 400_000).at(-1).value, 0);
+  // 이력이 상한에 닿으면 가장 오래된 기록보다 앞선 창은 null
+  const capped = throughputSeries(history.slice(0, 50), start + 300_000, 5, 20, 2, 50);
+  assert.equal(capped[0].value, null);
+  assert.equal(capped.at(-1).value, 0.5);
+});
+test("exceptions keep only reinspection and error rows with a reason", () => {
+  const base = { excluded: false, reviewRequired: false, errorCode: "NONE", processingStatus: "COMPLETED", cultivarConfidence: 100, confidence: 99, control: "SUCCEEDED" };
+  assert.equal(exceptionOf(base), null);
+  assert.deepEqual(exceptionOf({ ...base, reviewRequired: true, confidence: 55.8 }), { kind: "reinspection", reason: "품질 신뢰도 미달", lowCultivar: false, lowQuality: true });
+  assert.equal(exceptionOf({ ...base, reviewRequired: true, cultivarConfidence: 49.9 }).reason, "품종 신뢰도 미달");
+  assert.equal(exceptionOf({ ...base, reviewRequired: true, cultivarConfidence: 40, confidence: 40 }).reason, "품종·품질 신뢰도 미달");
+  // 기준값과 같으면 미달이 아니다
+  assert.equal(exceptionOf({ ...base, reviewRequired: true, cultivarConfidence: 50, confidence: 60, control: "FALLBACK" }).reason, "제어 실패 · 재검사 대체");
+  assert.deepEqual(exceptionOf({ ...base, excluded: true, errorCode: "INFERENCE_TIMEOUT", confidence: null }), { kind: "error", reason: "추론 시간 초과", lowCultivar: false, lowQuality: false });
+  assert.equal(exceptionOf({ ...base, excluded: true, processingStatus: "ERROR" }).reason, "추론 오류");
 });

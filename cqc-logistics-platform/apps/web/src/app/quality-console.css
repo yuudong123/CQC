@@ -238,25 +238,9 @@
   font-size: 13px;
   color: var(--muted);
 }
-.qc-chart {
-  height: 100px;
-  display: flex;
-  align-items: stretch;
-  gap: 4px;
-  border-bottom: 1px solid var(--line);
-}
-.qc-chart > div {
-  flex: 1;
-  display: flex;
-  align-items: flex-end;
-  background: #faf7f7;
-}
-.qc-chart span {
-  display: block;
-  width: 100%;
-  background: var(--rose);
-  min-height: 2px;
-  border-radius: 3px 3px 0 0;
+.qc-trend {
+  position: relative;
+  height: 170px;
 }
 .qc-chart-label {
   display: flex;
@@ -453,5 +437,146 @@
   .qc-period {
     flex-wrap: wrap;
     gap: 4px;
+  }
+}
+
+/* 재검사·오류 사과 목록 */
+.qc-segment {
+  display: flex;
+  gap: 4px;
+}
+.qc-segment button {
+  font-size: 12px;
+  padding: 4px 9px;
+  border-radius: 14px;
+}
+.qc-segment button[aria-pressed="true"] {
+  background: var(--rose);
+  border-color: var(--rose);
+  color: white;
+}
+.qc-bottom p.qc-exception-note {
+  margin: 0 0 8px;
+  font-size: 12px;
+}
+.qc-low {
+  color: #c01c31;
+  font-weight: 700;
+}
+/* 처리 중 검사가 없을 때 마지막 처리 사과를 보여 패널이 비지 않게 한다. */
+.qc-jobs > .qc-latest,
+.qc-jobs > .qc-empty {
+  grid-column: 1 / -1;
+}
+.qc-latest > .qc-muted {
+  margin: 0 0 8px;
+}
+.qc-latest-card {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.qc-latest-grade {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.qc-latest-grade strong {
+  font-size: 28px;
+}
+.qc-latest-grade small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.qc-latest-card dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
+  margin: 0;
+}
+.qc-latest-card dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+.qc-latest-card dd {
+  margin: 2px 0 0;
+  font-size: 15px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.qc-latest-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 6px;
+}
+.qc-latest-list li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 13px;
+}
+.qc-latest-list small {
+  margin-left: auto;
+  color: var(--muted);
+}
+.quality-canvas .qc-console .stat strong small {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.qc-ratio {
+  display: grid;
+  gap: 5px;
+}
+.qc-ratio-bar {
+  display: flex;
+  height: 14px;
+  border-radius: 7px;
+  overflow: hidden;
+  background: #f3eced;
+}
+.qc-ratio-bar span {
+  min-width: 2px;
+}
+.qc-ratio [data-index="0"] { --tone: var(--rose-dark); }
+.qc-ratio [data-index="1"] { --tone: #d27b86; }
+.qc-ratio [data-index="2"] { --tone: #ecc2c7; }
+.qc-ratio-bar span { background: var(--tone); }
+.qc-ratio-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-size: 12px;
+}
+.qc-ratio-legend span::before {
+  content: "";
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  margin-right: 4px;
+  background: var(--tone);
+}
+@media (max-width: 650px) {
+  .qc-latest-card {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 10px;
+  }
+  .qc-latest-grade strong {
+    font-size: 20px;
+  }
+  .quality-canvas .qc-console .stat strong small {
+    display: none;
   }
 }

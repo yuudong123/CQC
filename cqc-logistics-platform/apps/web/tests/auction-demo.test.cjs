@@ -78,14 +78,16 @@ test("자동 출품→입찰 3회→낙찰→배차 및 응답 유실 단계 재
   task.stage = 4;
   await advanceTask(task, s.api, base + 23000);
   assert.equal(s.orders.length, 1);
-  await advanceTask(task, s.api, base + 24500);
-  task.stage = 5;
+  assert.match(await advanceTask(task, s.api, base + 24500), /결제 완료\(가상\)/);
+  assert.equal(s.calls.filter(([path]) => path.endsWith("/dispatch")).length, 0);
   await advanceTask(task, s.api, base + 26000);
+  task.stage = 5;
+  await advanceTask(task, s.api, base + 27500);
   assert.equal(s.calls.filter(([path]) => path.endsWith("/dispatch")).length, 1);
   assert.equal(task.stage, 6);
 });
 test("가용 차량 오류는 배차 완료로 기록하지 않고 재개 가능", async () => {
-  const task = { cqcId: "test", batch: { key: "bin", rows }, stage: 5, bidCount: 3, orderId: "ORDER-1", lotId: "LOT-1" };
+  const task = { cqcId: "test", batch: { key: "bin", rows }, stage: 5, bidCount: 3, orderId: "ORDER-1", lotId: "LOT-1", paid: true };
   const api = async (path) => { if (path.endsWith("/dispatch")) throw new Error("가용 차량 없음"); return { status: "MATCHED" }; };
   await assert.rejects(advanceTask(task, api, base), /가용 차량/);
   assert.equal(task.stage, 5);

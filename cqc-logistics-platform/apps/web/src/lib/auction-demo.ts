@@ -21,7 +21,7 @@ export function collectBatches(records: Result[], seen: Set<string>, buckets: Ma
 type Lot = { lotId: string; cqcId: string; auctionStatus: string };
 type Order = { orderId: string; lotId: string; status: string };
 type Api = <T>(path: string, body?: unknown) => Promise<T>;
-export type DemoTask = { cqcId: string; batch: DemoBatch; stage: number; bidCount: number; lotId?: string; orderId?: string; openedAt?: number };
+export type DemoTask = { cqcId: string; batch: DemoBatch; stage: number; bidCount: number; lotId?: string; orderId?: string; openedAt?: number; paid?: boolean };
 
 /** 서버 조회로 진행 단계를 복구하여 응답 유실 후에도 출품·낙찰·배차를 중복 생성하지 않습니다. */
 export async function advanceTask(task: DemoTask, api: Api, now: number): Promise<string> {
@@ -84,6 +84,8 @@ export async function advanceTask(task: DemoTask, api: Api, now: number): Promis
   if (task.stage === 5) {
     const order = await api<Order>(`/orders/${task.orderId}`);
     if (order.status === "CANCELLED") { task.stage = 6; return `${task.lotId} 주문 취소 · 배차하지 않음`; }
+    // 결제 API는 없으므로 낙찰과 배차 사이에 가상 결제 단계만 한 번 보여줍니다.
+    if (!task.paid) { task.paid = true; return `${task.lotId} 결제 완료(가상) · 실결제 없음`; }
     if (order.status === "MATCHED" || order.status === "DISPATCHING") await api(`/orders/${task.orderId}/dispatch`, {});
     task.stage++;
     return `${task.lotId} 자동 배차 완료 · 관제에서 확인`;
