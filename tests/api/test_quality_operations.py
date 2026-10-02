@@ -82,6 +82,19 @@ def test_openapi_operations_match_shared_contract() -> None:
     assert retention["properties"]["history"]["type"] == "integer"
     assert shared_retention["properties"]["history"]["type"] == "integer"
     assert "Current number" in shared_retention["properties"]["images"]["description"]
+    assert "recentCompletedJobs" in state["required"]
+    assert "recentCompletedJobs" in shared_state["required"]
+    assert state["properties"]["recentCompletedJobs"]["maxItems"] == 64
+    assert shared_state["properties"]["recentCompletedJobs"]["items"] == {
+        "$ref": "#/components/schemas/RecentCompletedJob"
+    }
+    recent = shared["components"]["schemas"]["RecentCompletedJob"]
+    assert set(recent["properties"]) == {
+        "id", "status", "completedAt", "previewExpiresAt", "previews"
+    }
+    assert recent["properties"]["status"]["enum"] == [
+        "COMPLETED", "ERROR", "TIMEOUT"
+    ]
 
 
 def test_fault_image_contract_is_per_image_while_snapshot_remains_per_inspection() -> (

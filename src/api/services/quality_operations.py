@@ -73,6 +73,11 @@ class QualityOperationsService:
             if self._fault_image_storage is not None
             else 0
         )
+        jobs, recent_completed_jobs = (
+            self._live_inspections.snapshot_jobs()
+            if self._live_inspections is not None
+            else ([], [])
+        )
         component_unknown = {
             "status": "unknown",
             "lastSeenAt": None,
@@ -115,11 +120,8 @@ class QualityOperationsService:
                 "throughput": points[-2]["count"] if len(points) >= 2 else 0,
                 "running": False,
                 "faults": [],
-                "jobs": (
-                    self._live_inspections.jobs()
-                    if self._live_inspections is not None
-                    else []
-                ),
+                "jobs": jobs,
+                "recentCompletedJobs": recent_completed_jobs,
                 "history": [to_quality_result(row) for row in rows.items],
                 "images": [],
                 "points": points,

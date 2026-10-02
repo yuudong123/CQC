@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, replace
-from threading import Lock
-from time import monotonic
+from threading import RLock
+from time import monotonic, time
+from typing import Literal
 
 _JOB_ID = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 _PREVIEW_ID = re.compile(r"^[0-9a-f]{32}$")
@@ -20,6 +21,9 @@ class _LiveInspection:
     max_expires_at: float
     index: int
     completed_expires_at: float | None = None
+    completed_at_ms: int | None = None
+    preview_expires_at_ms: int | None = None
+    status: Literal["COMPLETED", "ERROR", "TIMEOUT"] | None = None
 
 
 class LiveInspectionStore:
@@ -32,7 +36,7 @@ class LiveInspectionStore:
         self._max_age_seconds = max_age_seconds
         self._grace_seconds = grace_seconds
         self._items: dict[str, _LiveInspection] = {}
-        self._lock = Lock()
+        self._lock = RLock()
         self._next_index = 0
 
     def publish(
@@ -69,7 +73,12 @@ class LiveInspectionStore:
             )
             return True
 
-    def complete(self, token: str) -> None:
+    def complete(
+        self,
+        token: str,
+        *,
+        status: Literal["COMPLETED", "ERROR", "TIMEOUT"] = "COMPLETED",
+    ) -> None:
         """Hide a finished job immediately and retain its images briefly for readers."""
 
         with self._lock:
@@ -82,7 +91,15 @@ class LiveInspectionStore:
             if expires_at <= now:
                 del self._items[token]
             else:
-                self._items[token] = replace(item, completed_expires_at=expires_at)
+                completed_at_ms = int(time() * 1000)
+                self._items[token] = replace(
+                    item,
+                    completed_expires_at=expires_at,
+                    completed_at_ms=completed_at_ms,
+                    preview_expires_at_ms=completed_at_ms
+                    + round((expires_at - now) * 1000),
+                    status=status,
+                )
 
     def jobs(self) -> list[dict[str, object]]:
         """현재 처리 중인 검사만 공유 Job 계약으로 반환한다."""
@@ -101,17 +118,50 @@ class LiveInspectionStore:
                     "finish": item.started_ms + self._max_age_seconds * 1000,
                     "faults": [],
                     "previewUrl": f"/api/quality/previews/live_{token}",
-                    "previews": [
-                        {
-                            "index": index,
-                            "previewUrl": f"/api/quality/previews/live_{token}_{index:02d}",
-                        }
-                        for index in range(len(item.images))
-                    ],
+                    "previews": self._previews(token, item),
                 }
                 for token, item in self._items.items()
                 if item.completed_expires_at is None
             ]
+
+    def recent_completed_jobs(self) -> list[dict[str, object]]:
+        """Return finished inspections while their preview URLs remain readable."""
+
+        with self._lock:
+            self._prune_expired()
+            return [
+                {
+                    "id": (
+                        item.inspection_id
+                        if _JOB_ID.fullmatch(item.inspection_id)
+                        else token
+                    ),
+                    "status": item.status,
+                    "completedAt": item.completed_at_ms,
+                    "previewExpiresAt": item.preview_expires_at_ms,
+                    "previews": self._previews(token, item),
+                }
+                for token, item in self._items.items()
+                if item.completed_expires_at is not None
+            ]
+
+    def snapshot_jobs(
+        self,
+    ) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
+        """Capture both lists atomically across a concurrent completion."""
+
+        with self._lock:
+            return self.jobs(), self.recent_completed_jobs()
+
+    @staticmethod
+    def _previews(token: str, item: _LiveInspection) -> list[dict[str, object]]:
+        return [
+            {
+                "index": index,
+                "previewUrl": f"/api/quality/previews/live_{token}_{index:02d}",
+            }
+            for index in range(len(item.images))
+        ]
 
     def read(self, token: str) -> tuple[bytes, str] | None:
         """처리 중이거나 완료 유예가 남은 이미지 bytes를 반환한다."""

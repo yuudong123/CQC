@@ -121,8 +121,9 @@ class InspectionService:
         """검사 요청을 판정·제어하고 가능한 결과를 DB에 기록한다."""
 
         preview_token = uuid4().hex
+        preview_status = "ERROR"
         try:
-            return await self._inspect(
+            result = await self._inspect(
                 inspection_id=inspection_id,
                 images=images,
                 metadata=metadata,
@@ -132,10 +133,18 @@ class InspectionService:
                 source_reference=source_reference,
                 preview_token=preview_token,
             )
+            if result.decision_reason is InspectionDecisionReason.INFERENCE_DEADLINE_EXCEEDED:
+                preview_status = "TIMEOUT"
+            elif not (
+                result.decision_reason.value.startswith("INFERENCE_")
+                or result.persistence_status is PersistenceStatus.FAILED
+            ):
+                preview_status = "COMPLETED"
+            return result
         finally:
             if self._live_inspections is not None:
                 try:
-                    self._live_inspections.complete(preview_token)
+                    self._live_inspections.complete(preview_token, status=preview_status)
                 except Exception:
                     logger.exception("처리 중 이미지 정리 실패: %s", inspection_id)
 
