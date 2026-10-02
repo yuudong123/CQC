@@ -75,6 +75,11 @@ class QualityPeriodTotals(BaseModel):
     thirty: int = Field(alias="30", ge=0)
 
 
+class QualityJobPreview(BaseModel):
+    index: int = Field(ge=0, le=11)
+    previewUrl: str = Field(pattern=r"^/api/quality/previews/[A-Za-z0-9_-]+$")
+
+
 class QualityJob(BaseModel):
     id: str = Field(min_length=1, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
     index: int = Field(ge=0)
@@ -82,6 +87,7 @@ class QualityJob(BaseModel):
     finish: float = Field(ge=0)
     faults: list[Fault] = Field(max_length=5)
     previewUrl: str | None = None
+    previews: list[QualityJobPreview] | None = Field(default=None, min_length=1, max_length=12)
 
 
 class QualityToday(QualitySummary):

@@ -186,8 +186,10 @@ class InspectionService:
                 self._live_inspections.publish(
                     preview_token,
                     inspection_id=inspection_id,
-                    content=image_payloads[0],
-                    content_type=images[0].content_type or "",
+                    images=[
+                        (content, image.content_type or "")
+                        for content, image in zip(image_payloads, images, strict=True)
+                    ],
                     started_ms=int(created_at.timestamp() * 1000),
                 )
             except Exception:

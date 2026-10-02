@@ -123,6 +123,10 @@ const schemas = {
     resultProperties,
     Object.keys(resultProperties).filter((k) => k !== "previewUrl"),
   ),
+  JobPreview: object({
+    index: { type: "integer", minimum: 0, maximum: 11 },
+    previewUrl,
+  }),
   Job: object(
     {
       id,
@@ -131,6 +135,13 @@ const schemas = {
       finish: num,
       faults: array(fault, 5),
       previewUrl,
+      previews: {
+        type: "array",
+        description: "Live inspection images in input order; index is zero-based. URLs expire when processing ends.",
+        minItems: 1,
+        maxItems: 12,
+        items: ref("JobPreview"),
+      },
     },
     ["id", "index", "started", "finish", "faults"],
   ),
