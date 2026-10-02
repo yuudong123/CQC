@@ -265,6 +265,70 @@ export function step(state: Runtime, now: number, intervalMs = 1000, singleInput
   }
   return next;
 }
+/**
+ * Backend 기본 신뢰도 기준(%, `src/api/core/config.py`). snapshot 이력에 판정 사유가 없어
+ * 화면에서 같은 기준으로 재검사 사유를 만든다. Backend가 사유를 내려주면 그걸 쓴다(#55).
+ */
+export const CONFIDENCE_MIN = { cultivar: 50, quality: 60 } as const;
+export type Exception = {
+  kind: "reinspection" | "error";
+  reason: string;
+  lowCultivar: boolean;
+  lowQuality: boolean;
+};
+/** 사람이 다시 봐야 하는 사과(재검사·오류)만 사유와 함께 돌려주고, 정상 통과는 null. */
+export function exceptionOf(row: Result): Exception | null {
+  if (row.excluded) {
+    const reason =
+      row.errorCode !== "NONE"
+        ? FAULTS[row.errorCode]
+        : row.processingStatus === "TIMEOUT"
+          ? FAULTS.INFERENCE_TIMEOUT
+          : FAULTS.INFERENCE_ERROR;
+    return { kind: "error", reason, lowCultivar: false, lowQuality: false };
+  }
+  if (!row.reviewRequired) return null;
+  const lowCultivar =
+    row.cultivarConfidence !== null && row.cultivarConfidence < CONFIDENCE_MIN.cultivar;
+  const lowQuality =
+    row.confidence !== null && row.confidence < CONFIDENCE_MIN.quality;
+  const reason =
+    lowCultivar && lowQuality
+      ? "품종·품질 신뢰도 미달"
+      : lowCultivar
+        ? "품종 신뢰도 미달"
+        : lowQuality
+          ? "품질 신뢰도 미달"
+          : row.control === "FALLBACK"
+            ? "제어 실패 · 재검사 대체"
+            : "재검사 지정";
+  return { kind: "reinspection", reason, lowCultivar, lowQuality };
+}
+export type ThroughputPoint = { at: number; value: number | null };
+/**
+ * `end`까지 최근 `minutes`분 처리량(건/초)을 `stepSeconds`마다 직전 `windowSeconds`초 이동평균으로 만든다.
+ * 서버 points는 30초치뿐이라 저장 이력 시각으로 계산한다. 이력이 상한(`cap`)에 닿았으면
+ * 가장 오래된 기록보다 앞선 창은 0이 아니라 수집 전(null)이다.
+ */
+export function throughputSeries(
+  history: Result[],
+  end: number,
+  minutes = 5,
+  windowSeconds = 20,
+  stepSeconds = 2,
+  cap = Infinity,
+): ThroughputPoint[] {
+  const times = history.map((row) => row.timestamp);
+  const oldest = history.length >= cap ? Math.min(...times) : -Infinity;
+  const total = Math.round((minutes * 60) / stepSeconds);
+  return Array.from({ length: total + 1 }, (_, index) => {
+    const at = end - (total - index) * stepSeconds * 1000;
+    const from = at - windowSeconds * 1000;
+    if (from < oldest) return { at, value: null };
+    const count = times.filter((time) => time > from && time <= at).length;
+    return { at, value: count / windowSeconds };
+  });
+}
 export function periodPoints(points: Point[], minutes: number, now: number) {
   return points.filter((point) => point.at > now - minutes * 60_000);
 }

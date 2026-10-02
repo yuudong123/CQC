@@ -8,6 +8,8 @@ from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI
 
+from src.logging_config import configure_service_logging
+
 from .clients.inference import HttpInferenceClient, MockInferenceClient
 from .clients.simulator import SimulatorClient
 from .control.virtual_control import MockVirtualControl
@@ -177,11 +179,13 @@ app = create_app()
 def main() -> int:
     """설정된 호스트와 포트로 백엔드를 실행한다."""
 
+    configure_service_logging()
     settings = get_settings()
     uvicorn.run(
         app,
         host=settings.app_host,
         port=settings.app_port,
+        log_config=None,
     )
     return 0
 

@@ -13,6 +13,8 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
+from src.logging_config import configure_service_logging
+
 from .config import SimulatorSettings
 from .dataset import SimulatorDatasetError
 from .position import SimulatorPositionError
@@ -161,11 +163,13 @@ def create_app(
 def main() -> None:
     """`python -m src.simulator.main`으로 독립 서버를 실행한다."""
 
+    configure_service_logging()
     settings = SimulatorSettings()
     uvicorn.run(
         create_app(settings),
         host=settings.simulator_bind_host,
         port=settings.simulator_bind_port,
+        log_config=None,
     )
 
 
