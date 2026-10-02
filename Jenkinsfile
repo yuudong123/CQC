@@ -42,12 +42,22 @@ pipeline {
         // 서로 변경할 수 있기 때문에 막는다.
         disableConcurrentBuilds()
 
-        // Pipeline이 비정상적으로 오래 실행되는 것을 방지한다.
-        timeout(time: 20, unit: 'MINUTES')
-
         // Jenkins 빌드 기록을 최근 30개까지만 유지한다.
         buildDiscarder(
             logRotator(numToKeepStr: '30')
+        )
+    }
+
+    parameters {
+        booleanParam(
+            name: 'FORCE_BUILD_FAILURE',
+            defaultValue: false,
+            description: 'MO-07 preservation test: fail Build before Deploy'
+        )
+        booleanParam(
+            name: 'FORCE_HEALTH_FAILURE',
+            defaultValue: false,
+            description: 'MO-07 rollback test: fail health verification after deploy'
         )
     }
 
@@ -92,6 +102,13 @@ pipeline {
     
     stages {
 
+        // Keep recovery outside the CI/CD timeout so it receives its own budget.
+        stage('CI/CD') {
+            options {
+                timeout(time: 20, unit: 'MINUTES')
+            }
+            stages {
+
         // ====================================================
         // 1. Environment Check
         // ====================================================
@@ -124,6 +141,10 @@ pipeline {
                     echo "======================================"
                     git branch --show-current || true
                     git rev-parse --short HEAD
+                    if [ -f .cqc-deploy-state/pending ]; then
+                        echo "Recovering an interrupted deployment before starting CI..."
+                        sh scripts/ci/compose-rollback.sh
+                    fi
 
                     echo "======================================"
                     echo " Docker Version"
@@ -162,12 +183,49 @@ pipeline {
                     echo " Compose Validate"
                     echo "======================================"
 
-                    docker-compose -f compose.yaml config
+                    docker-compose -f compose.yaml config --quiet
                 '''
             }
         }
 
         // ====================================================
+        stage('Python Test') {
+            steps {
+                sh '''
+                    set -eu
+                    container_id="$(docker create \
+                        -w /app \
+                        python:3.11-slim \
+                        sh -c "pip install --disable-pip-version-check -r requirements-backend-dev.txt && python -m pytest -q tests/api tests/simulator tests/ci tests/test_service_logging.py")"
+                    trap 'docker rm -f "$container_id" >/dev/null' EXIT
+                    docker cp . "$container_id:/app"
+                    docker start "$container_id" >/dev/null
+                    exit_code="$(docker wait "$container_id")"
+                    docker logs "$container_id"
+                    [ "$exit_code" -eq 0 ]
+                '''
+            }
+        }
+
+        stage('Web Test') {
+            steps {
+                sh '''
+                    set -eu
+                    container_id="$(docker create \
+                        --tmpfs /repo/cqc-logistics-platform/apps/web/node_modules \
+                        -w /repo/cqc-logistics-platform/apps/web \
+                        node:24-alpine \
+                        sh -c "npm ci --ignore-scripts && npm test")"
+                    trap 'docker rm -f "$container_id" >/dev/null' EXIT
+                    docker cp . "$container_id:/repo"
+                    docker start "$container_id" >/dev/null
+                    exit_code="$(docker wait "$container_id")"
+                    docker logs "$container_id"
+                    [ "$exit_code" -eq 0 ]
+                '''
+            }
+        }
+
         // 3. Docker Build
         // ====================================================
         // Compose의 build 설정이 존재하는 서비스를 빌드한다.
@@ -190,6 +248,10 @@ pipeline {
                     echo " Docker Build"
                     echo "======================================"
 
+                    if [ "${FORCE_BUILD_FAILURE:-false}" = true ]; then
+                        echo "[EXPECTED TEST FAILURE] Build failure injection enabled"
+                        exit 1
+                    fi
                     docker-compose -f compose.yaml build
                 '''
             }
@@ -201,8 +263,7 @@ pipeline {
         // 현재 프로젝트에서 반드시 존재해야 하는
         // 기본 디렉터리 구조를 확인한다.
         //
-        // 추후 테스트 환경이 확정되면
-        // pytest 등 실제 자동 테스트 단계로 확장한다.
+        // Python / Web 자동 테스트와 별도로 배포 필수 파일을 확인한다.
         // ====================================================
         stage('Basic Check') {
 
@@ -258,7 +319,7 @@ pipeline {
                     echo " CQC Deploy"
                     echo "======================================"
 
-                    docker-compose -f compose.yaml up -d --no-build --remove-orphans
+                    sh scripts/ci/compose-deploy.sh
                 '''
             }
         }
@@ -274,7 +335,7 @@ pipeline {
         // 4) logistics-web / simulator 상태 확인
         //
         // healthcheck가 아직 완료되지 않은 경우를 고려해
-        // 최대 60초 동안 반복 확인한다.
+        // 서비스별 최대 120초 동안 반복 확인한다.
         // ====================================================
         stage('Verify') {
 
@@ -297,50 +358,8 @@ pipeline {
                     echo " Healthcheck Verification"
                     echo "======================================"
 
-                    # Healthcheck가 적용된 실제 서비스 검증
-                    HEALTH_SERVICES="mysql inference backend simulator logistics-mongodb logistics-api logistics-web"
-
-                    for service in $HEALTH_SERVICES; do
-
-                        container_id="$(docker-compose -f compose.yaml ps -q "$service")"
-
-                        if [ -z "$container_id" ]; then
-                            echo "[ERROR] $service container not found"
-                            exit 1
-                        fi
-
-                        echo "Waiting for $service to become healthy..."
-
-                        healthy="false"
-
-                        for i in $(seq 1 12); do
-
-                            status="$(docker inspect \
-                                --format='{{if .State.Health}}{{.State.Health.Status}}{{else}}no-healthcheck{{end}}' \
-                                "$container_id")"
-
-                            echo "[$i/12] $service health status: $status"
-
-                            if [ "$status" = "healthy" ]; then
-                                healthy="true"
-                                break
-                            fi
-
-                            if [ "$status" = "unhealthy" ]; then
-                                echo "[ERROR] $service became unhealthy"
-                                docker inspect "$container_id" || true
-                                exit 1
-                            fi
-
-                            sleep 5
-                        done
-
-                        if [ "$healthy" != "true" ]; then
-                            echo "[ERROR] $service did not become healthy within 60 seconds"
-                            docker inspect "$container_id" || true
-                            exit 1
-                        fi
-                    done
+                    CQC_FORCE_HEALTH_FAILURE="$FORCE_HEALTH_FAILURE" \
+                        sh scripts/ci/verify-compose-health.sh
 
                     echo "======================================"
                     echo " API Smoke Verification"
@@ -390,7 +409,10 @@ print('Simulator playback OK:', data)
                     echo "======================================"
 
                     docker-compose -f compose.yaml ps
+                    rm -f .cqc-deploy-state/pending .cqc-deploy-state/rollback.json .cqc-deploy-state/project
                 '''
+            }
+        }
             }
         }
     }
@@ -406,16 +428,21 @@ print('Simulator playback OK:', data)
             echo '======================================'
         }
 
-        failure {
+        unsuccessful {
             echo '======================================'
             echo ' CQC CI/CD FAILED'
             echo '======================================'
 
-            // 실패 시 원인 확인을 위해 현재 Compose 상태를 출력한다.
-            sh '''
-                export INFERENCE_MODEL_DIR="$PWD/models/selected"
-                docker-compose -f compose.yaml ps || true
-            '''
+            // Failure, manual abort and timeout all enter the recovery path.
+            timeout(time: 5, unit: 'MINUTES') {
+                sh '''
+                    set -eu
+                    if [ -f .cqc-deploy-state/pending ]; then
+                        echo "Restoring the previous healthy deployment..."
+                        sh scripts/ci/compose-rollback.sh
+                    fi
+                '''
+            }
         }
 
         always {

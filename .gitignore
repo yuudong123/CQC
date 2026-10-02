@@ -17,3 +17,6 @@ AGENTS.md
 
 .ruff_cache/
 .pytest_cache/
+
+# Runtime deployment snapshots contain credentials. Never commit them.
+.cqc-deploy-state/

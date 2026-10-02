@@ -1,0 +1,2 @@
+# CI scripts are executed by a POSIX shell, including on Windows-hosted Docker.
+scripts/ci/*.sh text eol=lf
