@@ -22,6 +22,7 @@ const {
   recentThroughput,
   throughputSeries,
   exceptionOf,
+  displayedJobs,
   DEMO_INPUT_INTERVAL_MS,
 } = require("../src/lib/quality-runtime.ts");
 const start = Date.parse("2026-09-28T00:00:00Z");
@@ -178,4 +179,18 @@ test("exceptions keep only reinspection and error rows with a reason", () => {
   assert.equal(exceptionOf({ ...base, reviewRequired: true, cultivarConfidence: 50, confidence: 60, control: "FALLBACK" }).reason, "제어 실패 · 재검사 대체");
   assert.deepEqual(exceptionOf({ ...base, excluded: true, errorCode: "INFERENCE_TIMEOUT", confidence: null }), { kind: "error", reason: "추론 시간 초과", lowCultivar: false, lowQuality: false });
   assert.equal(exceptionOf({ ...base, excluded: true, processingStatus: "ERROR" }).reason, "추론 오류");
+});
+test("job panel keeps the last apple until the next one starts", () => {
+  const a = { id: "a", index: 1 };
+  const b = { id: "b", index: 2 };
+  // 처음부터 없으면 빈 칸
+  assert.deepEqual(displayedJobs([], []), { jobs: [], held: false });
+  // 처리 중이면 그대로
+  assert.deepEqual(displayedJobs([a], []), { jobs: [a], held: false });
+  // 끝나서 비면 마지막 사과를 남긴다
+  assert.deepEqual(displayedJobs([], [a]), { jobs: [a], held: true });
+  // 병렬로 여러 건이었으면 가장 나중 것 하나만
+  assert.deepEqual(displayedJobs([], [a, b]), { jobs: [b], held: true });
+  // 다음 사과가 들어오면 바로 바뀐다
+  assert.deepEqual(displayedJobs([b], [a]), { jobs: [b], held: false });
 });

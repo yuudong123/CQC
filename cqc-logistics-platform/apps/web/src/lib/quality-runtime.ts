@@ -122,6 +122,11 @@ export const DEMO_INPUT_INTERVAL_MS = 1000;
 /** 라인 속도 선택지. Backend `capabilities.intervals`와 같은 값이다. */
 export const LINE_INTERVALS = [1000, 2000, 3000];
 /** 진행 중인 마지막 1초 구간을 뺀 최근 `seconds`초의 초당 평균 처리량. 간격이 1초보다 길어도 0으로 떨어지지 않는다. */
+/** 처리 중 사과 패널에 보일 사과. 처리 중인 사과가 없으면 마지막 사과를 다음 사과가 들어올 때까지 남긴다. */
+export function displayedJobs(current: Job[], last: Job[]): { jobs: Job[]; held: boolean } {
+  if (current.length || !last.length) return { jobs: current, held: false };
+  return { jobs: last.slice(-1), held: true };
+}
 export function recentThroughput(points: Point[], seconds = 10): number {
   const end = points.at(-1)?.at;
   if (end === undefined) return 0;

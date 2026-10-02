@@ -26,8 +26,11 @@ import {
   periodPoints,
   throughputSeries,
   exceptionOf,
+  displayedJobs,
   CONFIDENCE_MIN,
   type Fault,
+  type Job,
+  type Result,
   type Runtime,
 } from "@/lib/quality-runtime";
 
@@ -55,6 +58,13 @@ function QualityImage({
       onError={() => setFailed(true)}
     />
   );
+}
+/** 마지막으로 처리한 사과의 판정 요약. 이력에 아직 없으면 반영 중으로 둔다. */
+function heldResult(row: Result | undefined) {
+  if (!row) return "판정 반영 중";
+  const exception = exceptionOf(row);
+  if (exception) return `${exception.kind === "error" ? "오류" : "재검사"} · ${exception.reason}`;
+  return `${row.variety ?? "—"} ${row.grade ?? "—"}`;
 }
 function Modal({
   title,
@@ -389,6 +399,11 @@ export default function QualityConsole({
       controller?.abort();
     };
   }, [remote]);
+  // 처리가 끝난 사과도 다음 사과가 올 때까지 남겨 패널 높이를 고정한다.
+  // 같은 key로 계속 그려서 이미 받은 미리보기를 다시 요청하지 않는다(완료 후 서버 미리보기는 만료됨).
+  const [lastJobs, setLastJobs] = useState<Job[]>([]);
+  if (state.jobs.length && lastJobs !== state.jobs) setLastJobs(state.jobs);
+  const shown = displayedJobs(state.jobs, lastJobs);
   const lastPoint = state.points.at(-1);
   const trendEnd = Math.max(
     snapshot?.capturedAt ?? 0,
@@ -627,7 +642,7 @@ export default function QualityConsole({
             }
           >
             <div className="qc-scroll qc-jobs">
-              {state.jobs.map((job) => (
+              {shown.jobs.map((job) => (
                 <article key={job.id} className="qc-job">
                   {remote && job.previews?.length ? (
                     <div className="qc-frame-area"><div className="qc-frame-grid" aria-label={`${job.id} 처리 중 이미지 ${job.previews.length}장`}>
@@ -664,19 +679,35 @@ export default function QualityConsole({
                   <div className="qc-job-info">
                     <strong title={job.id}>{job.id}</strong>
                     {!remote && <small>그룹 {sampleApples[imageIndexForJob(job.index)].group}</small>}
-                    <span>{remote ? "추론 처리 중" : "12장 입력 · 판정 시연"}</span>
+                    <span>
+                      {shown.held
+                        ? "처리 완료 · 다음 사과 대기"
+                        : remote
+                          ? "추론 처리 중"
+                          : "12장 입력 · 판정 시연"}
+                    </span>
                     <small>
-                      {job.faults.length
-                        ? job.faults.map((code) => FAULTS[code]).join(" · ")
-                        : remote && snapshot?.source === "backend"
-                          ? "처리 중"
-                          : "정상 시연"}
+                      {shown.held
+                        ? heldResult(state.history.find((row) => row.id === job.id))
+                        : job.faults.length
+                          ? job.faults.map((code) => FAULTS[code]).join(" · ")
+                          : remote && snapshot?.source === "backend"
+                            ? "처리 중"
+                            : "정상 시연"}
                     </small>
                   </div>
                 </article>
               ))}
-              {!state.jobs.length && (
-                <p className="qc-empty">처리 중인 사과가 없습니다.</p>
+              {!shown.jobs.length && (
+                // 첫 사과가 오기 전에도 12칸 자리를 잡아 패널 높이가 바뀌지 않게 한다.
+                <article className="qc-job">
+                  <div className="qc-frame-area"><div className="qc-frame-grid" aria-hidden="true">
+                    {Array.from({ length: 12 }, (_, frame) => <div key={frame} />)}
+                  </div></div>
+                  <div className="qc-job-info">
+                    <span>처리 중인 사과가 없습니다.</span>
+                  </div>
+                </article>
               )}
             </div>
           </Panel>
