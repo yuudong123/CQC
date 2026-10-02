@@ -76,10 +76,24 @@ def test_result_keeps_control_failure_and_excluded_prediction_distinct() -> None
         )
     )
     assert excluded["processingStatus"] == "TIMEOUT"
+    assert excluded["errorCode"] == "INFERENCE_TIMEOUT"
     assert excluded["status"] == "FAIL"
     assert excluded["variety"] is None
     assert excluded["confidence"] is None
     assert excluded["inferenceMs"] is None
+
+    connection_failure = to_quality_result(
+        _row(
+            error_code="INFERENCE_CONNECTION_ERROR",
+            predicted_cultivar=None,
+            predicted_grade=None,
+            exclude_from_normal_stats=True,
+            target_bin_code="TEST_REINSPECTION_BIN",
+        )
+    )
+    assert connection_failure["processingStatus"] == "ERROR"
+    assert connection_failure["errorCode"] == "INFERENCE_ERROR"
+    assert connection_failure["status"] == "FAIL"
 
 
 def test_unattempted_control_is_preserved_without_a_failure_label() -> None:

@@ -62,12 +62,18 @@ class HttpInferenceClient:
         url: str,
         *,
         timeout_ms: int = 2000,
+        connect_timeout_ms: int = 200,
         client: httpx.AsyncClient | None = None,
     ) -> None:
         if not url.startswith(("http://", "https://")):
             raise ValueError("Inference URL must be HTTP or HTTPS")
         self._url = url
-        self._client = client or httpx.AsyncClient(timeout=timeout_ms / 1000)
+        self._client = client or httpx.AsyncClient(
+            timeout=httpx.Timeout(
+                timeout_ms / 1000,
+                connect=connect_timeout_ms / 1000,
+            )
+        )
         self._owns_client = client is None
 
     async def predict(self, request: InferenceRequest) -> InferenceResponse:

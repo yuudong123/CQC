@@ -49,6 +49,7 @@ def create_app(
             HttpInferenceClient(
                 runtime_settings.inference_url,
                 timeout_ms=runtime_settings.inference_hard_timeout_ms,
+                connect_timeout_ms=runtime_settings.inference_connect_timeout_ms,
             )
             if runtime_settings.inference_client_mode == "http"
             else MockInferenceClient()

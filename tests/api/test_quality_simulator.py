@@ -52,6 +52,7 @@ def _base_snapshot() -> dict[str, object]:
             "running": False,
             "faults": [],
             "jobs": [],
+            "recentCompletedJobs": [],
             "history": [],
             "images": [],
             "points": [],

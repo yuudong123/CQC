@@ -11,7 +11,6 @@ from decimal import Decimal
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from threading import Event
-from types import SimpleNamespace
 from uuid import UUID
 
 import httpx
@@ -906,8 +905,8 @@ def test_snapshot_reflects_actual_image_count_and_delete_capability(
     history_row.errors = []
 
     class FakeHistory:
-        def list_page(self, *args, **kwargs):
-            return SimpleNamespace(items=[history_row])
+        def recent_rows(self, *args, **kwargs):
+            return [history_row]
 
         def recent_errors(self, *args, **kwargs):
             return []

@@ -58,10 +58,18 @@ class ConnectionFailureClient(MockInferenceClient):
         )
 
 
-class TimeoutFailureClient(MockInferenceClient):
+class ConnectTimeoutFailureClient(MockInferenceClient):
     async def predict(self, request: InferenceRequest) -> InferenceResponse:
         raise httpx.ConnectTimeout(
             "connect timed out",
+            request=httpx.Request("POST", "http://inference/v1/predict"),
+        )
+
+
+class ReadTimeoutFailureClient(MockInferenceClient):
+    async def predict(self, request: InferenceRequest) -> InferenceResponse:
+        raise httpx.ReadTimeout(
+            "response timed out",
             request=httpx.Request("POST", "http://inference/v1/predict"),
         )
 
@@ -444,13 +452,14 @@ def test_connection_error_uses_reinspection_and_records_error() -> None:
 
     assert response.decision_reason == "INFERENCE_CONNECTION_ERROR"
     assert response.target_bin_code == "TEST_REINSPECTION_BIN"
+    assert response.exclude_from_normal_stats is True
     assert persistence.errors[0].error_code == "INFERENCE_CONNECTION_ERROR"
 
 
-def test_transport_timeout_is_recorded_as_timeout() -> None:
+def test_connect_timeout_is_recorded_as_connection_error() -> None:
     persistence = RecordingPersistence()
     service = InspectionService(
-        TimeoutFailureClient(),
+        ConnectTimeoutFailureClient(),
         MockVirtualControl(),
         cultivar_confidence_threshold=0.50,
         quality_confidence_threshold=0.60,
@@ -467,7 +476,35 @@ def test_transport_timeout_is_recorded_as_timeout() -> None:
             virtual_brix=11.9,
         )
     )
+    assert response.decision_reason == "INFERENCE_CONNECTION_ERROR"
+    assert response.target_bin_code == "TEST_REINSPECTION_BIN"
+    assert response.exclude_from_normal_stats is True
+    assert persistence.errors[0].error_code == "INFERENCE_CONNECTION_ERROR"
+
+
+def test_read_timeout_is_recorded_as_inference_timeout() -> None:
+    persistence = RecordingPersistence()
+    service = InspectionService(
+        ReadTimeoutFailureClient(),
+        MockVirtualControl(),
+        cultivar_confidence_threshold=0.50,
+        quality_confidence_threshold=0.60,
+        inference_business_deadline_ms=500,
+        late_result_manager=_late_result_manager(),
+        bin_mapping_repository=FakeBinMappingRepository(),
+        persistence=persistence,
+    )
+    response = asyncio.run(
+        service.inspect(
+            inspection_id="inspection-read-timeout",
+            images=_images(1),
+            metadata=_metadata(1),
+            virtual_brix=11.9,
+        )
+    )
     assert response.decision_reason == "INFERENCE_DEADLINE_EXCEEDED"
+    assert response.target_bin_code == "TEST_REINSPECTION_BIN"
+    assert response.exclude_from_normal_stats is True
     assert persistence.errors[0].error_code == "INFERENCE_DEADLINE_EXCEEDED"
 
 

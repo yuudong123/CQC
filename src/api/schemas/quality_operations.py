@@ -90,6 +90,14 @@ class QualityJob(BaseModel):
     previews: list[QualityJobPreview] | None = Field(default=None, min_length=1, max_length=12)
 
 
+class QualityRecentCompletedJob(BaseModel):
+    id: str = Field(min_length=1, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
+    status: Literal["COMPLETED", "ERROR", "TIMEOUT"]
+    completedAt: float = Field(ge=0)
+    previewExpiresAt: float = Field(ge=0)
+    previews: list[QualityJobPreview] = Field(min_length=1, max_length=12)
+
+
 class QualityToday(QualitySummary):
     date: str
     review: int = Field(ge=0)
@@ -108,6 +116,7 @@ class QualityState(BaseModel):
     faults: list[Fault] = Field(max_length=5)
     scope: Literal["ALL", "NEXT"] | SkipJsonSchema[None] = None
     jobs: list[QualityJob] = Field(max_length=64)
+    recentCompletedJobs: list[QualityRecentCompletedJob] = Field(max_length=64)
     history: list[QualityResult] = Field(max_length=200)
     images: list[QualityResult] = Field(max_length=100)
     points: list[QualityPoint] = Field(max_length=1800)

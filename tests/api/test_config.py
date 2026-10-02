@@ -20,6 +20,7 @@ def test_settings_reads_backend_environment_variables(monkeypatch: MonkeyPatch) 
     monkeypatch.setenv("INSPECTION_HISTORY_DELETE_BATCH", "10")
     monkeypatch.setenv("INFERENCE_BUSINESS_DEADLINE_MS", "750")
     monkeypatch.setenv("INFERENCE_HARD_TIMEOUT_MS", "2500")
+    monkeypatch.setenv("INFERENCE_CONNECT_TIMEOUT_MS", "220")
     monkeypatch.setenv("MAX_LATE_TASKS", "3")
 
     settings = Settings()
@@ -38,6 +39,7 @@ def test_settings_reads_backend_environment_variables(monkeypatch: MonkeyPatch) 
     assert settings.quality_confidence_threshold == 0.62
     assert settings.inference_business_deadline_ms == 750
     assert settings.inference_hard_timeout_ms == 2500
+    assert settings.inference_connect_timeout_ms == 220
     assert settings.max_late_tasks == 3
 
 
@@ -51,6 +53,7 @@ def test_policy_settings_use_confirmed_defaults() -> None:
     assert settings.inspection_history_delete_batch == 8_640
     assert settings.inference_business_deadline_ms == 500
     assert settings.inference_hard_timeout_ms == 2000
+    assert settings.inference_connect_timeout_ms == 200
     assert settings.max_late_tasks == 4
     assert settings.live_preview_grace_seconds == 3
     assert settings.live_preview_max_dimension == 240
@@ -64,3 +67,8 @@ def test_history_delete_batch_must_be_below_limit() -> None:
             inspection_history_limit=5,
             inspection_history_delete_batch=5,
         )
+
+
+def test_connect_timeout_must_be_below_500ms_deadline() -> None:
+    with pytest.raises(ValueError, match="inference_connect_timeout_ms"):
+        Settings(_env_file=None, inference_connect_timeout_ms=500)

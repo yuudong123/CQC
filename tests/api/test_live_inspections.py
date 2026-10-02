@@ -5,7 +5,6 @@ from __future__ import annotations
 import asyncio
 import json
 from io import BytesIO
-from types import SimpleNamespace
 
 import httpx
 import pytest
@@ -39,8 +38,8 @@ class _BlockingInference(MockInferenceClient):
 
 
 class _History:
-    def list_page(self, *args: object, **kwargs: object) -> SimpleNamespace:
-        return SimpleNamespace(items=[])
+    def recent_rows(self, *args: object, **kwargs: object) -> list:
+        return []
 
     def recent_errors(self, *args: object, **kwargs: object) -> list:
         return []
@@ -174,6 +173,7 @@ async def _job_and_preview_exist_only_while_inspection_runs(
         )
         snapshot = (await client.get("/v1/quality/snapshot")).json()
         jobs = snapshot["state"]["jobs"]
+        assert snapshot["state"]["recentCompletedJobs"] == []
         assert len(jobs) == 1
         assert jobs[0]["id"] == "inspection-a"
         assert jobs[0]["previewUrl"].startswith("/api/quality/previews/live_")
@@ -205,11 +205,22 @@ async def _job_and_preview_exist_only_while_inspection_runs(
 
         inference.release["inspection-a"].set()
         assert (await pending).status_code == 200
-        assert (await client.get("/v1/quality/snapshot")).json()["state"]["jobs"] == []
+        finished_state = (await client.get("/v1/quality/snapshot")).json()["state"]
+        assert finished_state["jobs"] == []
+        recent = finished_state["recentCompletedJobs"]
+        assert len(recent) == 1
+        assert recent[0]["id"] == "inspection-a"
+        assert recent[0]["status"] == "COMPLETED"
+        assert recent[0]["previews"] == jobs[0]["previews"]
+        assert recent[0]["previewExpiresAt"] - recent[0]["completedAt"] == 3000
         assert (await client.get(preview_path)).status_code == 200
         for path in frame_paths:
             assert (await client.get(path)).status_code == 200
         clock[0] += 3
+
+        assert (await client.get("/v1/quality/snapshot")).json()["state"][
+            "recentCompletedJobs"
+        ] == []
         expired = await client.get(preview_path)
         assert expired.status_code == 410
         assert expired.json() == {"code": "IMAGE_EXPIRED"}
@@ -353,19 +364,30 @@ async def _parallel_inspections_keep_previews_separate(clock: list[float]) -> No
 
         inference.release["inspection-a"].set()
         assert (await pending_a).status_code == 200
-        assert [
-            job["id"]
-            for job in (await client.get("/v1/quality/snapshot")).json()["state"][
-                "jobs"
-            ]
-        ] == ["inspection-b"]
+        state_a = (await client.get("/v1/quality/snapshot")).json()["state"]
+        assert [job["id"] for job in state_a["jobs"]] == ["inspection-b"]
+        assert [job["id"] for job in state_a["recentCompletedJobs"]] == ["inspection-a"]
         assert (await client.get(paths["inspection-a"])).status_code == 200
         assert (await client.get(paths["inspection-b"])).status_code == 200
         clock[0] += 1
         inference.release["inspection-b"].set()
         assert (await pending_b).status_code == 200
-        assert (await client.get("/v1/quality/snapshot")).json()["state"]["jobs"] == []
+        state_b = (await client.get("/v1/quality/snapshot")).json()["state"]
+        assert state_b["jobs"] == []
+        assert {job["id"] for job in state_b["recentCompletedJobs"]} == {
+            "inspection-a",
+            "inspection-b",
+        }
+        assert {
+            job["id"]: len(job["previews"]) for job in state_b["recentCompletedJobs"]
+        } == {"inspection-a": 12, "inspection-b": 3}
         clock[0] += 2
+        assert [
+            job["id"]
+            for job in (await client.get("/v1/quality/snapshot")).json()["state"][
+                "recentCompletedJobs"
+            ]
+        ] == ["inspection-b"]
         assert (await client.get(paths["inspection-a"])).status_code == 410
         assert (await client.get(paths["inspection-b"])).status_code == 200
         for frame in next(job for job in jobs if job["id"] == "inspection-a")[
@@ -375,6 +397,9 @@ async def _parallel_inspections_keep_previews_separate(clock: list[float]) -> No
             assert (await client.get(path)).status_code == 410
         clock[0] += 1
         assert (await client.get(paths["inspection-b"])).status_code == 410
+        assert (await client.get("/v1/quality/snapshot")).json()["state"][
+            "recentCompletedJobs"
+        ] == []
     await service.shutdown()
 
 
@@ -411,10 +436,17 @@ async def _timeout_removes_live_image_without_changing_reinspection(
         assert response.status_code == 200
         assert response.json()["decision_reason"] == "INFERENCE_DEADLINE_EXCEEDED"
         assert store.jobs() == []
+        recent = (await client.get("/v1/quality/snapshot")).json()["state"][
+            "recentCompletedJobs"
+        ]
+        assert len(recent) == 1
+        assert recent[0]["status"] == "TIMEOUT"
+        assert len(recent[0]["previews"]) == 12
         assert (await client.get(path)).status_code == 200
         for frame in frame_paths:
             assert (await client.get(frame)).status_code == 200
         clock[0] += 3
+        assert store.recent_completed_jobs() == []
         assert (await client.get(path)).status_code == 410
         for frame in frame_paths:
             assert (await client.get(frame)).status_code == 410
@@ -471,6 +503,7 @@ def test_completed_previews_expire_after_grace_and_release_capacity(
     )
     store.complete(first)
     assert store.jobs() == []
+    assert [job["id"] for job in store.recent_completed_jobs()] == ["a"]
     clock[0] = 11.0
     store.complete(first)  # Repeated completion must not extend the deadline.
     assert store.read(first) == (b"a", "image/jpeg")
@@ -479,6 +512,7 @@ def test_completed_previews_expire_after_grace_and_release_capacity(
     )
     clock[0] = 13.0
     assert store.read(first) is None
+    assert store.recent_completed_jobs() == []
     assert store.publish(
         second, inspection_id="b", images=[(b"b", "image/jpeg")], started_ms=1
     )
@@ -494,9 +528,13 @@ def test_max_age_caps_grace_period(monkeypatch: pytest.MonkeyPatch) -> None:
     clock[0] = 69.0
     store.complete(token)
     assert store.jobs() == []
+    recent = store.recent_completed_jobs()
+    assert len(recent) == 1
+    assert recent[0]["previewExpiresAt"] - recent[0]["completedAt"] == 1000
     assert store.read(token) == (b"a", "image/jpeg")
     clock[0] = 70.0
     assert store.read(token) is None
+    assert store.recent_completed_jobs() == []
 
 
 def test_error_path_removes_live_image(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -529,10 +567,16 @@ async def _error_path_removes_live_image(clock: list[float]) -> None:
         inference.release["inspection-failed"].set()
         assert (await pending).status_code == 500
         assert store.jobs() == []
+        recent = (await client.get("/v1/quality/snapshot")).json()["state"][
+            "recentCompletedJobs"
+        ]
+        assert len(recent) == 1
+        assert recent[0]["status"] == "ERROR"
         assert (await client.get(path)).status_code == 200
         for frame in frame_paths:
             assert (await client.get(frame)).status_code == 200
         clock[0] += 3
+        assert store.recent_completed_jobs() == []
         assert (await client.get(path)).status_code == 410
         for frame in frame_paths:
             assert (await client.get(frame)).status_code == 410

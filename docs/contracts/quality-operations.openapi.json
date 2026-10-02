@@ -1479,7 +1479,7 @@
           },
           "previews": {
             "type": "array",
-            "description": "Live inspection images in input order; index is zero-based. URLs expire when processing ends.",
+            "description": "Live inspection images in input order; index is zero-based. URLs remain readable during the completion grace period.",
             "minItems": 1,
             "maxItems": 12,
             "items": {
@@ -1494,6 +1494,40 @@
           "finish",
           "faults"
         ],
+        "additionalProperties": false
+      },
+      "RecentCompletedJob": {
+        "type": "object",
+        "description": "A finished inspection retained only while its live preview URLs remain readable. Timestamps are Unix milliseconds.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "status": {
+            "type": "string",
+            "enum": ["COMPLETED", "ERROR", "TIMEOUT"]
+          },
+          "completedAt": {
+            "type": "number",
+            "minimum": 0
+          },
+          "previewExpiresAt": {
+            "type": "number",
+            "minimum": 0
+          },
+          "previews": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 12,
+            "items": {
+              "$ref": "#/components/schemas/JobPreview"
+            }
+          }
+        },
+        "required": ["id", "status", "completedAt", "previewExpiresAt", "previews"],
         "additionalProperties": false
       },
       "Point": {
@@ -1746,6 +1780,14 @@
                 },
                 "maxItems": 64
               },
+              "recentCompletedJobs": {
+                "type": "array",
+                "description": "Finished inspections whose live previews have not expired.",
+                "items": {
+                  "$ref": "#/components/schemas/RecentCompletedJob"
+                },
+                "maxItems": 64
+              },
               "history": {
                 "type": "array",
                 "items": {
@@ -1885,6 +1927,7 @@
               "running",
               "faults",
               "jobs",
+              "recentCompletedJobs",
               "history",
               "images",
               "points",

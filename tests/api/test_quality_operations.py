@@ -3,13 +3,52 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 from pathlib import Path
+from unittest.mock import Mock
 
 from fastapi.testclient import TestClient
 from sqlalchemy.exc import SQLAlchemyError
 
 from src.api.core.config import Settings
 from src.api.main import create_app
+from src.api.schemas.quality_operations import QualitySnapshot
+from src.api.services.quality_operations import QualityOperationsService
+
+
+def test_snapshot_limits_errors_without_shortening_history_contract() -> None:
+    history = Mock()
+    history.recent_rows.return_value = []
+    history.recent_errors.return_value = []
+    statistics = Mock()
+    statistics.today.return_value = (
+        "2026-10-02",
+        {
+            "total": 0,
+            "normal": 0,
+            "excluded": 0,
+            "grades": {},
+            "varieties": {},
+            "bins": {},
+            "suspicions": {},
+            "reinspection": 0,
+            "inferenceTotalMs": 0,
+            "inferenceCount": 0,
+        },
+    )
+    statistics.review_count.return_value = 0
+    statistics.last_saved.return_value = None
+    statistics.period_totals.return_value = {key: 0 for key in ("1", "5", "10", "30")}
+    statistics.points.return_value = []
+    captured_at = datetime(2026, 10, 2, tzinfo=timezone.utc).replace(tzinfo=None)
+
+    snapshot = QualityOperationsService(history, statistics).snapshot(captured_at)
+
+    history.recent_rows.assert_called_once_with(captured_at, limit=200)
+    history.recent_errors.assert_called_once_with(captured_at, limit=8)
+    assert snapshot["state"]["jobs"] == []
+    assert snapshot["state"]["recentCompletedJobs"] == []
+    QualitySnapshot.model_validate(snapshot)
 
 
 def test_unconfigured_database_returns_503_for_all_operations() -> None:
@@ -82,6 +121,21 @@ def test_openapi_operations_match_shared_contract() -> None:
     assert retention["properties"]["history"]["type"] == "integer"
     assert shared_retention["properties"]["history"]["type"] == "integer"
     assert "Current number" in shared_retention["properties"]["images"]["description"]
+    assert "recentCompletedJobs" in state["required"]
+    assert "recentCompletedJobs" in shared_state["required"]
+    assert state["properties"]["recentCompletedJobs"]["maxItems"] == 64
+    assert shared_state["properties"]["recentCompletedJobs"]["items"] == {
+        "$ref": "#/components/schemas/RecentCompletedJob"
+    }
+    recent = shared["components"]["schemas"]["RecentCompletedJob"]
+    assert set(recent["properties"]) == {
+        "id",
+        "status",
+        "completedAt",
+        "previewExpiresAt",
+        "previews",
+    }
+    assert recent["properties"]["status"]["enum"] == ["COMPLETED", "ERROR", "TIMEOUT"]
 
 
 def test_fault_image_contract_is_per_image_while_snapshot_remains_per_inspection() -> (
