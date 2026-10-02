@@ -66,6 +66,7 @@ def test_snapshot_preserves_runtime_settings_and_escapes_dollars():
     spec = snapshot_module.snapshot([container("backend")])
     service = spec["services"]["backend"]
     assert service["image"] == "sha256:backend-old"
+    assert service["pull_policy"] == "never"
     assert service["environment"] == ["MODE=old", "PASSWORD=old$$literal$${value}"]
     assert service["command"][-1] == "echo $$MODE && old-server"
     assert service["healthcheck"]["test"][-1] == 'test -n "$$MODE"'
@@ -134,7 +135,6 @@ def runtime(tmp_path):
         MOCK_PYTHON=shell_path(sys.executable),
         MOCK_TOOL=str(ROOT / "tests/ci/fake_docker.py"),
         MOCK_STATE_FILE=str(state),
-        MOCK_SNAPSHOT_SCRIPT=str(ROOT / "scripts/ci/snapshot-compose.py"),
         COMPOSE_FILE=str(candidate),
         CQC_DEPLOY_STATE_DIR=str(tmp_path / "deploy-state"),
         HEALTH_SERVICES="backend logistics-web",
@@ -185,6 +185,59 @@ def test_health_failure_restores_old_image_and_runtime_configuration(runtime):
             restored["HostConfig"]["PortBindings"] == old["HostConfig"]["PortBindings"]
         )
     assert not (directory / "pending").exists()
+
+
+def test_build_preserves_images_before_replacing_tags_and_rollback_restores_them(
+    runtime,
+):
+    run, state, directory, initial = runtime
+    built = run("stage:Docker Build", MOCK_BUILD_DROPS_UNTAGGED_IMAGES="1")
+    assert built.returncode == 0, built.stderr
+    preserved = json.loads(state.read_text())
+    for name in ("backend", "logistics-web"):
+        assert (
+            preserved["image_tags"][f"cqc-rollback/cqc/{name}:previous"]
+            == initial[f"old-{name}"]["Image"]
+        )
+    assert preserved["missing_images"] == []
+    assert not (directory / "pending").exists()
+    assert run("compose-deploy.sh").returncode == 0
+    assert run("compose-rollback.sh").returncode == 0
+    actual = json.loads(state.read_text())["containers"]
+    for name in ("backend", "logistics-web"):
+        assert actual[f"restored-{name}"]["Image"] == initial[f"old-{name}"]["Image"]
+
+
+def test_image_preservation_failure_stops_build_without_replacing_containers(runtime):
+    run, state, directory, initial = runtime
+    built = run("stage:Docker Build", MOCK_IMAGE_TAG_FAIL="1")
+    assert built.returncode != 0
+    actual = json.loads(state.read_text())
+    assert actual["containers"] == initial
+    assert not any(call[-1:] == ["build"] for call in actual["calls"])
+    assert not (directory / "pending").exists()
+
+
+def test_image_preservation_keeps_pending_recovery_images(runtime):
+    run, state, _, _ = runtime
+    assert run("preserve-compose-images.sh").returncode == 0
+    original_tags = json.loads(state.read_text())["image_tags"]
+    assert run("compose-deploy.sh").returncode == 0
+    assert run("preserve-compose-images.sh").returncode != 0
+    assert json.loads(state.read_text())["image_tags"] == original_tags
+
+
+def test_deploy_snapshot_works_without_host_workspace_mount(runtime):
+    run, _, directory, initial = runtime
+    deployed = run("compose-deploy.sh", MOCK_HOST_WORKSPACE_UNAVAILABLE="1")
+    assert deployed.returncode == 0, deployed.stderr
+    assert (directory / "pending").exists()
+    spec = json.loads((directory / "rollback.json").read_text())
+    for service in ("backend", "logistics-web"):
+        assert spec["services"][service]["image"] == initial[f"old-{service}"]["Image"]
+    assert (
+        run("compose-rollback.sh", MOCK_HOST_WORKSPACE_UNAVAILABLE="1").returncode == 0
+    )
 
 
 def test_interrupted_deploy_is_recoverable_without_verify(runtime):

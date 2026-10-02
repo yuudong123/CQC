@@ -35,14 +35,14 @@
 
 아래 표는 통합 점검에서 나온 결함과 현재 상태다. **열림** 상태인 결함 때문에 케이스가 실패하면 새 결함으로 올리지 말고 번호를 적는다. 출처는 [파트별 협업 요청](../../협업공지/파트별-협업-요청.md) 09-30 절과 PR #37이다.
 
-| 번호 | 현상 | 상태 (10-01) | 관련 케이스 |
+| 번호 | 현상 | 상태 (10-02) | 관련 케이스 |
 |---|---|---|---|
-| KI-1 | MySQL 중단 중 `POST /v1/inspections`가 HTTP 500으로 선별이 멈춤 | 코드 반영(#37 LKG: 마지막 정상 bin mapping 사용). 실제 MySQL 중단 검증은 #45 | QA-INS-13, QA-SIM-09 |
+| KI-1 | MySQL 중단 중 `POST /v1/inspections`가 HTTP 500으로 선별이 멈춤 | 해결(#37 LKG: 마지막 정상 bin mapping 사용). PR #52(#45)에서 Compose MySQL 약 58초 중단 중 선별·가상 제어 지속, 복구 후 Backend 재시작 없이 저장 재개를 검증. 서버컴 확인은 ALL-04 QA-INS-13 | QA-INS-13, QA-SIM-09 |
 | KI-2 | snapshot `throughput`이 진행 중인 1초 구간을 써서 낮게 나옴 | 해결(#37, 직전 완료 구간). 단 KI-6 참고 | QA-OPS-15 |
 | KI-3 | Inference 컨테이너 정지 시 오류 코드가 `INFERENCE_TIMEOUT`으로 기록 | 해결(#67, 연결 단계 timeout 기본 200ms 및 연결 실패 분류 적용; 10-02 로컬 Compose 재검증) | QA-INS-11 |
 | KI-4 | snapshot `components.Inference`가 항상 `unknown` | 해결(#37, Inference `/health` 확인. 학원 서버 `healthy` 확인) | QA-WEB-07 |
 | KI-5 | Simulator가 보낸 검사 1건이 실패하면 Simulator 전체가 정지 | 해결(#37, 실패 건만 기록하고 계속 전송) | QA-SIM-09 |
-| KI-6 | 입력 간격 2초에서 1초 단위 `throughput`이 0 또는 1만 나와 `현재 처리량`이 0건/초로 자주 보임 | 열림 (최근 10초 평균으로 표시, #49) | QA-OPS-15, QA-WEB-05 |
+| KI-6 | 입력 간격 2초에서 1초 단위 `throughput`이 0 또는 1만 나와 `현재 처리량`이 0건/초로 자주 보임 | 해결(#49, 화면 `현재 처리량`을 최근 10초 평균으로 표시). snapshot `throughput` 값 자체는 1초 구간이라 처리량 판단은 `periodTotals`로 한다 | QA-OPS-15, QA-WEB-05 |
 
 ## 2. 환경
 
@@ -1146,7 +1146,7 @@ sim() { curl -s -w " HTTP%{http_code}\n" -X PUT $BE/v1/quality/simulator -H "Con
 
 #### QA-SIM-09 검사 실패 후에도 입력 지속 · P1
 
-- 근거: FR-19·34 (KI-5는 #37에서 해결, KI-1 실제 검증은 #45)
+- 근거: FR-19·34 (KI-5는 #37에서 해결, KI-1은 PR #52에서 검증)
 - 환경: E2
 - 절차: `docker compose stop mysql` 20초 → `docker compose start mysql` → 30초 관찰
 - 기대 결과: MySQL이 멈춘 동안에도 Simulator가 계속 보내고 검사는 정상 bin으로 판정된다(저장만 실패). MySQL 복구 뒤 Backend·Simulator 재시작 없이 저장이 다시 늘어난다. `components.Simulator.status`가 `error`로 바뀌지 않는다.
@@ -1240,9 +1240,9 @@ sim() { curl -s -w " HTTP%{http_code}\n" -X PUT $BE/v1/quality/simulator -H "Con
 | QA-INS-08 | | | | | |
 | QA-INS-09 | | | | | |
 | QA-INS-10 | | | | | |
-| QA-INS-11 | | | | | KI-3 |
+| QA-INS-11 | | | | | KI-3 (#67) |
 | QA-INS-12 | | | | | |
-| QA-INS-13 | | | | | KI-1 (#45) |
+| QA-INS-13 | | | | | KI-1 (해결, PR #52) |
 | QA-INS-14 | | | | | |
 | QA-INS-15 | | | | | |
 | QA-INS-16 | | | | | |

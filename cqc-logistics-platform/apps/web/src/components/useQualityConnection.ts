@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { DEMO_INPUT_INTERVAL_MS, initialRuntime, step, classifyResult } from "@/lib/quality-runtime";
+import { DEMO_INPUT_INTERVAL_MS, initialRuntime, nextPollDelay, step, classifyResult } from "@/lib/quality-runtime";
 import {
   getSnapshot,
   parseSnapshot,
@@ -73,6 +73,7 @@ export function useQualityConnection(mode: "demo" | "api") {
       };
     }
     async function poll() {
+      const startedAt = Date.now();
       controller = new AbortController();
       const version = generation.current;
       try {
@@ -101,7 +102,9 @@ export function useQualityConnection(mode: "demo" | "api") {
               : "관제 상태를 읽지 못했습니다.",
           );
       } finally {
-        if (!disposed) pollTimer = setTimeout(poll, 1000);
+        // 응답 후 1초가 아니라 시작 기준 1초마다 조회한다. snapshot이 0.5~0.8초 걸리면
+        // 실제 주기가 1.7초쯤 돼서 2초 간격 사과를 덩어리로 놓쳤다.
+        if (!disposed) pollTimer = setTimeout(poll, nextPollDelay(Date.now() - startedAt));
       }
     }
     void poll();

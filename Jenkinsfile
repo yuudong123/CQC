@@ -252,6 +252,7 @@ pipeline {
                         echo "[EXPECTED TEST FAILURE] Build failure injection enabled"
                         exit 1
                     fi
+                    sh scripts/ci/preserve-compose-images.sh
                     docker-compose -f compose.yaml build
                 '''
             }
