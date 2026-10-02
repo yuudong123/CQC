@@ -193,11 +193,16 @@ pipeline {
             steps {
                 sh '''
                     set -eu
-                    docker run --rm \
-                        -v "$PWD:/app" \
+                    container_id="$(docker create \
                         -w /app \
                         python:3.11-slim \
-                        sh -c "pip install --disable-pip-version-check -r requirements-backend-dev.txt && pytest -q tests/api tests/simulator tests/ci tests/test_service_logging.py"
+                        sh -c "pip install --disable-pip-version-check -r requirements-backend-dev.txt && pytest -q tests/api tests/simulator tests/ci tests/test_service_logging.py")"
+                    trap 'docker rm -f "$container_id" >/dev/null' EXIT
+                    docker cp . "$container_id:/app"
+                    docker start "$container_id" >/dev/null
+                    exit_code="$(docker wait "$container_id")"
+                    docker logs "$container_id"
+                    [ "$exit_code" -eq 0 ]
                 '''
             }
         }
@@ -206,12 +211,17 @@ pipeline {
             steps {
                 sh '''
                     set -eu
-                    docker run --rm \
-                        -v "$PWD:/repo:ro" \
+                    container_id="$(docker create \
                         --tmpfs /repo/cqc-logistics-platform/apps/web/node_modules \
                         -w /repo/cqc-logistics-platform/apps/web \
                         node:24-alpine \
-                        sh -c "npm ci --ignore-scripts && npm test"
+                        sh -c "npm ci --ignore-scripts && npm test")"
+                    trap 'docker rm -f "$container_id" >/dev/null' EXIT
+                    docker cp . "$container_id:/repo"
+                    docker start "$container_id" >/dev/null
+                    exit_code="$(docker wait "$container_id")"
+                    docker logs "$container_id"
+                    [ "$exit_code" -eq 0 ]
                 '''
             }
         }
