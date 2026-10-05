@@ -2,8 +2,8 @@
 
 - 작성일: 2026-10-05
 - 계획·계약·입력·기대 결과: [BE-10.md](BE-10.md)
-- 현재 단계: **1/4 문서 작성. 2/4~4/4 전 항목 미실행**
-- 과거 단위/CI 시험 통과 기록은 이 문서의 PASS로 전환하지 않는다. 실제 서버 조회·모델 실행·통합시험은 이번 단계에서 하지 않았다.
+- 현재 단계: **2/4 로컬·격리 핵심 통합 검증 수행. OBS-01 Backend 수정·로컬 회귀 확인; 3/4~4/4 미실행**
+- 1/4에서는 시험을 실행하지 않았다. 이번 2/4 실행 결과는 §9에 새 기준선과 함께 기록하며, 과거 단위/CI 기록을 이번 PASS로 전환하지 않는다.
 - 아래 표는 결과 기록 틀이다. `미실행`과 `차단`은 실패를 관측했다는 뜻이 아니다. 향후 실행 시 동일 ID의 분기별 결과·증거를 모두 연결하고, 일부 분기 통과만으로 전체 ID를 PASS 처리하지 않는다.
 
 ## 1. 기준선과 실행 전 확인
@@ -27,33 +27,33 @@
 
 | 시험 ID | 단계 | 상태 | Run ID / 결과·증거 | 실행 전 참고 |
 |---|---|---|---|---|
-| BE10-INS-01 | 2/4 | 미실행 | — | 정상 12-bin |
-| BE10-INS-02 | 2/4 | 미실행 | — | 품종 저신뢰 |
-| BE10-INS-03 | 2/4 | 미실행 | — | 품질 저신뢰 |
-| BE10-INS-04 | 2/4 | 미실행 | — | 양쪽 저신뢰 |
-| BE10-INS-05 | 2/4 | 미실행 | — | threshold 동일 값 경계 |
-| BE10-INS-06 | 2/4 | 미실행 | — | virtual_brix 누락 |
-| BE10-INS-07 | 2/4 | 미실행 | — | ConnectError / ConnectTimeout |
-| BE10-INS-08 | 2/4 | 미실행 | — | Inference HTTP 오류 |
-| BE10-INS-09 | 2/4 | 미실행 | — | 응답 계약 오류 |
-| BE10-INS-10 | 2/4 | 미실행 | — | 제어 거부·1회 fallback |
-| BE10-INS-11 | 2/4 | 미실행 | — | 제어 무응답·재호출 없음 |
-| BE10-INS-12 | 2/4 | 미실행 | — | 제어 실패 |
-| BE10-TIM-01 | 2/4 | 미실행 | — | 1/2/3초 business/hard |
-| BE10-TIM-02 | 2/4 | 미실행 | — | A 시작 후 interval 변경, B부터 적용 |
-| BE10-TIM-03 | 2/4 | 미실행 | — | 서로 다른 interval 동시 처리 |
-| BE10-TIM-04 | 2/4 | 미실행 | — | late-result / ReadTimeout 분리 |
-| BE10-TIM-05 | 2/4 | 미실행 | — | hard 취소·late task 한도 |
-| BE10-TIM-06 | 2/4 | 미실행 | — | 1초 A late 동안 B 정상 |
-| BE10-TIM-07 | 2/4 | 미실행 | — | interval 없는 요청 fallback |
-| BE10-TIM-08 | 2/4 | 미실행 | — | 내부 header 인증·허용 interval |
-| BE10-TIM-09 | 2/4 | 미실행 | — | TIMEOUT/INFERENCE_ERROR, NEXT/ALL |
-| BE10-BND-01 | 2/4 | 미실행 | — | 1/12/13장·필수 images |
-| BE10-BND-02 | 2/4 | 미실행 | — | metadata 대응·MIME |
-| BE10-BND-03 | 2/4 | 통합 수용 미실행 | KB-02 수정 검증은 §8 | 로컬 ASGI 24MiB 전체 body 경계 통과; 실제 HTTP 서버 수용시험은 후속 |
-| BE10-BND-04 | 2/4 | 통합 수용 미실행 | KB-02 수정 검증은 §8 | CL 없음/과소·추가 part·파일 정리 통과; 실제 chunked 수용시험은 후속 |
-| BE10-DUP-01 | 2/4 | 통합 수용 미실행 | KB-01 수정 검증은 §7 | 로컬 단위/API 및 MySQL 순차 중복 통과, 단계 전체 수용과 구분 |
-| BE10-DUP-02 | 2/4 | 통합 수용 미실행 | KB-01 수정 검증은 §7 | 로컬 단위/API 및 MySQL 동시 중복 통과, 단계 전체 수용과 구분 |
+| BE10-INS-01 | 2/4 | PASS (L) | §9 INS-01 / local evidence | 실제 모델 6후보×당도2, 정상 bin 12종 |
+| BE10-INS-02 | 2/4 | PASS (C/L) | §9 INS-02 / local evidence | 제어된 HTTP 품종 저신뢰·실DB·이미지 |
+| BE10-INS-03 | 2/4 | PASS (C/L) | §9 INS-03 / local evidence | 제어된 HTTP 및 실제 모델 자연 품질 저신뢰 |
+| BE10-INS-04 | 2/4 | PASS (C/L) | §9 INS-04 / local evidence | 제어된 HTTP 양쪽 저신뢰·실DB·이미지 |
+| BE10-INS-05 | 2/4 | PASS (C/L) | §9 INS-05 / local evidence | threshold 바로 아래·등호·위 |
+| BE10-INS-06 | 2/4 | PASS (C/L) | §9 INS-06 / local evidence | 당도 누락 재검사·통계 비제외 |
+| BE10-INS-07 | 2/4 | PASS (C/L) | §9 INS-07 / local evidence | 실제 접속 거부, ConnectTimeout 대역·1/2/3초 |
+| BE10-INS-08 | 2/4 | PASS (C/L) | §9 INS-08 / local evidence | 실제 모델 손상 이미지422 및 HTTP500 responder |
+| BE10-INS-09 | 2/4 | PASS (C/L) | §9 INS-09 / local evidence | ID/frames/null/JSON 손상/필수 field 누락 |
+| BE10-INS-10 | 2/4 | PASS (C/L) | §9 INS-10 / local evidence | Mock Virtual Control 거부 후 재검사 성공 |
+| BE10-INS-11 | 2/4 | PASS (C/L) | §9 INS-11 / local evidence | Mock Virtual Control 무응답·재호출 없음 |
+| BE10-INS-12 | 2/4 | PASS (C/L) | §9 INS-12 / local evidence | Mock Virtual Control 실패·호출1 |
+| BE10-TIM-01 | 2/4 | PASS (C/L) | §9 TIM-01 / local evidence | 1/2/3초 business/hard 및 HTTP budget trace |
+| BE10-TIM-02 | 2/4 | PASS (C/L) | §9 TIM-02 / local evidence | snapshot A=2000 유지, B=3000; Runner/API 회귀 |
+| BE10-TIM-03 | 2/4 | PASS (C/L) | §9 TIM-03 / local evidence | 동시 1/2/3초 값 격리 |
+| BE10-TIM-04 | 2/4 | PASS (C/L) | §9 TIM-04 / local evidence | socket 지연 late 진단과 ReadTimeout 대역 분리 |
+| BE10-TIM-05 | 2/4 | PASS (C/L) | §9 TIM-05 / local evidence | 2/3/4초 hard 취소·단위 한도·반복10건 |
+| BE10-TIM-06 | 2/4 | PASS (C/L) | §9 TIM-06 / local evidence | 1초 A late 중 B 정상·DB 집계 불변 |
+| BE10-TIM-07 | 2/4 | PASS (C/L) | §9 TIM-07 / local evidence | header 없는 500/2000 fallback·설정 회귀 |
+| BE10-TIM-08 | 2/4 | PASS (C) | §9 TIM-08 / 이번 회귀 | 미인증403·허용 밖422·정상200 |
+| BE10-TIM-09 | 2/4 | PASS (C/L) | §9 TIM-09 / local evidence | 두 fault×NEXT/ALL×1/2/3초, 병렬 claim |
+| BE10-BND-01 | 2/4 | PASS (C/L) | §9 BND-01 / local evidence | 실제 모델1~12장·13장413·누락422 |
+| BE10-BND-02 | 2/4 | PASS (C/L) | §9 BND-02 / local evidence | 개수·중복·비연속422·MIME415·호출0 |
+| BE10-BND-03 | 2/4 | PASS (L) | §9 BND-03 / local evidence | 실제 Uvicorn socket에서 CL 있음 L−1/L/L+1 |
+| BE10-BND-04 | 2/4 | PASS (C/L) | §9 BND-04 / local evidence | 실제 chunked 경계 + ASGI 과소CL/추가part/파일 정리 |
+| BE10-DUP-01 | 2/4 | PASS (C/L) | §9 DUP-01 / 실MySQL 전용 pytest | 현재 migration 실DB 순차409·기존 행 불변 |
+| BE10-DUP-02 | 2/4 | PASS (C/L) | §9 DUP-02 / 실MySQL 전용 pytest | 독립 persistence 동시200 하나·409 하나 |
 | BE10-DB-01 | 3/4 | 미실행 | — | LKG warm, 실제 DB 장애 / 장애 주입 구분 |
 | BE10-DB-02 | 3/4 | 미실행 | — | DB 복구·새 이력 저장 |
 | BE10-DB-03 | 3/4 | 미실행 | — | cold/LKG 부재·잘못된 mapping |
@@ -146,17 +146,18 @@ PASS는 계획의 API·판정·제어·DB·통계·CSV·이미지·로그 조건
 | ENV-01 | 실제 배포·DB·Inference·mount·worker 미확인 | MO/DM 환경 제공 및 run 기준선 기록 | 실제 환경 시험 |
 | FE-DEP-01 | 기준선 FE parser/generator와 #55 차이; PR #92 open | FE merge·배포·Backend OpenAPI 일치 확인 | FE E2E, Backend 저장/API 단독 시험은 독립 |
 | DEC-01 | N/자연 timeout 허용률/반복 미확정 | 사용자 최종 승인 | E2E-02 PASS 판정 |
+| OBS-01 | 2/4 당시 추가 재현 FAIL: 점 포함 ID의 이미지 필터422·목록500. 이후 Backend 수정·로컬 회귀 통과 | 과거 증거 §9.4, 수정 검증 §9.5 | Backend 구현 blocker 해소. 3/4 실제 DB·보존 수용은 미실행, FE 파서는 후속 동기화 필요 |
 | DEC-02 | timer 오차·조회 부하·응답시간 수치 미확정 | 사용자 최종 승인, BE/MO 측정 협의 | 정량 timer/조회 성능 PASS 판정 |
 | DEC-03 | 정상100 후보 최신 실제 판정·manifest 미확인 | 2/4 BE+DM 후보 확인, 별도 run 고정 | 정상100 실행 |
 
 | 단계 | 현재 결과 | 완료 판단 조건 |
 |---|---|---|
 | 1/4 | 기준선·47개 명세·결과 틀 작성. 정량 후보 승인 대기 | 사용자 계획 확인, 미확정/의존성 인지. 제품 blocker 해결이나 실시험 통과를 뜻하지 않음 |
-| 2/4 | 미실행 | 27개 전 분기 증거 확보, KB-01/02 해결 후 중복·경계도 통과, #67/#87 회귀 없음 |
+| 2/4 | 정의된 27개 로컬 PASS, 별도 OBS-01 관측 FAIL 후 Backend 수정·로컬 회귀 통과 | C/L 분기 증거 §9. 실제 배포 S 수용을 대체하지 않음. 과거 OBS-01 관측도 보존 |
 | 3/4 | 미실행 | 15개 실제 DB·보존·조회·복구 증거 확보, MySQL skip를 PASS로 대체하지 않음 |
 | 4/4 | 미실행 | 5개 동일 배포 기준선 수용, 정상100·승인 정량 기준·FE·운영 복구 통과 |
 
-BE-10 2/4~4/4 전체 통합 수용시험은 아직 미실행이다. 아래 KB-01 별도 수정 검증을 BE-10 종료나 Issue #66 완료로 사용하지 않는다. 다음 단계 전체 실행은 잔여 blocker/환경 준비 후 별도 지시로 진행한다.
+BE-10 2/4 로컬 핵심 검증은 §9에 기록했다. 3/4~4/4는 아직 미실행이며 아래 KB·OBS 수정 검증이나 로컬 PASS를 BE-10 종료 또는 Issue #66 완료로 사용하지 않는다. 후속 단계는 환경 준비 후 별도 지시로 진행한다.
 
 ## 7. KB-01 수정 검증
 
@@ -210,3 +211,129 @@ BE-10 2/4~4/4 전체 통합 수용시험은 아직 미실행이다. 아래 KB-01
 로컬 시험은 httpx ASGITransport로 실제 multipart byte stream을 공급한 것이다. 과소·잘못된 Content-Length는 ASGI 수신 계층의 제한 검증이며 HTTP 서버가 잘못된 framing을 먼저 거부하는 경우까지 통과했다고 해석하지 않는다. 실제 Uvicorn·배포환경의 chunked/wire 경계와 의존성은 BE10-BND-03/04 통합 수용시험에서 별도 확인한다.
 
 최종 판단: **KB-02 구현 blocker 해제**. KB-01도 해소 상태이며 두 코드 blocker로 인한 BE-10 2/4 차단은 제거됐다. 실제 시험환경·배포 기준선 준비와 사용자의 후속 실행 지시가 필요하며 2/4 전체 수용시험은 아직 미실행이다. Simulator/FE/Inference/DB 계약·migration은 변경하지 않았고 commit·배포도 하지 않았다.
+
+## 9. BE-10 2/4 로컬·격리 통합 검증
+
+### 9.1 실행 기준선과 환경
+
+2026-10-05 KST, Codex 실행·사용자 최종 검토 대기. Issue #66을 GitHub API로 읽어 실제 Inference·MySQL/연속 요청·오류·CSV 목표와 open 상태를 재확인했다. 정상100과 CSV 종합 수용은 4/4·3/4에 유지한다.
+
+| 항목 | 이번 실행값 / 제한 |
+|---|---|
+| 기능 HEAD | `feat/backend` `3cf2b9e57a2a4b18ffb108125d017d083fd35313`, 시작 시 clean; KB-01/02 포함. 이번 제품 코드 변경 없음 |
+| 로컬 dev ref | `origin/dev` `51c6e325213d50ac1781a223f454d7eaeaf64285`; 이번 실행에서 fetch/merge하지 않음 |
+| Backend | Windows Python 3.13.15, checkout 소스. ASGITransport와 별도 Uvicorn localhost socket 사용; Compose Backend를 호출하지 않음 |
+| 의존성 | FastAPI 0.141.1, Starlette 1.6.0, python-multipart 0.0.32, httpx 0.28.1, Uvicorn 0.53.0 |
+| 실 Inference | 시험 전용 `cqc-be10-2-inference`, localhost:18011, image `sha256:462d4d9fc3022b3fdbe1bedf1ff099573a95bdb4afbd6798302f7ccbfa40809b`. 현재 src를 `/app/src` read-only mount하여 소스 기준선 일치 |
+| Inference 소스 SHA256 | api `bab47958ab956edb50ccca911d9acabb9a85c2fdd310042b426bcd26d06cc51f`; predictor `2cf91c35adb612e00154a1bf3ede8c01a69b5f886aff99c218364725d9ea39fc` |
+| 모델 / health | `mobilenet_v3_small_multiview`, `cqc-apple-separate12-focal-v2-cal-20260930`, CPU, views12, decode_workers8, ready/model_loaded=true. `approval_status=unverified_candidate`, `threshold_status=calibrated_dev_oof`; 품질 승인을 뜻하지 않음 |
+| 모델 SHA256 | pt `b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a`; json `b4c5a6df0d7b01d4cee890be99f1e55fa6474c67a0110d8a99328c51eea7ccd8` |
+| Dataset | realtime-apple-arrival-demo; index SHA256 `dc866e0ccd91f8cff9ce9a523d1707c4df678d564ace24016c5344537ba7e959`. 계획 §5의 정상6후보 및 자연 저신뢰 `demo-601031028000-000`; request.json 순서·metadata 유지 |
+| 독립 MySQL | `cqc-be10-2-mysql`, mysql:8.4, localhost:13316, 전용 be10 DB·임의 비밀번호. 기존 Alembic을 신규 격리 DB에 적용, head `20260929_02`, 기존 정상12+재검사 seed. 새 migration 작성 없음 |
+| 제어 / 저장소 | 제품 기본 MockVirtualControl; 제어 예외는 결과 대역 주입. 시스템100/저신뢰200, 시험별 임시 root·서로 독립. 실제 장치 시험 아님 |
+| timeout / 인증 | 각 검사 1000/2000/3000 및 hard2000/3000/4000, connect200. threshold0.50/0.60. 내부 token은 임의 생성·증거에서 제외, bundle header 포함 |
+| 공유 환경 보호 | 기존 cqc-backend/simulator/inference/mysql/frontend 및 Jenkins를 중단·재설정하지 않음. 별도 localhost container/server만 사용. 실제 배포 SHA/FE/browser/Jenkins 무부하 조건은 이번에 확인하지 않음 |
+
+**C와 L의 구분:** 낮은 confidence·HTTP 오류·지연은 localhost HTTP responder(C)로 결과를 제어하고 실제 Backend HTTP client·Service·MySQL·저장소를 연결했다. ConnectTimeout/ReadTimeout은 결정적 httpx transport 대역이며, ConnectError는 실제 loopback 접속 거부다. 정상6후보·1~12장·손상 이미지·자연 품질 저신뢰는 실제 모델 HTTP(L)다. 이들을 전부 실모델 오류 재현이라고 기록하지 않는다.
+
+### 9.2 시험별 결과와 증거
+
+정의된 2/4 ID **27개: PASS 27 / FAIL 0 / BLOCKED 0 (표준 Simulator ID·C/L 범위)**. 추가 탐색 **OBS-01: FAIL 1**은 별도 공개한다. local PASS가 실제 배포 S·모델 품질 승인·3/4 조회 종합 수용을 대체하지 않는다.
+
+실행 자료: [시험 코드](../../tests/api/test_be10_core_integration.py), [DB·통계·CSV 효과 감사](../../tests/api/test_be10_evidence_audit.py), [raw API/DB/이미지/budget 증거](BE-10-2-local-evidence.jsonl). JSONL의 `run`, `test_id`, `inspection_id`로 연결한다. 초기 실패 fixture/구 이미지 run도 보존했으므로 **파일 전체를 PASS 집합으로 해석하지 않는다**. 현재 소스로 완주한 `be10-2-fd436b9c`(69 pytest PASS), 최종 전체 회귀 `be10-2-63f2ca4e` 및 같은 run의 EFFECTS-AUDIT를 참조한다. 세부 pytest case와 BE10 ID는 1:1 건수 관계가 아니다.
+
+| 시험 ID | 환경·입력 | 실제 결과 / 기대 일치 | ID·증거 / 후속 |
+|---|---|---|---|
+| INS-01 | L, 계획 정상6후보×13.9/14.0, 12장 | 12요청 모두200/NORMAL·정상bin01~12·제어/저장SUCCEEDED·비제외. 현재 모델에서6후보 재확인 | `*-601031008000-000-*` 등 JSONL INS-01, raw confidence/버전/DB. 정상100은4/4 |
+| INS-02 | C→L DB, cc0.49/qc0.8 | LOW_CULTIVAR_CONFIDENCE, 재검사/review=true/비제외, 통계 total/normal 각각+1, low이미지1 | `*-LOW_CULTIVAR_CONFIDENCE-*`; category/reason/errorCode=null/threshold/CSV, ERROR 없음 |
+| INS-03 | C qc0.59 및 L `demo-601031028000-000` | LOW_QUALITY_CONFIDENCE; 실제 모델12장 low이미지12, 통계 비제외·재검사 | `*-real-low-quality`, INS-03 API/DB/이미지/CSV. 자연 저신뢰를 정상100에 섞지 않음 |
+| INS-04 | C cc0.49/qc0.59 | LOW_BOTH_CONFIDENCE, 재검사·비제외·이미지근거·low 성공 ERROR 없음 | `*-LOW_BOTH_CONFIDENCE-*`, INS-02/03/04/05 tag |
+| INS-05 | C 각 기준±0.000001/등호 및 기존 policy 시험 | 아래는 low, 등호/위 정상. 실제 적용threshold0.50/0.60 저장 | INS-02/03/04/05 tag + 이번 test_inspection_policy 회귀 |
+| INS-06 | C 정상 모델 응답, brix 없음 | 200/VIRTUAL_BRIX_MISSING·재검사·비제외, 가상당도 null, 보존이미지0 | `*-control-MISSING_BRIX`, INS-06/10/11/12 tag |
+| INS-07 | L 접속거부/C ConnectTimeout ×1/2/3초 | 200/INFERENCE_CONNECTION_ERROR·통계 제외·재검사, 관제ERROR/INFERENCE_ERROR | `*-ConnectError-*`, `*-ConnectTimeout-*`; 실제 저장·공개 이력·CSV |
+| INS-08 | L PNG MIME의 손상bytes, C HTTP500 | Backend200/INFERENCE_HTTP_ERROR·관제ERROR/INFERENCE_ERROR·제외. 실Inference 손상입력422 | `*-damaged`, `*-invalid-*`, API/DB/CSV |
+| INS-09 | C ID/frames 불일치·null·손상JSON·필수field 누락 | 모두200/INFERENCE_INVALID_RESPONSE·재검사·제외·관제INFERENCE_ERROR | `*-invalid-*`, INS-08/09 tag; 손상JSON/누락은추가실행 포함 |
+| INS-10 | C MockControl REJECTED→SUCCEEDED | 판정NORMAL 유지, 재검사fallback1회·제어총2회, 공개FALLBACK/REVIEW·비제외, 이미지0 | `*-control-REJECTED`, DB/CSV/제어 기록 |
+| INS-11 | C MockControl NO_RESPONSE | NORMAL·원target·무응답1회, 추가제어0·비제외·이미지0 | `*-control-NO_RESPONSE`, DB/CSV |
+| INS-12 | C MockControl FAILED | NORMAL·원target·FAILED1회·비제외·이미지0 | `*-control-FAILED`, DB/CSV |
+| TIM-01 | C socket/HTTP request hook, 1/2/3초 | business1/2/3, read/write/pool2/3/4, connect 항상0.2초. 빠른결과 정상 회귀 | TIM-01/03 budget trace + test_line_deadlines |
+| TIM-02 | C State snapshot A2000 시작 후3000 변경 | A2000/hard3000 유지·지연2.3초는timeout, B3000/hard4000 정상 | `*-snapshot-a/b`; State revision·Runner interval header·공개 PUT는 이번 회귀로 보완 |
+| TIM-03 | C 세 interval 동시, 각각delay1.2초 | A1000만timeout, B2000/C3000 정상. transport budget2/3/4 서로 독립 | `*-mixed-1000/2000/3000`, TIM-01/03 tag |
+| TIM-04 | C socket business+0.3초, 별도 ReadTimeout 대역 | business 후재검사 확정, late는진단payload만저장·bin/제어/통계 불변. ReadTimeout도timeout으로분류 | `*-late-1000/2000/3000`, `*-ReadTimeout-*`; 주입과구분 |
+| TIM-05 | C socket business+1.5초, 단위진단한도 | 총hard2/3/4초에서Backend HTTP task 취소·진단payload 없음. max_tasks초과추가진단만취소 | `*-hard-*`, TIM-04/05 tag + late task limit 회귀. 원격CPU작업중단을보장하는시험 아님 |
+| TIM-06 | C A delay1.7초/interval1000, A timeout 뒤 B즉시 | B정상 완료 시에도 A late active=1; B0.043초, A진단후DB집계전체 불변·제어추가0 | `*-late-a/normal-b`, TIM-06 stats before/after. 실배포자원경합은E2E-05 |
+| TIM-07 | C interval header없음, default delay0.7초 | 기존business500/hard2000·connect200 fallback, 재검사후late진단 | `*-fallback`; fallback 설정변경은 test_line_deadlines 회귀 |
+| TIM-08 | C 미인증/인증1500/정상/누락 | 미인증403·허용밖422·정상200·거부후속0 | 이번 test_internal_interval_header_validation 파라미터 실행 |
+| TIM-09 | C State 원자claim→Backend, 2fault×NEXT/ALL×3interval, 각2병렬 | NEXT 주입정확1건/나머지정상, ALL2건. 실제Inference 호출은비주입만, 주입late task0 | `*-NEXT/ALL-INFERENCE_TIMEOUT/ERROR-*`, TIM-09 claim/API/DB; Runner/API 설정회귀 포함 |
+| BND-01 | L 실제 모델1~12장, C13장·이미지없음 | 유효입력200·used_frame_count일치·정책대로판정, 13장413·없음422·거부후속0 | `*-real-one`, `*-real-frames-2..11`, INS-01의12장 및 BND-01/02 tag |
+| BND-02 | C 개수불일치·중복/비연속index·MIME 및 기존필수검증 | 422/415, Inference/제어0·DB행0 | `*-input-metadata_count/duplicate/gap/mime`; 기존JSON/필수field회귀 |
+| BND-03 | L Uvicorn/socket, 실제CL=L−1/L/L+1 | 전체body25,165,823/24는200,25는413·Inference추가0 | JSONL BND-03/04 declared=true; validPNG+unusedfile로본문정확구성 |
+| BND-04 | L 실chunked 및 C 잘못된/과소CL·추가part | CL없는L−1/L는200,L+1은413; field/file/overhead우회413, parser초과chunk 미전달·부분파일closed | declared=false + test_inspection_request_size. 잘못된wire framing은서버먼저거부가능, ASGI증거와분리 |
+| DUP-01 | L 실제MySQL 초기PK 충돌 | 첫200/SUCCEEDED·후속409, 기존모든컬럼불변·추론/제어/보관/late추가0 | 이번 test_mysql_duplicate_requests_process_once_and_preserve_row[False], `kb01-UUID`; pytest가검증후자체행정리 |
+| DUP-02 | L 독립Persistence2개·같은ID동시 | 200하나/409하나·검사1/제어기록1/오류0, 추가이미지/late0 | 같은시험[True], 실PK race. 일반DB장애선별지속은이번회귀 |
+
+위 표의 ID는 `BE10-` prefix를 생략했다. 실제 검사 상태·제어·threshold·DB행은 raw JSONL에 보존했다. 공개 관제 변환 및 검사별 CSV 증거를 확인했으며, 기간필터·CSV 전체 수용/DB outage/복구/보존 종합은3/4로 남긴다. 시스템 오류 이미지의 ID·reason·saved ERROR와 low 성공 ERROR 없음은 신규 caplog 및 이번 기존 review-image 회귀로 확인한다. 배포 `error.log` 운영 파일 자체 수용은3/4·4/4다.
+
+### 9.3 timeout·late 측정과 정지 관찰
+
+대표 완주 run `be10-2-fd436b9c`에서 측정한 **Backend POST 시작부터** 응답·수집까지의 시간이다. 업로드·DB·제어 비용도 포함하므로 내부 Inference 송신 시점의 business/hard와 수치를 동일시하지 않는다. 추가 timer 허용률을 운영 수용 기준으로 확정한 것이 아니다.
+
+| interval | late POST응답 / 진단완료 | hard POST응답 / 취소완료 |
+|---|---|---|
+| 1000 | 1.104s / 1.385s | 1.087s / 2.057s |
+| 2000 | 2.136s / 2.397s | 2.098s / 3.022s |
+| 3000 | 3.119s / 3.396s | 3.113s / 4.025s |
+
+late 정상 응답이 도착해도 원래 timeout의 예측 null·재검사 bin·control·exclude 플래그는 불변이다. A late 중 B의 POST 완료는 0.0427초였으며 A 진단이 완료되기 전에 B가 완료됐다. DB 통계 before/after가 완전히 동일하다.
+
+장애 주입은 실제 predict task를 만들지 않는다. NEXT/ALL 시험과 실제 socket 지연의 late/hard 증거를 섞지 않았다. `test_late_task_is_cancelled_at_hard_timeout` 및 `test_late_manager_cancels_each_task_at_its_own_total_hard_timeout`를 각 5회 실행해 **10회 PASS**, 정지 재현 없음.
+
+전체 회귀의 `faulthandler_timeout=30`이 이미지 100/200 순환 시험 중 stack을 출력했다. 첫 실행은 `fault_image_storage._stored_images_locked → _prune_locked → save`, `test_review_images.py:158`이었다. logging 수정 전 후속 실행은 pathlib 파일명 처리의 부분 stack이었으며 둘 다 이후 진행됐다. 최종 실행에서는 해당 stack 출력이 없었다. hard-timeout 정지 증거라고 분류하지 않으며 보존 성능 수용은 3/4 범위다.
+
+### 9.4 발견 결함과 시험환경 수정
+
+**OBS-01 — 검수 이미지 공통 ID 계약 불일치, 미해결 FAIL.** `POST /v1/inspections`는 점이 들어간 `be10-2-63f2ca4e.filter-observation`을 200으로 수락하고 저신뢰 이미지 1장을 저장했다. 이미지 필터는 `^[A-Za-z0-9_-]+$` 때문에 422, 필터 없는 목록은 응답 `items[0].inspectionId`의 같은 pattern 검증에서 ResponseValidationError로 500이다. 기존 정상 ID 이미지까지 같은 목록에서 조회할 수 없게 될 수 있다. 독립 임시 저장소에서 재현했으며 공유 저장소를 오염시키지 않았다.
+
+- 증거: JSONL `OBS-01`, 신규 strict xfail. 관측 500을 PASS로 바꾸지 않는다.
+- 코드 근거: `quality_fault_images.py`의 inspectionId Query 및 공개 FaultImages 응답 schema. 검사 요청은 같은 pattern을 강제하지 않는다.
+- 대응: 3/4 이미지 조회 전 ID 허용 범위를 정하고 쓰기/필터/응답 계약을 일치시키는 최소 수정이 필요하다. 현재 표준 Simulator ID에는 문제없어 2/4 정상·timeout·제어 검증과 별도 분류한다. 임의 계약 변경·#55 재설계는 하지 않았다.
+
+시험환경/fixture 수정은 제품 결함 수정과 구분한다:
+
+1. 초기 fixture가 필수 bundle header를 빠뜨려 422·11실패: header 보완. 다음 3실패는 DB에 없는 decision_reason을 참조한 시험 오류여서 error_code로 정정.
+2. threshold 숫자를 ID에 붙여 점을 만든 fixture에서 이미지 조회 실패 8건: 표준 ID의 시험은 허용 문자 ID로 수정하고 실제 부작용은 위 OBS-01로 별도 보존.
+3. Docker image의 Inference api hash가 구버전 `5facd101...`이어서 현재 src를 read-only mount하여 재검증. 모델·predictor checksum은 일치. 공용 image를 rebuild/교체하지 않음.
+4. 신규 Uvicorn 시험 서버가 기본 logging 설정으로 전역 logger를 변경해 전체 회귀의 `test_uvicorn_errors_reach_error_file`이 1실패: fixture에 `log_config=None, log_level=None`을 적용. 제품 logging 코드는 수정하지 않음.
+
+### 9.5 실행 집계·잔여 범위
+
+| 실행 | 결과 | 해석 |
+|---|---|---|
+| 작업전 Backend/Simulator/log 회귀 | 361 passed / 8 skipped,118.20s | 신규시험전기준. MySQL전용환경변수미설정의8 skip |
+| 현재src격리통합 완주 | 69 passed,83.85s | 신규67 case + 실제MySQL중복2. 실제모델·1~12장·timeout·NEXT·경계 포함 |
+| JSON/필수field 추가 및 OBS 탐색 | JSON오류6 PASS; OBS에서목록500재현 | 후속strict xfail로미해결결함을명시 |
+| hard-timeout 반복 | 10 PASS | 2시험×5회, 정지재현없음 |
+| logging 오염 수정 전 전체회귀 | 429 passed / 1 failed / 8 skipped / 1 xfailed,185.83s | 실패는신규fixture의전역logging오염. OBS-01 xfail은별도제품결함 |
+| 최종 전체 회귀 | **430 passed / 8 skipped / 1 xfailed**,177.75s | API·Simulator·service logging 전 범위. 신규 통합 69 PASS, OBS-01 strict xfail. 8 skip은 기존 MySQL 전용 변수 미설정이며 중복 PK 2개는 앞선 전용 실행에서 실DB PASS |
+| 완료 run 저장 효과 감사 | **1 passed**,1.98s | `be10-2-63f2ca4e`의 API 기록 ID 85개: 실제 DB 결과·제어 횟수·CSV 한 행씩·target 일치. 전체 격리 DB 489행의 total489/normal265/excluded224/inferenceCount265를 SQL 결과와 대조. 이 누적 trial DB를 정상100 수용이라고 해석하지 않음 |
+| Ruff / format / diff | 통과 | src/api·tests/api·tests/simulator Ruff, 신규 Python 2파일 format, git diff --check |
+
+이번 변경은 시험 코드·증거·BE-10 계획/결과표뿐이다. 제품 코드/FE/Simulator/Inference/DB 설정·새 migration 변경 없음. commit·배포 없음. 모든 시험과 감사 종료 후 `cqc.test=be10-2` label을 확인한 시험용 컨테이너 2개·임시 volume을 정리했다. 임시 UploadFile/저장소도 닫거나 정리됐으며 기존 Compose 5서비스와 Jenkins는 그대로 실행 중이다. DB 삭제 전 감사 결과와 raw 증거를 보존했다.
+
+**3/4는 조건부 진행 가능:** OBS-01 Backend 구현 blocker는 §9.5의 로컬 회귀에서 해소했다. DB/보존/조회 전용 환경 준비 후 실제 MySQL·이미지 조회 수용을 실행한다. 이번 2/4 임시 DB는 운영 DB나 3/4 공유 fixture가 아니다. DB 장애/복구·86,400/8,640·CSV 종합·이미지100/200 수용·Simulator position 복구는 이번 수용 결과에 추가하지 않는다.
+
+**4/4 필요:** 실제 배포 HEAD/image/worker·model hash/mount 재확인, 2초 정상100 및 승인된 N/자연 timeout 비율·Jenkins 무부하 조건, 실 Inference CPU 자원 경합에서 1초 late A/B, 실제 FE 브라우저/API 모드/#55 표시·필터, 배포 network/proxy body 제한·Volume·재시작·error.log 운영 복구. 이미 실행한 localhost wire 검증을 배포환경 검증이라고 확대하지 않는다.
+
+### 9.5 OBS-01 후속 수정·검증 (2/4 종료 후)
+
+과거 §9.4의 FAIL·JSONL 원본은 당시 관측으로 보존한다. 이후 검사 ID 규칙을 **1~64자, 영문 대소문자·숫자·`-`·`_`·`.`**로 확정해 검사 입력, 검수 이미지 필터·응답, 이력·snapshot, review, live/recent jobs 및 공유 OpenAPI에 적용했다. 공백과 `/`·`\` 등 허용 문자 밖의 입력은 검사 시작 전에 422로 거부한다. preview/delete의 개별 이미지 ID 규칙과 DB 구조는 변경하지 않았다. OBS-01 strict xfail은 일반 통합 테스트로 전환했다.
+
+| 검증 | 결과 | 범위·한계 |
+|---|---|---|
+| 점 포함 ID의 실제 POST→저신뢰/시스템 오류 이미지 저장→필터·전체 목록 | PASS 2 | 격리 로컬 API, 임시 이미지 저장소. 기존 sidecar·preview/delete 별도 PASS |
+| 1~64자·UUID·일반 ID·금지 문자·history/snapshot·review·live/recent jobs | PASS | 관련 단위/API 회귀에 포함 |
+| Backend·Simulator 전체 회귀 | 374 passed / 79 skipped | 추가 POST→이미지 2건 전에 실행. 격리 MySQL 환경변수 미설정으로 BE-10 전용 통합 테스트 포함 skip |
+| 최종 관련 API 회귀 | 103 passed | 추가 POST→이미지 2건 포함 |
+| Ruff / format / `git diff --check` | PASS | 변경 Python 파일 및 작업공간 diff 검사 |
+
+OBS-01의 **Backend 구현 blocker는 로컬 기준 해소**했다. 전환한 MySQL 기반 BE-10 통합 테스트는 이번 환경에서 실행되지 않았으므로 3/4 전용 MySQL·보존·조회 수용 결과로 간주하지 않는다. FE의 현재 이미지·이력 파서는 점 포함 ID를 거부하므로 공개 OpenAPI 변경에 맞춘 FE 후속 연동과 4/4 브라우저 확인이 필요하다.

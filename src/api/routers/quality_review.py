@@ -13,6 +13,11 @@ from fastapi.routing import APIRoute
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.exc import SQLAlchemyError
 
+from ..schemas.inspection_id import (
+    INSPECTION_ID_MAX_LENGTH,
+    INSPECTION_ID_MIN_LENGTH,
+    INSPECTION_ID_PATTERN,
+)
 from ..schemas.quality_history import QualityError
 from .quality_history import _error_response
 
@@ -31,7 +36,11 @@ class Review(BaseModel):
 class ReviewAck(BaseModel):
     """공유 OpenAPI의 검수 확인 응답."""
 
-    inspectionId: str = Field(min_length=1, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
+    inspectionId: str = Field(
+        min_length=INSPECTION_ID_MIN_LENGTH,
+        max_length=INSPECTION_ID_MAX_LENGTH,
+        pattern=INSPECTION_ID_PATTERN,
+    )
     misclassification: Misclassification
 
 
@@ -59,7 +68,14 @@ router = APIRouter(
     responses={code: {"model": QualityError} for code in (404, 409, 410, 422, 503)},
 )
 async def review_inspection(
-    id: Annotated[str, Path(min_length=1, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")],
+    id: Annotated[
+        str,
+        Path(
+            min_length=INSPECTION_ID_MIN_LENGTH,
+            max_length=INSPECTION_ID_MAX_LENGTH,
+            pattern=INSPECTION_ID_PATTERN,
+        ),
+    ],
     review: Review,
     request: Request,
     response: Response,

@@ -28,6 +28,11 @@ from ..repositories import (
     BinMappingUnavailableError,
     DuplicateInspectionIdError,
 )
+from ..schemas.inspection_id import (
+    INSPECTION_ID_MAX_LENGTH,
+    INSPECTION_ID_MIN_LENGTH,
+    INSPECTION_ID_PATTERN,
+)
 from ..schemas.inspection_results import InspectionResponse
 from ..schemas.inspections import InspectionImageMetadata, InspectionMetadata
 from ..services.inspections import InspectionService
@@ -148,7 +153,14 @@ def _parse_metadata(value: str) -> list[InspectionImageMetadata]:
 )
 async def validate_inspection_request(
     request: Request,
-    inspection_id: Annotated[str, Form(min_length=1)],
+    inspection_id: Annotated[
+        str,
+        Form(
+            min_length=INSPECTION_ID_MIN_LENGTH,
+            max_length=INSPECTION_ID_MAX_LENGTH,
+            pattern=INSPECTION_ID_PATTERN,
+        ),
+    ],
     images: Annotated[list[UploadFile], File()],
     metadata: Annotated[str, Form(min_length=1)],
     virtual_brix: Annotated[

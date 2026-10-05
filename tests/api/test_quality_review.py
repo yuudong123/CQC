@@ -84,3 +84,24 @@ def test_review_openapi_matches_shared_contract() -> None:
         == shared["parameters"][0]["schema"]["pattern"]
     )
     assert endpoint["parameters"][0]["schema"]["maxLength"] == 64
+
+
+def test_review_accepts_dotted_inspection_id_and_rejects_invalid_id() -> None:
+    app = create_app(Settings())
+    repository = _ReviewRepository()
+    repository.values["inspection.1"] = "NONE"
+    app.state.inspection_review_repository = repository
+    with TestClient(app) as client:
+        response = client.patch(
+            "/v1/quality/inspections/inspection.1/review",
+            json={"misclassification": "QUALITY_SUSPECT"},
+        )
+        assert response.status_code == 200
+        assert response.json()["inspectionId"] == "inspection.1"
+        assert repository.values["inspection.1"] == "QUALITY_SUSPECT"
+        for invalid in ("a" * 65, "a%5Cb"):
+            rejected = client.patch(
+                f"/v1/quality/inspections/{invalid}/review",
+                json={"misclassification": "OTHER"},
+            )
+            assert rejected.status_code == 422

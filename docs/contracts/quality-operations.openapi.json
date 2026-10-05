@@ -932,7 +932,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "pattern": "^[A-Za-z0-9_-]+$",
+              "pattern": "^[A-Za-z0-9_.-]+$",
               "minLength": 1,
               "maxLength": 64
             }
@@ -1096,7 +1096,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "pattern": "^[A-Za-z0-9_-]+$",
+              "pattern": "^[A-Za-z0-9_.-]+$",
               "minLength": 1,
               "maxLength": 64
             }
@@ -1246,7 +1246,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9_-]+$",
+            "pattern": "^[A-Za-z0-9_.-]+$",
             "minLength": 1,
             "maxLength": 64
           },
@@ -1467,7 +1467,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9_-]+$",
+            "pattern": "^[A-Za-z0-9_.-]+$",
             "minLength": 1,
             "maxLength": 64
           },
@@ -1527,7 +1527,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9_-]+$",
+            "pattern": "^[A-Za-z0-9_.-]+$",
             "minLength": 1,
             "maxLength": 64
           },
@@ -2166,7 +2166,7 @@
         "properties": {
           "inspectionId": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9_-]+$",
+            "pattern": "^[A-Za-z0-9_.-]+$",
             "minLength": 1,
             "maxLength": 64
           },
@@ -2237,7 +2237,7 @@
           },
           "inspectionId": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9_-]+$",
+            "pattern": "^[A-Za-z0-9_.-]+$",
             "minLength": 1,
             "maxLength": 64
           },

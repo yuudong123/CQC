@@ -143,6 +143,18 @@ class _HistoryRepository:
         return HistoryRows(self.items, len(self.items), ["DEMO_BIN_02"])
 
 
+def test_history_returns_dotted_inspection_id() -> None:
+    identifier = "history.2026-10-05"
+    app = create_app(Settings())
+    app.state.quality_history_repository = _HistoryRepository(
+        [_row(inspection_id=identifier)]
+    )
+    with TestClient(app) as client:
+        response = client.get("/v1/quality/inspections")
+    assert response.status_code == 200, response.text
+    assert response.json()["items"][0]["id"] == identifier
+
+
 def test_api_returns_history_page_and_contract_filters() -> None:
     app = create_app(Settings())
     repository = _HistoryRepository([_row()])

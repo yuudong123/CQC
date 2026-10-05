@@ -518,6 +518,21 @@ def test_completed_previews_expire_after_grace_and_release_capacity(
     )
 
 
+def test_live_and_recent_jobs_keep_dotted_inspection_id() -> None:
+    store = LiveInspectionStore(limit=1, max_age_seconds=60)
+    token = "a" * 32
+    inspection_id = "inspection.2026-10-05"
+    assert store.publish(
+        token,
+        inspection_id=inspection_id,
+        images=[(b"image", "image/jpeg")],
+        started_ms=1,
+    )
+    assert store.jobs()[0]["id"] == inspection_id
+    store.complete(token)
+    assert store.recent_completed_jobs()[0]["id"] == inspection_id
+
+
 def test_max_age_caps_grace_period(monkeypatch: pytest.MonkeyPatch) -> None:
     clock = _clock(monkeypatch)
     store = LiveInspectionStore(limit=1, max_age_seconds=60, grace_seconds=3)
