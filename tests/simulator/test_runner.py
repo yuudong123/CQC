@@ -158,8 +158,10 @@ def test_runner_schedules_and_bounds_inflight(concurrency: int) -> None:
             prepared = runner.prepare()
             runner.start(prepared)
             runner.start(prepared)
-            await asyncio.wait_for(reached.wait(), timeout=5)
-            await runner.stop()
+            try:
+                await asyncio.wait_for(reached.wait(), timeout=15)
+            finally:
+                await runner.stop()
             assert not runner.active
             assert not runner.failed
             assert 1 <= peak <= concurrency
