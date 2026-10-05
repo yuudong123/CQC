@@ -7,6 +7,11 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.json_schema import SkipJsonSchema
 
+from .inspection_id import (
+    INSPECTION_ID_MAX_LENGTH,
+    INSPECTION_ID_MIN_LENGTH,
+    INSPECTION_ID_PATTERN,
+)
 from .quality_history import Fault, QualityResult
 
 
@@ -81,17 +86,27 @@ class QualityJobPreview(BaseModel):
 
 
 class QualityJob(BaseModel):
-    id: str = Field(min_length=1, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
+    id: str = Field(
+        min_length=INSPECTION_ID_MIN_LENGTH,
+        max_length=INSPECTION_ID_MAX_LENGTH,
+        pattern=INSPECTION_ID_PATTERN,
+    )
     index: int = Field(ge=0)
     started: float = Field(ge=0)
     finish: float = Field(ge=0)
     faults: list[Fault] = Field(max_length=5)
     previewUrl: str | None = None
-    previews: list[QualityJobPreview] | None = Field(default=None, min_length=1, max_length=12)
+    previews: list[QualityJobPreview] | None = Field(
+        default=None, min_length=1, max_length=12
+    )
 
 
 class QualityRecentCompletedJob(BaseModel):
-    id: str = Field(min_length=1, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
+    id: str = Field(
+        min_length=INSPECTION_ID_MIN_LENGTH,
+        max_length=INSPECTION_ID_MAX_LENGTH,
+        pattern=INSPECTION_ID_PATTERN,
+    )
     status: Literal["COMPLETED", "ERROR", "TIMEOUT"]
     completedAt: float = Field(ge=0)
     previewExpiresAt: float = Field(ge=0)

@@ -4,12 +4,22 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from .inspection_id import (
+    INSPECTION_ID_MAX_LENGTH,
+    INSPECTION_ID_MIN_LENGTH,
+    INSPECTION_ID_PATTERN,
+)
+
 
 class QualityFaultImage(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     id: str = Field(min_length=1, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
-    inspectionId: str = Field(min_length=1, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
+    inspectionId: str = Field(
+        min_length=INSPECTION_ID_MIN_LENGTH,
+        max_length=INSPECTION_ID_MAX_LENGTH,
+        pattern=INSPECTION_ID_PATTERN,
+    )
     imageIndex: int = Field(ge=0, le=11)
     createdAt: float = Field(ge=0)
     category: Literal["SYSTEM_ERROR", "LOW_CONFIDENCE"]

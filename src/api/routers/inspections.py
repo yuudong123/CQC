@@ -2,21 +2,85 @@
 
 from __future__ import annotations
 
+from collections.abc import Awaitable, Callable
 from hmac import compare_digest
 from typing import Annotated, get_args
 
-from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile, status
+from fastapi import (
+    APIRouter,
+    File,
+    Form,
+    HTTPException,
+    Request,
+    Response,
+    UploadFile,
+    status,
+)
+from fastapi.routing import APIRoute
 from pydantic import ValidationError
+from starlette.types import Message
 
 from src.simulator.schemas import FaultType
 
 from ..core.config import Settings
-from ..repositories import BinMappingConfigurationError, BinMappingUnavailableError
+from ..repositories import (
+    BinMappingConfigurationError,
+    BinMappingUnavailableError,
+    DuplicateInspectionIdError,
+)
+from ..schemas.inspection_id import (
+    INSPECTION_ID_MAX_LENGTH,
+    INSPECTION_ID_MIN_LENGTH,
+    INSPECTION_ID_PATTERN,
+)
 from ..schemas.inspection_results import InspectionResponse
 from ..schemas.inspections import InspectionImageMetadata, InspectionMetadata
 from ..services.inspections import InspectionService
 
-router = APIRouter(prefix="/v1", tags=["inspections"])
+
+class _InspectionSizeRoute(APIRoute):
+    """Limit the multipart body before parsing without buffering a second copy."""
+
+    def get_route_handler(self) -> Callable[[Request], Awaitable[Response]]:
+        handler = super().get_route_handler()
+
+        async def limited(request: Request) -> Response:
+            limit = _settings_from(request).inference_max_request_bytes
+            content_length = request.headers.get("content-length")
+            if content_length is not None:
+                try:
+                    declared_size = int(content_length)
+                except ValueError:
+                    declared_size = None
+                if declared_size is not None and declared_size > limit:
+                    raise HTTPException(
+                        status_code=413,
+                        detail="multipart 요청이 허용된 최대 크기를 초과했습니다",
+                    )
+
+            received = 0
+
+            async def counted_receive() -> Message:
+                nonlocal received
+                message = await request.receive()
+                if message["type"] == "http.request":
+                    received += len(message.get("body", b""))
+                    if received > limit:
+                        # Do not pass the over-limit chunk to the multipart parser.
+                        # HTTPException preserves 413 through FastAPI; Starlette's
+                        # multipart parser closes partial uploads when this propagates.
+                        raise HTTPException(
+                            status_code=413,
+                            detail="multipart 요청이 허용된 최대 크기를 초과했습니다",
+                        )
+                return message
+
+            return await handler(Request(request.scope, receive=counted_receive))
+
+        return limited
+
+
+router = APIRouter(prefix="/v1", tags=["inspections"], route_class=_InspectionSizeRoute)
 
 SUPPORTED_IMAGE_TYPES = {"image/jpeg", "image/png"}
 
@@ -37,8 +101,8 @@ def _validate_request_size(
     images: list[UploadFile],
     limit: int,
 ) -> None:
-    # FastAPI는 endpoint에 진입하기 전에 form을 파싱한다. 배포 연동 시에는
-    # proxy 또는 ASGI 수신 제한으로 파싱 전에도 같은 크기 제한을 적용한다.
+    # _InspectionSizeRoute already limits the complete body before/during parsing.
+    # Retain the existing payload validation as a secondary input check.
     content_length = request.headers.get("content-length")
     if content_length is not None:
         try:
@@ -69,10 +133,34 @@ def _parse_metadata(value: str) -> list[InspectionImageMetadata]:
         ) from exc
 
 
-@router.post("/inspections", response_model=InspectionResponse)
+@router.post(
+    "/inspections",
+    response_model=InspectionResponse,
+    responses={
+        409: {
+            "description": "inspection_id가 이미 존재합니다. 후속 검사는 수행하지 않습니다.",
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {"detail": {"type": "string"}},
+                        "required": ["detail"],
+                    }
+                }
+            },
+        }
+    },
+)
 async def validate_inspection_request(
     request: Request,
-    inspection_id: Annotated[str, Form(min_length=1)],
+    inspection_id: Annotated[
+        str,
+        Form(
+            min_length=INSPECTION_ID_MIN_LENGTH,
+            max_length=INSPECTION_ID_MAX_LENGTH,
+            pattern=INSPECTION_ID_PATTERN,
+        ),
+    ],
     images: Annotated[list[UploadFile], File()],
     metadata: Annotated[str, Form(min_length=1)],
     virtual_brix: Annotated[
@@ -200,6 +288,11 @@ async def _validate_and_inspect(
             virtual_brix=virtual_brix,
             **options,
         )
+    except DuplicateInspectionIdError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="inspection_id가 이미 존재합니다",
+        ) from exc
     except (BinMappingConfigurationError, BinMappingUnavailableError) as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

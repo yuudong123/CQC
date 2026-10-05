@@ -11,6 +11,11 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
 
+from ..schemas.inspection_id import (
+    INSPECTION_ID_MAX_LENGTH,
+    INSPECTION_ID_MIN_LENGTH,
+    INSPECTION_ID_PATTERN,
+)
 from ..schemas.quality_fault_images import (
     QualityFaultImages,
     QualityImageDelete,
@@ -55,7 +60,10 @@ async def fault_images(
     response: Response,
     category: Literal["SYSTEM_ERROR", "LOW_CONFIDENCE"] | None = None,
     inspectionId: str | None = Query(
-        default=None, min_length=1, max_length=64, pattern=r"^[A-Za-z0-9_-]+$"
+        default=None,
+        min_length=INSPECTION_ID_MIN_LENGTH,
+        max_length=INSPECTION_ID_MAX_LENGTH,
+        pattern=INSPECTION_ID_PATTERN,
     ),
 ) -> dict | JSONResponse:
     response.headers["Cache-Control"] = "no-store"

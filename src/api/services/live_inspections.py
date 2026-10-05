@@ -8,7 +8,6 @@ from threading import RLock
 from time import monotonic, time
 from typing import Literal
 
-_JOB_ID = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 _PREVIEW_ID = re.compile(r"^[0-9a-f]{32}$")
 _FRAME_ID = re.compile(r"^(?P<token>[0-9a-f]{32})_(?P<index>0[0-9]|1[01])$")
 
@@ -108,11 +107,7 @@ class LiveInspectionStore:
             self._prune_expired()
             return [
                 {
-                    "id": (
-                        item.inspection_id
-                        if _JOB_ID.fullmatch(item.inspection_id)
-                        else token
-                    ),
+                    "id": item.inspection_id,
                     "index": item.index,
                     "started": item.started_ms,
                     "finish": item.started_ms + self._max_age_seconds * 1000,
@@ -131,11 +126,7 @@ class LiveInspectionStore:
             self._prune_expired()
             return [
                 {
-                    "id": (
-                        item.inspection_id
-                        if _JOB_ID.fullmatch(item.inspection_id)
-                        else token
-                    ),
+                    "id": item.inspection_id,
                     "status": item.status,
                     "completedAt": item.completed_at_ms,
                     "previewExpiresAt": item.preview_expires_at_ms,

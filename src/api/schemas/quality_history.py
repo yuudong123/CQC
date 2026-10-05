@@ -8,6 +8,12 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from .inspection_id import (
+    INSPECTION_ID_MAX_LENGTH,
+    INSPECTION_ID_MIN_LENGTH,
+    INSPECTION_ID_PATTERN,
+)
+
 
 class PageSize(IntEnum):
     FIFTY = 50
@@ -37,7 +43,11 @@ ErrorCode = Literal[
 class QualityResult(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    id: str = Field(min_length=1, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
+    id: str = Field(
+        min_length=INSPECTION_ID_MIN_LENGTH,
+        max_length=INSPECTION_ID_MAX_LENGTH,
+        pattern=INSPECTION_ID_PATTERN,
+    )
     date: date
     time: str
     timestamp: float = Field(ge=0)

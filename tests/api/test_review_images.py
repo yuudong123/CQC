@@ -45,9 +45,9 @@ def _service(system=None, low=None, *, cultivar=0.95, quality=0.85, persistence=
     )
 
 
-def _post(client, brix=15):
+def _post(client, brix=15, *, inspection_id="review-1"):
     data = {
-        "inspection_id": "review-1",
+        "inspection_id": inspection_id,
         "metadata": json.dumps(
             [
                 {
@@ -271,6 +271,92 @@ def test_legacy_filters_preview_delete_without_db(fault_root: Path):
         ).json() == {"deletedIds": [recent, legacy]}
         for image_id in (legacy, recent):
             assert client.get(f"/v1/quality/previews/{image_id}").status_code == 410
+
+
+def test_dotted_inspection_id_keeps_both_image_categories_readable(fault_root: Path):
+    inspection_id = "inspection.2026-10-05"
+    system = FaultImageStorage(fault_root)
+    low = FaultImageStorage(fault_root / "low-confidence", limit=200)
+    system_id = system.save(
+        inspection_id=inspection_id,
+        error_code="INFERENCE_CONNECTION_ERROR",
+        images=[_jpeg()],
+    )[0]
+    low_id = low.save(
+        inspection_id=inspection_id,
+        error_code=None,
+        category="LOW_CONFIDENCE",
+        decision_reason="LOW_QUALITY_CONFIDENCE",
+        quality_confidence=0.55,
+        applied_quality_threshold=0.6,
+        images=[_jpeg()],
+    )[0]
+    with TestClient(
+        create_app(Settings(database_url=None, fault_image_storage_root=fault_root))
+    ) as client:
+        filtered = client.get(
+            "/v1/quality/fault-images", params={"inspectionId": inspection_id}
+        )
+        assert filtered.status_code == 200
+        items = filtered.json()["items"]
+        assert {item["id"] for item in items} == {system_id, low_id}
+        assert all(item["inspectionId"] == inspection_id for item in items)
+        assert client.get("/v1/quality/fault-images").status_code == 200
+        low_item = next(item for item in items if item["id"] == low_id)
+        assert low_item["category"] == "LOW_CONFIDENCE"
+        assert low_item["decisionReason"] == "LOW_QUALITY_CONFIDENCE"
+        assert low_item["qualityConfidence"] == 0.55
+        assert low_item["appliedQualityThreshold"] == 0.6
+        for image_id in (system_id, low_id):
+            assert client.get(f"/v1/quality/previews/{image_id}").content == JPEG
+        deleted = client.request(
+            "DELETE", "/v1/quality/fault-images", json={"ids": [system_id, low_id]}
+        )
+        assert deleted.json() == {"deletedIds": [system_id, low_id]}
+        assert client.get("/v1/quality/fault-images").json()["items"] == []
+
+
+@pytest.mark.parametrize(
+    "reason,category",
+    [
+        ("LOW_QUALITY_CONFIDENCE", "LOW_CONFIDENCE"),
+        ("INFERENCE_CONNECTION_ERROR", "SYSTEM_ERROR"),
+    ],
+)
+def test_dotted_inspection_post_saves_queryable_image(
+    fault_root: Path, monkeypatch, reason: str, category: str
+):
+    inspection_id = f"inspection.{category.lower()}"
+    system = FaultImageStorage(fault_root)
+    low = FaultImageStorage(fault_root / "low-confidence", limit=200)
+    service = _service(system, low, cultivar=0.5, quality=0.85)
+    if category == "SYSTEM_ERROR":
+        original = service.inspect
+
+        async def injected(**kwargs):
+            kwargs["injected_inference_reason"] = InspectionDecisionReason(reason)
+            return await original(**kwargs)
+
+        monkeypatch.setattr(service, "inspect", injected)
+    with TestClient(
+        create_app(
+            Settings(database_url=None, fault_image_storage_root=fault_root),
+            inspection_service=service,
+        )
+    ) as client:
+        result = _post(client, inspection_id=inspection_id)
+        assert result["inspection_id"] == inspection_id
+        assert result["decision_reason"] == reason
+        filtered = client.get(
+            "/v1/quality/fault-images", params={"inspectionId": inspection_id}
+        )
+        assert filtered.status_code == 200
+        assert len(filtered.json()["items"]) == 1
+        item = filtered.json()["items"][0]
+        assert item["inspectionId"] == inspection_id
+        assert item["category"] == category
+        assert item["decisionReason"] == reason
+        assert client.get("/v1/quality/fault-images").status_code == 200
 
 
 @pytest.mark.parametrize(

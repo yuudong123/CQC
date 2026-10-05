@@ -15,10 +15,12 @@ from src.api.main import create_app
 from src.api.schemas.quality_operations import QualitySnapshot
 from src.api.services.quality_operations import QualityOperationsService
 
+from .test_quality_history import _row
+
 
 def test_snapshot_limits_errors_without_shortening_history_contract() -> None:
     history = Mock()
-    history.recent_rows.return_value = []
+    history.recent_rows.return_value = [_row(inspection_id="snapshot.2026-10-05")]
     history.recent_errors.return_value = []
     statistics = Mock()
     statistics.today.return_value = (
@@ -42,13 +44,21 @@ def test_snapshot_limits_errors_without_shortening_history_contract() -> None:
     statistics.points.return_value = []
     captured_at = datetime(2026, 10, 2, tzinfo=timezone.utc).replace(tzinfo=None)
 
-    snapshot = QualityOperationsService(history, statistics).snapshot(captured_at)
+    service = QualityOperationsService(history, statistics)
+    snapshot = service.snapshot(captured_at)
 
     history.recent_rows.assert_called_once_with(captured_at, limit=200)
     history.recent_errors.assert_called_once_with(captured_at, limit=8)
     assert snapshot["state"]["jobs"] == []
     assert snapshot["state"]["recentCompletedJobs"] == []
     QualitySnapshot.model_validate(snapshot)
+    assert snapshot["state"]["history"][0]["id"] == "snapshot.2026-10-05"
+    app = create_app(Settings())
+    app.state.quality_operations_service = service
+    with TestClient(app) as client:
+        response = client.get("/v1/quality/snapshot")
+    assert response.status_code == 200, response.text
+    assert response.json()["state"]["history"][0]["id"] == "snapshot.2026-10-05"
 
 
 def test_unconfigured_database_returns_503_for_all_operations() -> None:

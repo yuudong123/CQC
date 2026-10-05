@@ -97,6 +97,41 @@ def _application(settings: Settings | None = None):
     return create_app(runtime_settings, inspection_service=service)
 
 
+@pytest.mark.parametrize(
+    "inspection_id",
+    [
+        "inspection.001",
+        "ordinary-id_1",
+        "550e8400-e29b-41d4-a716-446655440000",
+        "a" * 64,
+    ],
+)
+def test_inspection_accepts_shared_identifier_contract(inspection_id: str) -> None:
+    with TestClient(_application()) as client:
+        response = _post(
+            client,
+            files=_images(1),
+            metadata=_metadata([0]),
+            inspection_id=inspection_id,
+        )
+    assert response.status_code == 200, response.text
+    assert response.json()["inspection_id"] == inspection_id
+
+
+@pytest.mark.parametrize("inspection_id", ["a" * 65, "   ", "a/b", r"a\b", "a b"])
+def test_inspection_rejects_invalid_identifier_before_service(
+    inspection_id: str,
+) -> None:
+    with TestClient(_application()) as client:
+        response = _post(
+            client,
+            files=_images(1),
+            metadata=_metadata([0]),
+            inspection_id=inspection_id,
+        )
+    assert response.status_code == 422
+
+
 def test_simulator_fault_headers_are_private_and_external_post_does_not_claim_next() -> (
     None
 ):

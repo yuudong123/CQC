@@ -23,6 +23,7 @@ from ..repositories import (
     BinMappingConfigurationError,
     BinMappingRepository,
     BinMappingUnavailableError,
+    DuplicateInspectionIdError,
     InspectionPersistence,
 )
 from ..repositories.records import ControlAttemptRecord, InspectionErrorRecord
@@ -200,6 +201,9 @@ class InspectionService:
                         created_at=created_at,
                     ),
                 )
+            except DuplicateInspectionIdError:
+                # A duplicate must stop before inference, previews, control or storage.
+                raise
             except Exception as exc:
                 # DB 단절 판단은 이 검사에만 적용하고 다음 검사는 다시 접속을 시도한다.
                 db_unavailable = is_database_unavailable_error(exc)
