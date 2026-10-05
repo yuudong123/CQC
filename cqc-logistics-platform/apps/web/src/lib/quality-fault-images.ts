@@ -3,6 +3,9 @@ import { sampleApples } from "./sample-apples";
 export type FaultImage = {
   id: string; inspectionId: string; imageIndex: number; createdAt: number;
   errorCode: "INFERENCE_TIMEOUT" | "INFERENCE_ERROR" | "INFERENCE_CONNECTION_ERROR" | "INFERENCE_HTTP_ERROR" | "INFERENCE_INVALID_RESPONSE";
+  category: "SYSTEM_ERROR" | "LOW_CONFIDENCE"; decisionReason: string;
+  cultivarConfidence: number | null; qualityConfidence: number | null;
+  appliedCultivarThreshold: number | null; appliedQualityThreshold: number | null;
   previewUrl: string;
 };
 export function parseFaultImages(value: unknown): FaultImage[] {
@@ -32,7 +35,10 @@ export class DemoFaultImageStore {
         const id = `${row.id}_view_${imageIndex}`;
         this.sources.set(id, src);
         added.push({ id, inspectionId: row.id, imageIndex, createdAt: row.timestamp,
-          errorCode, previewUrl: `/api/quality/previews/${id}` });
+          errorCode, category: "SYSTEM_ERROR", decisionReason: errorCode,
+          cultivarConfidence: null, qualityConfidence: null,
+          appliedCultivarThreshold: null, appliedQualityThreshold: null,
+          previewUrl: `/api/quality/previews/${id}` });
       });
     }
     this.items = [...added, ...this.items].slice(0, 100);
