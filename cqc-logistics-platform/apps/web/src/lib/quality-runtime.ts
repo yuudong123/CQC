@@ -24,6 +24,14 @@ export type Job = {
   previewUrl?: string;
   previews?: { index: number; previewUrl: string }[];
 };
+/** 미리보기 유예(완료 후 약 3초) 동안만 남는 끝난 검사(#53, PR #88). */
+export type CompletedJob = {
+  id: string;
+  status: "COMPLETED" | "ERROR" | "TIMEOUT";
+  completedAt: number;
+  previewExpiresAt: number;
+  previews: { index: number; previewUrl: string }[];
+};
 export type Result = InspectionRecord & {
   inferenceMs: number | null;
   cultivarConfidence: number | null;
@@ -53,6 +61,8 @@ export type Runtime = {
   faults: Fault[];
   scope?: Scope;
   jobs: Job[];
+  /** #88 이전 Backend와 브라우저 예시에는 없다. */
+  recentCompletedJobs?: CompletedJob[];
   history: Result[];
   images: Result[];
   points: Point[];
@@ -131,10 +141,27 @@ export const POLL_INTERVAL_MS = 1000;
 export function nextPollDelay(elapsedMs: number, intervalMs = POLL_INTERVAL_MS): number {
   return Math.max(0, intervalMs - Math.max(0, elapsedMs));
 }
-/** 처리 중 사과 패널에 보일 사과. 처리 중인 사과가 없으면 마지막 사과를 다음 사과가 들어올 때까지 남긴다. */
-export function displayedJobs(current: Job[], last: Job[]): { jobs: Job[]; held: boolean } {
-  if (current.length || !last.length) return { jobs: current, held: false };
-  return { jobs: last.slice(-1), held: true };
+/**
+ * 처리 중 사과 패널에 보일 사과. 처리 중인 사과가 없으면 마지막 사과를 다음 사과가 들어올 때까지 남긴다.
+ * 처리 중일 때 조회가 못 잡은 사과도 recentCompletedJobs로 이어서 보여준다(지금 남긴 사과보다 나중에 끝난 것만).
+ */
+export function displayedJobs(
+  current: Job[],
+  last: Job[],
+  recent: CompletedJob[] = [],
+): { jobs: Job[]; held: boolean } {
+  if (current.length) return { jobs: current, held: false };
+  const held = last.at(-1);
+  const newest = recent.reduce<CompletedJob | undefined>(
+    (best, row) => (!best || row.completedAt > best.completedAt ? row : best),
+    undefined,
+  );
+  if (newest && newest.id !== held?.id && (!held || newest.completedAt >= held.started))
+    return {
+      jobs: [{ id: newest.id, index: -1, started: newest.completedAt, finish: newest.previewExpiresAt, faults: [], previews: newest.previews }],
+      held: true,
+    };
+  return { jobs: held ? [held] : [], held: !!held };
 }
 export function recentThroughput(points: Point[], seconds = 10): number {
   const end = points.at(-1)?.at;

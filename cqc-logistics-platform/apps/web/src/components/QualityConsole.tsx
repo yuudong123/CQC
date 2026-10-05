@@ -8,7 +8,15 @@ import QualityHistory from "./QualityHistory";
 import QualityStatistics from "./QualityStatistics";
 import ThroughputChart from "./ThroughputChart";
 import { useDemo } from "./DemoProvider";
-import type { FaultImage } from "@/lib/quality-fault-images";
+import {
+  CATEGORY_LABEL,
+  IMAGE_LIMIT,
+  imageCategory,
+  imageEvidence,
+  imageReason,
+  type FaultImage,
+  type ImageCategory,
+} from "@/lib/quality-fault-images";
 import { downloadQualityCsv } from "@/lib/quality-api";
 import { sampleApples } from "@/lib/sample-apples";
 import { formatPercent } from "@/lib/quality-format";
@@ -124,6 +132,7 @@ function FaultImages({
 }) {
   const [selected, setSelected] = useState<string | null>(null);
   const [category, setCategory] = useState("ALL");
+  const [kind, setKind] = useState<"ALL" | ImageCategory>("ALL");
   const [confirmation, setConfirmation] = useState<string[] | null>(null);
   const [error, setError] = useState("");
   const entries = images.map(image => {
@@ -131,8 +140,11 @@ function FaultImages({
     return { ...image, misclassification: record?.misclassification ?? "NONE", hasRecord: !!record };
   });
   const rows = entries.filter(
-    (row) => category === "ALL" || row.misclassification === category,
+    (row) =>
+      (kind === "ALL" || imageCategory(row) === kind) &&
+      (category === "ALL" || row.misclassification === category),
   );
+  const kept = (c: ImageCategory) => images.filter((row) => imageCategory(row) === c).length;
   const preview = entries.find((row) => row.id === selected);
   async function remove() {
     if (!confirmation) return;
@@ -149,6 +161,20 @@ function FaultImages({
     <>
       <div className="qc-actions">
         <label>
+          구분{" "}
+          <select
+            value={kind}
+            onChange={(event) => setKind(event.target.value as "ALL" | ImageCategory)}
+          >
+            <option value="ALL">전체</option>
+            {Object.entries(CATEGORY_LABEL).map(([key, label]) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
           오판 의심 필터{" "}
           <select
             value={category}
@@ -163,7 +189,7 @@ function FaultImages({
           </select>
         </label>
         <span>
-          {rows.length}장 표시 · 실제 보존 {retained} / 100장
+          {rows.length}장 표시 · 보존 {retained}장 (시스템 오류 {kept("SYSTEM_ERROR")}/{IMAGE_LIMIT.SYSTEM_ERROR} · 저신뢰 {kept("LOW_CONFIDENCE")}/{IMAGE_LIMIT.LOW_CONFIDENCE})
         </span>
         <button
           disabled={!images.length || pending || !allowDelete}
@@ -174,7 +200,7 @@ function FaultImages({
       </div>
       <p className="qc-muted">
         {remote
-          ? "서버에 보관된 장애 이미지입니다."
+          ? "서버에 보관된 검수 이미지입니다. 시스템 오류와 저신뢰 재검사 사과를 사유와 함께 보관합니다."
           : "예시 이미지 관리 · 삭제는 이 브라우저의 목록에만 적용됩니다."}{" "}
         검사 이력은 유지됩니다.
       </p>
@@ -211,12 +237,13 @@ function FaultImages({
               src={
                 remote ? preview.previewUrl : imageSource(preview.id)
               }
-              alt={`${preview.id} 장애 이미지`}
+              alt={`${preview.id} 검수 이미지`}
             />
           </div>
           <div>
             <h3>{preview.id}</h3>
-            <p>{preview.inspectionId} · view {preview.imageIndex} · {preview.errorCode}</p>
+            <p>{preview.inspectionId} · view {preview.imageIndex} · {CATEGORY_LABEL[imageCategory(preview)]} · {imageReason(preview)}</p>
+            {imageEvidence(preview) && <p>{imageEvidence(preview)}</p>}
             <button onClick={() => setSelected(null)}>미리보기 닫기</button>
           </div>
         </div>
@@ -226,7 +253,8 @@ function FaultImages({
           <tr>
             <th>검사 ID</th>
             <th>발생 시각</th>
-            <th>장애</th>
+            <th>구분</th>
+            <th>사유</th>
             <th>오판 의심</th>
             <th>이미지</th>
           </tr>
@@ -236,7 +264,11 @@ function FaultImages({
             <tr key={row.id}>
               <td>{row.inspectionId}<br /><small>view {row.imageIndex} · {row.id}</small></td>
               <td>{kst(row.createdAt).slice(11, 19)}</td>
-              <td>{row.errorCode}</td>
+              <td>{CATEGORY_LABEL[imageCategory(row)]}</td>
+              <td>
+                {imageReason(row)}
+                {imageEvidence(row) && <><br /><small>{imageEvidence(row)}</small></>}
+              </td>
               <td>
                 <select
                   aria-label={`${row.id} 오판 의심`}
@@ -272,7 +304,7 @@ function FaultImages({
         </tbody>
       </table>
       {!rows.length && (
-        <p className="qc-empty">보관된 장애 이미지가 없습니다.</p>
+        <p className="qc-empty">보관된 검수 이미지가 없습니다.</p>
       )}
     </>
   );
@@ -401,9 +433,11 @@ export default function QualityConsole({
   }, [remote]);
   // 처리가 끝난 사과도 다음 사과가 올 때까지 남겨 패널 높이를 고정한다.
   // 같은 key로 계속 그려서 이미 받은 미리보기를 다시 요청하지 않는다(완료 후 서버 미리보기는 만료됨).
+  // 처리 중일 때 못 잡은 사과는 recentCompletedJobs(완료 후 약 3초)로 이어서 보여준다.
   const [lastJobs, setLastJobs] = useState<Job[]>([]);
-  if (state.jobs.length && lastJobs !== state.jobs) setLastJobs(state.jobs);
-  const shown = displayedJobs(state.jobs, lastJobs);
+  const shown = displayedJobs(state.jobs, lastJobs, state.recentCompletedJobs);
+  const jobKey = (jobs: Job[]) => jobs.map((job) => `${job.id}:${job.previews?.length ?? 0}`).join();
+  if (shown.jobs.length && jobKey(shown.jobs) !== jobKey(lastJobs)) setLastJobs(shown.jobs);
   const lastPoint = state.points.at(-1);
   const trendEnd = Math.max(
     snapshot?.capturedAt ?? 0,
@@ -534,7 +568,7 @@ export default function QualityConsole({
           <button onClick={() => setTab("history")}>검사 이력</button>
           <button onClick={() => setTab("statistics")}>기간 통계</button>
           <button onClick={() => setTab("images")}>
-            장애 이미지 {remote ? (snapshot?.retention.images ?? 0) : faultImages.length}장
+            검수 이미지 {remote ? (snapshot?.retention.images ?? 0) : faultImages.length}장
           </button>
           <button onClick={() => setTab("faults")}>시연 설정</button>
           <button
@@ -976,7 +1010,7 @@ export default function QualityConsole({
               : tab === "history"
                 ? "검사 이력 관리"
                 : tab === "images"
-                  ? "장애 이미지 관리"
+                  ? "검수 이미지 관리"
                   : "시연 설정"
           }
           close={() => setTab(null)}

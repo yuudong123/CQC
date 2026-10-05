@@ -235,7 +235,7 @@ test("fault image inventory failure keeps the control snapshot; snapshot failure
   const unavailable = await loadQualityPoll(async () => snapshot, async () => { throw new Error("서비스에 연결할 수 없습니다."); });
   assert.equal(unavailable.snapshot, snapshot);
   assert.equal(unavailable.images, null);
-  assert.match(unavailable.imageError, /장애 이미지 목록을 불러오지 못했습니다: 서비스에 연결할 수 없습니다\./);
+  assert.match(unavailable.imageError, /검수 이미지 목록을 불러오지 못했습니다: 서비스에 연결할 수 없습니다\./);
   let imagesStarted = false;
   await assert.rejects(
     loadQualityPoll(async () => { throw new Error("snapshot down"); }, async () => { imagesStarted = true; return images; }),
