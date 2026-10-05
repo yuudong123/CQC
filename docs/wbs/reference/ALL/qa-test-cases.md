@@ -13,9 +13,9 @@
 |---|---|---|---|
 | 배포·상태 | QA-DEP | MO-02·04·05, NFR-05·06 | Compose 8개 서비스, healthcheck, migration, 볼륨이 dev에 있다 |
 | Inference API | QA-INF | DM-07·08, FR-03·38·51, NFR-01·22 | OpenAPI 계약, 보정 패키지, 서버컴 지연 측정이 끝났다 |
-| 검사 API | QA-INS | BE-04, FR-02·04·05·13·14·19·26·28·34·37·39·44·45·53·55, NFR-18·24 | `POST /v1/inspections`, 임계값, 12-bin seed, 500ms 기한이 구현됐다 |
+| 검사 API | QA-INS | BE-04, FR-02·04·05·13·14·19·26·28·34·37·39·44·45·53·55, NFR-18·24 | `POST /v1/inspections`, 임계값, 12-bin seed, 라인 속도 기한(#87)이 구현됐다 |
 | 관제 조회 API | QA-OPS | BE-05, FR-07~10·21·22·29·31·32, NFR-14 | 관제 OpenAPI의 snapshot·이력·통계·CSV가 구현됐다 |
-| 장애 이미지 | QA-IMG | BE-06, FR-16·42, NFR-09 | 저장·목록·미리보기·선택 삭제·100장 순환이 구현됐다 |
+| 검수 이미지 | QA-IMG | BE-06, FR-16·42, NFR-09 | 시스템 오류·저신뢰 재검사 저장·목록·미리보기·선택 삭제·종류별 100/200장 순환이 구현됐다(#55) |
 | Simulator·검수 | QA-SIM, QA-OPS-16 | BE-07, FR-15·18·23·24·33·46~49·54 | 독립 Simulator(자동 재생·정지/재개·위치 복구·장애 6종·다음 1건·라인 속도 1·2·3초), `PUT /simulator`, 검수 API가 구현·배포됐다 |
 | 웹 관제 화면 | QA-WEB | FE-02~08, FR-06·20~22·35·36·41, NFR-11·12 | 실제 Backend 연결을 09-30에 확인했다 |
 | 자동 시험 | QA-AUTO | 전체 | 저장소 시험으로 재현할 수 있다 |
@@ -60,7 +60,8 @@
 services:
   backend:
     environment:
-      # QA-INS-12, QA-IMG-06: 모든 요청을 시간 초과로 만든다 (hard timeout 2000ms보다 작아야 함)
+      # QA-INS-12, QA-IMG-06: 직접 보낸 요청(간격 헤더 없음)을 시간 초과로 만든다 (hard timeout 2000ms보다 작아야 함)
+      # Simulator 요청은 라인 속도 기한(#87)을 쓰므로 이 값의 영향을 받지 않는다
       INFERENCE_BUSINESS_DEADLINE_MS: "50"
       # QA-INS-10: 닫힌 포트로 즉시 연결 실패
       # INFERENCE_URL: http://inference:9/v1/predict
@@ -495,8 +496,8 @@ done
 
 #### QA-INS-12 Inference 시간 초과 · P1
 
-- 근거: FR-19·26, BE-04 500ms 기한
-- 환경: E2, `INFERENCE_BUSINESS_DEADLINE_MS=50` 적용
+- 근거: FR-19·26, BE-04 제한시간(직접 요청 기본값)
+- 환경: E2, `INFERENCE_BUSINESS_DEADLINE_MS=50` 적용. `send`는 간격 헤더를 보내지 않아 이 기본값이 적용된다
 - 절차:
   1. `send $BE/v1/inspections $RUN-ins12 $DEMO/demo-601031008000-000 15.0`, 응답 시간을 잰다(`curl -w "%{time_total}"`).
   2. 3초 기다린 뒤 이력에서 같은 ID를 조회한다.
@@ -504,7 +505,7 @@ done
   1. HTTP 200, `decision_reason=INFERENCE_DEADLINE_EXCEEDED`, `exclude_from_normal_stats=true`, `TEST_REINSPECTION_BIN`, 예측 필드 `null`. 응답이 Inference 완료를 기다리지 않는다(Inference 처리 시간보다 짧다).
   2. 이력 `processingStatus=TIMEOUT`, `errorCode=INFERENCE_TIMEOUT`, `variety=null`, `bin=TEST_REINSPECTION_BIN`. 늦게 도착한 추론 결과가 bin·예측값을 바꾸지 않는다(FR-26).
   3. 장애 이미지 12장, `errorCode=INFERENCE_TIMEOUT`(QA-IMG-02).
-- 지연 결과 추적 한도·hard timeout은 자동 시험 `tests/api/test_late_results.py`로 확인한다.
+- 지연 결과 추적 한도·hard timeout은 자동 시험 `tests/api/test_late_results.py`로, 라인 속도별 기한(1·2·3초 → hard 2·3·4초)은 `tests/api/test_line_deadlines.py`로 확인한다.
 
 #### QA-INS-13 DB 중단 중 선별 지속 · P1
 
@@ -766,23 +767,24 @@ done
 | g | 없는 ID `qa-no-such-id` | 404 `INSPECTION_EXPIRED` |
 | h | ID에 허용 안 되는 문자 `qa.bad` | 422 `INVALID_REVIEW` |
 
-### 5.5 장애 이미지 (QA-IMG)
+### 5.5 검수 이미지 (QA-IMG)
 
 #### QA-IMG-01 저장 조건 · P1
 
-- 근거: FR-16 정상 이미지 즉시 삭제, BE-06
+- 근거: FR-16 정상 이미지 즉시 삭제·저신뢰 재검사 보관(#55), BE-06
 - 환경: E1
-- 절차: 장애 이미지 수를 기록하고 QA-INS-01 정상 12건, QA-INS-03·04를 보낸 뒤 다시 센다.
-- 기대 결과: 수가 변하지 않는다. 정상·저신뢰·당도 누락 요청의 사진은 저장되지 않는다.
+- 절차: 검수 이미지 수를 기록하고 QA-INS-01 정상 12건, QA-INS-03·04를 보낸 뒤 다시 센다.
+- 기대 결과: 정상·당도 누락 요청의 사진은 저장되지 않는다. 저신뢰 요청(QA-INS-03)의 사진만 12장 늘고, 그 항목은 `category=LOW_CONFIDENCE`, `errorCode=null`, `decisionReason`이 `LOW_*_CONFIDENCE` 중 하나다.
 
 #### QA-IMG-02 목록 · P1
 
-- 근거: BE-06 개별 장애 이미지 계약
+- 근거: BE-06 개별 검수 이미지 계약(#55)
 - 환경: E1, QA-INS-08 이후
 - 절차: `curl -s -D - $BE/v1/quality/fault-images`
 - 기대 결과:
-  - `items` ≤ 100, 최신 `createdAt` 순
-  - 항목 키: `id`(`32자리 16진수_두 자리 번호`), `inspectionId`, `imageIndex`(0~11), `createdAt`(epoch ms), `errorCode`, `previewUrl`(`/api/quality/previews/<id>`)
+  - `items` ≤ 300(시스템 오류 100 + 저신뢰 200), 최신 `createdAt` 순
+  - 항목 키: `id`(`32자리 16진수_두 자리 번호`), `inspectionId`, `imageIndex`(0~11), `createdAt`(epoch ms), `errorCode`(저신뢰는 `null`), `previewUrl`(`/api/quality/previews/<id>`), `category`(`SYSTEM_ERROR`·`LOW_CONFIDENCE`), `decisionReason`, `cultivarConfidence`·`qualityConfidence`·`appliedCultivarThreshold`·`appliedQualityThreshold`(0~1 또는 `null`)
+  - `?category=LOW_CONFIDENCE`, `?inspectionId=<id>`로 걸러진다
   - `$RUN-ins08` 항목: `imageIndex=0`, `errorCode=INFERENCE_HTTP_ERROR`
   - 시간 초과 기록(E2)은 `errorCode=INFERENCE_TIMEOUT`으로 보인다
 
@@ -819,11 +821,11 @@ done
 |---|---|---|
 | a | `{"ids":[]}` | 200 `{"deletedIds":[]}` |
 | b | `{"ids":["../x"]}` | 422 `INVALID_IDS` |
-| c | id 101개 | 422 `INVALID_IDS` |
+| c | id 301개 | 422 `INVALID_IDS` |
 | d | `{"ids":["A"],"all":true}` | 422 `INVALID_IDS` (추가 필드 금지) |
 | e | 본문 없음 | 422 `INVALID_IDS` |
 
-#### QA-IMG-06 100장 순환 · P1
+#### QA-IMG-06 시스템 오류 100장 순환 · P1
 
 - 근거: NFR-09
 - 환경: E2 (학원 서버의 기존 장애 이미지를 지우므로 E1에서 하지 않는다)
@@ -832,7 +834,8 @@ done
 - 기대 결과:
   - 목록 100장 (12×9=108 중 오래된 8장 삭제)
   - `$RUN-img06-1`은 `imageIndex` 8~11의 4장만 남고, `-2`~`-9`는 12장씩 모두 남는다
-  - snapshot `retention.images=100`, 웹 버튼 `장애 이미지 100장`
+  - 시스템 오류 이미지가 100장이다. 저신뢰 재검사 이미지(최대 200장)는 따로 세며 이 순환에 밀려나지 않는다
+  - 웹 검수 이미지 창 요약 `시스템 오류 100/100`
   - 검사 이력 9건은 모두 남는다
 
 #### QA-IMG-07 재시작 보존 · P2
@@ -984,17 +987,17 @@ E3에서 실행한다. 달리 적지 않으면 창 크기는 1600×900이다.
 - 절차: `기간 통계`를 열고 오늘~오늘로 조회, `통계 새로고침`, `기간 통계 CSV`
 - 기대 결과: 품종·품질·성공한 선별 명령·오판 의심 표의 수량이 QA-OPS-12 응답과 같다. 비율의 분모는 품종·품질은 `normal`, 오판 의심은 `total`. 날짜가 잘못되면 `시작일과 종료일을 올바르게 선택하세요.`와 CSV 비활성. CSV 파일 이름은 `cqc-period-statistics.csv`, 내용은 QA-OPS-13 a 형식.
 
-#### QA-WEB-15 장애 이미지 창 · P1
+#### QA-WEB-15 검수 이미지 창 · P1
 
 - 근거: FR-16·42, FE-07
 - 절차와 기대:
-  1. 상단 버튼 `장애 이미지 N장`의 N이 snapshot `retention.images`와 같다
-  2. 창 제목 `장애 이미지 관리`, 안내 `서버에 보관된 장애 이미지입니다.`, 표 열 `검사 ID`·`발생 시각`·`장애`·`오판 의심`·`이미지`
+  1. 상단 버튼 `검수 이미지 N장`의 N이 snapshot `retention.images`와 같다
+  2. 창 제목 `검수 이미지 관리`, 안내 `서버에 보관된 검수 이미지입니다. …`, 필터 `구분`(전체·시스템 오류·저신뢰 재검사)·`오판 의심 필터`, 요약 `시스템 오류 n/100 · 저신뢰 n/200`, 표 열 `검사 ID`·`발생 시각`·`구분`·`사유`·`오판 의심`·`이미지`. 저신뢰 행의 사유 아래에 `품질 55.8% < 60.0%`처럼 기준에 못 미친 신뢰도가 보인다
   3. `미리보기` → 원본 사진이 보인다. `미리보기 닫기`로 닫힌다
   4. 한 행 `삭제` → `선택한 이미지 1장을 삭제할까요?` 확인 → `삭제 확인` 후 그 행만 사라지고 N이 1 줄어든다
   5. `전체 이미지 삭제` → 확인 문구가 떠 있는 동안 새 장애 검사 1건을 보낸다 → 확인 후 확인 창을 연 시점의 이미지만 지워지고 새 이미지는 남는다
   6. 삭제한 이미지의 검사는 검사 이력에 그대로 있다
-  7. 이미지가 없으면 `보관된 장애 이미지가 없습니다.`
+  7. 이미지가 없으면 `보관된 검수 이미지가 없습니다.`
   8. 다른 곳에서 지운 이미지의 미리보기 → `이미지 조회 불가 · 만료 또는 연결 끊김`
 - 4·5는 E2에서 하거나 E1에서는 본인 `$RUN` 이미지로만 한다.
 

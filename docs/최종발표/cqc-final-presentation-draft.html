@@ -162,7 +162,7 @@ body.nav-open .deck-nav{transform:none}
     <div class="research-flow" style="grid-template-columns:repeat(5,1fr)">
       <div><span>01 · 입력</span><h3>사과 12장</h3><p>사전 구성한 사진 묶음<br>500ms 간격 투입 목표</p></div>
       <div><span>02 · 판정</span><h3>품종·외관</h3><p>부사·양광 / 특·상·보통<br>각각의 신뢰도 반환</p></div>
-      <div><span>03 · 분기</span><h3>재검사</h3><p>저신뢰·오류·<br>응답 500ms 초과</p></div>
+      <div><span>03 · 분기</span><h3>재검사</h3><p>저신뢰·오류·<br>라인 속도 내 미응답</p></div>
       <div><span>04 · 선별</span><h3>12 + 1</h3><p>품종 2 × 외관 3 ×<br>가상 당도 14° 2구간</p></div>
       <div><span>05 · 관제</span><h3>저장·조회</h3><p>MySQL 이력<br>처리 상태·통계 화면</p></div>
     </div>
@@ -170,7 +170,7 @@ body.nav-open .deck-nav{transform:none}
     <table class="research-table"><thead><tr><th>완료 판단 기준</th><th>2026-10-02 확인 상태</th></tr></thead><tbody>
       <tr><td>12장 입력 → 판정 → 재검사 → 12+1 목적지</td><td>Simulator 자동 투입 → Backend → Inference 분기 동작(학원 서버)</td></tr>
       <tr><td>이력 저장·관제 화면</td><td>서버 관제 화면이 실제 Backend·DB 이력 표시 / 처리 중 사과 12장·재검사·오류 목록·처리량 추이</td></tr>
-      <tr><td>500ms 간격 투입 · 응답 500ms 이내</td><td>추론 서버 내부 p95 309ms / 전체 흐름 초당 0.63건으로 미달 → 시연 간격 2000ms</td></tr>
+      <tr><td>500ms 간격 투입 · 라인 속도 안에 응답</td><td>추론 서버 내부 p95 309ms / 전체 흐름 초당 0.63건으로 미달 → 시연 간격 2000ms / 제한시간 = 라인 속도(10-05)</td></tr>
       <tr><td>정상 100건 · 장애 5종 반복 시연</td><td>10월 12일 수용시험 예정</td></tr>
       <tr><td>외관 Macro F1 ≥ 0.90</td><td>목표 미달: v1 Test 0.7778 / v2 개발 5-fold 0.8844</td></tr>
     </tbody></table>
@@ -436,12 +436,12 @@ sweetness_band: &lt;14 | ≥14
   <div class="kicker">29 · IMPLEMENTATION</div><h2>구현 현황</h2><p class="subtitle">파트별 구현 기능과 연결 작업</p>
   <table class="role-table"><thead><tr><th>영역</th><th>상태</th><th>구현 기능</th><th>후속 작업</th></tr></thead><tbody>
     <tr><td>모델</td><td class="role">서비스 중</td><td>v2 보정 패키지 서빙·임계값 0.50/0.60<br>서버컴 지연·처리량 측정</td><td>최종 Test·모델 카드 확정</td></tr>
-    <tr><td>Backend</td><td class="role">연결 완료</td><td>검사·관제·이력·통계·CSV·장애 이미지·검수 API<br>DB 장애 시 선별 지속·이력 순환 삭제·처리 중 사과 12장(축소본)</td><td>재검사 이미지 보관(#55)<br>일·주·월 통계(#56)</td></tr>
-    <tr><td>Frontend</td><td class="role">실서버 연결</td><td>서버 관제·처리 중 사과 12장·라인 속도 조절<br>재검사·오류 사과 목록·처리량 추이(Chart.js)·이력·통계·장애 이미지</td><td>8시간 연속 관제 시험</td></tr>
+    <tr><td>Backend</td><td class="role">연결 완료</td><td>검사·관제·이력·통계·CSV·검수 이미지(오류·저신뢰)·검수 API<br>DB 장애 시 선별 지속·이력 순환 삭제·처리 중 사과 12장·라인 속도 제한시간</td><td>API·DB 계약 동결(10-13)<br>통합·수용시험(10-12)</td></tr>
+    <tr><td>Frontend</td><td class="role">실서버 연결</td><td>서버 관제·처리 중 사과 12장·라인 속도 조절<br>재검사·오류 사과 목록·처리량 추이(Chart.js)·이력·통계·검수 이미지</td><td>8시간 연속 관제 시험</td></tr>
     <tr><td>배포</td><td class="role">운영 중</td><td>Compose 7개(품질 4·물류 3)·Jenkins dev 자동 배포·테스트<br>실패 시 이전 버전 복구·Simulator 자동 재생·오류 로그 순환</td><td>수용시험(10-12)·배포 버전 동결</td></tr>
     <tr><td>물류</td><td class="role">시연 목업</td><td>출품·입찰·낙찰·결제(가상)·배차 브라우저 시연<br>MVP 제외(10-01 결정)</td><td>MVP 이후 실제 물류 API 전환</td></tr>
   </tbody></table>
-  <div class="source">근거: ALL-03, PR #37·#50·#51·#52·#59·#60·#78·#82·#83·#84, 결정 기록 10-01, 열린 이슈 #55·#56</div><div class="footer"><span>CQC · 최종 발표 초안</span><span>32</span></div>
+  <div class="source">근거: ALL-03, PR #37·#50·#51·#52·#59·#60·#78·#82·#83·#84, PR #89·#90, 결정 기록 10-01·10-05(#55·#56·#87)</div><div class="footer"><span>CQC · 최종 발표 초안</span><span>32</span></div>
 </section>
 
 <section class="page">
