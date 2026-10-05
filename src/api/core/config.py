@@ -35,6 +35,7 @@ class Settings(BaseSettings):
     quality_confidence_threshold: float = Field(default=0.60, ge=0, le=1)
     inference_business_deadline_ms: int = Field(default=500, ge=1)
     inference_hard_timeout_ms: int = Field(default=2000, ge=1)
+    inference_hard_timeout_grace_ms: int = Field(default=1000, ge=1)
     inference_connect_timeout_ms: int = Field(default=200, ge=1, lt=500)
     inference_health_timeout_ms: int = Field(default=1_500, ge=1)
     max_late_tasks: int = Field(default=4, ge=0)
