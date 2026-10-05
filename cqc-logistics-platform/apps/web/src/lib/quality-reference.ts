@@ -49,6 +49,8 @@ export class QualityReferenceService {
         ...row,
         previewUrl: preview(row.id),
       })),
+      // 참조 API는 완료 후 미리보기 유예가 없어 항상 비어 있다.
+      recentCompletedJobs: [],
       images: this.state.images.map((row) => ({
         ...row,
         previewUrl: preview(row.id),
