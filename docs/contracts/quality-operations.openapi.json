@@ -1076,7 +1076,32 @@
               }
             }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "SYSTEM_ERROR",
+                "LOW_CONFIDENCE"
+              ]
+            }
+          },
+          {
+            "name": "inspectionId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "minLength": 1,
+              "maxLength": 64
+            }
+          }
+        ]
       },
       "delete": {
         "operationId": "qualityDeleteImages",
@@ -2172,7 +2197,7 @@
               "minLength": 1,
               "maxLength": 64
             },
-            "maxItems": 100,
+            "maxItems": 300,
             "description": "Individual fault image IDs captured when the confirmation dialog opens. Send that snapshot for delete-all; an empty array is a no-op. IDs that are already absent are ignored."
           }
         },
@@ -2192,7 +2217,7 @@
               "minLength": 1,
               "maxLength": 64
             },
-            "maxItems": 100,
+            "maxItems": 300,
             "description": "Only individual fault image IDs successfully deleted by this request; missing or failed IDs are omitted."
           }
         },
@@ -2226,18 +2251,70 @@
             "minimum": 0
           },
           "errorCode": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "enum": [
               "INFERENCE_TIMEOUT",
               "INFERENCE_ERROR",
               "INFERENCE_CONNECTION_ERROR",
               "INFERENCE_HTTP_ERROR",
-              "INFERENCE_INVALID_RESPONSE"
-            ]
+              "INFERENCE_INVALID_RESPONSE",
+              null
+            ],
+            "description": "Null for LOW_CONFIDENCE; existing system-error mapping preserved."
           },
           "previewUrl": {
             "type": "string",
             "pattern": "^/api/quality/previews/[A-Za-z0-9_-]+$"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "SYSTEM_ERROR",
+              "LOW_CONFIDENCE"
+            ]
+          },
+          "decisionReason": {
+            "type": "string",
+            "description": "Backend decision reason; low confidence is not a system error."
+          },
+          "cultivarConfidence": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1,
+            "description": "0..1; null when unavailable, including legacy sidecars."
+          },
+          "qualityConfidence": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1,
+            "description": "0..1; null when unavailable, including legacy sidecars."
+          },
+          "appliedCultivarThreshold": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1,
+            "description": "0..1; null when unavailable, including legacy sidecars."
+          },
+          "appliedQualityThreshold": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0,
+            "maximum": 1,
+            "description": "0..1; null when unavailable, including legacy sidecars."
           }
         },
         "required": [
@@ -2246,7 +2323,13 @@
           "imageIndex",
           "createdAt",
           "errorCode",
-          "previewUrl"
+          "previewUrl",
+          "category",
+          "decisionReason",
+          "cultivarConfidence",
+          "qualityConfidence",
+          "appliedCultivarThreshold",
+          "appliedQualityThreshold"
         ],
         "additionalProperties": false
       },
@@ -2258,7 +2341,7 @@
             "items": {
               "$ref": "#/components/schemas/FaultImage"
             },
-            "maxItems": 100
+            "maxItems": 300
           }
         },
         "required": [

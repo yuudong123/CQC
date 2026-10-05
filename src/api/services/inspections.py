@@ -60,6 +60,13 @@ _FAULT_IMAGE_REASONS = frozenset(
         InspectionDecisionReason.INFERENCE_INVALID_RESPONSE,
     }
 )
+_LOW_CONFIDENCE_IMAGE_REASONS = frozenset(
+    {
+        InspectionDecisionReason.LOW_CULTIVAR_CONFIDENCE,
+        InspectionDecisionReason.LOW_QUALITY_CONFIDENCE,
+        InspectionDecisionReason.LOW_BOTH_CONFIDENCE,
+    }
+)
 
 
 class InferenceResponseMismatchError(RuntimeError):
@@ -82,6 +89,7 @@ class InspectionService:
         bin_mapping_repository: BinMappingRepository | None = None,
         persistence: InspectionPersistence | None = None,
         fault_image_storage: FaultImageStorage | None = None,
+        low_confidence_image_storage: FaultImageStorage | None = None,
         live_inspections: LiveInspectionStore | None = None,
         live_preview_max_dimension: int = 240,
         live_preview_jpeg_quality: int = 90,
@@ -100,6 +108,7 @@ class InspectionService:
         )
         self._persistence = persistence
         self._fault_image_storage = fault_image_storage
+        self._low_confidence_image_storage = low_confidence_image_storage
         self._live_inspections = live_inspections
         self._live_preview_max_dimension = live_preview_max_dimension
         self._live_preview_jpeg_quality = live_preview_jpeg_quality
@@ -329,20 +338,57 @@ class InspectionService:
             # Mapping 조회에서 DB 단절이 확인되면 같은 검사의 저장 재시도를 생략한다.
             persistence_status = PersistenceStatus.FAILED
 
-        if decision.reason in _FAULT_IMAGE_REASONS and self._fault_image_storage:
+        system_error = decision.reason in _FAULT_IMAGE_REASONS
+        low_confidence = decision.reason in _LOW_CONFIDENCE_IMAGE_REASONS
+        image_storage = (
+            self._fault_image_storage
+            if system_error
+            else self._low_confidence_image_storage
+        )
+        storage_result = "disabled"
+        stored_ids: list[str] = []
+        storage_error: Exception | None = None
+        if (system_error or low_confidence) and image_storage is not None:
             try:
-                await asyncio.to_thread(
-                    self._fault_image_storage.save,
+                stored_ids = await asyncio.to_thread(
+                    image_storage.save,
                     inspection_id=inspection_id,
-                    error_code=decision.reason.value,
+                    error_code=decision.reason.value if system_error else None,
+                    category="SYSTEM_ERROR" if system_error else "LOW_CONFIDENCE",
+                    decision_reason=decision.reason.value,
+                    cultivar_confidence=(
+                        inference_response.cultivar_confidence
+                        if inference_response is not None
+                        else None
+                    ),
+                    quality_confidence=(
+                        inference_response.quality_confidence
+                        if inference_response is not None
+                        else None
+                    ),
+                    applied_cultivar_threshold=self._cultivar_confidence_threshold,
+                    applied_quality_threshold=self._quality_confidence_threshold,
                     images=[
                         FaultImage(content, image.content_type or "")
                         for content, image in zip(image_payloads, images, strict=True)
                     ],
                     created_at=utc_now(),
                 )
-            except Exception:
-                logger.exception("Fault image storage failed: %s", inspection_id)
+                storage_result = "saved"
+            except Exception as exc:  # noqa: BLE001 -- optional storage must not change the decision
+                storage_result = "failed"
+                storage_error = exc
+        if system_error or storage_error is not None:
+            # Record the result of this attempt, independently of later pruning.
+            logger.error(
+                "Inspection image storage: inspection_id=%s decision_reason=%s "
+                "image_storage=%s images_saved=%s",
+                inspection_id,
+                decision.reason.value,
+                storage_result,
+                len(stored_ids),
+                exc_info=storage_error,
+            )
 
         inference_fields = (
             inference_response.model_dump(exclude={"inspection_id"})

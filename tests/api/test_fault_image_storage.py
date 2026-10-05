@@ -998,3 +998,23 @@ def test_snapshot_reflects_actual_image_count_and_delete_capability(
         assert state["state"]["images"] == []
         assert state["state"]["history"][0]["id"] == "inspection-retained"
         assert state["state"]["history"][0]["misclassification"] == "CULTIVAR_SUSPECT"
+        low_storage = app.state.low_confidence_image_storage
+        app.state.quality_operations_service = QualityOperationsService(
+            FakeHistory(),
+            FakeStatistics(),
+            storage,
+            low_confidence_image_storage=low_storage,
+        )
+        low_id = low_storage.save(
+            inspection_id="retained-low",
+            error_code=None,
+            category="LOW_CONFIDENCE",
+            decision_reason="LOW_BOTH_CONFIDENCE",
+            images=[_jpeg()],
+        )[0]
+        assert snapshot()["retention"]["images"] == 1
+        assert snapshot()["state"]["history"][0]["id"] == "inspection-retained"
+        assert client.request(
+            "DELETE", "/v1/quality/fault-images", json={"ids": [low_id]}
+        ).json() == {"deletedIds": [low_id]}
+        assert snapshot()["retention"]["images"] == 0
