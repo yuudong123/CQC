@@ -78,6 +78,7 @@ class InspectionService:
         quality_confidence_threshold: float,
         inference_business_deadline_ms: int,
         late_result_manager: LateResultManager,
+        inference_hard_timeout_grace_ms: int = 1000,
         bin_mapping_repository: BinMappingRepository | None = None,
         persistence: InspectionPersistence | None = None,
         fault_image_storage: FaultImageStorage | None = None,
@@ -91,6 +92,7 @@ class InspectionService:
         self._quality_confidence_threshold = quality_confidence_threshold
         self._inference_business_deadline_ms = inference_business_deadline_ms
         self._late_result_manager = late_result_manager
+        self._inference_hard_timeout_grace_ms = inference_hard_timeout_grace_ms
         self._bin_mapping_lkg = (
             LkgBinMapping(bin_mapping_repository)
             if bin_mapping_repository is not None
@@ -117,6 +119,7 @@ class InspectionService:
         simulator_faults: tuple[FaultType, ...] = (),
         injected_inference_reason: InspectionDecisionReason | None = None,
         source_reference: str | None = None,
+        simulator_interval_ms: int | None = None,
     ) -> InspectionResponse:
         """검사 요청을 판정·제어하고 가능한 결과를 DB에 기록한다."""
 
@@ -132,8 +135,12 @@ class InspectionService:
                 injected_inference_reason=injected_inference_reason,
                 source_reference=source_reference,
                 preview_token=preview_token,
+                simulator_interval_ms=simulator_interval_ms,
             )
-            if result.decision_reason is InspectionDecisionReason.INFERENCE_DEADLINE_EXCEEDED:
+            if (
+                result.decision_reason
+                is InspectionDecisionReason.INFERENCE_DEADLINE_EXCEEDED
+            ):
                 preview_status = "TIMEOUT"
             elif not (
                 result.decision_reason.value.startswith("INFERENCE_")
@@ -144,7 +151,9 @@ class InspectionService:
         finally:
             if self._live_inspections is not None:
                 try:
-                    self._live_inspections.complete(preview_token, status=preview_status)
+                    self._live_inspections.complete(
+                        preview_token, status=preview_status
+                    )
                 except Exception:
                     logger.exception("처리 중 이미지 정리 실패: %s", inspection_id)
 
@@ -159,6 +168,7 @@ class InspectionService:
         injected_inference_reason: InspectionDecisionReason | None,
         source_reference: str | None,
         preview_token: str,
+        simulator_interval_ms: int | None,
     ) -> InspectionResponse:
         """기존 검사 흐름을 수행하며 입력을 읽은 뒤 임시 이미지를 게시한다."""
 
@@ -227,6 +237,7 @@ class InspectionService:
             inference_request,
             injected_reason=injected_reason,
             persist_late_result=row_created,
+            simulator_interval_ms=simulator_interval_ms,
         )
 
         if (
@@ -359,6 +370,7 @@ class InspectionService:
         *,
         persist_late_result: bool,
         injected_reason: InspectionDecisionReason | None = None,
+        simulator_interval_ms: int | None = None,
     ) -> tuple[
         InferenceResponse | None,
         InspectionDecision,
@@ -390,12 +402,35 @@ class InspectionService:
                     )
                 ],
             )
+        if simulator_interval_ms is not None and simulator_interval_ms not in (
+            1000,
+            2000,
+            3000,
+        ):
+            raise ValueError("Simulator interval must be 1000, 2000 or 3000ms")
+        business_deadline_ms = (
+            simulator_interval_ms
+            if simulator_interval_ms is not None
+            else self._inference_business_deadline_ms
+        )
+        hard_timeout_ms = (
+            business_deadline_ms + self._inference_hard_timeout_grace_ms
+            if simulator_interval_ms is not None
+            else None
+        )
         event_loop = asyncio.get_running_loop()
         inference_started_at = event_loop.time()
-        inference_task = asyncio.create_task(self._inference_client.predict(request))
+        # Override only this HTTP request; never mutate the shared client's timeout.
+        prediction = (
+            self._inference_client.predict(request, timeout_ms=hard_timeout_ms)
+            if isinstance(self._inference_client, HttpInferenceClient)
+            and hard_timeout_ms is not None
+            else self._inference_client.predict(request)
+        )
+        inference_task = asyncio.create_task(prediction)
         completed, _ = await asyncio.wait(
             {inference_task},
-            timeout=self._inference_business_deadline_ms / 1000,
+            timeout=business_deadline_ms / 1000,
         )
         if inference_task not in completed:
             frame_count = len(request.images)
@@ -413,6 +448,7 @@ class InspectionService:
                 inference_task=inference_task,
                 started_at=inference_started_at,
                 on_result=on_result,
+                hard_timeout_ms=hard_timeout_ms,
             )
             decision = decide_inference_timeout(
                 cultivar_confidence_threshold=self._cultivar_confidence_threshold,

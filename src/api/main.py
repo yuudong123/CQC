@@ -87,6 +87,7 @@ def create_app(
             runtime_settings.inference_business_deadline_ms
         ),
         late_result_manager=late_result_manager,
+        inference_hard_timeout_grace_ms=runtime_settings.inference_hard_timeout_grace_ms,
         bin_mapping_repository=(
             BinMappingRepository(session_factory)
             if session_factory is not None

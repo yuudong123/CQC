@@ -112,7 +112,9 @@ class SimulatorRunner:
         workers: set[asyncio.Task[None]] = set()
         position_lock = asyncio.Lock()
 
-        async def send(sequence: int, bundle: SimulatorBundle) -> None:
+        async def send(
+            sequence: int, bundle: SimulatorBundle, interval_ms: int
+        ) -> None:
             nonlocal committed
             inspection_id = str(uuid4())
             faults = self._state.claim_faults_for_inspection()
@@ -133,6 +135,7 @@ class SimulatorRunner:
                         "X-CQC-Simulator-Token": self._fault_token,
                         "X-CQC-Simulator-Faults": ",".join(faults),
                         "X-CQC-Simulator-Bundle-ID": bundle.bundle_id,
+                        "X-CQC-Simulator-Interval-Ms": str(interval_ms),
                     },
                 )
                 result.raise_for_status()
@@ -185,7 +188,13 @@ class SimulatorRunner:
                 if self._stop.is_set():
                     break
                 bundle = await asyncio.to_thread(dataset.load, next_position)
-                worker = asyncio.create_task(send(next_position, bundle))
+                # Freeze the current interval at dispatch, after dataset I/O.
+                interval_ms = self._state.get_state().interval_ms
+                interval = interval_ms / 1000
+                if last_started is not None and interval_ms != scheduled_interval_ms:
+                    next_due = last_started + interval
+                scheduled_interval_ms = interval_ms
+                worker = asyncio.create_task(send(next_position, bundle, interval_ms))
                 workers.add(worker)
                 started = loop.time()
                 if next_due is None or started - next_due >= interval:

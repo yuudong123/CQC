@@ -151,9 +151,11 @@ async def _validate_and_inspect(
 
     token = request.headers.get("x-cqc-simulator-token")
     raw_faults = request.headers.get("x-cqc-simulator-faults", "")
+    raw_interval = request.headers.get("x-cqc-simulator-interval-ms")
+    simulator_interval_ms: int | None = None
     simulator_faults: tuple[FaultType, ...] = ()
     source_reference: str | None = None
-    if token is not None or raw_faults:
+    if token is not None or raw_faults or raw_interval is not None:
         expected_token = request.app.state.simulator_fault_token
         if (
             expected_token is None
@@ -171,6 +173,12 @@ async def _validate_and_inspect(
                 status_code=422, detail="Simulator 장애 설정이 잘못되었습니다"
             )
         simulator_faults = parsed
+        if raw_interval is not None:
+            if raw_interval not in {"1000", "2000", "3000"}:
+                raise HTTPException(
+                    status_code=422, detail="Simulator interval이 잘못되었습니다"
+                )
+            simulator_interval_ms = int(raw_interval)
         source_reference = request.headers.get("x-cqc-simulator-bundle-id")
         if source_reference is None or not 1 <= len(source_reference) <= 255:
             raise HTTPException(
@@ -183,6 +191,8 @@ async def _validate_and_inspect(
             if source_reference is not None
             else {}
         )
+        if simulator_interval_ms is not None:
+            options["simulator_interval_ms"] = simulator_interval_ms
         return await _service_from(request).inspect(
             inspection_id=inspection_id,
             images=images,

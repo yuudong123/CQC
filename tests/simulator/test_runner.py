@@ -231,11 +231,12 @@ def test_runner_uses_start_spacing_and_runtime_interval_changes() -> None:
         state = SimulatorStateService(interval_ms=2000)
         state.start_on_boot()
         starts: list[float] = []
+        intervals: list[str] = []
         reached = asyncio.Event()
         runner: SimulatorRunner
 
         async def respond(request: httpx.Request) -> httpx.Response:
-            del request
+            intervals.append(request.headers["X-CQC-Simulator-Interval-Ms"])
             starts.append(monotonic())
             if len(starts) == 2:
                 state.update_state(
@@ -269,6 +270,7 @@ def test_runner_uses_start_spacing_and_runtime_interval_changes() -> None:
             assert 2.7 <= gaps[1] <= 3.5
             assert 0.75 <= gaps[2] <= 1.5
             assert state.get_state().interval_ms == 1000
+            assert intervals[:4] == ["2000", "2000", "3000", "1000"]
 
             state.update_state(
                 SimulatorSettingsUpdate(expectedRevision=2, running=False)

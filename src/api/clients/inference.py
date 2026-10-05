@@ -76,7 +76,10 @@ class HttpInferenceClient:
         )
         self._owns_client = client is None
 
-    async def predict(self, request: InferenceRequest) -> InferenceResponse:
+    async def predict(
+        self, request: InferenceRequest, *, timeout_ms: int | None = None
+    ) -> InferenceResponse:
+        """Override transport budgets per inspection, retaining #67's 200ms connect limit."""
         files = []
         for index, content in enumerate(request.images):
             is_png = content.startswith(b"\x89PNG\r\n\x1a\n")
@@ -84,6 +87,11 @@ class HttpInferenceClient:
                 ("png", "image/png") if is_png else ("jpg", "image/jpeg")
             )
             files.append(("images", (f"view-{index}.{extension}", content, media_type)))
+        options = (
+            {"timeout": httpx.Timeout(timeout_ms / 1000, connect=0.2)}
+            if timeout_ms is not None
+            else {}
+        )
         response = await self._client.post(
             self._url,
             data={
@@ -93,6 +101,7 @@ class HttpInferenceClient:
                 ),
             },
             files=files,
+            **options,
         )
         response.raise_for_status()
         return InferenceResponse.model_validate(response.json())

@@ -38,8 +38,9 @@ class LateResultManager:
         inference_task: asyncio.Task[InferenceResponse],
         started_at: float,
         on_result: Callable[[LateInferenceResult], Awaitable[None]] | None = None,
+        hard_timeout_ms: int | None = None,
     ) -> bool:
-        """한도 안의 task만 hard timeout까지 추적한다."""
+        """한도 안의 task를 요청별 상한(없으면 기본값)까지 추적한다."""
 
         if self.active_count >= self._max_tasks:
             self.dropped_inspection_ids.append(inspection_id)
@@ -48,7 +49,12 @@ class LateResultManager:
             return False
 
         elapsed = asyncio.get_running_loop().time() - started_at
-        remaining_seconds = self._hard_timeout_seconds - elapsed
+        hard_timeout_seconds = (
+            self._hard_timeout_seconds
+            if hard_timeout_ms is None
+            else hard_timeout_ms / 1000
+        )
+        remaining_seconds = hard_timeout_seconds - elapsed
         watcher = asyncio.create_task(
             self._collect(
                 inspection_id=inspection_id,
