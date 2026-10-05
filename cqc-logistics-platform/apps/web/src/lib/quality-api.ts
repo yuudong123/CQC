@@ -201,6 +201,22 @@ export function parseSnapshot(value: unknown): QualitySnapshot {
         j.faults.every(validFault) &&
         (j.previewUrl === undefined || validPreview(j.previewUrl)) &&
         (j.previews === undefined || validJobPreviews(j.previews)),
+    ) ||
+    // #88 이전 Backend에는 없다.
+    !(
+      s.recentCompletedJobs === undefined ||
+      (Array.isArray(s.recentCompletedJobs) &&
+        s.recentCompletedJobs.length <= 64 &&
+        s.recentCompletedJobs.every(
+          (j) =>
+            object(j) &&
+            typeof j.id === "string" &&
+            /^[A-Za-z0-9_-]{1,64}$/.test(j.id) &&
+            ["COMPLETED", "ERROR", "TIMEOUT"].includes(String(j.status)) &&
+            finite(j.completedAt) &&
+            finite(j.previewExpiresAt) &&
+            validJobPreviews(j.previews),
+        ))
     )
   )
     throw new QualityApiError("관제 데이터 형식이 올바르지 않습니다.");

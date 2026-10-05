@@ -27,6 +27,7 @@ const {
   POLL_INTERVAL_MS,
   DEMO_INPUT_INTERVAL_MS,
 } = require("../src/lib/quality-runtime.ts");
+const { parseFaultImages, imageCategory, imageReason, imageEvidence } = require("../src/lib/quality-fault-images.ts");
 const start = Date.parse("2026-09-28T00:00:00Z");
 function complete(overrides = {}) {
   return step(step({ ...initialRuntime(), ...overrides }, start), start + 1000);
@@ -205,4 +206,37 @@ test("polling keeps a fixed start-to-start interval", () => {
   assert.equal(nextPollDelay(1200), 0);
   // 시계가 뒤로 가도 주기보다 오래 기다리지 않음
   assert.equal(nextPollDelay(-50), 1000);
+});
+test("job panel follows recent completed apples it missed while processing", () => {
+  const frames = [{ index: 0, previewUrl: "/api/quality/previews/live_x_00" }];
+  const held = { id: "a", index: 1, started: 1000 };
+  const done = (id, completedAt) => ({ id, status: "COMPLETED", completedAt, previewExpiresAt: completedAt + 3000, previews: frames });
+  // 처리 중일 때 못 잡은 b가 a보다 나중에 끝났으면 b로 넘어간다
+  const next = displayedJobs([], [held], [done("b", 3500)]);
+  assert.equal(next.held, true);
+  assert.equal(next.jobs[0].id, "b");
+  assert.equal(next.jobs[0].previews, frames);
+  // 이미 보여 준 a의 완료 기록이면 그대로 a
+  assert.deepEqual(displayedJobs([], [held], [done("a", 1800)]), { jobs: [held], held: true });
+  // a보다 먼저 끝난 옛 사과로는 돌아가지 않는다
+  assert.deepEqual(displayedJobs([], [held], [done("z", 500)]), { jobs: [held], held: true });
+  // 여러 건이면 가장 나중에 끝난 것
+  assert.equal(displayedJobs([], [], [done("c", 4000), done("d", 4500)]).jobs[0].id, "d");
+});
+test("review images accept low confidence rows and legacy system errors", () => {
+  const base = { id: "abc_00", inspectionId: "insp", imageIndex: 0, createdAt: 1, previewUrl: "/api/quality/previews/abc_00" };
+  const low = { ...base, errorCode: null, category: "LOW_CONFIDENCE", decisionReason: "LOW_QUALITY_CONFIDENCE",
+    cultivarConfidence: 0.99, qualityConfidence: 0.558, appliedCultivarThreshold: 0.5, appliedQualityThreshold: 0.6 };
+  const legacy = { ...base, id: "def_01", previewUrl: "/api/quality/previews/def_01", errorCode: "INFERENCE_TIMEOUT" };
+  const [l, g] = parseFaultImages({ items: [low, legacy] });
+  assert.equal(imageCategory(l), "LOW_CONFIDENCE");
+  assert.equal(imageReason(l), "품질 신뢰도 미달");
+  assert.equal(imageEvidence(l), "품질 55.8% < 60.0%");
+  // #90 이전 응답: category 없음 → 시스템 오류
+  assert.equal(imageCategory(g), "SYSTEM_ERROR");
+  assert.equal(imageReason(g), "추론 시간 초과");
+  assert.equal(imageEvidence(g), "");
+  // 오류 코드가 없는데 시스템 오류라고 하면 거부
+  assert.throws(() => parseFaultImages({ items: [{ ...low, category: "SYSTEM_ERROR" }] }));
+  assert.throws(() => parseFaultImages({ items: [{ ...low, qualityConfidence: 55.8 }] }));
 });

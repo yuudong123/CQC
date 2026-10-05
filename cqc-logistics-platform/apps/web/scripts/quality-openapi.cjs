@@ -18,6 +18,12 @@ const array = (items, maxItems) => ({
   items,
   ...(maxItems === undefined ? {} : { maxItems }),
 });
+const ratio = {
+  type: ["number", "null"],
+  minimum: 0,
+  maximum: 1,
+  description: "0..1; null when unavailable, including legacy sidecars.",
+};
 const ref = (name) => ({ $ref: `#/components/schemas/${name}` });
 const counts = { type: "object", additionalProperties: num };
 const marker = enumeration([
@@ -104,6 +110,10 @@ const runtimeProperties = {
   faults: array(fault, 5),
   scope: enumeration(["ALL", "NEXT"]),
   jobs: array(ref("Job"), 64),
+  recentCompletedJobs: {
+    ...array(ref("RecentCompletedJob"), 64),
+    description: "Finished inspections whose live previews have not expired.",
+  },
   history: array(ref("Result"), 200),
   images: array(ref("Result"), 100),
   points: array(ref("Point"), 1800),
@@ -137,7 +147,7 @@ const schemas = {
       previewUrl,
       previews: {
         type: "array",
-        description: "Live inspection images in input order; index is zero-based. URLs expire when processing ends.",
+        description: "Live inspection images in input order; index is zero-based. URLs remain readable during the completion grace period.",
         minItems: 1,
         maxItems: 12,
         items: ref("JobPreview"),
@@ -214,31 +224,46 @@ const schemas = {
     },
     ["expectedRevision"],
   ),
+  RecentCompletedJob: {
+    ...object({
+      id,
+      status: enumeration(["COMPLETED", "ERROR", "TIMEOUT"]),
+      completedAt: num,
+      previewExpiresAt: num,
+      previews: { type: "array", minItems: 1, maxItems: 12, items: ref("JobPreview") },
+    }),
+    description: "A finished inspection retained only while its live preview URLs remain readable. Timestamps are Unix milliseconds.",
+  },
   Review: object({ misclassification: marker }),
   ReviewAck: object({ inspectionId: id, misclassification: marker }),
-  ImageDelete: object({ ids: { ...array(id, 100), description: "Individual fault image IDs captured when the confirmation dialog opens. Send that snapshot for delete-all; an empty array is a no-op. IDs that are already absent are ignored." } }),
-  ImageDeleteAck: object({ deletedIds: { ...array(id, 100), description: "Only individual fault image IDs successfully deleted by this request; missing or failed IDs are omitted." } }),
+  ImageDelete: object({ ids: { ...array(id, 300), description: "Individual fault image IDs captured when the confirmation dialog opens. Send that snapshot for delete-all; an empty array is a no-op. IDs that are already absent are ignored." } }),
+  ImageDeleteAck: object({ deletedIds: { ...array(id, 300), description: "Only individual fault image IDs successfully deleted by this request; missing or failed IDs are omitted." } }),
   FaultImage: object({
     id,
     inspectionId: id,
     imageIndex: { type: "integer", minimum: 0, maximum: 11 },
     createdAt: num,
-    errorCode: enumeration([
-      "INFERENCE_TIMEOUT",
-      "INFERENCE_ERROR",
-      "INFERENCE_CONNECTION_ERROR",
-      "INFERENCE_HTTP_ERROR",
-      "INFERENCE_INVALID_RESPONSE",
-    ]),
-    category: enumeration(["SYSTEM_ERROR", "LOW_CONFIDENCE"]),
-    decisionReason: text,
-    cultivarConfidence: nullable({ type: "number", minimum: 0, maximum: 1 }),
-    qualityConfidence: nullable({ type: "number", minimum: 0, maximum: 1 }),
-    appliedCultivarThreshold: nullable({ type: "number", minimum: 0, maximum: 1 }),
-    appliedQualityThreshold: nullable({ type: "number", minimum: 0, maximum: 1 }),
+    errorCode: {
+      type: ["string", "null"],
+      enum: [
+        "INFERENCE_TIMEOUT",
+        "INFERENCE_ERROR",
+        "INFERENCE_CONNECTION_ERROR",
+        "INFERENCE_HTTP_ERROR",
+        "INFERENCE_INVALID_RESPONSE",
+        null,
+      ],
+      description: "Null for LOW_CONFIDENCE; existing system-error mapping preserved.",
+    },
     previewUrl,
+    category: enumeration(["SYSTEM_ERROR", "LOW_CONFIDENCE"]),
+    decisionReason: { ...text, description: "Backend decision reason; low confidence is not a system error." },
+    cultivarConfidence: ratio,
+    qualityConfidence: ratio,
+    appliedCultivarThreshold: ratio,
+    appliedQualityThreshold: ratio,
   }),
-  FaultImages: object({ items: array(ref("FaultImage"), 100) }),
+  FaultImages: object({ items: array(ref("FaultImage"), 300) }),
   Error: object({ code: text }),
 };
 const response = (schema) => ({
@@ -356,6 +381,10 @@ const document = {
     "/fault-images": {
       get: {
         operationId: "qualityFaultImages",
+        parameters: [
+          { name: "category", in: "query", required: false, schema: enumeration(["SYSTEM_ERROR", "LOW_CONFIDENCE"]) },
+          { name: "inspectionId", in: "query", required: false, schema: id },
+        ],
         responses: responses(ref("FaultImages")),
       },
       delete: {
