@@ -41,6 +41,7 @@ class Settings(BaseSettings):
     max_late_tasks: int = Field(default=4, ge=0)
     fault_image_storage_root: Path | None = None
     fault_image_limit: int = Field(default=100, ge=1)
+    low_confidence_image_limit: int = Field(default=200, ge=1)
     live_preview_limit: int = Field(default=64, ge=1, le=64)
     live_preview_max_age_seconds: int = Field(default=60, ge=1)
     live_preview_grace_seconds: int = Field(default=3, ge=0)

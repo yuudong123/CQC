@@ -157,6 +157,12 @@ def test_fault_image_contract_is_per_image_while_snapshot_remains_per_inspection
         "createdAt",
         "errorCode",
         "previewUrl",
+        "category",
+        "decisionReason",
+        "cultivarConfidence",
+        "qualityConfidence",
+        "appliedCultivarThreshold",
+        "appliedQualityThreshold",
     }
     assert schemas["Snapshot"]["properties"]["state"]["properties"]["images"][
         "items"

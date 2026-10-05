@@ -1,7 +1,4 @@
-"""확정된 장애 이미지 파일만 별도 저장하는 내부 저장 계층.
-
-장애 저장 trigger와 공개 조회·삭제 API는 아직 확정되지 않아 연결하지 않는다.
-"""
+"""Store review images and independent decision sidecars within one retention root."""
 
 from __future__ import annotations
 
@@ -41,15 +38,21 @@ class FaultImageRecord:
     inspection_id: str
     image_index: int
     created_at: datetime
-    error_code: str
+    error_code: str | None
     content_type: str
+    category: str
+    decision_reason: str
+    cultivar_confidence: float | None
+    quality_confidence: float | None
+    applied_cultivar_threshold: float | None
+    applied_quality_threshold: float | None
 
 
 _IMAGE_ID = re.compile(r"^([0-9a-f]{32})_([0-9]{2})$")
 
 
 class FaultImageStorage:
-    """파일 100장 기준으로 원자적 묶음 저장과 단일 프로세스 prune을 수행한다."""
+    """Publish image groups atomically and prune within this instance's root."""
 
     def __init__(self, root: Path, *, limit: int = 100) -> None:
         if limit < 1:
@@ -62,9 +65,15 @@ class FaultImageStorage:
         self,
         *,
         inspection_id: str,
-        error_code: str,
+        error_code: str | None,
         images: list[FaultImage],
         created_at: datetime | None = None,
+        category: str = "SYSTEM_ERROR",
+        decision_reason: str | None = None,
+        cultivar_confidence: float | None = None,
+        quality_confidence: float | None = None,
+        applied_cultivar_threshold: float | None = None,
+        applied_quality_threshold: float | None = None,
     ) -> list[str]:
         """검사 이미지 묶음을 게시한 뒤 파일 수가 한도를 넘으면 오래된 순서로 정리한다."""
 
@@ -93,6 +102,12 @@ class FaultImageStorage:
                                 timespec="milliseconds"
                             ),
                             "error_code": error_code,
+                            "category": category,
+                            "decision_reason": decision_reason or error_code,
+                            "cultivar_confidence": cultivar_confidence,
+                            "quality_confidence": quality_confidence,
+                            "applied_cultivar_threshold": applied_cultivar_threshold,
+                            "applied_quality_threshold": applied_quality_threshold,
                             "image_index": index,
                             "content_type": image.content_type,
                         }
@@ -198,6 +213,12 @@ class FaultImageStorage:
                 created_at=created_at,
                 error_code=data["error_code"],
                 content_type=data["content_type"],
+                category=data.get("category", "SYSTEM_ERROR"),
+                decision_reason=data.get("decision_reason") or data["error_code"],
+                cultivar_confidence=data.get("cultivar_confidence"),
+                quality_confidence=data.get("quality_confidence"),
+                applied_cultivar_threshold=data.get("applied_cultivar_threshold"),
+                applied_quality_threshold=data.get("applied_quality_threshold"),
             )
         except (OSError, ValueError, KeyError, TypeError):
             return None

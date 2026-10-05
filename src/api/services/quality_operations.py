@@ -44,10 +44,12 @@ class QualityOperationsService:
         statistics: QualityStatisticsRepository,
         fault_image_storage: FaultImageStorage | None = None,
         live_inspections: LiveInspectionStore | None = None,
+        low_confidence_image_storage: FaultImageStorage | None = None,
     ) -> None:
         self._history = history
         self._statistics = statistics
         self._fault_image_storage = fault_image_storage
+        self._low_confidence_image_storage = low_confidence_image_storage
         self._live_inspections = live_inspections
 
     def statistics(
@@ -66,11 +68,15 @@ class QualityOperationsService:
         periods = self._statistics.period_totals(captured_at)
         points = self._statistics.points(captured_at)
         captured_ms = _epoch_ms(captured_at)
-        image_count = (
-            self._fault_image_storage.count_files()
-            if self._fault_image_storage is not None
-            else 0
+        image_storages = tuple(
+            storage
+            for storage in (
+                self._fault_image_storage,
+                self._low_confidence_image_storage,
+            )
+            if storage is not None
         )
+        image_count = sum(storage.count_files() for storage in image_storages)
         jobs, recent_completed_jobs = (
             self._live_inspections.snapshot_jobs()
             if self._live_inspections is not None
@@ -90,7 +96,7 @@ class QualityOperationsService:
                 "control": False,
                 "faults": False,
                 "review": True,
-                "deleteImages": self._fault_image_storage is not None,
+                "deleteImages": bool(image_storages),
                 "concurrency": [],
                 "intervals": [],
             },

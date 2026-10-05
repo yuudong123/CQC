@@ -73,6 +73,14 @@ def create_app(
         if runtime_settings.fault_image_storage_root is not None
         else None
     )
+    low_confidence_image_storage = (
+        FaultImageStorage(
+            runtime_settings.fault_image_storage_root / "low-confidence",
+            limit=runtime_settings.low_confidence_image_limit,
+        )
+        if runtime_settings.fault_image_storage_root is not None
+        else None
+    )
     live_inspections = LiveInspectionStore(
         limit=runtime_settings.live_preview_limit,
         max_age_seconds=runtime_settings.live_preview_max_age_seconds,
@@ -103,6 +111,7 @@ def create_app(
             else None
         ),
         fault_image_storage=fault_image_storage,
+        low_confidence_image_storage=low_confidence_image_storage,
         live_inspections=live_inspections,
         live_preview_max_dimension=runtime_settings.live_preview_max_dimension,
         live_preview_jpeg_quality=runtime_settings.live_preview_jpeg_quality,
@@ -135,6 +144,7 @@ def create_app(
     application.state.settings = runtime_settings
     application.state.inspection_service = runtime_inspection_service
     application.state.fault_image_storage = fault_image_storage
+    application.state.low_confidence_image_storage = low_confidence_image_storage
     application.state.live_inspections = live_inspections
     application.state.simulator_fault_token = runtime_settings.simulator_fault_token
     application.state.simulator_client = simulator_client
@@ -155,6 +165,7 @@ def create_app(
             QualityStatisticsRepository(session_factory),
             fault_image_storage,
             live_inspections,
+            low_confidence_image_storage,
         )
         if session_factory is not None
         else None

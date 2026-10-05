@@ -12,20 +12,29 @@ class QualityFaultImage(BaseModel):
     inspectionId: str = Field(min_length=1, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
     imageIndex: int = Field(ge=0, le=11)
     createdAt: float = Field(ge=0)
-    errorCode: Literal[
-        "INFERENCE_TIMEOUT",
-        "INFERENCE_ERROR",
-        "INFERENCE_CONNECTION_ERROR",
-        "INFERENCE_HTTP_ERROR",
-        "INFERENCE_INVALID_RESPONSE",
-    ]
+    category: Literal["SYSTEM_ERROR", "LOW_CONFIDENCE"]
+    decisionReason: str
+    cultivarConfidence: float | None = Field(ge=0, le=1)
+    qualityConfidence: float | None = Field(ge=0, le=1)
+    appliedCultivarThreshold: float | None = Field(ge=0, le=1)
+    appliedQualityThreshold: float | None = Field(ge=0, le=1)
+    errorCode: (
+        Literal[
+            "INFERENCE_TIMEOUT",
+            "INFERENCE_ERROR",
+            "INFERENCE_CONNECTION_ERROR",
+            "INFERENCE_HTTP_ERROR",
+            "INFERENCE_INVALID_RESPONSE",
+        ]
+        | None
+    )
     previewUrl: str = Field(pattern=r"^/api/quality/previews/[A-Za-z0-9_-]+$")
 
 
 class QualityFaultImages(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    items: list[QualityFaultImage] = Field(max_length=100)
+    items: list[QualityFaultImage] = Field(max_length=300)
 
 
 FaultImageId = Annotated[
@@ -36,10 +45,10 @@ FaultImageId = Annotated[
 class QualityImageDelete(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    ids: list[FaultImageId] = Field(max_length=100)
+    ids: list[FaultImageId] = Field(max_length=300)
 
 
 class QualityImageDeleteAck(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    deletedIds: list[FaultImageId] = Field(max_length=100)
+    deletedIds: list[FaultImageId] = Field(max_length=300)
