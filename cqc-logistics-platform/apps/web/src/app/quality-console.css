@@ -135,13 +135,19 @@
   overflow: hidden;
   margin: 0;
 }
-.qc-col > .qc-jobs-panel,
-.qc-col > .qc-status-panel {
+.qc-col > .qc-jobs-panel {
   flex: 0 0 auto;
+}
+/* 설비·연동 오류가 쌓여도 처리 현황 그래프를 밀어내지 않게, 상태 패널은 줄어들며 안에서 스크롤한다. */
+.qc-col > .qc-status-panel {
+  flex: 0 1 auto;
 }
 .qc-col > .qc-exception-panel,
 .qc-col > .qc-trend-panel {
   flex: 1 1 0;
+}
+.qc-col > .qc-trend-panel {
+  min-height: 340px;
 }
 .qc-console .panel-heading {
   flex-shrink: 0;
