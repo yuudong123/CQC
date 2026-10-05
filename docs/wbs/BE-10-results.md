@@ -50,10 +50,10 @@
 | BE10-TIM-09 | 2/4 | 미실행 | — | TIMEOUT/INFERENCE_ERROR, NEXT/ALL |
 | BE10-BND-01 | 2/4 | 미실행 | — | 1/12/13장·필수 images |
 | BE10-BND-02 | 2/4 | 미실행 | — | metadata 대응·MIME |
-| BE10-BND-03 | 2/4 | 미실행 | — | Content-Length 있는 24MiB 전체 body 경계 |
-| BE10-BND-04 | 2/4 | 미실행 | — | KB-02: Content-Length 없는 전체 body 상한 |
-| BE10-DUP-01 | 2/4 | 미실행 | — | KB-01: 순차 중복 409 |
-| BE10-DUP-02 | 2/4 | 미실행 | — | KB-01: 동시 중복 1건만 제어·저장 |
+| BE10-BND-03 | 2/4 | 통합 수용 미실행 | KB-02 수정 검증은 §8 | 로컬 ASGI 24MiB 전체 body 경계 통과; 실제 HTTP 서버 수용시험은 후속 |
+| BE10-BND-04 | 2/4 | 통합 수용 미실행 | KB-02 수정 검증은 §8 | CL 없음/과소·추가 part·파일 정리 통과; 실제 chunked 수용시험은 후속 |
+| BE10-DUP-01 | 2/4 | 통합 수용 미실행 | KB-01 수정 검증은 §7 | 로컬 단위/API 및 MySQL 순차 중복 통과, 단계 전체 수용과 구분 |
+| BE10-DUP-02 | 2/4 | 통합 수용 미실행 | KB-01 수정 검증은 §7 | 로컬 단위/API 및 MySQL 동시 중복 통과, 단계 전체 수용과 구분 |
 | BE10-DB-01 | 3/4 | 미실행 | — | LKG warm, 실제 DB 장애 / 장애 주입 구분 |
 | BE10-DB-02 | 3/4 | 미실행 | — | DB 복구·새 이력 저장 |
 | BE10-DB-03 | 3/4 | 미실행 | — | cold/LKG 부재·잘못된 mapping |
@@ -141,8 +141,8 @@ PASS는 계획의 API·판정·제어·DB·통계·CSV·이미지·로그 조건
 
 | ID | 현재 상태 | 다음 조치 / 책임 | 차단 범위 |
 |---|---|---|---|
-| KB-01 | 중복 ID 409 목표와 현재 INSERT 실패 후 계속 처리 불일치 | BE 별도 수정 지시 및 409 body/code 계약 확인 | DUP-01/02, 2/4 전체 완료 |
-| KB-02 | Content-Length 없는 전체 multipart 상한 증거/처리 공백 | BE/MO raw body gate 또는 ingress 제한 확인·필요 변경 별도 승인 | BND-04, 2/4 전체 완료 |
+| KB-01 | 해소: 초기 INSERT 중복 409 차단, 단위/API·MySQL·전체 회귀 통과 | §7 증거 참조; 배포환경 DUP 수용시험은 후속 | KB-01 구현 blocker 해제, 2/4 전체 완료와 구분 |
+| KB-02 | 해소: 검사 전용 파싱 전 body gate·24MiB 경계·chunk 누적·부분 파일 정리·전체 회귀 통과 | §8 증거 참조; 실제 HTTP 서버 BND 수용시험은 후속 | KB-02 구현 blocker 해제, 2/4 전체 완료와 구분 |
 | ENV-01 | 실제 배포·DB·Inference·mount·worker 미확인 | MO/DM 환경 제공 및 run 기준선 기록 | 실제 환경 시험 |
 | FE-DEP-01 | 기준선 FE parser/generator와 #55 차이; PR #92 open | FE merge·배포·Backend OpenAPI 일치 확인 | FE E2E, Backend 저장/API 단독 시험은 독립 |
 | DEC-01 | N/자연 timeout 허용률/반복 미확정 | 사용자 최종 승인 | E2E-02 PASS 판정 |
@@ -156,4 +156,57 @@ PASS는 계획의 API·판정·제어·DB·통계·CSV·이미지·로그 조건
 | 3/4 | 미실행 | 15개 실제 DB·보존·조회·복구 증거 확보, MySQL skip를 PASS로 대체하지 않음 |
 | 4/4 | 미실행 | 5개 동일 배포 기준선 수용, 정상100·승인 정량 기준·FE·운영 복구 통과 |
 
-이 문서에는 실제 통합시험 결과가 아직 없다. BE-10 종료나 Issue #66 완료로 사용하지 않는다. 다음 단계 전체 실행은 blocker/환경 준비 후 별도 지시로 진행한다.
+BE-10 2/4~4/4 전체 통합 수용시험은 아직 미실행이다. 아래 KB-01 별도 수정 검증을 BE-10 종료나 Issue #66 완료로 사용하지 않는다. 다음 단계 전체 실행은 잔여 blocker/환경 준비 후 별도 지시로 진행한다.
+
+## 7. KB-01 수정 검증
+
+- 날짜: 2026-10-05. 코드 기준선: `6102344` + 이번 미commit 변경.
+- 별도 KB-01 수정 지시의 검증 결과다. 위 47개 BE-10 시험의 전체 수용 실행 결과를 대체하지 않는다.
+- 확정 계약: 이미 저장된 inspection_id의 초기 INSERT PK 충돌은 409, body `{"detail":"inspection_id가 이미 존재합니다"}`. 추론·제어·미리보기 게시·이미지 보관·late task를 수행하지 않는다.
+- PK 분류: 초기 flush에 한정한 MySQL 1062 + PRIMARY key. 다른 unique/NOT NULL/FK 무결성 오류는 기존 저장 실패 정책을 유지한다. 사전 ID SELECT, ORM/migration, 공개 관제/Inference 계약 변경 없음.
+- 적용 범위: DB에 현재 남아 있는 ID. DB 장애 중 전역 멱등 보장과 순환 삭제된 ID의 영구 거부는 추가하지 않는다.
+
+| 검증 | 실행 / 증거 | 결과 |
+|---|---|---|
+| 수정 전 기준 | API·Service·Repository 관련 기존 시험 | 67 passed |
+| 신규 단위/API | `tests/api/test_duplicate_inspections.py` | 15 passed |
+| 실제 MySQL PK | `tests/api/test_duplicate_inspections_mysql_integration.py`; MySQL 8.4.11, 별도 임시 container/DB, 현재 ORM schema | 2 passed |
+| 순차 재요청 | 첫 요청200 저장 성공, 후속409; 기존 모든 DB 검사 컬럼 비교 | 통과 |
+| 동시 재요청 | 독립 Persistence 두 개, 같은 ID 병렬 요청, 실제 PK race | 200 하나+409 하나; 검사1·제어기록1·오류0 |
+| 후속 처리 차단 | 정상/저신뢰/지연 응답 후보로 중복 요청; 호출 계수·storage spy·late manager 관찰 | 중복 Inference/제어/이미지 저장0, late task/result0 |
+| 일반 저장 실패 | 일반 실패·다른 unique 충돌의 API 검사 | HTTP200·persistence FAILED·추론/제어 유지 |
+| 전체 회귀 / #67/#87/#55 | `python -m pytest tests/api tests/simulator tests/test_service_logging.py -q -rs -p no:cacheprovider --tb=short` | 최종 345 passed, 8 skipped, 2 deprecation warnings (101.79s) |
+| Ruff / diff | `ruff check src/api tests/api`, 변경 Python 6개 `ruff format --check`, `git diff --check` | 통과 |
+
+임시 MySQL은 운영 DB/Volume과 분리했고 종료 후 시험 container/Volume을 정리했다. 실제 서버 배포와 Inference 모델 전체 E2E는 이 시험 범위가 아니다. MySQL 전용 두 시험은 별도 실행했으며, 기본 전체 회귀에서 CQC_TEST_DATABASE_URL 미설정으로 skip되는 것과 구분한다.
+
+회귀 실행 참고: 샌드박스 실행은 Windows 임시 폴더 접근 거부로 유효한 전체 결과를 얻지 못해 권한 있는 환경에서 재실행했다. 재실행에서 기존 30ms 응답/1ms deadline 기반 late-task 한도 시험이 1회 실패해 재확인했다. 원인은 확정하지 않았으며 해당 시험/late manager는 수정하지 않았다. 임시 폴더 정리와 겹친 중간 실행은 결과에서 제외했다. 진행 중 시험이 없는 상태에서 잔여 폴더가 0개임을 확인한 뒤 독립적으로 실행한 최종 전체 회귀는 345 passed / 8 skipped였다.
+
+최종 판단: **KB-01 구현 blocker 해제**. #67 연결/응답 timeout 분류, #87 요청별 timeout·late-result, #55 이미지 보관·조회 회귀 범위 통과. 기본 회귀의 8 skip은 MySQL URL/격리 보존 DB 미설정에 의한 것이며 신규 중복 MySQL 2개만 별도 실DB 통과를 확인했다. 기존 MySQL 통합 전체를 통과했다고 확대 해석하지 않는다. KB-02 후속 수정 검증은 §8에 별도 기록하며 통합환경 확인과 BE-10 2/4 전체 수용시험은 구분한다. commit·배포는 하지 않았다.
+
+## 8. KB-02 수정 검증
+
+- 날짜: 2026-10-05. 코드 기준선: `6102344` + 기존 KB-01 및 이번 KB-02 미commit 변경.
+- 별도 KB-02 수정 지시의 로컬 단위/API 회귀 결과다. BE-10 2/4~4/4 통합 수용시험을 실행하거나 완료한 기록이 아니다.
+- 계약: `POST /v1/inspections`의 multipart **본문 전체** 24MiB(25,165,824 bytes). boundary·part header·모든 field/file 포함, 외부 HTTP header·요청 줄·chunk framing 제외. 정확히 제한은 허용, 초과는 기존 detail의 413.
+- 구현: 검사 전용 custom APIRoute에서 Content-Length 초과를 파싱 전에 거부한다. 헤더 유무·유효성에 관계없이 실제 ASGI body chunk byte를 누적하고 초과 chunk는 parser에 전달하지 않는다. `request.body()` 재적재·전역 middleware는 추가하지 않았으며 기존 Router validation을 유지했다.
+
+| 검증 | 결과 | 증거 / 범위 |
+|---|---|---|
+| 수정 전 관련 회귀 | 39 passed | `tests/api/test_inspections.py tests/api/test_duplicate_inspections.py` |
+| 새 body 제한 시험 | 16 passed | `tests/api/test_inspection_request_size.py`; 아래 관련 실행에 포함 |
+| 관련 단위/API 회귀 | 55 passed | `python -m pytest tests/api/test_inspection_request_size.py tests/api/test_inspections.py tests/api/test_duplicate_inspections.py -q -p no:cacheprovider --tb=short` |
+| 실제 24MiB 경계 | 통과 | B=L−1/L은 200, B=L+1은 413. 정확한 Content-Length/헤더 없음 양쪽; 정상 PNG와 사용하지 않는 file part로 전체 bytes 구성 |
+| 헤더 우회 및 추가 part | 통과 | CL 없음/과소/잘못된 숫자/음수 모두 실제 body 초과 413. 이미지·known field 합계가 제한 이하인 overhead 초과 및 추가 field/file 초과 차단 |
+| 파싱 전 조기 차단 | 통과 | Content-Length>L에서 body read 0회·parser 호출 0회 |
+| 초과 chunk 및 파일 정리 | 통과 | body 수신 L+1 bytes 중 parser 전달 L bytes. 부분 업로드 2개 handle 모두 closed, 디스크 spool 포함. `Request.body()` 호출 시 실패하도록 검증 |
+| 후속 처리 차단 | 통과 | 초과 요청 Service/Inference/Virtual Control/이미지 저장 호출 0회, late task 0개 |
+| endpoint 범위 | 통과 | 검사 route 전용. 별도 `/health`는 같은 크기 설정/초과 CL로도 기존 200 유지 |
+| Backend·Simulator·로그 전체 회귀 | **361 passed / 8 skipped** | `python -m pytest tests/api tests/simulator tests/test_service_logging.py -q -rs -p no:cacheprovider --tb=short`; 105.98s. KB-01·#67·#87·#55 회귀 포함 |
+| Ruff / diff | 통과 | `ruff check src/api tests/api`, 변경 Python 2파일 `ruff format --check`, `git diff --check` |
+
+8 skip은 MySQL URL 또는 격리 보존 DB 미설정에 의한 것이다. 이번 단계에서는 실DB 시험을 추가 실행하지 않았다. KB-01의 별도 MySQL 검증 기록은 §7에 유지한다. 의존성 deprecation warning 2개가 있었으며 시험 실패는 없었다.
+
+로컬 시험은 httpx ASGITransport로 실제 multipart byte stream을 공급한 것이다. 과소·잘못된 Content-Length는 ASGI 수신 계층의 제한 검증이며 HTTP 서버가 잘못된 framing을 먼저 거부하는 경우까지 통과했다고 해석하지 않는다. 실제 Uvicorn·배포환경의 chunked/wire 경계와 의존성은 BE10-BND-03/04 통합 수용시험에서 별도 확인한다.
+
+최종 판단: **KB-02 구현 blocker 해제**. KB-01도 해소 상태이며 두 코드 blocker로 인한 BE-10 2/4 차단은 제거됐다. 실제 시험환경·배포 기준선 준비와 사용자의 후속 실행 지시가 필요하며 2/4 전체 수용시험은 아직 미실행이다. Simulator/FE/Inference/DB 계약·migration은 변경하지 않았고 commit·배포도 하지 않았다.

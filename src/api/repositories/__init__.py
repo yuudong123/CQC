@@ -5,11 +5,12 @@ from .bin_mappings import (
     BinMappingRepository,
     BinMappingUnavailableError,
 )
-from .persistence import InspectionPersistence
+from .persistence import DuplicateInspectionIdError, InspectionPersistence
 
 __all__ = [
     "BinMappingConfigurationError",
     "BinMappingRepository",
     "BinMappingUnavailableError",
+    "DuplicateInspectionIdError",
     "InspectionPersistence",
 ]

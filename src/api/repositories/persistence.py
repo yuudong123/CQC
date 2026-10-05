@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import re
 from datetime import datetime
 from threading import Lock
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, sessionmaker
 
 from ..core.datetime import to_utc_naive
@@ -12,6 +14,21 @@ from .control_attempts import ControlAttemptRepository
 from .inspection_errors import InspectionErrorRepository
 from .inspections import InspectionRepository
 from .records import ControlAttemptRecord, InspectionErrorRecord
+
+
+class DuplicateInspectionIdError(Exception):
+    """An initial inspection INSERT collided with the inspection_id primary key."""
+
+
+def _is_inspection_pk_duplicate(exc: IntegrityError) -> bool:
+    args = getattr(exc.orig, "args", ())
+    if len(args) < 2 or args[0] != 1062 or not isinstance(args[1], str):
+        return False
+    key = re.search(r"for key ['`]([^'`]+)['`]\s*$", args[1])
+    if key is None:
+        return False
+    name = key.group(1)
+    return name == "PRIMARY" or name.split(".")[-2:] == ["inspections", "PRIMARY"]
 
 
 class InspectionPersistence:
@@ -48,7 +65,13 @@ class InspectionPersistence:
                     else self._history_count
                 )
                 repository.create_pending(db_values)
-                session.flush()
+                try:
+                    session.flush()
+                except IntegrityError as exc:
+                    # Only this INSERT's inspection PK collision is a request conflict.
+                    if _is_inspection_pk_duplicate(exc):
+                        raise DuplicateInspectionIdError from exc
+                    raise
                 count += 1
                 if count >= self._history_limit:
                     # 삭제 경계에서 실제 건수를 다시 확인해 외부 삭제로 인한 오차를 제거한다.
