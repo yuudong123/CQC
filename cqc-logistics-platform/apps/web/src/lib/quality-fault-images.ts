@@ -1,5 +1,6 @@
 import type { Runtime } from "./quality-runtime";
 import { exceptionOf } from "./quality-runtime";
+import { validInspectionId } from "./quality-api";
 import { sampleApples } from "./sample-apples";
 export type FaultErrorCode =
   "INFERENCE_TIMEOUT" | "INFERENCE_ERROR" | "INFERENCE_CONNECTION_ERROR" | "INFERENCE_HTTP_ERROR" | "INFERENCE_INVALID_RESPONSE";
@@ -24,7 +25,7 @@ export function parseFaultImages(value: unknown): FaultImage[] {
   const v = value as { items?: FaultImage[] } | null;
   if (!v || !Array.isArray(v.items) || v.items.length > IMAGE_LIMIT.SYSTEM_ERROR + IMAGE_LIMIT.LOW_CONFIDENCE || v.items.some(r =>
     !r || typeof r.id !== "string" || !/^[A-Za-z0-9_-]{1,64}$/.test(r.id) ||
-    typeof r.inspectionId !== "string" || !/^[A-Za-z0-9_-]{1,64}$/.test(r.inspectionId) ||
+    !validInspectionId(r.inspectionId) ||
     !Number.isInteger(r.imageIndex) || r.imageIndex < 0 || r.imageIndex > 11 ||
     !Number.isFinite(r.createdAt) || r.createdAt < 0 ||
     !(r.errorCode === null ? r.category === "LOW_CONFIDENCE" : ERROR_CODES.includes(r.errorCode)) ||

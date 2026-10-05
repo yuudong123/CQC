@@ -403,7 +403,7 @@ export class QualityReferenceService {
         this.revision++;
         return this.json(this.snapshot());
       }
-      const review = path.match(/^inspections\/([A-Za-z0-9_-]+)\/review$/);
+      const review = path.match(/^inspections\/((?!\.+$)[A-Za-z0-9_.-]{1,64})\/review$/);
       if (review && method === "PATCH") {
         if (this.state.dbDown) return this.fail(503, "DB_UNAVAILABLE");
         const body = await request.json();

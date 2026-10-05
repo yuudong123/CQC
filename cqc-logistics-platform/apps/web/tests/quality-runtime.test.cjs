@@ -240,3 +240,13 @@ test("review images accept low confidence rows and legacy system errors", () => 
   assert.throws(() => parseFaultImages({ items: [{ ...low, category: "SYSTEM_ERROR" }] }));
   assert.throws(() => parseFaultImages({ items: [{ ...low, qualityConfidence: 55.8 }] }));
 });
+test("inspection ids allow dots like the Backend contract but not dot-only path segments", () => {
+  const { validInspectionId } = require("../src/lib/quality-api.ts");
+  assert.equal(validInspectionId("qa-run.20261006_01"), true);
+  assert.equal(validInspectionId("a".repeat(64)), true);
+  assert.equal(validInspectionId("a".repeat(65)), false);
+  for (const bad of ["", ".", "..", "a/b", "a b", "a\b"]) assert.equal(validInspectionId(bad), false, bad);
+  const base = { id: "img_00", imageIndex: 0, createdAt: 1, previewUrl: "/api/quality/previews/img_00", errorCode: "INFERENCE_TIMEOUT" };
+  assert.equal(parseFaultImages({ items: [{ ...base, inspectionId: "run.1" }] })[0].inspectionId, "run.1");
+  assert.throws(() => parseFaultImages({ items: [{ ...base, inspectionId: ".." }] }));
+});

@@ -4,7 +4,7 @@ const routes: [RegExp, string[]][] = [
   [/^statistics(?:\.csv)?$/, ["GET"]],
   [/^simulator$/, ["PUT"]],
   [/^fault-images$/, ["GET", "DELETE"]],
-  [/^inspections\/[A-Za-z0-9_-]+\/review$/, ["PATCH"]],
+  [/^inspections\/(?!\.+\/)[A-Za-z0-9_.-]{1,64}\/review$/, ["PATCH"]],
   [/^previews\/[A-Za-z0-9_-]+$/, ["GET"]],
 ];
 export async function proxyQuality(request: Request, path: string) {

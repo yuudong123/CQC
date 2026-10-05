@@ -180,6 +180,8 @@ test("proxy restricts routes, methods, origins, content types and sanitizes back
     assert.equal((await proxyQuality(req(), "snapshot")).status, 503);
     process.env.CQC_QUALITY_BACKEND_URL = "http://backend:8000";
     assert.equal((await proxyQuality(req(), "../health")).status, 404);
+    // 검사 ID에 점은 허용하지만(#100) 점만으로 된 경로 조각은 막는다
+    for (const bad of ["inspections/../review", "inspections/./review"]) assert.equal((await proxyQuality(req("PATCH"), bad)).status, 404);
     assert.equal((await proxyQuality(req("POST"), "snapshot")).status, 405);
     assert.equal((await proxyQuality(req("PUT", "http://other.test"), "simulator")).status, 403);
     global.fetch = async (url, options) => { assert.equal(String(url), "http://backend:8000/v1/quality/snapshot"); assert.equal(options.redirect, "error"); return Response.json({ safe: true }); };
