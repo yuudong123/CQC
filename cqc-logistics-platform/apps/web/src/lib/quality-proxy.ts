@@ -1,3 +1,4 @@
+export const CSV_TIMEOUT_MS = 60_000;
 const routes: [RegExp, string[]][] = [
   [/^snapshot$/, ["GET"]],
   [/^inspections(?:\.csv)?$/, ["GET"]],
@@ -19,11 +20,25 @@ export async function proxyQuality(request: Request, path: string) {
   if (!route[1].includes(request.method))
     return error(405, "METHOD_NOT_ALLOWED");
   const incoming = new URL(request.url);
+  // 컨테이너 안의 request.url은 내부 포트(3000)라 공개 주소(3100)와 다르다(#110).
+  // 브라우저가 실제로 접속한 주소는 Host(프록시 경유면 X-Forwarded-Host)로 본다.
+  const origin = request.headers.get("origin");
+  const site = request.headers.get("sec-fetch-site");
+  const host =
+    request.headers.get("x-forwarded-host") ??
+    request.headers.get("host") ??
+    incoming.host;
+  const sameOrigin = (value: string) => {
+    try {
+      return new URL(value).host === host;
+    } catch {
+      return false;
+    }
+  };
   if (
     request.method !== "GET" &&
-    ((request.headers.get("origin") &&
-      request.headers.get("origin") !== incoming.origin) ||
-      request.headers.get("sec-fetch-site") === "cross-site")
+    (site === "cross-site" ||
+      (origin !== null && site !== "same-origin" && !sameOrigin(origin)))
   )
     return error(403, "CROSS_ORIGIN_WRITE");
   const base = process.env.CQC_QUALITY_BACKEND_URL;
@@ -41,7 +56,11 @@ export async function proxyQuality(request: Request, path: string) {
       headers: body ? { "Content-Type": "application/json" } : {},
       cache: "no-store",
       redirect: "error",
-      signal: AbortSignal.any([request.signal, AbortSignal.timeout(5000)]),
+      // 대량 CSV는 Backend가 파일을 다 만든 뒤 응답한다(39,039건 약 14초, #109).
+      signal: AbortSignal.any([
+        request.signal,
+        AbortSignal.timeout(path.endsWith(".csv") ? CSV_TIMEOUT_MS : 5000),
+      ]),
     });
     if (!response.ok)
       return error(

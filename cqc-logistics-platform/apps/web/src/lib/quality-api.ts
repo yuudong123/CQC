@@ -341,7 +341,10 @@ export async function saveReview(
   });
 }
 export async function downloadQualityCsv(path: string, name: string) {
-  const response = await qualityRequest(path);
+  // 대량 CSV는 기본 8초를 넘길 수 있어 프록시와 같은 60초까지 기다린다(#109).
+  const response = await qualityRequest(path, {
+    signal: AbortSignal.timeout(60_000),
+  });
   if (!response.headers.get("content-type")?.includes("text/csv"))
     throw new QualityApiError("CSV 응답 형식이 올바르지 않습니다.");
   const url = URL.createObjectURL(await response.blob());
