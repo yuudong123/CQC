@@ -1,8 +1,8 @@
 # 확정 범위 QA 테스트 케이스
 
-- 기준: dev `077d02c` (2026-10-01, PR #37 BE-08·BE-09 LKG·라인 속도 `intervalMs` 반영). 학원 서버 모델 `cqc-apple-separate12-focal-v2-cal-20260930`, 임계값 품종 0.50·품질 0.60
-- 작성: 조현재 (2026-09-30). 상태: **실행 전 준비 문서**
-- 목적: 구현과 계약이 확정된 기능만 먼저 검증해 ALL-03 통합(10-08)과 ALL-04 수용시험(10-12) 전에 결함을 찾는다.
+- 기준: dev `2c859dd` (2026-10-06, PR #100 검사 ID 규칙·중복 409, #101 FE 검사 ID, #102 진단 기록 상한까지 반영). 학원 서버 모델 `cqc-apple-separate12-focal-v2-cal-20260930`, 임계값 품종 0.50·품질 0.60
+- 작성: 조현재 (2026-09-30), 10-06 QA 목록 초안으로 갱신. 상태: **QA 목록 초안 — 10-08 회의에서 기준(QA-SIM-13)·분담 확정 후 실행**
+- 목적: 구현과 계약이 확정된 기능을 ALL-04 수용시험(#65)으로 검증한다. 분담은 [6.1](#61-파트별-분담), BE-10 3·4단계와 겹치는 케이스는 [6.2](#62-be-10과-겹치는-케이스)를 따른다.
 - 진행 상태는 [ALL-03](../../ALL-03.md)에만 적는다. 이 문서에는 케이스와 실행 기록 칸만 둔다.
 
 ## 1. 범위
@@ -11,13 +11,13 @@
 
 | 영역 | 케이스 | 근거 | 확정 이유 |
 |---|---|---|---|
-| 배포·상태 | QA-DEP | MO-02·04·05, NFR-05·06 | Compose 8개 서비스, healthcheck, migration, 볼륨이 dev에 있다 |
+| 배포·상태 | QA-DEP | MO-02·04·05, NFR-05·06 | Compose 7개 서비스(품질 4·물류 3), healthcheck, migration, 볼륨이 dev에 있다 |
 | Inference API | QA-INF | DM-07·08, FR-03·38·51, NFR-01·22 | OpenAPI 계약, 보정 패키지, 서버컴 지연 측정이 끝났다 |
 | 검사 API | QA-INS | BE-04, FR-02·04·05·13·14·19·26·28·34·37·39·44·45·53·55, NFR-18·24 | `POST /v1/inspections`, 임계값, 12-bin seed, 라인 속도 기한(#87)이 구현됐다 |
 | 관제 조회 API | QA-OPS | BE-05, FR-07~10·21·22·29·31·32, NFR-14 | 관제 OpenAPI의 snapshot·이력·통계·CSV가 구현됐다 |
 | 검수 이미지 | QA-IMG | BE-06, FR-16·42, NFR-09 | 시스템 오류·저신뢰 재검사 저장·목록·미리보기·선택 삭제·종류별 100/200장 순환이 구현됐다(#55) |
 | Simulator·검수 | QA-SIM, QA-OPS-16 | BE-07, FR-15·18·23·24·33·46~49·54 | 독립 Simulator(자동 재생·정지/재개·위치 복구·장애 6종·다음 1건·라인 속도 1·2·3초), `PUT /simulator`, 검수 API가 구현·배포됐다 |
-| 웹 관제 화면 | QA-WEB | FE-02~08, FR-06·20~22·35·36·41, NFR-11·12 | 실제 Backend 연결을 09-30에 확인했다 |
+| 웹 관제 화면 | QA-WEB | FE-02~08, FR-06·20~22·35·36·41, NFR-11·12 | 학원 서버 3100이 실제 Backend에 연결된 API 모드로 배포되어 있다(10-02~) |
 | 자동 시험 | QA-AUTO | 전체 | 저장소 시험으로 재현할 수 있다 |
 
 ### 1.2 제외: 미확정·미구현 (구현되면 케이스 추가)
@@ -42,14 +42,16 @@
 | KI-4 | snapshot `components.Inference`가 항상 `unknown` | 해결(#37, Inference `/health` 확인. 학원 서버 `healthy` 확인) | QA-WEB-07 |
 | KI-5 | Simulator가 보낸 검사 1건이 실패하면 Simulator 전체가 정지 | 해결(#37, 실패 건만 기록하고 계속 전송) | QA-SIM-09 |
 | KI-6 | 입력 간격 2초에서 1초 단위 `throughput`이 0 또는 1만 나와 `현재 처리량`이 0건/초로 자주 보임 | 해결(#49, 화면 `현재 처리량`을 최근 10초 평균으로 표시). snapshot `throughput` 값 자체는 1초 구간이라 처리량 판단은 `periodTotals`로 한다 | QA-OPS-15, QA-WEB-05 |
+| KI-7 | 고정 500ms 기한 때문에 서버 CPU가 바쁠 때 시간 초과 4.1% | 해결(#87, 제한시간 = 라인 간격. 10-05 배포 후 535건 중 0건) | QA-INS-12, QA-SIM-02·13 |
+| KI-8 | Windows 개발 PC에서 검수 이미지 시험 2개가 폴더 이름 변경 권한 오류(WinError 5) | 개발 환경 한정(#99 닫힘). 서버 Linux에서는 재현되지 않음. QA-AUTO-01에서 다시 확인 | QA-AUTO-01 |
 
 ## 2. 환경
 
 | 환경 | 구성 | 용도 | 주의 |
 |---|---|---|---|
-| E1 학원 서버 | `192.168.133.106` Backend 8000·Inference 8001·웹 3100. Jenkins가 dev를 자동 배포 | 기본 기능 확인 | 공용 MySQL에 기록이 남는다. `inspection_id`는 `qa-` 접두사를 붙인다. 재배포 중이면 기다린다. **Simulator가 2초마다 검사를 넣고 있어** 오늘 집계 증가량은 E1에서 판정하지 않는다. Simulator 설정(정지·장애)도 E1에서 바꾸지 않는다 |
+| E1 학원 서버 | `192.168.133.106` Backend 8000·Inference 8001·웹 3100(API 모드). Jenkins가 dev를 자동 배포 | 기본 기능·화면 확인 | 공용 MySQL에 기록이 남는다. `inspection_id`는 `qa-` 접두사를 붙인다. 재배포 중이면 기다린다. **Simulator가 2초마다 검사를 넣고 있어** 오늘 집계 증가량은 E1에서 판정하지 않는다. Simulator 설정(정지·장애)도 E1에서 바꾸지 않는다 |
 | E2 로컬 Compose | dev 체크아웃, `.env`는 `.env.example` 복사, `INFERENCE_MODEL_DIR`에 보정 패키지 폴더 | 장애 주입(DB·Inference 정지, 기한·주소 변경) | 모델 폴더는 DM(조현재)에게 받는다. 학원 서버에서 장애 주입을 하지 않는다 |
-| E3 웹 API 모드 | `apps/web`을 E1 또는 E2 Backend에 연결해 로컬 실행 | 웹 화면 확인 | 배포된 3100 웹은 브라우저 예시 모드이므로 QA-WEB에 쓰지 않는다 |
+| E3 웹 API 모드 | 읽기 확인은 학원 서버 `http://192.168.133.106:3100`을 그대로 쓴다. 조작·장애 확인은 `apps/web`을 E2 Backend에 연결해 로컬 실행 | 웹 화면 확인 | E1 웹에서는 Simulator 조작·이미지 일괄 삭제를 하지 않는다(공용) |
 
 ### 2.1 E2 장애 주입 설정
 
@@ -77,7 +79,7 @@ CQC_QUALITY_MODE=api CQC_QUALITY_BACKEND_URL=http://192.168.133.106:8000 npm run
 CQC_QUALITY_MODE=api CQC_QUALITY_BACKEND_URL=http://192.168.133.106:8000 npx next start -p 3200
 ```
 
-E2에 붙일 때는 주소를 `http://localhost:8000`으로 바꾼다. 브라우저는 Chrome 최신판을 쓰고 `http://localhost:3200`을 연다.
+E1 읽기 확인은 이 빌드 없이 `http://192.168.133.106:3100`을 연다. E2에 붙일 때는 주소를 `http://localhost:8000`으로 바꾼다. 브라우저는 Chrome 최신판을 쓰고 `http://localhost:3200`을 연다.
 
 ## 3. 공통 준비
 
@@ -182,14 +184,14 @@ sql "SELECT inspection_id, inspection_status, target_bin_code, error_code FROM i
 
 #### QA-DEP-01 컨테이너 구성과 재시작 정책 · P1
 
-- 근거: MO-02·04, 프로젝트 기획 Compose 8개 서비스
+- 근거: MO-02·04, Compose 7개 서비스
 - 환경: E2 (E1은 MO가 서버에서 실행)
 - 절차:
   1. `docker compose ps --format "table {{.Service}}\t{{.Status}}"`
   2. `docker inspect -f '{{.Name}} {{.HostConfig.RestartPolicy.Name}}' $(docker compose ps -q)`
 - 기대 결과:
-  - 서비스 8개: `mysql`, `inference`, `backend`, `frontend`, `simulator`, `logistics-mongodb`, `logistics-api`, `logistics-web`
-  - `mysql`·`inference`·`backend`·`simulator`·`logistics-mongodb`·`logistics-api`·`logistics-web`은 `(healthy)`, `frontend`는 `Up`(placeholder)
+  - 서비스 7개: `mysql`, `inference`, `backend`, `simulator`, `logistics-mongodb`, `logistics-api`, `logistics-web`
+  - 7개 모두 `(healthy)`. 품질 관제 화면은 `logistics-web`(3100)이 Backend에 붙어 제공한다(별도 `frontend` 서비스 없음)
   - `simulator`의 healthy는 재생 중이고 최근 30초 안에 검사 전송이 성공했다는 뜻이다
   - 모든 컨테이너의 재시작 정책이 `unless-stopped`
 
@@ -346,7 +348,7 @@ sql "SELECT inspection_id, inspection_status, target_bin_code, error_code FROM i
   1. 36개 묶음 ID: `python -c "import json;[print(b['bundle_id']) for b in json.load(open('docs/wbs/results/v2-cal-demo-dry-run-20260930.json',encoding='utf-8'))['bundles_detail']]" > qa-tmp/ids36.txt`
   2. 준비 실행 3건 후 순차로 보낸다: `while read id; do send $INF/v1/predict $RUN-$id $DEMO/$id | grep -i server-timing; done < qa-tmp/ids36.txt > qa-tmp/timing.txt`
   3. `total;dur=` 값 36개의 평균·p95·최대를 계산한다.
-- 기대 결과: 36건 모두 HTTP 200, `total` p95 ≤ 500ms, 500ms 초과 0건. 기준값: 09-30 측정 평균 271.4·p95 308.8·최대 324.9ms([원본](../../results/server-real-photos-20260930.json)). p95가 기준값보다 30% 이상 크면 통과여도 기록하고 DM에게 알린다.
+- 기대 결과: 36건 모두 HTTP 200, `total` 최대가 라인 간격(2000ms) 안. 기준값: 09-30 측정 평균 271.4·p95 308.8·최대 324.9ms([원본](../../results/server-real-photos-20260930.json)). p95가 기준값보다 30% 이상 크면 통과여도 기록하고 DM에게 알린다. 500ms 고정 기준은 #87로 없어졌다(결정 기록 10-05·10-06).
 - 비고: 노트북에서 잰 왕복 시간은 업로드가 대부분이라 판정에 쓰지 않는다.
 
 ### 5.3 검사 API (QA-INS)
@@ -447,7 +449,7 @@ done
 
 | # | 입력 | 기대 HTTP | 기대 `detail` |
 |---|---|---|---|
-| a | `inspection_id="   "` (공백만) | 422 | `inspection_id는 비어 있을 수 없습니다` |
+| a | `inspection_id="   "` (공백만) | 422 | 검증 오류(허용 문자 아님) |
 | b | `images` 없음 | 422 | 필드 누락 |
 | c | 사진 13장 | 413 | `images는 최대 12장까지 허용합니다` |
 | d | 합계 24MiB 초과 (QA-INF-06 j 더미) | 413 | `multipart 요청이 허용된 최대 크기를 초과했습니다` |
@@ -458,8 +460,12 @@ done
 | i | 사진 2장, metadata 1개 | 422 | `images와 metadata 개수는 같아야 합니다` |
 | j | 사진 2장, `view_index` 0, 0 | 422 | `view_index는 중복될 수 없습니다` |
 | k | 사진 2장, `view_index` 1, 2 | 422 | `view_index는 현재 이미지 순서에 따라 0부터 연속되어야 합니다` |
+| l | `inspection_id`가 `qa/bad`, `qa bad`, `qa*bad` | 422 | 검증 오류. 허용 문자는 영문·숫자·`_`·`.`·`-`(#100) |
+| m | `inspection_id` 65자 | 422 | 검증 오류(최대 64자) |
+| n | `inspection_id=$RUN.ins07.n`(점 포함) | 200 | 정상 판정. 점은 허용 |
+| o | n과 같은 ID를 한 번 더 | 409 | `inspection_id가 이미 존재합니다`. 기존 행·이미지가 바뀌지 않고 Inference를 다시 부르지 않는다(KB-01) |
 
-- 공통 기대: 검증 오류는 Inference를 호출하지 않고 DB·장애 이미지에 아무것도 남기지 않는다(QA-OPS-03 목록과 QA-IMG-02 목록에 해당 ID가 없다).
+- 공통 기대: 검증 오류(422·413·415)와 중복(409)은 Inference를 호출하지 않고 DB·장애 이미지에 새 기록을 남기지 않는다(QA-OPS-03 목록과 QA-IMG-02 목록에 해당 ID가 없거나 n의 1건뿐이다).
 
 #### QA-INS-08 Inference 오류 응답 → 시스템 오류 재검사 · P1
 
@@ -490,7 +496,7 @@ done
 - 근거: FR-39 (KI-3 해결, #67)
 - 환경: E2
 - 절차: `docker compose stop inference` → `send $BE/v1/inspections $RUN-ins11 $DEMO/demo-601031008000-000 15.0` → `docker compose start inference`
-- 기대 결과: HTTP 200, `decision_reason=INFERENCE_CONNECTION_ERROR`, 재검사 bin, `exclude_from_normal_stats=true`, 이력 `errorCode=INFERENCE_ERROR`·`processingStatus=ERROR`·`excluded=true`. TCP 연결 실패 또는 연결 단계 timeout은 `INFERENCE_ERROR`로, 연결 후 응답 지연과 500ms 업무 기한 초과는 `INFERENCE_TIMEOUT`으로 분류한다.
+- 기대 결과: HTTP 200, `decision_reason=INFERENCE_CONNECTION_ERROR`, 재검사 bin, `exclude_from_normal_stats=true`, 이력 `errorCode=INFERENCE_ERROR`·`processingStatus=ERROR`·`excluded=true`. TCP 연결 실패 또는 연결 단계 timeout은 `INFERENCE_ERROR`로, 연결 후 응답 지연과 업무 기한 초과(Simulator 요청은 라인 간격, 간격 헤더 없는 직접 요청은 500ms)는 `INFERENCE_TIMEOUT`으로 분류한다.
 - 추가 확인: Inference 재시작 후 healthy가 되면 Backend 재시작 없이 다음 정상 요청이 `COMPLETED`.
 
 #### QA-INS-12 Inference 시간 초과 · P1
@@ -515,7 +521,7 @@ done
   2. `send $BE/v1/inspections $RUN-ins13-a $DEMO/demo-601031008000-000 15.0`, 응답 시간 기록
   3. `docker compose start mysql`, healthy 후 `send ... $RUN-ins13-b ...`
 - 기대 결과:
-  2. HTTP 200, 모델 판정대로 `COMPLETED`·`DEMO_BIN_02`·`control_status=SUCCEEDED`, `persistence_status=FAILED`. 응답이 500ms 기준 흐름을 막지 않는다(#37 LKG, 실제 검증은 #45).
+  2. HTTP 200, 모델 판정대로 `COMPLETED`·`DEMO_BIN_02`·`control_status=SUCCEEDED`, `persistence_status=FAILED`. DB를 기다리느라 응답이 라인 간격을 넘기지 않는다(#37 LKG, 실제 검증은 #45).
   3. `$RUN-ins13-b`는 `persistence_status=SUCCEEDED`. `$RUN-ins13-a`는 이력에 없어도 된다(유실 허용).
 
 #### QA-INS-14 제어 명령 기록과 응답 시간 · P2
@@ -560,9 +566,10 @@ done
   - `state.running=true`, `state.concurrency=1`, `state.intervalMs=2000`, `state.faults=[]`, `state.scope=ALL`
   - `periodTotals` 키 `1`·`5`·`10`·`30`, 값은 1 ≤ 5 ≤ 10 ≤ 30 순서로 줄지 않는다
   - `state.points` 30개, `at`이 1000ms 간격으로 오름차순, 마지막 `at` ≤ `capturedAt`
-  - `state.history` ≤ 200건 최신순, `state.errors` ≤ 50건, `state.jobs=[]`, `state.dbDown=false`
+  - `state.history` ≤ 200건 최신순, `state.errors` ≤ 50건, `state.dbDown=false`
+  - `state.jobs`는 처리 중인 검사(0~`concurrency`건, 미리보기 포함), `state.recentCompletedJobs`는 미리보기가 아직 살아 있는 최근 완료 검사(≤ 64건, #88)
   - `state.today.date`가 오늘 KST 날짜(`YYYY-MM-DD`)
-  - `retention.images`가 QA-IMG-02 목록 수와 같다
+  - `retention.images`가 QA-IMG-02 목록 수와 같고 300 이하(시스템 오류 100 + 저신뢰 200)
 
 #### QA-OPS-02 오늘 집계 증가량 · P1
 
@@ -764,7 +771,7 @@ done
 | e | `{"misclassification":"WRONG"}` | 422 `INVALID_REVIEW` |
 | f | `{"misclassification":"OTHER","extra":1}` | 422 `INVALID_REVIEW` |
 | g | 없는 ID `qa-no-such-id` | 404 `INSPECTION_EXPIRED` |
-| h | ID에 허용 안 되는 문자 `qa.bad` | 422 `INVALID_REVIEW` |
+| h | ID에 허용 안 되는 문자 `qa*bad` | 422 `INVALID_REVIEW` (점 `.`은 허용 문자라 `qa.bad`는 404, #100) |
 
 ### 5.5 검수 이미지 (QA-IMG)
 
@@ -904,13 +911,15 @@ E3에서 실행한다. 달리 적지 않으면 창 크기는 1600×900이다.
   - `선별 목적지별 성공 명령`을 펼치면 snapshot `today.bins`와 같은 목록
   - 하단 문구 `서버 저장 결과 기준 · 시간 초과와 추론 오류는 품종·품질 집계에서 제외`
 
-#### QA-WEB-05-1 처리 중 사과 빈 상태 · P2
+#### QA-WEB-05-1 처리 중 사과 표시 · P2
 
-- 근거: FR-20·41
-- 환경: E3, 처리 중인 검사가 없을 때(현재 Backend는 `jobs: []`라 항상 이 상태)
+- 근거: FR-20·41, #53·#83·#88
+- 환경: E3(E1 읽기)
+- 절차: 2분 동안 `처리 중 사과` 패널을 본다. 개발자 도구로 snapshot `state.jobs`·`recentCompletedJobs`를 함께 본다.
 - 기대 결과:
-  - 패널에 `처리 중인 사과가 없습니다.`만 보인다. 이 자리는 처리 중 사과 이미지 전용이라 완료된 판정을 대신 보여주지 않는다
-  - `jobs`가 오면(#53) 처리 중 카드와 이미지가 보인다
+  - 검사 1건마다 12장 사진이 보이고, 라인 간격 2초면 2초마다 다음 사과로 바뀐다. 사과가 건너뛰어지지 않는다(1분에 약 30개)
+  - 처리 중인 검사가 잠깐 없어도 마지막으로 처리한 사과를 다음 사과가 올 때까지 계속 보여준다(패널 높이가 줄었다 늘었다 하지 않는다)
+  - 화면을 처음 열었을 때 처리한 사과가 아직 없으면 12칸 빈 자리와 `처리 중인 사과가 없습니다.`가 보인다
 
 #### QA-WEB-06 통계 CSV 버튼 · P2
 
@@ -1009,7 +1018,7 @@ E3에서 실행한다. 달리 적지 않으면 창 크기는 1600×900이다.
 #### QA-WEB-17 전체 무스크롤 반응형 · P1
 
 - 근거: NFR-11·12, FE-02·08
-- 절차: 창 크기 1920×1080, 1600×900, 1366×768, 1280×720, 1024×768, 390×844에서 각각 새로고침하고 콘솔에 붙여넣는다.
+- 절차: 창 크기 1920×1080, 1600×900, 1366×768, 1280×720, 1024×768, 768×1024, 390×844에서 각각 새로고침하고 콘솔에 붙여넣는다.
 
 ```js
 const d = document.documentElement;
@@ -1020,6 +1029,7 @@ const d = document.documentElement;
 ```
 
 - 기대 결과: 모든 크기에서 `doc`이 `viewport`와 같다(전체 페이지 스크롤 없음), `transform`이 `none`, 네 패널이 화면 안에 있다. 표·목록은 패널 안에서만 스크롤된다. 관리 창은 창 안에서 스크롤된다. 글자 크기를 줄여 맞추지 않는다.
+- 기준값: 10-06 서버 3100에서 7개 크기 모두 통과([FE-08](../../FE-08.md)).
 
 #### QA-WEB-18 proxy 제한 · P2
 
@@ -1038,15 +1048,15 @@ const d = document.documentElement;
 
 #### QA-WEB-19 장시간 실행 · P1
 
-- 근거: FE-08 메모리 누수 점검
-- 환경: E3 + 초당 2건 입력(Simulator 전에는 아래 반복 명령)
+- 근거: FE-08 메모리 누수 점검, #73
+- 환경: E1 3100(읽기). 입력은 서버 Simulator가 넣는 실제 검사를 쓴다(따로 보내지 않는다)
 - 절차:
-  1. 입력: `while true; do for id in $(cat qa-tmp/ids36.txt); do send $BE/v1/inspections $RUN-long-$(date +%s%N) $DEMO/$id 15.0 > /dev/null & sleep 0.5; done; done`
-  2. 개발자 도구 Performance monitor로 JS heap·DOM 노드를 15분마다 기록한다.
-  3. 1시간(축약) 또는 8시간(ALL-04 전 본시험) 실행한다.
-- 기대 결과: 5분 이후 heap 중앙값이 증가 추세 없이 유지(09-30 기준 22~23MB), DOM 노드 수가 일정(09-30 기준 2,074개 고정), 연결 배지가 계속 `서버 관제`, `오늘 저장 검사`가 계속 증가, 브라우저 콘솔 오류 0건.
-- 탭 전환: 다른 탭으로 5분 옮겼다 돌아와 1초 안에 최신 수치로 돌아오고 오류가 없다.
-- 비고: E1에서 하면 공용 DB에 수천 건이 쌓이므로 E2에서 한다.
+  1. 1600×900 창으로 3100을 연다. JS heap·DOM 노드·이벤트 리스너·요청 수를 일정 간격으로 기록한다(FE-08 본시험은 30초 간격 자동 기록).
+  2. 1시간(축약) 또는 8시간(본시험) 실행한다. 중간의 Jenkins 재배포는 그대로 두고 끊긴 구간을 따로 적는다.
+  3. 1시간마다 다른 탭을 10분 띄웠다가 돌아온다.
+- 기대 결과: 강제 GC 뒤 heap이 증가 추세 없이 유지, DOM 노드 수가 일정, 끊긴 구간 밖에서 연결 배지가 계속 `서버 관제`, `오늘 저장 검사`가 계속 증가, 브라우저 예외 0건. 재배포로 끊기면 경고가 뜨고 복구 뒤 새로고침 없이 경고가 사라진다.
+- 탭 전환: 숨김 중에는 조회가 느려져도 되고, 돌아온 뒤 몇 초 안에 최신 수치로 돌아오며 오류가 없다.
+- 기준값: 10-06 본시험 결과([FE-08](../../FE-08.md), #73).
 
 ### 5.7 Simulator (QA-SIM)
 
@@ -1205,7 +1215,8 @@ sim() { curl -s -w " HTTP%{http_code}\n" -X PUT $BE/v1/quality/simulator -H "Con
 #### QA-AUTO-01 Python 시험 · P1
 
 - 절차: `python -m pytest tests data/sampling/tests -q`
-- 기대 결과: 실패 0. 건너뜀은 MySQL 통합 시험 3개뿐(`CQC_TEST_DATABASE_URL` 미지정).
+- 기대 결과: 실패 0. 건너뜀은 실제 MySQL·외부 서비스가 필요한 조건부 시험뿐이고, 건너뜀 사유가 환경변수 미지정(`CQC_TEST_DATABASE_URL` 등)이어야 한다. 건너뜀 수는 기록만 한다.
+- 비고: Windows에서 검수 이미지 시험 2개가 `WinError 5`로 실패하면 KI-8로 적고 Linux(Jenkins 또는 Docker)에서 다시 돌린 결과로 판정한다(#99).
 
 #### QA-AUTO-02 MySQL 통합 시험 · P2
 
@@ -1215,111 +1226,149 @@ sim() { curl -s -w " HTTP%{http_code}\n" -X PUT $BE/v1/quality/simulator -H "Con
 #### QA-AUTO-03 웹 시험·정적 검사·빌드 · P1
 
 - 절차: `cd cqc-logistics-platform/apps/web && npm test && npx tsc --noEmit && npm run lint && npm run build`
-- 기대 결과: 시험 실패 0, `tsc` 오류 0, ESLint 오류 0(경고는 기록만), 빌드 성공.
+- 기대 결과: 시험 실패 0(10-06 기준 51개), `tsc` 오류 0, ESLint 오류 0(경고는 기록만), 빌드 성공.
 
-## 6. 실행 순서와 기록표
+## 6. 분담과 실행 순서
 
-학원 서버를 오염시키지 않도록 E1 읽기 케이스를 먼저, 장애 주입은 E2에서 나중에 한다.
+### 6.1 파트별 분담
 
-1. QA-AUTO-01·03
-2. E1: QA-DEP-02 → QA-INF 전체 → QA-INS-01~05·07·08 → QA-OPS-01·03~13·15 → QA-IMG-01~05
-3. E1: QA-OPS-16(본인 `$RUN` 행만), QA-SIM-01·02·10·13
-4. E3(E1 연결): QA-WEB-01~03·05~08·12~18
-5. E2: QA-DEP-01·03~07 → QA-INS-06·10~17 → QA-OPS-02·14 → QA-IMG-06·07 → QA-SIM-03~09·11·12 → QA-WEB-04·09~11·19 → QA-AUTO-02
+케이스 담당은 그 기능을 만든 파트다. 담당 파트가 실행하고 기록표를 채운다. 실패하면 4절 양식으로 담당 파트에 이슈를 올린다.
 
-| 케이스 | 결과 (통과/실패/차단) | 실행자 | 일시 | 커밋·모델 | 비고·결함 번호 |
-|---|---|---|---|---|---|
-| QA-DEP-01 | | | | | |
-| QA-DEP-02 | | | | | |
-| QA-DEP-03 | | | | | |
-| QA-DEP-04 | | | | | |
-| QA-DEP-05 | | | | | |
-| QA-DEP-06 | | | | | |
-| QA-DEP-07 | | | | | |
-| QA-INF-01 | | | | | |
-| QA-INF-02 | | | | | |
-| QA-INF-03 | | | | | |
-| QA-INF-04 | | | | | |
-| QA-INF-05 | | | | | |
-| QA-INF-06 | | | | | |
-| QA-INF-07 | | | | | |
-| QA-INF-08 | | | | | |
-| QA-INS-01 | | | | | |
-| QA-INS-02 | | | | | |
-| QA-INS-03 | | | | | |
-| QA-INS-04 | | | | | |
-| QA-INS-05 | | | | | |
-| QA-INS-06 | | | | | |
-| QA-INS-07 | | | | | |
-| QA-INS-08 | | | | | |
-| QA-INS-09 | | | | | |
-| QA-INS-10 | | | | | |
-| QA-INS-11 | | | | | KI-3 (#67) |
-| QA-INS-12 | | | | | |
-| QA-INS-13 | | | | | KI-1 (해결, PR #52) |
-| QA-INS-14 | | | | | |
-| QA-INS-15 | | | | | |
-| QA-INS-16 | | | | | |
-| QA-INS-17 | | | | | |
-| QA-OPS-01 | | | | | |
-| QA-OPS-02 | | | | | |
-| QA-OPS-03 | | | | | |
-| QA-OPS-04 | | | | | |
-| QA-OPS-05 | | | | | |
-| QA-OPS-06 | | | | | |
-| QA-OPS-07 | | | | | |
-| QA-OPS-08 | | | | | |
-| QA-OPS-09 | | | | | |
-| QA-OPS-10 | | | | | |
-| QA-OPS-11 | | | | | |
-| QA-OPS-12 | | | | | |
-| QA-OPS-13 | | | | | |
-| QA-OPS-14 | | | | | |
-| QA-OPS-15 | | | | | KI-6 |
-| QA-IMG-01 | | | | | |
-| QA-IMG-02 | | | | | |
-| QA-IMG-03 | | | | | |
-| QA-IMG-04 | | | | | |
-| QA-IMG-05 | | | | | |
-| QA-IMG-06 | | | | | |
-| QA-IMG-07 | | | | | |
-| QA-WEB-01 | | | | | |
-| QA-WEB-02 | | | | | |
-| QA-WEB-03 | | | | | |
-| QA-WEB-04 | | | | | |
-| QA-WEB-05 | | | | | |
-| QA-WEB-05-1 | | | | | |
-| QA-WEB-06 | | | | | |
-| QA-WEB-07 | | | | | |
-| QA-WEB-08 | | | | | |
-| QA-WEB-09 | | | | | |
-| QA-WEB-10 | | | | | |
-| QA-WEB-11 | | | | | |
-| QA-WEB-12 | | | | | |
-| QA-WEB-13 | | | | | |
-| QA-WEB-14 | | | | | |
-| QA-WEB-15 | | | | | |
-| QA-WEB-16 | | | | | |
-| QA-WEB-17 | | | | | |
-| QA-WEB-18 | | | | | |
-| QA-WEB-19 | | | | | |
-| QA-OPS-16 | | | | | |
-| QA-SIM-01 | | | | | |
-| QA-SIM-02 | | | | | |
-| QA-SIM-03 | | | | | |
-| QA-SIM-04 | | | | | |
-| QA-SIM-05 | | | | | |
-| QA-SIM-06 | | | | | |
-| QA-SIM-07 | | | | | |
-| QA-SIM-08 | | | | | |
-| QA-SIM-09 | | | | | #45 |
-| QA-SIM-10 | | | | | |
-| QA-SIM-11 | | | | | |
-| QA-SIM-12 | | | | | |
-| QA-SIM-13 | | | | | |
-| QA-AUTO-01 | | | | | |
-| QA-AUTO-02 | | | | | |
-| QA-AUTO-03 | | | | | |
+| 파트 | 담당 | 케이스 | 수 | 실행 환경 |
+|---|---|---|---:|---|
+| DM | 조현재 | QA-DEP-02·03, QA-INF-01~08, QA-INS-01~06(모델·임계값 판정), QA-SIM-13(수용 기준) | 17 | E1, QA-INS-06만 E2 |
+| BE | 홍준희 | QA-INS-07~17, QA-OPS-01~16, QA-IMG-01~06, QA-SIM-03~07·09~12, QA-AUTO-01·02 | 44 | E1 읽기 + E2 장애 주입 |
+| FE | 강성민 | QA-WEB-01~19·05-1, QA-AUTO-03 | 21 | E3(E1 3100 읽기, 조작·장애는 E2 연결) |
+| MO | 홍유나 | QA-DEP-01·04~07, QA-IMG-07, QA-SIM-01·02·08 | 9 | 서버 컨테이너·볼륨·재시작, E2 |
+
+- 합계 91개. 4개 파트가 공통으로 쓰는 E2(로컬 Compose)·모델 폴더 준비는 MO와 DM이 돕는다(2절).
+- MO-09(#71)는 이 목록에서 반복 실행할 케이스를 골라 자동화한다. 우선 대상: QA-DEP-01~05, QA-INF-01·06, QA-INS-01·07, QA-OPS-01·08·10, QA-SIM-01·02.
+- 결과는 ALL-04(#65) 기록표로 모은다. 진행 상황은 ALL-03에만 적는다.
+
+### 6.2 BE-10과 겹치는 케이스
+
+BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-10 결과에 같은 기대값이 증거와 함께 있으면 해당 QA 케이스는 그 결과를 링크해 갈음하고, E1에서 하는 확인만 따로 한다.
+
+| QA 케이스 | BE-10 시험 | 비고 |
+|---|---|---|
+| QA-INS-07 | BND-01~04, DUP-01·02 (2단계 통과) | E1에서 l~o만 다시 확인 |
+| QA-INS-08~12 | INS-07~09, TIM-01~07 (2단계 통과) | E1 가능한 QA-INS-08만 다시 확인 |
+| QA-INS-13, QA-OPS-14, QA-SIM-09 | DB-01·02 | |
+| QA-INS-14·15 | INS-10~12 (2단계 통과) | |
+| QA-OPS-02·12 | OPS-02 | |
+| QA-OPS-03~09 | OPS-01 | |
+| QA-OPS-10·11 | OPS-03 | |
+| QA-IMG-01~06 | IMG-01~05 | |
+| QA-SIM-06 | TIM-09 (2단계), E2E-05 | |
+| QA-SIM-08 | SIM-01 | |
+| QA-SIM-13 | E2E-01 | 기준은 10-08 확정 |
+| QA-DEP-06 | E2E-04 | |
+
+### 6.3 실행 순서
+
+학원 서버를 오염시키지 않도록 E1 읽기 케이스를 먼저, 장애 주입은 E2에서 나중에 한다. 측정 중에는 dev에 푸시하지 않는다(Jenkins 재배포).
+
+1. 전원: QA-AUTO-01~03 (BE·FE)
+2. E1: QA-DEP-02 → QA-INF 전체 → QA-INS-01~05·07·08 → QA-OPS-01·03~13·15 → QA-IMG-01~05 (DM → BE)
+3. E1: QA-OPS-16(본인 `$RUN` 행만), QA-SIM-01·02·10·13 (BE·MO·DM)
+4. E3(E1 3100): QA-WEB-01~03·05·05-1·06~08·12~19 (FE)
+5. E2: QA-DEP-01·03~07 → QA-INS-06·10~17 → QA-OPS-02·14 → QA-IMG-06·07 → QA-SIM-03~09·11·12 → QA-WEB-04·09~11 → QA-AUTO-02 (MO·DM·BE·FE)
+
+### 6.4 기록표
+
+| 케이스 | 담당 | 결과 (통과/실패/차단) | 실행자 | 일시 | 커밋·모델 | 비고·결함 번호 |
+|---|---|---|---|---|---|---|
+| QA-DEP-01 | MO | | | | |  |
+| QA-DEP-02 | DM | | | | |  |
+| QA-DEP-03 | DM | | | | |  |
+| QA-DEP-04 | MO | | | | |  |
+| QA-DEP-05 | MO | | | | |  |
+| QA-DEP-06 | MO | | | | |  |
+| QA-DEP-07 | MO | | | | |  |
+| QA-INF-01 | DM | | | | |  |
+| QA-INF-02 | DM | | | | |  |
+| QA-INF-03 | DM | | | | |  |
+| QA-INF-04 | DM | | | | |  |
+| QA-INF-05 | DM | | | | |  |
+| QA-INF-06 | DM | | | | |  |
+| QA-INF-07 | DM | | | | |  |
+| QA-INF-08 | DM | | | | |  |
+| QA-INS-01 | DM | | | | |  |
+| QA-INS-02 | DM | | | | |  |
+| QA-INS-03 | DM | | | | |  |
+| QA-INS-04 | DM | | | | |  |
+| QA-INS-05 | DM | | | | |  |
+| QA-INS-06 | DM | | | | |  |
+| QA-INS-07 | BE | | | | |  |
+| QA-INS-08 | BE | | | | |  |
+| QA-INS-09 | BE | | | | |  |
+| QA-INS-10 | BE | | | | |  |
+| QA-INS-11 | BE | | | | | KI-3 (#67) |
+| QA-INS-12 | BE | | | | |  |
+| QA-INS-13 | BE | | | | | KI-1 (해결, PR #52) |
+| QA-INS-14 | BE | | | | |  |
+| QA-INS-15 | BE | | | | |  |
+| QA-INS-16 | BE | | | | |  |
+| QA-INS-17 | BE | | | | |  |
+| QA-OPS-01 | BE | | | | |  |
+| QA-OPS-02 | BE | | | | |  |
+| QA-OPS-03 | BE | | | | |  |
+| QA-OPS-04 | BE | | | | |  |
+| QA-OPS-05 | BE | | | | |  |
+| QA-OPS-06 | BE | | | | |  |
+| QA-OPS-07 | BE | | | | |  |
+| QA-OPS-08 | BE | | | | |  |
+| QA-OPS-09 | BE | | | | |  |
+| QA-OPS-10 | BE | | | | |  |
+| QA-OPS-11 | BE | | | | |  |
+| QA-OPS-12 | BE | | | | |  |
+| QA-OPS-13 | BE | | | | |  |
+| QA-OPS-14 | BE | | | | |  |
+| QA-OPS-15 | BE | | | | | KI-6 |
+| QA-IMG-01 | BE | | | | |  |
+| QA-IMG-02 | BE | | | | |  |
+| QA-IMG-03 | BE | | | | |  |
+| QA-IMG-04 | BE | | | | |  |
+| QA-IMG-05 | BE | | | | |  |
+| QA-IMG-06 | BE | | | | |  |
+| QA-IMG-07 | MO | | | | |  |
+| QA-WEB-01 | FE | | | | |  |
+| QA-WEB-02 | FE | | | | |  |
+| QA-WEB-03 | FE | | | | |  |
+| QA-WEB-04 | FE | | | | |  |
+| QA-WEB-05 | FE | | | | |  |
+| QA-WEB-05-1 | FE | | | | |  |
+| QA-WEB-06 | FE | | | | |  |
+| QA-WEB-07 | FE | | | | |  |
+| QA-WEB-08 | FE | | | | |  |
+| QA-WEB-09 | FE | | | | |  |
+| QA-WEB-10 | FE | | | | |  |
+| QA-WEB-11 | FE | | | | |  |
+| QA-WEB-12 | FE | | | | |  |
+| QA-WEB-13 | FE | | | | |  |
+| QA-WEB-14 | FE | | | | |  |
+| QA-WEB-15 | FE | | | | |  |
+| QA-WEB-16 | FE | | | | |  |
+| QA-WEB-17 | FE | | | | |  |
+| QA-WEB-18 | FE | | | | |  |
+| QA-WEB-19 | FE | | | | |  |
+| QA-OPS-16 | BE | | | | |  |
+| QA-SIM-01 | MO | | | | |  |
+| QA-SIM-02 | MO | | | | |  |
+| QA-SIM-03 | BE | | | | |  |
+| QA-SIM-04 | BE | | | | |  |
+| QA-SIM-05 | BE | | | | |  |
+| QA-SIM-06 | BE | | | | |  |
+| QA-SIM-07 | BE | | | | |  |
+| QA-SIM-08 | MO | | | | |  |
+| QA-SIM-09 | BE | | | | | #45 |
+| QA-SIM-10 | BE | | | | |  |
+| QA-SIM-11 | BE | | | | |  |
+| QA-SIM-12 | BE | | | | |  |
+| QA-SIM-13 | DM | | | | |  |
+| QA-AUTO-01 | BE | | | | |  |
+| QA-AUTO-02 | BE | | | | |  |
+| QA-AUTO-03 | FE | | | | |  |
 
 ## 7. 갱신 규칙
 
