@@ -1,0 +1,16 @@
+# Used only with a unique MO-09 Compose project and --no-build.
+# Reuse the deployed application images without changing their tags.
+services:
+  mysql:
+    healthcheck:
+      # A fresh disposable volume needs time for MySQL's initial bootstrap.
+      start_period: 120s
+      test:
+        - CMD-SHELL
+        - 'MYSQL_PWD="$$MYSQL_ROOT_PASSWORD" mysql --protocol=TCP -h127.0.0.1 -uroot -Nse "SELECT 1" >/dev/null 2>&1'
+  inference:
+    image: cqc-cicd-inference:latest
+  backend:
+    image: cqc-cicd-backend:latest
+  simulator:
+    image: cqc-cicd-simulator:latest
