@@ -25,7 +25,7 @@
 | 물류 API | **12 통과** | 기본 MemoryStore 시험. MongoDB·실제 QC 출품 연동을 증명하지 않음 |
 | Backend·Simulator·서비스 로깅 | **327 통과 / 6 skip / 3 실패** (Windows Python 3.11.9, 최초 pytest 8.4.2) | pytest **9.1.1**로 실패 3항목을 다시 실행해 동일 실패 확인. MySQL 등 6 skip을 실DB 통과로 계산하지 않음 |
 | Backend 실패 분리 | 이미지 순환 2개: workspace 임시 디렉터리 rename WinError 5 반복. hard-timeout 1개: 묶음 실패·단독 통과 | [#99](https://github.com/yuudong123/CQC/issues/99)·[#66](https://github.com/yuudong123/CQC/issues/66). 이미지 저장 OS Temp 대조는 110건 저장·100건 보존 성공. Linux 운영 실패로 확대하지 않음 |
-| 발표 PDF | 최종·10-08 변경 사본 모두 **36쪽**, 31쪽 이미지 각 3개 포함 | 신규 발표 제작이 아니라 기존 산출물 완료조건 확인 |
+| 발표 PDF | 최종·10-08 변경 사본 모두 **41쪽**(목차·데이터 선정 이유·감사 쪽 추가), 35쪽 시연 이미지 각 3개 포함. HTML은 이미지 클릭 확대 | 신규 발표 제작이 아니라 기존 산출물 완료조건 확인 |
 
 이전 10-05 `dee8c54`의 Python 346 통과·6 skip 및 `b820b5d`의 웹 48 통과는 당시 기록이다. 이번 Windows 결과를 전체 통과로 덮어쓰지 않는다. PR #92의 웹 50 통과·build 성공, #94의 Simulator 8 통과는 각 PR에 기록된 검증이다.
 
