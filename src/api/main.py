@@ -43,6 +43,7 @@ def create_app(
     late_result_manager = LateResultManager(
         hard_timeout_ms=runtime_settings.inference_hard_timeout_ms,
         max_tasks=runtime_settings.max_late_tasks,
+        history_limit=runtime_settings.late_result_history_limit,
     )
     inference_client = (
         (
@@ -88,7 +89,9 @@ def create_app(
     )
     runtime_inspection_service = inspection_service or InspectionService(
         inference_client,
-        MockVirtualControl(),
+        MockVirtualControl(
+            history_limit=runtime_settings.virtual_control_history_limit
+        ),
         cultivar_confidence_threshold=(runtime_settings.cultivar_confidence_threshold),
         quality_confidence_threshold=runtime_settings.quality_confidence_threshold,
         inference_business_deadline_ms=(

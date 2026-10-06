@@ -39,6 +39,8 @@ class Settings(BaseSettings):
     inference_connect_timeout_ms: int = Field(default=200, ge=1, lt=500)
     inference_health_timeout_ms: int = Field(default=1_500, ge=1)
     max_late_tasks: int = Field(default=4, ge=0)
+    virtual_control_history_limit: int = Field(default=200, ge=1)
+    late_result_history_limit: int = Field(default=200, ge=1)
     fault_image_storage_root: Path | None = None
     fault_image_limit: int = Field(default=100, ge=1)
     low_confidence_image_limit: int = Field(default=200, ge=1)

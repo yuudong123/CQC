@@ -12,14 +12,19 @@ from ..schemas.late_results import LateInferenceResult
 class LateResultManager:
     """제한된 수의 늦은 task를 hard timeout까지 유지한다."""
 
-    def __init__(self, *, hard_timeout_ms: int, max_tasks: int) -> None:
+    def __init__(
+        self, *, hard_timeout_ms: int, max_tasks: int, history_limit: int = 200
+    ) -> None:
         if hard_timeout_ms <= 0:
             raise ValueError("Inference hard timeout은 0보다 커야 합니다")
         if max_tasks < 0:
             raise ValueError("late task 최대 개수는 0 이상이어야 합니다")
+        if history_limit < 1:
+            raise ValueError("late 진단 기록 보관 상한은 1 이상이어야 합니다")
 
         self._hard_timeout_seconds = hard_timeout_ms / 1000
         self._max_tasks = max_tasks
+        self._history_limit = history_limit
         self._watchers: set[asyncio.Task[None]] = set()
         self.results: list[LateInferenceResult] = []
         self.hard_timeout_inspection_ids: list[str] = []
@@ -44,6 +49,7 @@ class LateResultManager:
 
         if self.active_count >= self._max_tasks:
             self.dropped_inspection_ids.append(inspection_id)
+            del self.dropped_inspection_ids[: -self._history_limit]
             inference_task.cancel()
             inference_task.add_done_callback(self._consume_task_result)
             return False
@@ -100,6 +106,7 @@ class LateResultManager:
             )
         except TimeoutError:
             self.hard_timeout_inspection_ids.append(inspection_id)
+            del self.hard_timeout_inspection_ids[: -self._history_limit]
             inference_task.cancel()
             await asyncio.gather(inference_task, return_exceptions=True)
         except asyncio.CancelledError:
@@ -112,6 +119,8 @@ class LateResultManager:
                 inference_response=inference_response,
             )
             self.results.append(result)
+            # 진단 보관만 제한한다. 현재 result의 callback/DB 저장은 계속 수행한다.
+            del self.results[: -self._history_limit]
             if on_result is not None:
                 await on_result(result)
 
