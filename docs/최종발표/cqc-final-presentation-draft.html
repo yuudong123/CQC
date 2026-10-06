@@ -555,8 +555,8 @@ sweetness_band: &lt;14 | ≥14
   <div class="kicker">29 · IMPLEMENTATION</div><h2>구현 범위와 남은 검증</h2><p class="subtitle">10-06 기준 / 서버에서 연결된 기능과 10-12 최종 수용시험을 구분</p>
   <table class="role-table"><thead><tr><th>영역</th><th>현재 상태</th><th>구현·확인한 것</th><th>남은 검증·작업</th></tr></thead><tbody>
     <tr><td>DM·모델</td><td class="role">서비스 중</td><td>v2 보정 모델·임계값 0.50/0.60<br>외관 CV 0.8844 / 체크섬·발표 수치 일치 확인</td><td>동결 후 최종 Test 1회<br>모델 카드 확정</td></tr>
-    <tr><td>BE</td><td class="role">통합시험 중</td><td>판정·12+1 선별·MySQL·검수 사진·라인 속도 기한<br>BE-10 2단계 27/27 통과(PR #100)</td><td>BE-10 3·4단계(DB·보존·복구)<br>API·DB 계약 동결</td></tr>
-    <tr><td>FE</td><td class="role">실서버 관제</td><td>처리 중 사과 12장·검수 이미지·처리량 추이·라인 속도<br>7개 화면 크기 무스크롤·관리 창 스크롤 확인</td><td>장시간 관제 시험<br>화면 동결·발표 흐름 점검</td></tr>
+    <tr><td>BE</td><td class="role">통합시험 중</td><td>판정·12+1 선별·MySQL·검수 사진·라인 속도 기한<br>BE-10 2단계 27/27·3단계 13/15 통과(보류 2)</td><td>BE-10 4단계(실배포 연속·장애 시험)<br>API·DB 계약 동결</td></tr>
+    <tr><td>FE</td><td class="role">실서버 관제</td><td>처리 중 사과 12장·검수 이미지·처리량 추이·라인 속도<br>7개 화면 크기 무스크롤 · 서버 3시간 25분 연속 관제</td><td>화면 동결·발표 흐름 점검</td></tr>
     <tr><td>MO·배포</td><td class="role">운영 중</td><td>Compose 7서비스·Jenkins 시험 후 배포·실패 시 이전 버전 복구<br>위치 복구·로그 순환·장애 시험(MO-07·08)</td><td>수용시험 자동화<br>발표 버전 태그·복구 절차 동결</td></tr>
     <tr><td>거래·물류</td><td class="role">확장 시연</td><td>브라우저 가상 출품·입찰·결제·배차<br>QC 이력 참조 / MVP 제외(10-01 결정)</td><td>실거래·물류 API 통합은<br>MVP 이후 범위</td></tr>
   </tbody></table>
@@ -572,9 +572,9 @@ sweetness_band: &lt;14 | ≥14
     <div class="metric"><span class="name">10-02 → 10-05 · 추론 제한시간</span><strong>시간 초과 4.1% → 0</strong><p>고정 500ms → 라인 속도와 같게(#87)<br>적용 후 535건, Jenkins 배포 2회 중에도 0건</p></div>
     <div class="metric"><span class="name">10-05 · 운영 판정 200건</span><strong>재검사 9.5%</strong><p>PASS 181 · REVIEW 19 / 시간 초과·오류 0건<br>내부 추론 p95 153.6ms</p></div>
     <div class="metric"><span class="name">09-30 · 개발 152개 OOF 보정</span><strong>23.7→16.4%</strong><p>개발 표본의 재검사율 / ECE 0.259→0.081<br>재학습 없이 model.json만 교체</p></div>
-    <div class="metric"><span class="name">10-12 · 최종 수용시험</span><strong>100건 + 장애 5종</strong><p>정상 100건 연속·장애 5종·보존 정책<br>판정 기준은 10-08 회의에서 확정</p></div>
+    <div class="metric"><span class="name">10-06 · 서버 관제 화면 3시간 25분</span><strong>누수 없음</strong><p>강제 GC 뒤 heap 6.8~8.7MB 유지 · 예외 0건<br>재배포 4회·탭 숨김 2회 뒤 새로고침 없이 복구</p></div>
   </div>
-  <div class="source">근거: server-real-photos-20260930.json, v2-calibration-oof-20260930.json, 10-02·10-05 운영 이력(ALL-03.md), 결정 기록 10-05</div><div class="footer"><span>CQC · 최종 발표 초안</span><span>37</span></div>
+  <div class="source">근거: server-real-photos-20260930.json, v2-calibration-oof-20260930.json, 10-02·10-05 운영 이력(ALL-03.md), 결정 기록 10-05, fe-long-run-server-20261006.json</div><div class="footer"><span>CQC · 최종 발표 초안</span><span>37</span></div>
 </section>
 
 <section class="page">
@@ -607,7 +607,7 @@ sweetness_band: &lt;14 | ≥14
 </section>
 
 <section class="page">
-  <div class="kicker">31 · EXTENSION</div><h2>남은 검증과 확장 방향</h2><p class="subtitle">다음 단계: 수용시험·장시간 관제·동결 / 이후 농가 데이터와 실물 설비 확장</p>
+  <div class="kicker">31 · EXTENSION</div><h2>남은 검증과 확장 방향</h2><p class="subtitle">다음 단계: 수용시험·동결 / 이후 농가 데이터와 실물 설비 확장</p>
   <div class="lanes lanes-six">
     <div class="lane"><div class="lane-name">현장 데이터</div><div class="lane-current"><div class="tag">현재</div><p>AI Hub 179개 사과 · 특·상·보통 라벨만<br>결점(상처) 라벨 없음 · 재검사로 빠지는지 미검증</p></div><div class="lane-next"><div class="tag">확장</div><p>농가별 표본 수집·성능 평가<br>결점(상처) 라벨 확보 → 등외 직접 판정</p></div></div>
     <div class="lane"><div class="lane-name">촬영 조건</div><div class="lane-current"><div class="tag">현재</div><p>데이터셋 촬영 환경</p></div><div class="lane-next"><div class="tag">확장</div><p>거리·각도·조명 설정과 보정</p></div></div>
@@ -616,7 +616,7 @@ sweetness_band: &lt;14 | ≥14
     <div class="lane"><div class="lane-name">공동 클라우드</div><div class="lane-current"><div class="tag">현재</div><p>서버컴 기반 실행</p></div><div class="lane-next"><div class="tag">확장</div><p>장치 인증·농가별 데이터 분리·공유 추론</p></div></div>
     <div class="lane"><div class="lane-name">설비 속도</div><div class="lane-current"><div class="tag">현재</div><p>시연 2초 간격 · 관제에서 1·2·3초 조절</p></div><div class="lane-next"><div class="tag">확장</div><p>농가별 투입 간격과 판정 제한시간 별도 검증</p></div></div>
   </div>
-  <div class="closing-strip">다음 완료 기준: 정상 100건·장애 5종 / 8시간 관제 / 10-13 코드·모델·계약 동결</div>
+  <div class="closing-strip">다음 완료 기준: 정상 100건·장애 5종 수용시험 / 10-13 코드·모델·계약 동결</div>
   <div class="source">근거: project-plan.md 7장·8.1, quality-trend-metrics.md(#56) / 불량 라벨이 없어 불량률 대신 등급 분포·재검사율 사용</div><div class="footer"><span>CQC · 최종 발표 초안</span><span>40</span></div>
 </section>
 
