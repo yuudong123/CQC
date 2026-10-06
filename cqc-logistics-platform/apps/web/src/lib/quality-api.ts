@@ -76,7 +76,7 @@ const validResult = (v: unknown) => {
   return (
     prediction &&
     typeof v.id === "string" &&
-    /^[A-Za-z0-9_-]+$/.test(v.id) &&
+    validInspectionId(v.id) &&
     typeof v.date === "string" &&
     typeof v.time === "string" &&
     finite(v.timestamp) &&
@@ -114,6 +114,9 @@ const validFault = (v: unknown) =>
     "CONTROL_NO_RESPONSE",
     "CONTROL_FAILED",
   ].includes(String(v));
+/** 검사 ID(#100): 영문·숫자·`_`·`.`·`-` 1~64자. 점만으로 된 값은 경로로 쓰면 위로 올라가므로 거부한다. */
+export const validInspectionId = (v: unknown): v is string =>
+  typeof v === "string" && /^[A-Za-z0-9_.-]{1,64}$/.test(v) && !/^\.+$/.test(v);
 const validPreview = (v: unknown) =>
   typeof v === "string" && /^\/api\/quality\/previews\/[A-Za-z0-9_-]+$/.test(v);
 const validJobPreviews = (v: unknown) =>
@@ -211,7 +214,7 @@ export function parseSnapshot(value: unknown): QualitySnapshot {
           (j) =>
             object(j) &&
             typeof j.id === "string" &&
-            /^[A-Za-z0-9_-]{1,64}$/.test(j.id) &&
+            validInspectionId(j.id) &&
             ["COMPLETED", "ERROR", "TIMEOUT"].includes(String(j.status)) &&
             finite(j.completedAt) &&
             finite(j.previewExpiresAt) &&

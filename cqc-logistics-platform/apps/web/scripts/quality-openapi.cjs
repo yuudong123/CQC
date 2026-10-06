@@ -46,13 +46,15 @@ const id = {
   minLength: 1,
   maxLength: 64,
 };
+// 검사 ID(#100): 점 허용. 개별 이미지 ID는 위 id 규칙을 그대로 쓴다.
+const inspectionId = { ...id, pattern: "^[A-Za-z0-9_.-]+$" };
 const previewUrl = {
   type: "string",
   pattern: "^/api/quality/previews/[A-Za-z0-9_-]+$",
 };
 const percent = { type: "number", minimum: 0, maximum: 100 };
 const resultProperties = {
-  id,
+  id: inspectionId,
   date: { type: "string", format: "date" },
   time: text,
   timestamp: num,
@@ -139,7 +141,7 @@ const schemas = {
   }),
   Job: object(
     {
-      id,
+      id: inspectionId,
       index: integer,
       started: num,
       finish: num,
@@ -226,7 +228,7 @@ const schemas = {
   ),
   RecentCompletedJob: {
     ...object({
-      id,
+      id: inspectionId,
       status: enumeration(["COMPLETED", "ERROR", "TIMEOUT"]),
       completedAt: num,
       previewExpiresAt: num,
@@ -235,12 +237,12 @@ const schemas = {
     description: "A finished inspection retained only while its live preview URLs remain readable. Timestamps are Unix milliseconds.",
   },
   Review: object({ misclassification: marker }),
-  ReviewAck: object({ inspectionId: id, misclassification: marker }),
+  ReviewAck: object({ inspectionId, misclassification: marker }),
   ImageDelete: object({ ids: { ...array(id, 300), description: "Individual fault image IDs captured when the confirmation dialog opens. Send that snapshot for delete-all; an empty array is a no-op. IDs that are already absent are ignored." } }),
   ImageDeleteAck: object({ deletedIds: { ...array(id, 300), description: "Only individual fault image IDs successfully deleted by this request; missing or failed IDs are omitted." } }),
   FaultImage: object({
     id,
-    inspectionId: id,
+    inspectionId,
     imageIndex: { type: "integer", minimum: 0, maximum: 11 },
     createdAt: num,
     errorCode: {
@@ -307,6 +309,7 @@ const csvResponses = {
   503: response(ref("Error")),
 };
 const idParameter = { name: "id", in: "path", required: true, schema: id };
+const inspectionIdParameter = { ...idParameter, schema: inspectionId };
 const document = {
   openapi: "3.1.0",
   info: {
@@ -373,7 +376,7 @@ const document = {
     "/inspections/{id}/review": {
       patch: {
         operationId: "qualityReview",
-        parameters: [idParameter],
+        parameters: [inspectionIdParameter],
         requestBody: body(ref("Review")),
         responses: responses(ref("ReviewAck")),
       },
@@ -383,7 +386,7 @@ const document = {
         operationId: "qualityFaultImages",
         parameters: [
           { name: "category", in: "query", required: false, schema: enumeration(["SYSTEM_ERROR", "LOW_CONFIDENCE"]) },
-          { name: "inspectionId", in: "query", required: false, schema: id },
+          { name: "inspectionId", in: "query", required: false, schema: inspectionId },
         ],
         responses: responses(ref("FaultImages")),
       },
