@@ -22,6 +22,8 @@ def test_settings_reads_backend_environment_variables(monkeypatch: MonkeyPatch) 
     monkeypatch.setenv("INFERENCE_HARD_TIMEOUT_MS", "2500")
     monkeypatch.setenv("INFERENCE_CONNECT_TIMEOUT_MS", "220")
     monkeypatch.setenv("MAX_LATE_TASKS", "3")
+    monkeypatch.setenv("VIRTUAL_CONTROL_HISTORY_LIMIT", "17")
+    monkeypatch.setenv("LATE_RESULT_HISTORY_LIMIT", "23")
 
     settings = Settings()
 
@@ -41,6 +43,8 @@ def test_settings_reads_backend_environment_variables(monkeypatch: MonkeyPatch) 
     assert settings.inference_hard_timeout_ms == 2500
     assert settings.inference_connect_timeout_ms == 220
     assert settings.max_late_tasks == 3
+    assert settings.virtual_control_history_limit == 17
+    assert settings.late_result_history_limit == 23
 
 
 def test_policy_settings_use_confirmed_defaults() -> None:
@@ -55,6 +59,8 @@ def test_policy_settings_use_confirmed_defaults() -> None:
     assert settings.inference_hard_timeout_ms == 2000
     assert settings.inference_connect_timeout_ms == 200
     assert settings.max_late_tasks == 4
+    assert settings.virtual_control_history_limit == 200
+    assert settings.late_result_history_limit == 200
     assert settings.live_preview_grace_seconds == 3
     assert settings.live_preview_max_dimension == 240
     assert settings.live_preview_jpeg_quality == 90
@@ -72,3 +78,30 @@ def test_history_delete_batch_must_be_below_limit() -> None:
 def test_connect_timeout_must_be_below_500ms_deadline() -> None:
     with pytest.raises(ValueError, match="inference_connect_timeout_ms"):
         Settings(_env_file=None, inference_connect_timeout_ms=500)
+
+
+@pytest.mark.parametrize(
+    "name", ["virtual_control_history_limit", "late_result_history_limit"]
+)
+@pytest.mark.parametrize("limit", [0, -1])
+def test_diagnostic_history_limits_must_be_positive(name, limit):
+    with pytest.raises(ValueError, match=name):
+        Settings(_env_file=None, **{name: limit})
+
+
+def test_app_injects_independent_diagnostic_history_limits():
+    from src.api.main import create_app
+
+    app = create_app(
+        Settings(
+            _env_file=None,
+            database_url=None,
+            inference_client_mode="mock",
+            simulator_internal_url=None,
+            virtual_control_history_limit=17,
+            late_result_history_limit=23,
+        )
+    )
+    service = app.state.inspection_service
+    assert service._virtual_control._history_limit == 17
+    assert service._late_result_manager._history_limit == 23

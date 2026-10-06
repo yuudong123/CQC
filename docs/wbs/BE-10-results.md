@@ -337,3 +337,54 @@ late 정상 응답이 도착해도 원래 timeout의 예측 null·재검사 bin�
 | Ruff / format / `git diff --check` | PASS | 변경 Python 파일 및 작업공간 diff 검사 |
 
 OBS-01의 **Backend 구현 blocker는 로컬 기준 해소**했다. 전환한 MySQL 기반 BE-10 통합 테스트는 이번 환경에서 실행되지 않았으므로 3/4 전용 MySQL·보존·조회 수용 결과로 간주하지 않는다. FE의 현재 이미지·이력 파서는 점 포함 ID를 거부하므로 공개 OpenAPI 변경에 맞춘 FE 후속 연동과 4/4 브라우저 확인이 필요하다.
+
+## 10. Issue #95 — 제어·late-result 메모리 보관 상한
+
+2026-10-06 KST, `101bbe4` checkout 기준의 로컬 수정·검증이다. commit·공유 서비스 배포는 하지 않았다. GitHub #95 본문과 전체 댓글 1개를 다시 확인했으며, 기존에 보고된 29.64MiB/2.74MiB는 수정 전 로컬 모의 부하 측정이지 실서버 RSS 측정이 아니다.
+
+### 10.1 최소 수정
+
+- `VIRTUAL_CONTROL_HISTORY_LIMIT=200`: `MockVirtualControl.requests`와 `status_histories`를 같은 호출 구간에서 oldest부터 함께 정리한다. 기존 list 객체와 조회 형식을 유지한다.
+- configured outcomes의 선택 순번은 `_call_count`로 분리한다. `call_count`는 성공적으로 결과를 선택한 총 호출 수이며, 보관 건수나 목록 정리에 영향받지 않는다. outcomes 소진 후 추가 호출은 기존과 같이 오류다.
+- `LATE_RESULT_HISTORY_LIMIT=200`: `results`, `hard_timeout_inspection_ids`, `dropped_inspection_ids` 각각 독립적으로 oldest부터 정리한다. 공통 late 상한 하나를 사용하며 제어 상한과는 별도 설정이다.
+- 두 Settings는 1 이상을 검증하고 `create_app()`에서 장수명 객체에 주입한다. `.env.example`에 기본값을 추가했다.
+- `_watchers`, active task 한도, business/hard deadline, 취소·shutdown·callback·DB late 진단 저장 정책은 변경하지 않았다. 결과가 목록에서 제거되어도 callback은 현재 result 참조로 계속 수행한다.
+- API·FE·DB schema·migration은 변경하지 않았다.
+
+### 10.2 단위·회귀 검증
+
+Windows Python 3.13.15의 기존 `.venv`에서 실행했다. 수정 전 제어·late·Settings 기준 시험은 **23 PASS**였다.
+
+| 실행 | 결과 | 검증 범위 |
+|---|---|---|
+| 제어·late·Settings·신규 메모리 검증 | **44 PASS** | 제어14, 기존 late12, Settings9, 신규 보관/동시성/가속9 |
+| Backend·Simulator·service logging 전체 | **397 PASS / 79 SKIP**, 116.34s | #87 요청별 dynamic timeout, #67 연결/응답 오류 분류, NEXT, 확정 판정 불변, hard 취소·shutdown 포함. 전용 DB/BE-10 환경을 주입하지 않은 실행의 skip이며 통합 PASS로 표시하지 않는다 |
+| 격리 실제 Inference·MySQL 통합 | **78 PASS / 0 SKIP**, 79.21s | BE-10 핵심70, MySQL late1·중복2·Repository1·이력1·관제통계/CSV1·검수1·축소 순환삭제1. 기존 2/4 핵심 회귀이며 3/4 전체15항목 수용 완료를 뜻하지 않는다 |
+| Ruff check / format check / diff check | PASS | 수정 Python 파일과 작업공간 diff |
+
+최초 전체 실행은 Windows 기본 pytest 임시 디렉터리 접근 제한으로 setup error가 발생해 중단했다. 권한을 받아 같은 범위를 재실행한 결과가 위 397/79다. 제품 결함이나 회귀 FAIL로 분류하지 않는다. 기존 Starlette/httpx·anyio deprecation warning 2개는 남아 있다.
+
+신규 시험은 N-1/N/N+1 및 반복 호출, oldest 제거, 제어 요청/상태 대응, outcomes 소진, 상한 이후 거부→대체를 검증한다. late 결과·hard·drop 목록을 각각 초과시키고, 진행 중 inference를 Event로 유지한 채 drop 기록이 순환해도 watcher가 유지되는지 확인한다. 별도 Event 기반 병렬 시험에서는 첫 결과가 보관 목록에서 제거된 상태에서도 대기 중 callback이 끝나고 최종 `active_count=0`이 되는지 확인한다. 고정 sleep으로 새 timing gate를 만들지 않았다.
+
+### 10.3 가속 메모리 측정
+
+`tests/api/test_memory_retention.py`의 동일 인스턴스 반복 시험이다. append-only RecordingPersistence를 사용하지 않으며, 각 batch 종료 후 idle·GC를 확인하고 `tracemalloc` 현재/peak bytes와 목록 길이를 측정한다. 첫 batch는 warm-up으로 제외한다.
+
+| 대상 | 반복·batch | warm-up 이후 현재 할당량 | 최종 보관량 |
+|---|---|---|---|
+| Virtual Control | **60,000회**, 10,000회×6 | **114,168~116,360 bytes** | requests200 / status_histories200, 총 호출60,000 |
+| LateResultManager | **1,500개 완료 응답**, 250개×6 | **547,623~549,204 bytes** | results200 / hard0 / drop0, active0 |
+
+제어 40,000회 추가 구간의 변동 폭은 2,192 bytes, late 1,000개 추가 구간은 1,581 bytes였다. 측정 sample 자체의 작은 보관 비용도 포함한다. 목록은 매 batch 200건을 유지했고, warm-up 이후 할당량 변동은 시험 gate 128KiB 이내로 plateau를 확인했다. hard/drop 목록의 보존 경계는 별도 단위 시험에서 독립 검증했다.
+
+이 결과는 **로컬 모의 가속 시험**이다. 실제 8시간 배포환경의 Backend RSS, 브라우저 heap/DOM, CPU·DB·네트워크 경합을 측정한 결과가 아니며 #73 완료를 대체하지 않는다. #95 수정 배포 후 해당 환경에서 장시간 관측이 필요하다. BE-10 3/4의 15개 DB·보존·조회·복구 수용시험과 4/4 배포환경 수용도 별도로 남는다.
+
+### 10.4 통합 환경·후속 판단
+
+시험 전용 `cqc-issue95-mysql`(mysql:8.4, localhost:13319)과 `cqc-issue95-inference`(로컬 cqc-inference image, localhost:18019)를 생성했다. MySQL은 임의 생성한 인증정보와 신규 독립 schema 3개를 사용하고 기존 Alembic head `20260929_02`를 적용했다. Inference는 현재 `src`와 `models/selected`를 read-only mount하고 CPU·decode_workers8로 실행했다. 기존 Compose 5서비스를 중단·재설정하지 않았다.
+
+정상 후보·부분 프레임·손상 이미지·자연 저신뢰는 실제 모델 HTTP로, 응답 지연·HTTP 오류 등은 시험용 HTTP responder/transport 대역으로 검증했다. 후자를 실제 모델 장애라고 표현하지 않는다. 실제 MySQL late 진단 저장 후 원 판정·bin·제어·통계 불변을 재확인했다.
+
+실행 자료는 로컬 `outputs/issue95-validation/integration.log`, `integration.xml`, `integration-evidence.jsonl`에 남겼다(기존 outputs ignore 정책 적용). 시험 종료 후 `cqc.test=issue95` label을 확인한 컨테이너 2개와 해당 임시 볼륨만 제거했다. 전체 회귀에서 skip된 조건부 통합78개는 별도 환경에서 PASS했고, 기존 완료 run 전용 evidence audit1개는 이번 범위에서 실행하지 않았다.
+
+**#95의 코드·로컬 검증·기록 완료 조건은 충족했다.** GitHub Issue 상태는 변경하지 않았으며 commit·배포도 하지 않았다. 수정 배포 후 #73 8시간 시험을 진행할 수 있고, #95로 인한 BE-10 3/4 blocker는 로컬 기준 해소했다. 이번 검증은 #73 8시간 측정이나 BE-10 3/4 전체 수용 완료를 대체하지 않는다.
