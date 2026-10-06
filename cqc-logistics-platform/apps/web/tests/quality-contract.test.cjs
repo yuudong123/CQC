@@ -6,7 +6,7 @@ const ts = require("typescript");
 require.extensions[".ts"] = (module, filename) => module._compile(ts.transpileModule(fs.readFileSync(filename, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, filename);
 const { QualityReferenceService } = require("../src/lib/quality-reference.ts");
 const { parseSnapshot, parseHistory } = require("../src/lib/quality-api.ts");
-const { proxyQuality } = require("../src/lib/quality-proxy.ts");
+const { proxyQuality, CSV_TIMEOUT_MS } = require("../src/lib/quality-proxy.ts");
 const { summarizeInspections } = require("../src/lib/quality-statistics.ts");
 const { classifyResult } = require("../src/lib/quality-runtime.ts");
 const openapi = require("../scripts/quality-openapi.cjs");
@@ -184,6 +184,24 @@ test("proxy restricts routes, methods, origins, content types and sanitizes back
     for (const bad of ["inspections/../review", "inspections/./review"]) assert.equal((await proxyQuality(req("PATCH"), bad)).status, 404);
     assert.equal((await proxyQuality(req("POST"), "snapshot")).status, 405);
     assert.equal((await proxyQuality(req("PUT", "http://other.test"), "simulator")).status, 403);
+    // 배포: 컨테이너 내부 주소(:3000)로 들어와도 공개 주소(Host :3100)와 Origin이 같으면 허용한다(#110)
+    const deployed = (headers) => new Request("http://0.0.0.0:3000/api/quality/fault-images", { method: "DELETE", body: '{"ids":[]}', headers });
+    global.fetch = async () => Response.json({ deletedIds: [] });
+    assert.equal((await proxyQuality(deployed({ origin: "http://192.168.133.106:3100", host: "192.168.133.106:3100" }), "fault-images")).status, 200);
+    assert.equal((await proxyQuality(deployed({ origin: "http://192.168.133.106:3100", "sec-fetch-site": "same-origin" }), "fault-images")).status, 200);
+    assert.equal((await proxyQuality(deployed({ origin: "http://evil.example", host: "192.168.133.106:3100" }), "fault-images")).status, 403);
+    assert.equal((await proxyQuality(deployed({ origin: "http://192.168.133.106:3100", host: "192.168.133.106:3100", "sec-fetch-site": "cross-site" }), "fault-images")).status, 403);
+    assert.equal((await proxyQuality(deployed({ origin: "null", host: "192.168.133.106:3100" }), "fault-images")).status, 403);
+    // 대량 CSV는 5초에 끊지 않는다(#109): 6초 걸리는 CSV도 받고, 같은 지연의 snapshot은 끊긴다
+    assert.ok(CSV_TIMEOUT_MS >= 60_000);
+    const slow = (body, type) => async (url, options) => {
+      await new Promise((resolve, reject) => { const t = setTimeout(resolve, 6000); options.signal.addEventListener("abort", () => { clearTimeout(t); reject(options.signal.reason); }); });
+      return new Response(body, { headers: { "Content-Type": type } });
+    };
+    global.fetch = slow("﻿a\r\n", "text/csv; charset=utf-8");
+    assert.equal((await proxyQuality(req(), "inspections.csv")).status, 200);
+    global.fetch = slow("{}", "application/json");
+    assert.equal((await proxyQuality(req(), "snapshot")).status, 503);
     global.fetch = async (url, options) => { assert.equal(String(url), "http://backend:8000/v1/quality/snapshot"); assert.equal(options.redirect, "error"); return Response.json({ safe: true }); };
     const ok = await proxyQuality(req(), "snapshot"); assert.equal(ok.status, 200); assert.equal(ok.headers.get("cache-control"), "no-store");
     global.fetch = async () => new Response("<html>private</html>", { headers: { "Content-Type": "text/html" } });
