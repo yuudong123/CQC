@@ -362,8 +362,12 @@ export function throughputSeries(
   const times = history.map((row) => row.timestamp);
   const oldest = history.length >= cap ? Math.min(...times) : -Infinity;
   const total = Math.round((minutes * 60) / stepSeconds);
+  // 계산 시각을 step 눈금에 고정한다. 조회(1초)마다 end를 그대로 쓰면 창 경계가 1초씩 흔들려
+  // 지난 구간 값이 바뀌고 굴곡이 생겼다 사라진다.
+  const step = stepSeconds * 1000;
+  const last = Math.floor(end / step) * step;
   return Array.from({ length: total + 1 }, (_, index) => {
-    const at = end - (total - index) * stepSeconds * 1000;
+    const at = last - (total - index) * step;
     const from = at - windowSeconds * 1000;
     if (from < oldest) return { at, value: null };
     const count = times.filter((time) => time > from && time <= at).length;

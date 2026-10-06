@@ -172,6 +172,15 @@ test("throughput series is a moving average over saved history and leaves uncoll
   assert.equal(capped[0].value, null);
   assert.equal(capped.at(-1).value, 0.5);
 });
+test("throughput series keeps past points fixed between 1-second polls", () => {
+  // 지터가 있는 2초 간격 투입. 조회 시각이 1초 밀려도 이미 지난 점의 값은 그대로여야 한다.
+  const history = Array.from({ length: 150 }, (_, i) => ({ timestamp: start + 300_000 - i * 2000 - (i % 3) * 400 }));
+  const a = throughputSeries(history, start + 300_500);
+  const b = throughputSeries(history, start + 303_500);
+  assert.equal(a.at(-1).at % 2000, 0);
+  const valueAt = new Map(b.map((point) => [point.at, point.value]));
+  for (const point of a.slice(1)) assert.equal(valueAt.get(point.at), point.value);
+});
 test("exceptions keep only reinspection and error rows with a reason", () => {
   const base = { excluded: false, reviewRequired: false, errorCode: "NONE", processingStatus: "COMPLETED", cultivarConfidence: 100, confidence: 99, control: "SUCCEEDED" };
   assert.equal(exceptionOf(base), null);
