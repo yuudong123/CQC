@@ -66,8 +66,9 @@ pipeline {
     // ========================================================
     // GitHub에 push가 발생하면 Jenkins Pipeline을 자동 실행한다.
     //
-    // Jenkins Job은 Pipeline script from SCM을 사용하고,
-    // Branch Specifier는 */feat/mlops로 설정한다.
+    // 배포 Job은 Pipeline script from SCM의 Branch Specifier를 */dev로 설정한다.
+    // PR 검사는 .github/workflows/pr-checks.yml에서 수행한다.
+    // 이 파일의 배포 단계는 dev에서만 실행한다.
     //
     // GitHub 저장소의 Webhook이 Jenkins와 연결되어 있어야
     // push 이벤트가 Jenkins로 전달된다.
@@ -102,6 +103,22 @@ pipeline {
     
     stages {
 
+        stage('Branch Policy') {
+            steps {
+                script {
+                    // Multibranch uses BRANCH_NAME; a single Pipeline-from-SCM Job
+                    // can expose only its configured SCM Branch Specifier.
+                    def branch = env.BRANCH_NAME ?: env.GIT_BRANCH ?: scm.branches?.first()?.name ?: ''
+                    def normalized = branch.replaceFirst('^refs/heads/', '')
+                                           .replaceFirst('^refs/remotes/', '')
+                                           .replaceFirst('^origin/', '')
+                                           .replaceFirst('^\\*/', '')
+                    env.CQC_DEPLOY_ALLOWED = (!env.CHANGE_ID && normalized == 'dev') ? 'true' : 'false'
+                    echo "Branch policy: branch=${branch}, PR=${env.CHANGE_ID ?: 'none'}, deploy=${env.CQC_DEPLOY_ALLOWED}"
+                }
+            }
+        }
+
         // Keep recovery outside the CI/CD timeout so it receives its own budget.
         stage('CI/CD') {
             options {
@@ -118,8 +135,7 @@ pipeline {
         // 따라서 Jenkinsfile 내부에서 별도의 git clone / checkout을
         // 다시 수행하지 않는다.
         //
-        // 현재 작업 브랜치를 feat/mlops로 사용할 경우,
-        // Jenkins Job의 Branch Specifier를 */feat/mlops로 설정한다.
+        // 배포 Job의 Branch Specifier는 */dev로 설정한다.
         //
         // 이 단계에서는 Jenkins 실행 환경에서
         // Git / Docker / Docker Compose 사용 가능 여부를 확인한다.
@@ -141,7 +157,7 @@ pipeline {
                     echo "======================================"
                     git branch --show-current || true
                     git rev-parse --short HEAD
-                    if [ -f .cqc-deploy-state/pending ]; then
+                    if [ "${CQC_DEPLOY_ALLOWED:-false}" = true ] && [ -f .cqc-deploy-state/pending ]; then
                         echo "Recovering an interrupted deployment before starting CI..."
                         sh scripts/ci/compose-rollback.sh
                     fi
@@ -235,6 +251,8 @@ pipeline {
         // ====================================================
         stage('Docker Build') {
 
+            when { expression { env.CQC_DEPLOY_ALLOWED == 'true' } }
+
             steps {
 
                 sh '''
@@ -307,6 +325,8 @@ pipeline {
         // ====================================================
         stage('Deploy') {
 
+            when { expression { env.CQC_DEPLOY_ALLOWED == 'true' } }
+
             steps {
 
                 sh '''
@@ -339,6 +359,8 @@ pipeline {
         // 서비스별 최대 120초 동안 반복 확인한다.
         // ====================================================
         stage('Verify') {
+
+            when { expression { env.CQC_DEPLOY_ALLOWED == 'true' } }
 
             steps {
 
@@ -438,7 +460,7 @@ print('Simulator playback OK:', data)
             timeout(time: 5, unit: 'MINUTES') {
                 sh '''
                     set -eu
-                    if [ -f .cqc-deploy-state/pending ]; then
+                    if [ "${CQC_DEPLOY_ALLOWED:-false}" = true ] && [ -f .cqc-deploy-state/pending ]; then
                         echo "Restoring the previous healthy deployment..."
                         sh scripts/ci/compose-rollback.sh
                     fi
