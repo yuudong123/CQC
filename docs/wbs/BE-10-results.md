@@ -2,9 +2,10 @@
 
 - 작성일: 2026-10-05
 - 계획·계약·입력·기대 결과: [BE-10.md](BE-10.md)
-- 현재 단계: **2/4 로컬·격리 핵심 통합 검증 수행. OBS-01 Backend 수정·로컬 회귀 확인; 3/4~4/4 미실행**
+- 현재 단계: **3/4 Linux·실제 MySQL 검증 실행 완료: 15 ID 중 13 PASS / 0 FAIL / 2 DEFERRED(문서·계약 및 정량 기준 후속 이관). 4/4 미실행**
 - 1/4에서는 시험을 실행하지 않았다. 이번 2/4 실행 결과는 §9에 새 기준선과 함께 기록하며, 과거 단위/CI 기록을 이번 PASS로 전환하지 않는다.
 - 아래 표는 결과 기록 틀이다. `미실행`과 `차단`은 실패를 관측했다는 뜻이 아니다. 향후 실행 시 동일 ID의 분기별 결과·증거를 모두 연결하고, 일부 분기 통과만으로 전체 ID를 PASS 처리하지 않는다.
+- `DEFERRED`는 사용자 결정에 따라 후속 Issue·단계로 이관한 항목이며 제품 FAIL이 아니다. 3/4의 두 DEFERRED 항목은 §11.5에 최종 분류했다.
 
 ## 1. 기준선과 실행 전 확인
 
@@ -54,21 +55,21 @@
 | BE10-BND-04 | 2/4 | PASS (C/L) | §9 BND-04 / local evidence | 실제 chunked 경계 + ASGI 과소CL/추가part/파일 정리 |
 | BE10-DUP-01 | 2/4 | PASS (C/L) | §9 DUP-01 / 실MySQL 전용 pytest | 현재 migration 실DB 순차409·기존 행 불변 |
 | BE10-DUP-02 | 2/4 | PASS (C/L) | §9 DUP-02 / 실MySQL 전용 pytest | 독립 persistence 동시200 하나·409 하나 |
-| BE10-DB-01 | 3/4 | 미실행 | — | LKG warm, 실제 DB 장애 / 장애 주입 구분 |
-| BE10-DB-02 | 3/4 | 미실행 | — | DB 복구·새 이력 저장 |
-| BE10-DB-03 | 3/4 | 미실행 | — | cold/LKG 부재·잘못된 mapping |
-| BE10-OPS-01 | 3/4 | 미실행 | — | 이력·필터·pagination·KST |
-| BE10-OPS-02 | 3/4 | 미실행 | — | 정상/저신뢰/시스템 오류/당도 누락 집계 |
-| BE10-OPS-03 | 3/4 | 미실행 | — | 필터 전체 CSV·BOM・행 집합 |
-| BE10-OPS-04 | 3/4 | 미실행 | — | 조회 성능 수치는 DEC-02 승인 대기 |
-| BE10-RET-01 | 3/4 | 미실행 | — | 86,400 / 8,640, 격리 시험 DB 필수 |
-| BE10-IMG-01 | 3/4 | 미실행 | — | 4종 시스템 / 3종 저신뢰 저장·sidecar |
-| BE10-IMG-02 | 3/4 | 미실행 | — | 이미지 100 / 200 독립 순환 |
-| BE10-IMG-03 | 3/4 | 미실행 | — | category / inspectionId / 기존 sidecar |
-| BE10-IMG-04 | 3/4 | 미실행 | — | DB 이력 없이 sidecar 독립 조회 |
-| BE10-IMG-05 | 3/4 | 미실행 | — | preview / delete / cache 금지 |
-| BE10-LOG-01 | 3/4 | 미실행 | — | 저장 결과 ERROR 추적·저신뢰 성공 무ERROR |
-| BE10-SIM-01 | 3/4 | 미실행 | — | position 복구·OFF |
+| BE10-DB-01 | 3/4 | PASS (L) | §11 DB-01 | 실제 중단과 주입 구분·LKG·저장 실패 |
+| BE10-DB-02 | 3/4 | PASS (L) | §11 DB-02 | Backend 무재시작 복구·mapping 갱신 |
+| BE10-DB-03 | 3/4 | PASS (L) | §11 DB-03 | cold500·불완전 mapping500·제어0 |
+| BE10-OPS-01 | 3/4 | DEFERRED (현행 API 검증 PASS) | §11 OPS-01 | model 필터 문서·계약 정합성 및 추가 필요성은 #68 BE-11로 이관 |
+| BE10-OPS-02 | 3/4 | PASS (C/L) | §11 OPS-02 | 20행 정책·DB/API/snapshot 일치 |
+| BE10-OPS-03 | 3/4 | PASS (L) | §11 OPS-03 | 필터 전체 CSV·BOM·KST/ms |
+| BE10-OPS-04 | 3/4 | DEFERRED (관측 완료) | §11 OPS-04 | 정량 PASS/FAIL은 #65 및 BE-10 4/4 최종 수용 기준으로 이관 |
+| BE10-RET-01 | 3/4 | PASS (L) | §11 RET-01 | 86,400 / 8,640·혼합/FK/cache·이미지 독립 |
+| BE10-IMG-01 | 3/4 | PASS (C/L) | §11 IMG-01 | 4건 시스템·3건 low 및 제어 예외 비저장 |
+| BE10-IMG-02 | 3/4 | PASS (L) | §11 IMG-02 | 이미지 100 / 200 독립 순환 |
+| BE10-IMG-03 | 3/4 | PASS (L) | §11 IMG-03 | category / inspectionId / legacy |
+| BE10-IMG-04 | 3/4 | PASS (L) | §11 IMG-04 | DB 없는 sidecar 독립 조회 |
+| BE10-IMG-05 | 3/4 | PASS (L) | §11 IMG-05 | 300 ID·preview/delete·cache·경쟁 회귀 |
+| BE10-LOG-01 | 3/4 | PASS (C/L) | §11 LOG-01 | 실제 error.log·DB/sidecar/late 연결 |
+| BE10-SIM-01 | 3/4 | PASS (L) | §11 SIM-01 | process/container·position·OFF·실MySQL |
 | BE10-E2E-01 | 4/4 | 미실행 | — | 정상 판정·저장 100건; DEC-03 |
 | BE10-E2E-02 | 4/4 | 미실행 | — | 2초 자연 timeout; DEC-01 승인 대기 |
 | BE10-E2E-03 | 4/4 | 미실행 | — | FE-DEP-01: PR #92 merge·배포 확인 |
@@ -146,18 +147,18 @@ PASS는 계획의 API·판정·제어·DB·통계·CSV·이미지·로그 조건
 | ENV-01 | 실제 배포·DB·Inference·mount·worker 미확인 | MO/DM 환경 제공 및 run 기준선 기록 | 실제 환경 시험 |
 | FE-DEP-01 | 기준선 FE parser/generator와 #55 차이; PR #92 open | FE merge·배포·Backend OpenAPI 일치 확인 | FE E2E, Backend 저장/API 단독 시험은 독립 |
 | DEC-01 | N/자연 timeout 허용률/반복 미확정 | 사용자 최종 승인 | E2E-02 PASS 판정 |
-| OBS-01 | 2/4 당시 추가 재현 FAIL: 점 포함 ID의 이미지 필터422·목록500. 이후 Backend 수정·로컬 회귀 통과 | 과거 증거 §9.4, 수정 검증 §9.5 | Backend 구현 blocker 해소. 3/4 실제 DB·보존 수용은 미실행, FE 파서는 후속 동기화 필요 |
-| DEC-02 | timer 오차·조회 부하·응답시간 수치 미확정 | 사용자 최종 승인, BE/MO 측정 협의 | 정량 timer/조회 성능 PASS 판정 |
+| OBS-01 | 2/4 당시 추가 재현 FAIL: 점 포함 ID의 이미지 필터422·목록500. 이후 Backend 수정·로컬 회귀 통과 | 과거 증거 §9.4, 수정 검증 §9.5, 실제 MySQL·이미지 연결 검증 §11 | Backend 구현 blocker 해소. FE 브라우저 검증은 4/4 |
+| DEC-02 | timer 오차·조회 부하·응답시간 수치 미확정 | timer는 사용자 최종 승인, BE/MO 측정 협의. 조회/CSV 정량 판정은 DEFERRED로 #65 및 BE-10 4/4에 이관 | 정량 timer/조회 성능 PASS 판정; 3/4 실행 완료는 차단하지 않음 |
 | DEC-03 | 정상100 후보 최신 실제 판정·manifest 미확인 | 2/4 BE+DM 후보 확인, 별도 run 고정 | 정상100 실행 |
 
 | 단계 | 현재 결과 | 완료 판단 조건 |
 |---|---|---|
 | 1/4 | 기준선·47개 명세·결과 틀 작성. 정량 후보 승인 대기 | 사용자 계획 확인, 미확정/의존성 인지. 제품 blocker 해결이나 실시험 통과를 뜻하지 않음 |
 | 2/4 | 정의된 27개 로컬 PASS, 별도 OBS-01 관측 FAIL 후 Backend 수정·로컬 회귀 통과 | C/L 분기 증거 §9. 실제 배포 S 수용을 대체하지 않음. 과거 OBS-01 관측도 보존 |
-| 3/4 | 미실행 | 15개 실제 DB·보존·조회·복구 증거 확보, MySQL skip를 PASS로 대체하지 않음 |
+| 3/4 | 실행 완료: 13 PASS / 0 FAIL / 2 DEFERRED | 실제 DB·보존·조회·복구 증거 §11. model 필터 문서·계약은 #68 BE-11, 조회/CSV 정량 판정은 #65 및 4/4로 이관 |
 | 4/4 | 미실행 | 5개 동일 배포 기준선 수용, 정상100·승인 정량 기준·FE·운영 복구 통과 |
 
-BE-10 2/4 로컬 핵심 검증은 §9에 기록했다. 3/4~4/4는 아직 미실행이며 아래 KB·OBS 수정 검증이나 로컬 PASS를 BE-10 종료 또는 Issue #66 완료로 사용하지 않는다. 후속 단계는 환경 준비 후 별도 지시로 진행한다.
+BE-10 2/4 로컬 핵심 검증은 §9, 3/4 Linux·실제 MySQL 실행 결과는 §11에 기록했다. 3/4 실행은 완료했으며 두 DEFERRED 항목은 제품 FAIL이 아니다. 4/4는 아직 미실행이므로 이를 BE-10 전체 종료 또는 Issue #66 완료로 사용하지 않는다. 4/4는 환경·수용 기준 준비 후 별도 지시로 진행한다.
 
 ## 7. KB-01 수정 검증
 
@@ -388,3 +389,111 @@ Windows Python 3.13.15의 기존 `.venv`에서 실행했다. 수정 전 제어·
 실행 자료는 로컬 `outputs/issue95-validation/integration.log`, `integration.xml`, `integration-evidence.jsonl`에 남겼다(기존 outputs ignore 정책 적용). 시험 종료 후 `cqc.test=issue95` label을 확인한 컨테이너 2개와 해당 임시 볼륨만 제거했다. 전체 회귀에서 skip된 조건부 통합78개는 별도 환경에서 PASS했고, 기존 완료 run 전용 evidence audit1개는 이번 범위에서 실행하지 않았다.
 
 **#95의 코드·로컬 검증·기록 완료 조건은 충족했다.** GitHub Issue 상태는 변경하지 않았으며 commit·배포도 하지 않았다. 수정 배포 후 #73 8시간 시험을 진행할 수 있고, #95로 인한 BE-10 3/4 blocker는 로컬 기준 해소했다. 이번 검증은 #73 8시간 측정이나 BE-10 3/4 전체 수용 완료를 대체하지 않는다.
+
+## 11. BE-10 3/4 실제 MySQL·Linux 검증
+
+2026-10-06 KST, 기준 HEAD `2c859dd`(PR #102 merge). #66, #70, #95, #99, #101 본문·댓글을 확인했다. #95·#99·#101은 확인 시 CLOSED였다. #70의 운영 서버 결과는 참고 자료이며 아래 시험의 PASS 근거로 대체하지 않았다. FE parser 수정은 #101에 기록되어 있으나 실제 FE 브라우저 연결은 4/4에서 확인한다.
+
+### 11.1 환경·증거와 판정 범위
+
+- Backend/pytest는 **Linux 컨테이너 내부 `/app`**에서 실행했다. 현재 `src`·`tests`를 복사하고 공유 OpenAPI를 read-only mount했다. Python **3.11.17**, pytest **9.1.1**, Linux WSL2 kernel **6.18.33.2**다. 목표 서버/Python 3.13 환경의 성능 수용을 주장하지 않는다.
+- 실제 `mysql:8.4`, Alembic head `20260929_02`, 활성 정상 12 + 재검사 1 mapping을 사용했다. `cqc-be10-3-*` 전용 컨테이너·network·MySQL volume만 생성/중단/삭제했다. 기존 Compose 5개 서비스, 공용 DB, Jenkins는 변경하지 않았다.
+- schema는 수용 시험 `be10_3`, 핵심 통합 `be10_3_core`, 일반 MySQL 회귀 `cqc_test`, 축소 보존 `be10_3_retention`으로 분리했다. localhost 전용 기존 보존 시험에는 Linux runner의 loopback TCP forwarder를 사용했다. 실제 DB는 동일한 전용 MySQL이며 대역 DB가 아니다.
+- 이미지·sidecar·임시 파일은 **Linux `/tmp/pytest-of-root/...`**에 저장했다. 증거 JSON/로그만 `outputs/be10-3/`로 반출했다. Windows 공유 경로에 fault 이미지 저장을 수행한 결과로 혼동하지 않는다.
+- Inference는 3/4의 판정 fixture용 socket HTTP responder, 제어는 현재 Mock Virtual Control이다. 전체 회귀의 BE-10 핵심 시험에서는 승인 모델·대표 데이터셋을 별도 Linux Inference에 연결했다. 자연 timeout·CPU 경합 수용은 4/4다.
+- 테스트용 DB를 실제 중단/재기동했다. 같은 Backend app/pool의 복구를 확인했으며 장애분 backfill은 하지 않았다. 초기 저장과 최종 저장 실패 시 API의 FAILED와 DB 미저장/PENDING의 차이는 유실 허용 계약대로 기록했다.
+
+로컬 원본 증거(기존 outputs ignore 적용):
+
+| 증거 | 내용 |
+|---|---|
+| `outputs/be10-3/environment.json` | HEAD·환경·격리 설명, 비밀값 없음 |
+| `acceptance-evidence.jsonl` | 시험 ID별 API, 실제 DB 행·제어, sidecar, CSV·건수·성능·process 증거. 재실행 기록은 append하며 동일 ID의 최종 해당 기록을 사용 |
+| `full-acceptance.log/xml` | Linux 9개 수용 pytest 최종 run |
+| `regression.log/xml` | Backend·Simulator·MySQL·실모델 핵심·logging 전체 회귀 |
+| `supplement-acceptance.log/xml` | 최종 정상 판정 저장 실패·DB_ERROR·errors 8·혼합 기본 보존 보완 검증 |
+| `period-acceptance.log/xml` | 86,400건 중 KST 오늘43,200건의 기간 필터 조회·전체 CSV 관측 |
+| `core-evidence.jsonl` | BE-10 핵심 회귀의 실제 API/DB/late 진단 |
+| `container-recovery.json`, `container-simulator-*.log` | 독립 Simulator 컨테이너 재생성·position volume·OFF·MySQL 저장 |
+| `error.log`, `mysql.log` | 실제 ERROR 파일 및 전용 MySQL 중단/복구 로그 |
+| `run_linux.py`, `mysql_proxy.py`, `container_recovery.py` | 로컬 시험 orchestration. 임의 인증정보는 프로세스 환경에만 두고 증거에 기록하지 않음 |
+
+### 11.2 15개 시험 ID의 결과
+
+`D`는 JSONL의 `db`/`newest_db`/실SQL count, `A`는 `api`/`history`/`snapshot`/`statistics`, `F`는 sidecar/CSV/log/process 증거다. 각 행의 JSONL ID와 연결하면 입력·기대·실측 및 원래 inspection_id를 확인할 수 있다. 입력 fixture ID를 실제 시연 정상 100건 수용 집합으로 보지 않는다.
+
+| 시험 ID | 판정 | 입력·기대 결과 | 실제 결과·inspection_id | DB/API/파일 증거 | 후속 |
+|---|---|---|---|---|---|
+| BE10-DB-01 | PASS | warm LKG 뒤 실제 MySQL 중단; 별도 DB_ERROR. 판정·제어 유지, persistence FAILED, DB GET/CSV503 | `be10-3.outage-normal/low`: 정상/저신뢰 제어 SUCCEEDED·저장 FAILED. DB 조회 5종 DB_UNAVAILABLE. low sidecar/preview200. 주입은 정상 DB에서 별도 확인 | D: outage 행0; A: DB-01/DB-01-INJECTED; F: sidecar·MySQL log | 장애분 유실 허용, backfill 없음 |
+| BE10-DB-02 | PASS | DB 복구 후 같은 Backend/pool로 다음 검사 저장·유효 mapping 갱신 | `be10-3.recovered`: SUCCEEDED, 변경 `BE10_RECOVERED_BIN` 사용, 조회200. outage 두 ID는 복구 뒤도 없음 | D/A: DB-02의 API·실제 행; F: stop/start 로그 | 운영 서버 복구는 4/4 별도 |
+| BE10-DB-03 | PASS | cold/no LKG outage 및 DB 정상 불완전 mapping은500·제어0 | `be10-3.cold-outage`: 행0. `be10-3.invalid-mapping`: COMPLETED·NOT_REQUESTED·SUCCEEDED, BIN_MAPPING_CONFIGURATION_ERROR, bin null, 추가 제어0 | D/A: DB-03; mapping active13→12 실SQL 변경·복원 | HTTP500 저장 행이 비제외인 기존 동작 유지 |
+| BE10-OPS-01 | DEFERRED (현행 API 검증 PASS) | 기간·품종·등급·bin·상태·오류·검수, 50/100/200 page, KST/ms, 원 판정 불변 | 225행 최신순·page200+25와 SQL ID 순서 일치. 리뷰200/없는 ID404, invalid422. `.`, KST 자정±ms 및 snapshotAt 검증. **문서 model 필터 분기는 현 API 미지원** | D/A: OPS-01, OPS-01/03-KST, KB-01/OBS-01/STORAGE; F: 필터별 CSV ID 집합 | 문서·계약 정합성 및 model 필터 추가 필요성은 #68 BE-11로 이관. 3/4 신규 기능 구현 없음 |
+| BE10-OPS-02 | PASS | 정상12+low3+system4+당도누락1, total20/normal16/excluded4/reinspection8/inferenceCount16 | 20행 fixture의 API·SQL·snapshot 일치. 품종/품질 분포 합16, 정상12bin+재검사. low 포함·system 제외 유지 | D/A: OPS-02의 20개 원 행·summary·snapshot | 정상100 수용 아님 |
+| BE10-OPS-03 | PASS | API 동일 filters/snapshot의 전체 CSV, BOM·한글·KST·ms | pageSize50이어도225행 전체 출력, SQL/API ID 집합 일치. EFBBBF, 부사/특, `00:00:00.123`, 통계 CSV total225, 이미지 미포함·no-store | A/F: OPS-03, OPS-01/03-KST의 header/row/경계 증거 | 운영 다운로드 경로는 4/4 |
+| BE10-OPS-04 | DEFERRED (관측 완료) | 86,400건 목록·통계·snapshot·CSV 관측; 사전 정량 합격 기준 없음 | 각200·CSV86,400행. p50/p95/max 아래 표, 전체 CSV 중앙값 **34.82초**. 사용자 답변 **관측값 기록, 정량 판정 보류**에 따라 임의 기준 및 성능 PASS/FAIL을 만들지 않음 | D/A/F: OPS-04의 5회 raw sample·bytes·rows | 정량 PASS/FAIL은 #65 및 BE-10 4/4 최종 수용 기준으로 이관 |
+| BE10-RET-01 | PASS | 축소·기본 86,399→86,400, oldest8640삭제·잔존77760·FK·cache·이미지 독립 | 실제 기본 경계와 초과 DB 축소7→3, 외부 삭제 cache4 보정. 혼합 잔존77760 중 system15552/비제외62208, API·SQL·CSV 일치, 이미지7 유지 | D/A/F: RET-01, RET-01-MIXED; FK0, `.fixture-15` 삭제 뒤 sidecar/preview200 | 운영 장기 관측은 #73 |
+| BE10-IMG-01 | PASS | 정상/당도누락/control 예외0, low3/system4 저장 및 진단 근거 | `.fixture-12~18` low3/system4. 정상·당도누락·실패·무응답·거부/대체는 추가 이미지0. low errorCode null·system 코드/사유, threshold0.5/0.6 | D/A/F: IMG-01의 DB20·API7·sidecar7 | 실모델/운영 입력 수용 별도 |
+| BE10-IMG-02 | PASS | system101→100, low201→200, 독립 oldest 제거·DB 원 행 유지 | 각 `.SYSTEM_ERROR-000`/`.LOW_CONFIDENCE-000` 이미지만 제거; 최신 1~100/1~200, 합300. 해당 DB 검사·원 판정은 보존 | D/A/F: IMG-02의 ID 집합·DB 상태·Linux root | #99 Windows 결과와 분리 |
+| BE10-IMG-03 | PASS | category/inspectionId·legacy 6-field·invalid422 | 두 category200, dotted ID200, invalid category/경로422. legacy SYSTEM_ERROR·미존재 confidence/threshold null | A/F: IMG-03의 legacy 실sidecar 변경·응답 | FE 표시·parser는 4/4 |
+| BE10-IMG-04 | PASS | DB 없는 sidecar 독립 조회, 이력 복원 없음 | low outage 미저장 ID와 `.LOW_CONFIDENCE-200` 행 삭제 후 목록/preview200, 검수404. retention 삭제 sidecar도 유지 | D/A/F: DB-01, IMG-04, RET-01-MIXED | DB 장애 중 DB 기반 API503는 정상 계약 |
+| BE10-IMG-05 | PASS | 두 root 선택/300 ID·중복·없는 ID·확인 후 새 이미지·만료 | 중복 선택1개 삭제, 남은299 bulk 삭제200, 이후 idempotent0, malformed422, 삭제 preview410, 확인 후 신규 preview200 | A/F: IMG-05, 전체 회귀의 save/prune/list/delete 경쟁 시험 | DB/검수 변경 없음 |
+| BE10-LOG-01 | PASS | 실제 error.log saved/disabled/failed; low 성공 ERROR 없음·디스크실패ERROR; 정책 불변 | `.log-saved/disabled/failed/low/low-failed`의 원 verdict·제어·DB 저장 유지. 초기/최종 DB 장애 ID 추적. late는 원 판정과 분리 DB 진단 저장 | D/A/F: LOG-01, error.log, core TIM-04/06·MySQL late 회귀 | 배포 log rotation/Volume은 4/4 |
+| BE10-SIM-01 | PASS | 정지/재개·process/container 재생성·position·OFF·HTTP 실패·동시 완료 | Linux process0→2→3, 재생성3→6. 별도 container0→3、재생성3→5, OFF, 실제 DB 신규5행/각12 frames·다음 demo-1 이어감. HTTP 실패·동시 완료·revision/NEXT는 회귀 포함 | D/A/F: SIM-01의 PID·state·DB·로그, container-recovery.json, Simulator 회귀 | 목표 서버 Volume 복구는 4/4 |
+
+KB-01/OBS-01 추가 증거: `be10-3.duplicate-low` 최초200·3장 low 이미지 저장 뒤 동일 ID409, DB 행 전체 불변, Inference/Control/이미지/active task 증가0. 동시 ID는200 하나/409 하나·Inference1/Control1. dotted ID가 history/snapshot/review/이미지 preview/CSV/recent jobs에 연결되고 Backend500/422 없음. 직접 history `inspectionId` 필터는 현행 관제 계약에 없어422이며 목록의 정확한 ID 연결과 별개다.
+
+### 11.3 86,400건 성능 관측
+
+각 endpoint **5회**, p95는 nearest-rank(표본5이므로 최대값과 같음). 워밍업/운영 부하/목표 서버 CPU를 통제한 성능 수용이 아니다. 해당 실제 행 수에서 status200·CSV 행 수를 확인했으며, 아래 지연만으로 FAIL 또는 PASS를 정하지 않았다.
+
+| API | p50(ms) | p95/max(ms) | 응답 bytes |
+|---|---:|---:|---:|
+| inspections(기본50) | 634.35 | 1089.06 | 25,150 |
+| statistics | 1113.46 | 1454.85 | 215 |
+| snapshot | 1531.47 | 1606.66 | 103,093 |
+| inspections.csv 전체86,400 | 34816.87 | 36458.14 | 15,725,077 |
+
+별도 기간 fixture는 정상86,400행 중 KST 오늘43,200/전일43,200이다. 오늘 from/to·동일 snapshotAt에서 목록5회 **p50 588.48ms / p95·최대604.49ms**, 필터 전체 CSV **1회16,068.65ms / 7,905,877bytes / 43,200행**이었다. SQL 선택 건수·API total·CSV 정확한 ID 집합이 일치했고 DB 총수86,400은 불변이었다. CSV 1회 표본의 p95를 주장하지 않는다(`BE10-OPS-04-PERIOD`).
+
+전체 CSV 중앙값 **34.82초**(원 관측값 34,816.87ms)는 후속 성능 검토 입력으로 유지한다. 현재 `completed_at` 정렬·keyset 조회에 대응하는 index가 없는 것은 코드상 확인되지만, index 추가/스키마 변경은 이번에 하지 않았다. 기간·정렬·snapshot·전체 CSV 관측은 수행했고, 사전에 확정되지 않은 **정량 PASS/FAIL은 DEFERRED로 #65 및 BE-10 4/4 최종 수용 기준에 이관**한다.
+
+### 11.4 실패 재현·원인·영향·조치
+
+제품 결함으로 오인하지 않고 첫 FAIL 원본 `first-acceptance.*`, `first-regression.*`, `corrected.xml`을 보존했다.
+
+1. 실행기 준비 시 없는 `pyproject.toml` 참조로 `cp` 실패: 테스트 준비 오류. 생성된 빈 경로 및 전용 리소스만 제거하고 잘못된 참조를 삭제했다.
+2. 신규 malformed ID 시험이 유효 문자열 `bad`를422로 기대: 기존 계약은 유효한 미존재 ID 삭제200이다. `bad/path`로 fixture 수정 후 이미지 시험 PASS. 제품 변경 없음.
+3. Simulator endpoint를 base URL 설정에 넣어 `/v1/inspections/v1/inspections` 404: position이 실패 요청 뒤 진행하는 현행 정책은 관측했지만 실제 DB 저장 증거가 없어 해당 실행을 PASS로 쓰지 않았다. base URL 수정 후 실제 HTTP·MySQL 저장으로 재검증.
+4. SIGTERM 종료 코드를0만 기대: Uvicorn 종료 후 `-15` 전달은 정상 종료 방식이다. 0/-SIGTERM과 `Application shutdown complete` 로그를 함께 확인했다.
+5. 전체 회귀의 계약 파일 미mount 6 FAIL, core/집계 fixture의 schema 공유로 total100 vs5 1 FAIL: 격리 harness 결함이다. 공유 계약 read-only mount, core·일반 회귀 DB 분리로 재실행했다. Linux MySQL 보존 전용 hostname guard skip도 loopback forwarder로 해결했다.
+6. 컨테이너 복구 harness가 기존 입력 dataset 디렉터리를 재사용해 FileExistsError: Windows rename 접근 거부와 다른 준비 오류다. 새 고유 입력 경로를 사용해 실제 Linux container/position volume·MySQL 저장을 다시 검증했다.
+
+이 실패들은 원인·영향이 시험 코드/준비에 한정되어 Backend 제품 코드를 수정하지 않았다. 최종 제품 FAIL은 없다.
+
+### 11.5 최종 집계·4/4 인계
+
+**15 ID: 13 PASS / 0 FAIL / 2 DEFERRED. 3/4 실행 완료.** 2026-10-06 사용자 최종 분류에 따라 아래 두 항목은 제품 FAIL이 아닌 후속 이관으로 기록한다. 현행 API 계약에 따른 기능 검증과 성능 관측은 완료했으며, 기존 계약의 4/4 착수는 가능하다. BE-10 전체 최종 수용은 4/4 결과를 별도로 따른다.
+
+| 항목 | 최종 분류 및 이관 |
+|---|---|
+| OPS-01 model 필터 문서/API 차이 | DEFERRED → [#68 BE-11](https://github.com/yuudong123/CQC/issues/68). 문서·계약 정합성과 필터 추가 필요성을 검토하며 3/4에서는 신규 기능을 구현하지 않는다. |
+| OPS-04 조회/CSV 정량 성능 | DEFERRED → [#65 ALL-04](https://github.com/yuudong123/CQC/issues/65) 및 BE-10 4/4 최종 수용 기준. 86,400건 CSV 중앙값 34.82초를 유지하고, 사전 합격 기준이 없어 임의 PASS/FAIL을 정하지 않는다. |
+
+이번 최종 분류는 `BE-10-results.md`와 `BE-10.md`만 수정하며 제품 코드·테스트 변경, 테스트 재실행 및 commit은 하지 않는다. 아래 실행 결과는 기존 증거를 유지한 것이다.
+
+| 최종 실행 | 결과 |
+|---|---|
+| Linux 수용 pytest | **9 PASS**, 326.38s |
+| 정상 최종 저장 장애·DB_ERROR·오류8·혼합 보존 보완 | **5 PASS**, 115.70s (기존3case 재검증 포함) |
+| 86,400건 기간 필터 보완 | **1 PASS**, 38.34s |
+| 독립 Simulator 컨테이너 재생성 | **PASS**, position0→3→5, DB 신규5행, OFF |
+| Backend·Simulator·logging 전체 회귀 | **475 PASS / 1 SKIP**, 108.51s. BE-10 핵심70·실제 MySQL8 포함, 해당78 모두 PASS |
+| 유일한 skip | 기존 completed-run 증거 audit의 `CQC_BE10_AUDIT_RUN` 미설정. DB 연결/수용 시험 skip이 아님 |
+| Ruff | Backend·Simulator 및 관련 전체 시험 **PASS** |
+| format / git diff --check | 신규 Python format **PASS**, diff **PASS** |
+
+서로 다른 run의 재검증 건수를 새 고유 testcase로 중복 집계하지 않는다(신규 opt-in pytest 고유12case, 실행15case). 정상 최종 저장 장애의 `be10-3.final-outage`는 **NORMAL·control SUCCEEDED·API persistence FAILED**, 실제 DB 초기 행 PENDING이었다. DB down으로 best-effort 실패 상태 갱신도 실패할 수 있는 계약이며, 복구 뒤 `.final-recovered`는 SUCCEEDED였다. `be10-2-1ef761d9-late-a`는 DB late payload/received_at만 추가되고 재검사 bin·원 제외 정책·통계가 불변이며 동시 `.normal-b`도 정상 저장됐다.
+
+3/4 실행 당시 수정 파일은 신규 `tests/api/test_be10_operations_integration.py`와 이 결과 문서뿐이다. 로컬 증거·harness는 ignored outputs에 있다. 시험 종료 후 label을 확인하고 전용 컨테이너·MySQL volume·network·position volume만 정리했다.
+
+4/4로 넘기는 범위는 FE 브라우저 E2E·API 모드/실제 표시, 정상100 전체 수용, 2초 자연 timeout 비율, 실모델 CPU 경합·목표 서버 성능, 배포 proxy/body 제한·Volume/log 운영 복구다. #99 Windows 재현 원인을 이번 Linux PASS로 해결했다고 주장하지 않는다. #73 8시간 실제 운영 관측도 이 로컬 시험으로 대체하지 않는다. 기존 기능·공유 API·DB schema·설정·FE·MLOps 배포 파일은 수정하지 않았으며 commit도 하지 않는다.
