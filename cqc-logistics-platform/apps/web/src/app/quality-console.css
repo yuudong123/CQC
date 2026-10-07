@@ -146,8 +146,22 @@
 .qc-col > .qc-trend-panel {
   flex: 1 1 0;
 }
+/* 처리 중 사과는 정상 작동 확인용이라 우하단에 한 줄로 작게 둔다. */
+.qc-col > .qc-jobs-compact {
+  flex: 0 0 auto;
+}
+.qc-jobs-compact .qc-frame-grid {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 3px;
+}
+.qc-jobs-compact .qc-frame-grid span {
+  display: none;
+}
+.qc-jobs-compact .qc-job-info {
+  font-size: 12px;
+}
 .qc-col > .qc-trend-panel {
-  min-height: 340px;
+  min-height: 260px;
 }
 .qc-console .panel-heading {
   flex-shrink: 0;
@@ -203,37 +217,87 @@
 .qc-job small {
   color: var(--muted);
 }
+/* 구성요소 상태는 색 점이 있는 작은 칩으로 한 줄에 모은다. */
 .qc-components {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  margin-bottom: 14px;
-}
-.qc-components > div {
-  display: flex;
-  justify-content: space-between;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
-  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.qc-components > .qc-component {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 6px;
   border: 1px solid var(--line);
-  padding: 10px;
+  border-left-width: 4px;
+  padding: 5px 8px;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 12px;
+  min-width: 0;
+}
+.qc-component i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #1b9b4b;
+}
+.qc-component strong {
+  font-size: 12px;
+}
+.qc-component span {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.qc-component.success { border-left-color: #1b9b4b; }
+.qc-component.warning { border-left-color: #d98b1f; background: #fff8ec; }
+.qc-component.warning i { background: #d98b1f; }
+.qc-component.danger { border-left-color: #c01c31; background: #fdecee; }
+.qc-component.danger i { background: #c01c31; }
+.qc-component.danger span { color: #9d1626; font-weight: 600; }
+.qc-error-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.qc-error-head h3 {
+  margin: 4px 0;
+  font-size: 13px;
+}
+.qc-error-head small,
+.qc-error-more summary {
+  color: var(--muted);
+  font-size: 11px;
+}
+.qc-error-more summary {
+  cursor: pointer;
+  padding: 4px 0;
 }
 .qc-console h3 {
   font-size: 14px;
   margin: 12px 0 8px;
 }
 .qc-error {
-  padding: 8px 0;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px;
+  align-items: baseline;
+  padding: 5px 0;
   border-bottom: 1px solid var(--line);
-  font-size: 13px;
+  font-size: 12px;
 }
 .qc-error time {
-  float: right;
   color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
 .qc-error p {
-  margin: 5px 0;
+  margin: 0;
+  color: #9d1626;
+  font-weight: 600;
 }
 .qc-error small {
   color: var(--muted);
@@ -574,4 +638,56 @@
   .quality-canvas .qc-console .stat strong small {
     display: none;
   }
+}
+
+/* 멀리서도 보이도록 오늘 저장 검사·재검사율을 크게, 나머지 지표는 작게 묶는다. */
+.quality-canvas .qc-console .qc-kpis {
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.3fr) minmax(0, 1fr);
+}
+.quality-canvas .qc-console .qc-kpis .stat.hero {
+  min-height: 104px;
+}
+.quality-canvas .qc-console .qc-kpis .stat.hero strong {
+  font-size: 52px;
+  line-height: 1;
+}
+.quality-canvas .qc-console .qc-kpis .stat.hero strong small {
+  font-size: 20px;
+  margin-left: 6px;
+  color: var(--muted);
+  letter-spacing: 0;
+}
+.quality-canvas .qc-console .qc-kpis .stat.hero.alert strong {
+  color: #c01c31;
+}
+.quality-canvas .qc-console .qc-kpis .stat.hero.alert {
+  border-color: #e9a3ab;
+  background: #fdecee;
+}
+.qc-kpi-mini dl {
+  margin: 0;
+  width: 100%;
+  display: grid;
+  gap: 4px;
+}
+.qc-kpi-mini dl > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+}
+.qc-kpi-mini dt {
+  color: var(--muted);
+  font-weight: 600;
+}
+.qc-kpi-mini dd {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #441d2b;
+  font-variant-numeric: tabular-nums;
+}
+.qc-kpi-mini dl > .danger dd {
+  color: #9d1626;
 }
