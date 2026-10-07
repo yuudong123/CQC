@@ -31,7 +31,8 @@ def _inference_response(
         cultivar_confidence=cultivar_confidence,
         cultivar_probabilities=CultivarProbabilities(
             fuji=cultivar_confidence,
-            yanggwang=1 - cultivar_confidence,
+            # 합계 허용 오차 안의 동률로 0.50 직전 confidence를 표현한다.
+            yanggwang=min(1 - cultivar_confidence, cultivar_confidence),
         ),
         predicted_grade="L",
         quality_confidence=quality_confidence,
@@ -65,7 +66,7 @@ def _inference_response(
             False,
         ),
         (
-            0.49,
+            0.4995,
             0.80,
             InspectionStatus.REINSPECTION_REQUIRED,
             InspectionDecisionReason.LOW_CULTIVAR_CONFIDENCE,
@@ -79,7 +80,7 @@ def _inference_response(
             True,
         ),
         (
-            0.49,
+            0.4995,
             0.59,
             InspectionStatus.REINSPECTION_REQUIRED,
             InspectionDecisionReason.LOW_BOTH_CONFIDENCE,
