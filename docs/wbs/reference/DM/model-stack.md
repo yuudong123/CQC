@@ -2,7 +2,7 @@
 
 - 담당자: 조현재
 - 작성 기한: 2026-09-17
-- 상태: DM-01~DM-09 완료. v1은 최초 Test 품질 승인 실패, 서비스 모델은 v2 후보(미승인·신뢰도 미보정). 서버컴은 합성 입력 측정만 완료
+- 상태(2026-10-06): DM-01~08 완료, DM-09는 동결 후 최종 Test·모델 카드 확정만 남음(#75). v1은 최초 Test 품질 승인 실패. 서비스 모델은 v2 보정 패키지 `cqc-apple-separate12-focal-v2-cal-20260930`(독립 승인 전 후보, 개발 OOF 온도 보정, 임계값 품종 0.50·품질 0.60). 서버컴은 합성 입력(09-23)과 실제 시연 사진(09-30, 내부 p95 309ms) 측정 완료
 
 ## 현재 확정
 
@@ -29,11 +29,11 @@
 
 ## v2 후보 (현재 서비스 모델)
 
-- 패키지: `cqc-apple-separate12-focal-v2-candidate`, 체크포인트 SHA-256 `b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a`
+- 패키지: `cqc-apple-separate12-focal-v2-candidate`에 개발 OOF 온도 보정을 더한 `cqc-apple-separate12-focal-v2-cal-20260930`(09-30부터 서비스), 체크포인트 SHA-256 `b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a`
 - 구조·입력: v1과 같은 `separate`·대표 12장·224×224 RGB
 - 학습: 품질 Focal loss(gamma 2), learning rate 3e-4, dropout 0.4, weight decay 5e-4, Test 제외 152그룹, 4 epoch
 - 개발 검증 품질 Macro F1: 5-fold 평균 0.8844, source 0.7932. 기존 Test 27개는 회귀 진단 1.0000으로 독립 승인 근거가 아님
-- 상태: `approval_status=unverified_candidate`, `threshold_status=not_calibrated`. 서비스 임계값 0.50은 v1 검증 예측 기준이므로 v2 기준 재결정이 필요
+- 상태: `approval_status=unverified_candidate`, `threshold_status=calibrated_dev_oof`. 품질 온도 0.391·품종 온도 0.384로 보정한 뒤 임계값을 품종 0.50·품질 0.60으로 다시 정했다(DM-08, 09-30). 보정 전 `not_calibrated` 단계에서는 v1 기준 0.50을 임시로 썼다
 - 근거: [DM-06](<../../[DM-06] 모델·입력 장수 비교.md>), [DM-09](<../../[DM-09] 최종 Test·모델 카드.md>)
 
 ## v1 선택 설정

@@ -166,7 +166,7 @@ def populate_twenty(client, plans, row):
             }
         elif index < 15:
             plans[identifier] = {
-                "cc": 0.4 if index != 13 else 0.9,
+                "cc": 0.4995 if index != 13 else 0.9,
                 "qc": 0.4 if index != 12 else 0.8,
             }
         elif index < 19:
@@ -190,7 +190,7 @@ def test_mysql_storage_duplicate_and_dotted_id(ops):
     factory, endpoint, plans, calls, row, sessions = ops
     app = factory(endpoint)
     identifier = "be10-3.duplicate-low"
-    plans[identifier] = {"cc": 0.4}
+    plans[identifier] = {"cc": 0.4995}
     with TestClient(app) as client:
         result = post(client, identifier, count=3)
         before = row(identifier)
@@ -493,7 +493,9 @@ def test_images_independent_retention_filter_legacy_orphan_and_delete(ops):
             for i in range(amount):
                 identifier = f"be10-3.{category}-{i:03d}"
                 plans[identifier] = (
-                    {"http_error": 500} if category == "SYSTEM_ERROR" else {"cc": 0.4}
+                    {"http_error": 500}
+                    if category == "SYSTEM_ERROR"
+                    else {"cc": 0.4995}
                 )
                 post(client, identifier)
             items = client.get(
@@ -641,7 +643,7 @@ def test_database_outage_recovery_lkg_and_invalid_mapping(ops):
                 ).mappings()
             ]
         assert len(active) == 13
-        plans["be10-3.outage-low"] = {"cc": 0.4}
+        plans["be10-3.outage-low"] = {"cc": 0.4995}
         mysql_action("stop")
         try:
             normal = post(client, "be10-3.outage-normal")
@@ -793,7 +795,7 @@ def test_final_persistence_outage_and_error_log(ops, tmp_path):
             assert recovered["persistence_status"] == "SUCCEEDED"
             plans["be10-3.log-saved"] = {"http_error": 500}
             saved = post(client, "be10-3.log-saved")
-            plans["be10-3.log-low"] = {"cc": 0.4}
+            plans["be10-3.log-low"] = {"cc": 0.4995}
             low = post(client, "be10-3.log-low")
             handler.flush()
             text = path.read_text()
@@ -814,7 +816,7 @@ def test_final_persistence_outage_and_error_log(ops, tmp_path):
             plans["be10-3.log-failed"] = {"http_error": 500}
             failed = post(client, "be10-3.log-failed")
             service._low_confidence_image_storage = FaultImageStorage(blocked)
-            plans["be10-3.log-low-failed"] = {"cc": 0.4}
+            plans["be10-3.log-low-failed"] = {"cc": 0.4995}
             low_failed = post(client, "be10-3.log-low-failed")
             assert (
                 failed["decision_reason"]

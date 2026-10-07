@@ -26,7 +26,7 @@
 
 위 표는 2026-09-29 dev 기준 기록이다. 이후 확인한 **BE-07 Backend 구현 범위는 완료**됐다. Simulator는 독립 프로세스로 실행하며 상태·revision·동시성·장애·NEXT·runner·위치를 소유한다. Backend는 기존 관제 API를 내부 HTTP client로 연결한다. Backend·Simulator 테스트 214건과 MySQL 실DB 통합 테스트 4건이 통과했다. 완료 범위와 실행·설정 계약은 [BE-07 완료 문서](wbs/BE-07.md)를 따른다.
 
-`Dockerfile.simulator`, Compose 연결, dataset read-only·state writable Volume, 실제 시연 데이터의 컨테이너 통합, 재시작 후 위치 복구, 목표 CPU 처리량 및 Jenkins 배포 검증은 **후속 MLOps/공동 통합 범위**로 남는다. 이는 BE-07 Backend 미구현을 의미하지 않는다.
+`Dockerfile.simulator`, Compose 연결, dataset read-only·state writable Volume, 실제 시연 데이터의 컨테이너 통합은 학원 서버 배포로 끝났고, 재시작 후 위치 복구와 Jenkins 시험 후 배포·실패 시 복구도 서버에서 확인했다(MO-07·08). 목표 CPU 처리량(초당 2건)은 미달이며 수용 기준은 ALL-04(#65)에서 정한다.
 
 ## 1. 프로젝트 효과 조사
 
@@ -230,7 +230,7 @@ AI Hub 원본 이미지·라벨
   → 웹 화면에 결과 표시
 ```
 
-위 흐름은 통합 완료 기준이다. 검사 결과 저장·조회는 BE-05로 구현됐고, Simulator와 관제 제어 API 연결은 남아 있다. 검사 API의 `virtual_brix`는 형식상 선택 입력이지만 누락되면 `VIRTUAL_BRIX_MISSING` 재검사로 분기하며 6-bin 경로는 사용하지 않는다. 정상 QC 결과를 출품 데이터로 전달한 뒤 물류 서비스의 입찰·낙찰·배차 흐름을 연결한다.
+위 흐름은 통합 완료 기준이다. 검사 결과 저장·조회(BE-05), Simulator와 관제 제어 API 연결(BE-07·08)이 구현돼 학원 서버에서 동작한다. 검사 API의 `virtual_brix`는 형식상 선택 입력이지만 누락되면 `VIRTUAL_BRIX_MISSING` 재검사로 분기하며 6-bin 경로는 사용하지 않는다. 정상 QC 결과를 출품 데이터로 전달한 뒤 물류 서비스의 입찰·낙찰·배차 흐름을 연결한다.
 
 ### 3.2 MVP 기능 범위
 
@@ -320,7 +320,7 @@ QC 이력 보존 정책은 상한 86,400건 도달 시 오래된 8,640건 삭제
 
 품질 코드는 `L=특`, `M=상`, `S=보통`이다. Backend는 클래스 인덱스를 추측하지 않고 응답의 라벨별 확률을 사용한다. Inference는 예측·진단을 반환하고 저신뢰·시간초과·bin·DB·제어 정책은 Backend가 적용한다. 검사·제어·저장 상태는 각각 구분한다. 늦은 응답은 제한된 task에서 수집해 기존 검사 행의 진단 필드에 별도 저장하며, 확정된 판정·bin·제어·통계는 변경하지 않는다. DB 장애나 Backend 재시작 시 진단 결과 유실은 허용한다.
 
-FE 관제용 조회·통계·CSV·시연 제어·이미지 관리 계약은 [관제 API 인계](wbs/협업공지/Frontend-관제-API-계약-인계.md)와 [관제 OpenAPI](contracts/quality-operations.openapi.json)를 따른다. 기존 검사 API와 별도다. Backend에는 조회 5개(`snapshot`, `inspections`, `inspections.csv`, `statistics`, `statistics.csv`)가 구현됐고 제어·검수·장애 이미지·미리보기 4개는 남아 있다.
+FE 관제용 조회·통계·CSV·시연 제어·이미지 관리 계약은 [관제 API 인계](wbs/협업공지/Frontend-관제-API-계약-인계.md)와 [관제 OpenAPI](contracts/quality-operations.openapi.json)를 따른다. 기존 검사 API와 별도다. Backend에는 조회 5개(`snapshot`, `inspections`, `inspections.csv`, `statistics`, `statistics.csv`)와 제어·검수·검수 이미지·미리보기 4개가 모두 구현돼 있다.
 
 ### 3.7 판매·물류 통합 범위와 구현 원칙
 
@@ -334,7 +334,7 @@ FE 관제용 조회·통계·CSV·시연 제어·이미지 관리 계약은 [관
 - 앞으로도 시연에 필요한 단순한 규칙과 상태 전이를 우선한다. 프론트 화면 흐름에 따라 세부 동작은 조정할 수 있으나 적재 한도, 픽업 후 하차, 확인 게이트, 고장 차량 제외는 유지한다. 변경 시 API·문서·검증 기준을 함께 맞춘다.
 - 기존 WBS의 ID·담당·일정은 유지한다. 물류 상세 작업은 별도 작업 순서 문서로 관리하며 추가 담당 배정은 팀 합의로 정한다. 모델 파트는 QC 결과 계약, 백엔드는 실제 결과 전달, 프론트는 역할별 화면, MLOps는 통합 배포 경계를 검토한다.
 
-현재 루트 Compose는 QC 5개 서비스와 물류 3개 서비스(`logistics-mongodb`, `logistics-api`, `logistics-web`)로 구성된다. QC의 MySQL·Backend·Inference·Simulator는 실제 실행 설정이고, 루트 `frontend`만 placeholder다. 웹 코드와 Dockerfile은 존재하며 `logistics-web` 배포와 QC 프론트 역할의 연결을 정리해야 한다. 전체 흐름 완료는 공동 수용시험으로 확인한다. 상세 기준: [물류 제품 범위](wbs/reference/LOGISTICS/01-product-scope.md), [작업 순서](wbs/reference/LOGISTICS/06-build-order.md).
+현재 루트 Compose는 QC 4개 서비스(MySQL·Inference·Backend·Simulator)와 물류 3개 서비스(`logistics-mongodb`, `logistics-api`, `logistics-web`), 모두 7개의 실제 실행 설정이다. 예전 placeholder `frontend`는 없어졌고, 품질 관제 화면은 `logistics-web`(3100)이 API 모드로 Backend에 붙어 제공한다. 전체 흐름 완료는 공동 수용시험으로 확인한다. 상세 기준: [물류 제품 범위](wbs/reference/LOGISTICS/01-product-scope.md), [작업 순서](wbs/reference/LOGISTICS/06-build-order.md).
 
 ## 4. 구현 기술 검토
 
@@ -592,15 +592,15 @@ MLOps·CI/CD: 기본 실행 환경 → 영역별 자동 검사 → 통합 배포
 | 두 번째 품목 | 확장 후보, 품목명 미정 | 사과 품종 2종의 MVP 진행률과 후보 품목 데이터 구조 |
 | 모델 프레임워크 | PyTorch·torchvision 확정 | Python 3.11, 원격 CUDA 학습과 CPU 추론 |
 | Backend 기술 | FastAPI·Pydantic·SQLAlchemy·Alembic 확정 | 실제 의존성 파일과 Backend 코드 기준 |
-| 웹 기술·화면 | Next.js·React·TypeScript 확정, 현재 화면으로 마무리 | 실제 관제 API 연결과 배포·장시간 시험 |
+| 웹 기술·화면 | Next.js·React·TypeScript 확정, 실제 관제 API 연결·배포·반응형·장시간 관제 확인(FE-08, 10-06) | 화면 동결(FE-09) |
 | 데이터베이스 | QC MySQL·물류 MongoDB 확정 | 저장·조회·당도 컬럼과 보존 삭제(86,400/8,640) Backend 구현·격리 검증 완료; 배포 시 migration 적용과 전체 수용시험 필요 |
 | 저신뢰 임계값 | 확정: 품종 0.50·품질 0.60 (09-30 v2 온도 보정 후 재결정) | 학원 서버 배포 반영 완료 |
 | bin 코드·매핑 구조 | 12-bin·재검사 1개 seed(`DEMO_BIN_01~12`, 재검사 bin) migration 구현 | FE 표시 매핑 대조 |
 | 모델 성능 승인값 | 확정 | 품종·품질 Macro F1 각각 0.90 이상 |
 | 이미지 형식·파일/요청 크기·허용 프레임 수 | 확정 | PNG/JPEG, 1~12장, multipart 합계 24MiB |
-| 상태·오류·OpenAPI | 검사 계약·상태 Enum과 FE 관제 계약, Backend 조회 API 5개 구현 | 제어·검수·이미지 API 구현과 공동 검증 |
-| late result 처리 | 제한된 메모리 추적·hard timeout 구현 | 확정 제어 유지, 진단 DB 저장 연결 |
-| Simulator·FE 통합 배포 | Simulator는 독립 컨테이너로 배포·자동 재생(PR #30~#32), 루트 `frontend`는 placeholder | 기존 웹 컨테이너의 실제 API 모드 연결 |
+| 상태·오류·OpenAPI | 검사 계약·상태 Enum과 FE 관제 계약, Backend 조회 5개·제어·검수·이미지 API 구현 | API·DB 계약 동결(BE-11) |
+| late result 처리 | 제한된 메모리 추적·hard timeout·진단 DB 저장 구현, 진단 기록 상한 200건(#102) | 확정 제어 유지 |
+| Simulator·FE 통합 배포 | Simulator는 독립 컨테이너로 배포·자동 재생(PR #30~#32), 관제 화면은 `logistics-web` API 모드로 배포(placeholder `frontend` 제거) | 최종 수용시험(ALL-04) |
 | Jenkins 운영 트리거 | 사용자 설명 Poll SCM, 저장소는 githubPush 선언 | 실제 Job 대상 브랜치·폴링 설정 확인 후 일치시킴 |
 | 농가별·클라우드 확장 | 향후 검토, 현재 MVP에 미포함 | 장치 인증·데이터 분리·현장 표본·설비 제약·서버 용량·비용 |
 

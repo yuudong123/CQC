@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+import asyncio
 import json
 
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 from httpx import Response
 
-from src.api.clients.inference import MockInferenceClient
+from src.api.clients.inference import HttpInferenceClient, MockInferenceClient
 from src.api.control.virtual_control import MockVirtualControl
 from src.api.core.config import Settings
 from src.api.main import create_app
@@ -355,6 +357,115 @@ def test_inspection_returns_internal_error_for_mismatched_inference_response(
     assert response.status_code == 200
     assert response.json()["decision_reason"] == "INFERENCE_INVALID_RESPONSE"
     assert response.json()["target_bin_code"] == "TEST_REINSPECTION_BIN"
+
+
+@pytest.mark.parametrize(
+    ("updates", "valid"),
+    [
+        pytest.param({"inference_time_ms": 12.5}, True, id="positive"),
+        pytest.param({"inference_time_ms": 0.0}, True, id="zero"),
+        pytest.param({"inference_time_ms": float("inf")}, False, id="infinity"),
+        pytest.param({"inference_time_ms": float("nan")}, False, id="nan"),
+        pytest.param(
+            {"inference_time_ms": float("-inf")}, False, id="negative-infinity"
+        ),
+        pytest.param({"inference_time_ms": -1.0}, False, id="negative"),
+        pytest.param(
+            {"cultivar_probabilities": {"fuji": 0.9, "yanggwang": 0.2}},
+            False,
+            id="cultivar-sum",
+        ),
+        pytest.param({"cultivar_confidence": 0.8}, False, id="cultivar-confidence"),
+        pytest.param(
+            {"predicted_cultivar": "yanggwang"}, False, id="cultivar-prediction"
+        ),
+        pytest.param(
+            {"quality_probabilities": {"L": 0.8, "M": 0.2, "S": 0.2}},
+            False,
+            id="quality-sum",
+        ),
+        pytest.param({"quality_confidence": 0.7}, False, id="quality-confidence"),
+        pytest.param({"predicted_grade": "M"}, False, id="quality-prediction"),
+    ],
+)
+def test_http_inference_response_validation_preserves_inspection_policy(
+    updates: dict[str, object], valid: bool
+) -> None:
+    async def run() -> None:
+        request = InferenceRequest(
+            inspection_id="inspection-time",
+            images=[b"image-bytes"],
+            metadata=json.loads(_metadata([0])),
+        )
+        payload = (await MockInferenceClient().predict(request)).model_dump()
+        payload.update(updates)
+
+        def respond(_: httpx.Request) -> httpx.Response:
+            # Raw JSON exercises nonstandard numeric tokens from an external peer.
+            return httpx.Response(
+                200,
+                content=json.dumps(payload).encode(),
+                headers={"Content-Type": "application/json"},
+            )
+
+        control = MockVirtualControl()
+        persistence = RecordingPersistence()
+        settings = Settings(_env_file=None)
+        async with httpx.AsyncClient(
+            transport=httpx.MockTransport(respond)
+        ) as transport:
+            service = InspectionService(
+                HttpInferenceClient("http://inference/v1/predict", client=transport),
+                control,
+                cultivar_confidence_threshold=settings.cultivar_confidence_threshold,
+                quality_confidence_threshold=settings.quality_confidence_threshold,
+                inference_business_deadline_ms=settings.inference_business_deadline_ms,
+                late_result_manager=LateResultManager(
+                    hard_timeout_ms=2000, max_tasks=4
+                ),
+                bin_mapping_repository=FakeBinMappingRepository(),
+                persistence=persistence,
+            )
+            app = create_app(settings, inspection_service=service)
+            async with httpx.AsyncClient(
+                transport=httpx.ASGITransport(app=app), base_url="http://backend"
+            ) as client:
+                response = await client.post(
+                    "/v1/inspections",
+                    data={
+                        "inspection_id": request.inspection_id,
+                        "metadata": _metadata([0]),
+                        "virtual_brix": "14.0",
+                    },
+                    files=_images(1),
+                )
+
+        assert response.status_code == 200
+        body = response.json()
+        assert body["control_status"] == "SUCCEEDED"
+        assert body["persistence_status"] == "SUCCEEDED"
+        assert control.call_count == 1
+        saved = persistence.final_values[0]
+        if valid:
+            assert body["inspection_status"] == "COMPLETED"
+            assert body["decision_reason"] == "NORMAL"
+            assert body["target_bin_code"] == "DEMO_BIN_02"
+            assert body["inference_time_ms"] == payload["inference_time_ms"]
+            assert float(saved["inference_time_ms"]) == payload["inference_time_ms"]
+            assert not persistence.errors
+        else:
+            assert body["inspection_status"] == "REINSPECTION_REQUIRED"
+            assert body["decision_reason"] == "INFERENCE_INVALID_RESPONSE"
+            assert body["review_required"] is True
+            assert body["exclude_from_normal_stats"] is True
+            assert body["target_bin_code"] == "TEST_REINSPECTION_BIN"
+            assert control.requests[0].target_bin_code == "TEST_REINSPECTION_BIN"
+            assert body["inference_time_ms"] is None
+            assert saved["inference_time_ms"] is None
+            assert saved["exclude_from_normal_stats"] is True
+            assert persistence.errors[0].error_code == "INFERENCE_INVALID_RESPONSE"
+
+    asyncio.run(run())
 
 
 def test_inspection_requires_at_least_one_image() -> None:

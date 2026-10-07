@@ -125,7 +125,8 @@ def environment(tmp_path):
             cultivar_confidence=cc,
             quality_confidence=qc,
             cultivar_probabilities={
-                name: cc if name == cultivar else 1 - cc
+                # Near-0.50 ties keep low confidence within the sum tolerance.
+                name: cc if name == cultivar else min(1 - cc, cc)
                 for name in ("fuji", "yanggwang")
             },
             quality_probabilities={
@@ -227,9 +228,9 @@ def _stored_contract(app, identifier, sessions):
 @pytest.mark.parametrize(
     "cc,qc,reason",
     [
-        (0.49, 0.8, "LOW_CULTIVAR_CONFIDENCE"),
+        (0.4995, 0.8, "LOW_CULTIVAR_CONFIDENCE"),
         (0.9, 0.59, "LOW_QUALITY_CONFIDENCE"),
-        (0.49, 0.59, "LOW_BOTH_CONFIDENCE"),
+        (0.4995, 0.59, "LOW_BOTH_CONFIDENCE"),
         (0.50, 0.60, "NORMAL"),
         (0.499999, 0.8, "LOW_CULTIVAR_CONFIDENCE"),
         (0.500001, 0.8, "NORMAL"),
