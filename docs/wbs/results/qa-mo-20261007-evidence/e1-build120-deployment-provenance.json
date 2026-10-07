@@ -1,0 +1,62 @@
+{
+  "verified_kst": "2026-10-07T15:01:36.208067+09:00",
+  "environment": "E1 cqc-cicd / 192.168.133.106",
+  "jenkins_build": 120,
+  "build_result": "SUCCESS",
+  "build_started_kst": "2026-10-07T14:43:43.749000+09:00",
+  "build_finished_kst": "2026-10-07T14:50:02.974000+09:00",
+  "source_sha": "24e49e139f447a29a66270d378a911ef543fa66c",
+  "docker_daemon_id": "a0bc414e-5458-48c9-8f33-4a7d36127a6b",
+  "same_docker_daemon": true,
+  "services": [
+    {
+      "service": "backend",
+      "image_id": "sha256:18db776b2638bb9618b42789cfd515dcbdbcaca885f5bc37cfbc1704c023f8ea",
+      "build_manifest_list": "sha256:18db776b2638bb9618b42789cfd515dcbdbcaca885f5bc37cfbc1704c023f8ea",
+      "matches": true,
+      "created_utc": "2026-10-07T05:49:02.142217201Z",
+      "started_utc": "2026-10-07T05:49:34.410451522Z",
+      "status": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "inference",
+      "image_id": "sha256:1ac540f1cdc8458d97785bb161f195c4ac18580e5c8478ceb78294c7f003fe12",
+      "build_manifest_list": "sha256:1ac540f1cdc8458d97785bb161f195c4ac18580e5c8478ceb78294c7f003fe12",
+      "matches": true,
+      "created_utc": "2026-10-07T05:48:52.531274741Z",
+      "started_utc": "2026-10-07T05:49:27.400150912Z",
+      "status": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "simulator",
+      "image_id": "sha256:37f7c8684e7b14bb0804c6c158f68894c71425d564276547742635a7a2327f05",
+      "build_manifest_list": "sha256:37f7c8684e7b14bb0804c6c158f68894c71425d564276547742635a7a2327f05",
+      "matches": true,
+      "created_utc": "2026-10-07T05:49:15.473296537Z",
+      "started_utc": "2026-10-07T05:49:41.952702858Z",
+      "status": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "logistics-web",
+      "image_id": "sha256:7ff1f13a7cf636d843794e55ea48dcda08879d1686b779316db68ce428154b44",
+      "build_manifest_list": "sha256:7ff1f13a7cf636d843794e55ea48dcda08879d1686b779316db68ce428154b44",
+      "matches": true,
+      "created_utc": "2026-10-07T05:49:15.46885049Z",
+      "started_utc": "2026-10-07T05:49:41.885990365Z",
+      "status": "running",
+      "health": "healthy"
+    }
+  ],
+  "backend_validation": {
+    "path": "src/api/schemas/inference.py",
+    "git_blob_sha256": "a97a165f53b9b0a57bcb772afaa449d00a13e2278cece060c074a3dac3c56467",
+    "running_file_sha256": "a97a165f53b9b0a57bcb772afaa449d00a13e2278cece060c074a3dac3c56467",
+    "bytes_match": true,
+    "validation_commit_300f4d5_is_ancestor": true
+  },
+  "verified": true,
+  "coverage": "Deployment provenance only; six new BE QA cases not executed"
+}
