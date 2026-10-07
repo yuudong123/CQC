@@ -92,7 +92,8 @@ body.nav-open .deck-nav{transform:none}
 /* toolbar-autohide:start */
 @media screen and (hover:hover){
   .toolbar{position:fixed;left:0;right:0;z-index:40;transform:translateY(-100%);transition:transform .22s ease}
-  body.bar-show .toolbar,body.nav-open .toolbar{transform:none}
+  body.bar-show .toolbar{transform:none}
+  .deck-nav{top:0}
   .bar-zone{position:fixed;left:0;right:0;top:0;height:12px;z-index:39}
   .page{scroll-margin-top:16px}
 }
@@ -903,7 +904,7 @@ sweetness_band: &lt;14 | ≥14
 <div class="bar-zone screen-only" aria-hidden="true"></div>
 <script>
 (function(){
-  // 마우스를 화면 맨 위(또는 툴바 위)에 둘 때만 툴바를 보인다. 목차가 열려 있거나 툴바 안에 포커스가 있으면 유지.
+  // 마우스를 화면 맨 위(또는 툴바 위)에 둘 때만 툴바를 보인다. 목차가 열려 있어도 같고, 툴바 안에 포커스가 있으면 유지.
   if(!window.matchMedia||!window.matchMedia('(hover:hover)').matches)return;
   var bar=document.querySelector('.toolbar'), zone=document.querySelector('.bar-zone'), body=document.body, t=null;
   if(!bar||!zone)return;
@@ -940,8 +941,9 @@ sweetness_band: &lt;14 | ≥14
   function fit(){
     if(!box.checked){root.classList.remove('fit-page');root.style.removeProperty('--fit');return;}
     root.classList.add('fit-page');
-    // 목차가 열려 있으면 툴바가 계속 보이므로 그 높이를 빼고 맞춘다.
-    var top=body.classList.contains('nav-open')?bar.offsetHeight:0;
+    // 툴바가 자동으로 숨는 화면에서는 위 여백 없이 맞춘다. 숨지 않는 화면에서 목차가 열려 있으면 툴바 높이를 뺀다.
+    var autohide=window.matchMedia&&window.matchMedia('(hover:hover)').matches;
+    var top=(!autohide&&body.classList.contains('nav-open'))?bar.offsetHeight:0;
     var availW=document.documentElement.clientWidth-navWidth(), availH=window.innerHeight-top;
     var s=Math.min(availH/H, availW/W);
     root.style.setProperty('--fit', s.toFixed(4));
