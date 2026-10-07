@@ -1,4 +1,6 @@
 export const CSV_TIMEOUT_MS = 60_000;
+// 검수 이미지 전체 삭제는 ID 300개(약 11.4KB)를 한 번에 보낸다. Backend 한도 300개에 여유를 둔다.
+export const MAX_BODY_BYTES = 16_384;
 const routes: [RegExp, string[]][] = [
   [/^snapshot$/, ["GET"]],
   [/^inspections(?:\.csv)?$/, ["GET"]],
@@ -49,7 +51,8 @@ export async function proxyQuality(request: Request, path: string) {
       return error(503, "INVALID_BACKEND");
     target.search = incoming.search;
     const body = request.method === "GET" ? undefined : await request.text();
-    if (body && body.length > 8192) return error(413, "BODY_TOO_LARGE");
+    if (body && new TextEncoder().encode(body).length > MAX_BODY_BYTES)
+      return error(413, "BODY_TOO_LARGE");
     const response = await fetch(target, {
       method: request.method,
       body,
