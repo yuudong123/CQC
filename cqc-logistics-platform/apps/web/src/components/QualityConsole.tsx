@@ -322,7 +322,7 @@ const binLabel = (code: string) =>
       : code;
 // 구성요소 상태 → 색. 정상은 초록, 정지·확인 중은 주황, 오류는 빨강.
 function componentTone(status: string, text: string) {
-  if (status === "error" || /실패|장애|끊김|오류/.test(text)) return "danger";
+  if (status === "error" || /실패|장애|끊김|오류|불가/.test(text)) return "danger";
   if (status === "healthy" || /정상|응답|입력 중|전송 중|준비 완료|조회 성공/.test(text)) return "success";
   return "warning";
 }
@@ -576,7 +576,9 @@ export default function QualityConsole({
           ["Backend", "", health],
           ["MySQL", "", state.dbDown ? "저장 실패 시연" : "미연결"],
         ];
-  const problems = components.filter(([, status, text]) => componentTone(status, text) === "danger").length;
+  const tones = components.map(([, status, text]) => componentTone(status, text));
+  const problems = tones.filter((tone) => tone !== "success").length;
+  const overall = tones.includes("danger") ? "danger" : problems ? "warning" : "success";
   const lastSeen = (name: string) => {
     const seen = remote && snapshot?.components[name as keyof typeof snapshot.components]?.lastSeenAt;
     return seen ? `수신 ${kst(seen).slice(11, 19)}` : "";
@@ -806,7 +808,7 @@ export default function QualityConsole({
             className="qc-status-panel"
             icon="box"
             action={
-              <Badge tone={problems ? "danger" : "success"}>
+              <Badge tone={overall}>
                 {problems ? `확인 필요 ${problems}` : "모두 정상"}
               </Badge>
             }
