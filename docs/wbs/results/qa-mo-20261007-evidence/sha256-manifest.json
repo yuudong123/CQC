@@ -32,6 +32,14 @@
     "sha256": "0c00d1145d9e7ea163bc6e7ec5c7c02eff34b547f02c25b7669d17c3a4e55383"
   },
   {
+    "path": "e1-build120-deployment-provenance.json",
+    "sha256": "538d010d54af1f7ad0630f31ec0109695836e239ede8ffd4ff86203b73713941"
+  },
+  {
+    "path": "e1-build120-selected-log.txt",
+    "sha256": "19cf0172ef1379a76c9d79e95cfbe83ca0767c7a333f7295ba5917bb5e67338e"
+  },
+  {
     "path": "e2-final-all04-rows.md",
     "sha256": "f163ebf5ef3c8970133e33d582bcd8592b4e0c66f4847d5a5b83ebbc1f942e22"
   },
