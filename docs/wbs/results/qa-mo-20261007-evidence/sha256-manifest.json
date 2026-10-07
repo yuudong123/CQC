@@ -1,0 +1,122 @@
+[
+  {
+    "path": "20261006-1425-all04-rows.md",
+    "sha256": "13ec5eaf7cf1a9f0e96d023494351f4c67871369f7862d808d790beef3b92ff2"
+  },
+  {
+    "path": "20261006-1425-normal-100.json",
+    "sha256": "dc8eb3cef6b3d0090c92e8d153e9d1e126f7d0f60318d6e12454f6bfb4247eac"
+  },
+  {
+    "path": "20261006-1425-results.json",
+    "sha256": "342a053f18dd096f96fcc555f340785159b53e1b71ce604b5f7800871022a5c1"
+  },
+  {
+    "path": "20261006-1425-run.json",
+    "sha256": "ceb02bc44f78471055f2711bfbd810f19a9aa90ef094cb41035ac247da3d5f2d"
+  },
+  {
+    "path": "20261006-1425-timing-db.json",
+    "sha256": "2ec24aa2dfa78011a85e8e14eeb0accda54f92e5f370ed3399374497e179b4d3"
+  },
+  {
+    "path": "20261006-recovery-all04-rows.md",
+    "sha256": "03268c37ea7776fc724109848e601da62a5461939b1ca45a75035a8ff2683f92"
+  },
+  {
+    "path": "20261006-recovery-recovery-evidence.json",
+    "sha256": "5263386a256cb07353a3a3c9ff1bb282455b657fd9df6e164a4687c066a485e6"
+  },
+  {
+    "path": "20261006-recovery-results.json",
+    "sha256": "0c00d1145d9e7ea163bc6e7ec5c7c02eff34b547f02c25b7669d17c3a4e55383"
+  },
+  {
+    "path": "e2-final-all04-rows.md",
+    "sha256": "f163ebf5ef3c8970133e33d582bcd8592b4e0c66f4847d5a5b83ebbc1f942e22"
+  },
+  {
+    "path": "e2-final-cleanup-log.txt",
+    "sha256": "c81df0a99ae784b269b61bd22fa35b960a1216158bd8ae7347c70836e09691cf"
+  },
+  {
+    "path": "e2-final-cleanup.json",
+    "sha256": "9f4922623be0fa9a5e6c20d094f17f32376c97385763e9d2e30ce7140f9b14d5"
+  },
+  {
+    "path": "e2-final-compose.pinned.yaml",
+    "sha256": "240be0ac7cd6bd6f58e88c162e3182dd0bb35ada1ea28029a781229847e35d4d"
+  },
+  {
+    "path": "e2-final-restart-evidence.json",
+    "sha256": "041113d546cd27ccefbe0f2d48c2edceb941a5175aa1ac7262d47a081066070f"
+  },
+  {
+    "path": "e2-final-results.json",
+    "sha256": "9415c52879d2e14a4da17c7227db4ebcb3520d658102a00b1405184cee54864c"
+  },
+  {
+    "path": "e2-final-runner-log.txt",
+    "sha256": "7fec3d8e0f7f7e336d42f2da7f902e650694d213530af4fdea0b76dd52a1776d"
+  },
+  {
+    "path": "e2-final-startup-log.txt",
+    "sha256": "03dc7200c9c1ecfbc872f80a3b150bfcb40d50e4ddf63928a951631836e647a3"
+  },
+  {
+    "path": "e2-restart4-restart-evidence.json",
+    "sha256": "a17f7551540ff309bf980ffd0d0cf83405daedff07e53a65d7c4793169f0b610"
+  },
+  {
+    "path": "investigation-build-115-selected-log.txt",
+    "sha256": "526deb7772be33ba2b8ce290a7e87552caf79bce883c393c63dd771a243e21d9"
+  },
+  {
+    "path": "investigation-deployment-provenance.json",
+    "sha256": "abccaaea16043cade8bfe4723862b1782ce81096bfeccf57d8ba15688f0b48d0"
+  },
+  {
+    "path": "investigation-largest-gap-decomposition.json",
+    "sha256": "8833e67f4683384454ab55a5cae0a85d84c63cbfa512bbf107f6b716f49811b9"
+  },
+  {
+    "path": "investigation-timing-20261006-1104.json",
+    "sha256": "1aeb79f4bbf22df5f62b18750476aea2fa095b6ec776cc2462147a8311745329"
+  },
+  {
+    "path": "investigation-timing-20261006-1423.json",
+    "sha256": "94cb0d8a7e862560f179fed1279f818549abf71866002ecfbe4b16e117ca9f93"
+  },
+  {
+    "path": "investigation-timing-20261007-0951.json",
+    "sha256": "bdb6356612acba5ab90896e64c405d765e41f00d3e95f5133fa6fb5066128711"
+  },
+  {
+    "path": "investigation-timing-summary.json",
+    "sha256": "ff0ec9639d696d3c9ca5945fb9d1c2cd597ec8a17e09634c27b54628603983c8"
+  },
+  {
+    "path": "live-all04-rows.md",
+    "sha256": "03fcdb0479f638aa8dd4d93360a28ca612ff0dcff55da6a31af7f325efbb476c"
+  },
+  {
+    "path": "live-normal-100.json",
+    "sha256": "c44b559a7943a52334c423e69d56f9de871b1ef87019bac753e2dd0adf0a5b7a"
+  },
+  {
+    "path": "live-results.json",
+    "sha256": "d5f225178523d0d0e3a02b3e0718dcdad48bd173b4de202f9a8334aab19bb15c"
+  },
+  {
+    "path": "live-run.json",
+    "sha256": "b3bc297e8f602985a53ed6fec21721a494c3905b4ef4029ca506c98a4988ba26"
+  },
+  {
+    "path": "previous-sha256-manifest.json",
+    "sha256": "6123ed9870a965b9e3312674bce1916ef8dcf683e8b65fd12caa72577043d1da"
+  },
+  {
+    "path": "prior-1104-normal-100.json",
+    "sha256": "d428c90de4f25d921fb1585ebb998f1c49eea118cd819c3bc959e5e4b086d8b4"
+  }
+]

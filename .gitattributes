@@ -1,2 +1,5 @@
 # CI scripts are executed by a POSIX shell, including on Windows-hosted Docker.
 scripts/ci/*.sh text eol=lf
+
+# Preserve QA evidence bytes so the recorded SHA-256 hashes survive Git checkout.
+docs/wbs/results/qa-mo-20261007-evidence/** -text

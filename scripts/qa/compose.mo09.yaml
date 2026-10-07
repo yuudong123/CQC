@@ -4,7 +4,7 @@ services:
   mysql:
     healthcheck:
       # A fresh disposable volume needs time for MySQL's initial bootstrap.
-      start_period: 120s
+      start_period: 300s
       test:
         - CMD-SHELL
         - 'MYSQL_PWD="$$MYSQL_ROOT_PASSWORD" mysql --protocol=TCP -h127.0.0.1 -uroot -Nse "SELECT 1" >/dev/null 2>&1'
