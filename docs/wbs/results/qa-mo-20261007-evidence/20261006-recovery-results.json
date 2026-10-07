@@ -1,0 +1,41 @@
+[
+  {
+    "case": "QA-INS-11",
+    "status": "통과",
+    "actor": "홍유나 (MO-09 자동화)",
+    "time_kst": "2026-10-06 14:55:57 KST",
+    "commit_model": "E2 image SHA unverified; script HEAD 1f521804e458",
+    "note": "Inference 정지 중 재검사·저장, 복구 후 정상 저장 확인; 이력 필드 미확인",
+    "environment": "E2",
+    "coverage": "부분: 이력 errorCode·processingStatus·excluded 미확인",
+    "qa_case": "QA-INS-11",
+    "owner": "BE",
+    "record_status": "차단"
+  },
+  {
+    "case": "QA-INS-13",
+    "status": "실패",
+    "actor": "홍유나 (MO-09 자동화)",
+    "time_kst": "2026-10-06 14:57:08 KST",
+    "commit_model": "E2 image SHA unverified; script HEAD 1f521804e458",
+    "note": "MySQL 정지 중 정상 bin·저장 실패, 복구 후 저장 확인; 응답 4.938초로 2초 라인 간격 초과",
+    "environment": "E2",
+    "coverage": "전체",
+    "qa_case": "QA-INS-13",
+    "owner": "BE",
+    "record_status": "실패"
+  },
+  {
+    "case": "QA-SIM-09",
+    "status": "통과",
+    "actor": "홍유나 (MO-09 자동화)",
+    "time_kst": "2026-10-06 14:57:08 KST",
+    "commit_model": "E2 image SHA unverified; script HEAD 1f521804e458",
+    "note": "MySQL 정지 중 lastSeenAt 증가, 복구 후 직접 요청 저장 확인; 자동 저장 건수·구성요소 상태 미확인",
+    "environment": "E2",
+    "coverage": "부분: 자동 저장 건수·Simulator 구성요소 상태 미확인",
+    "qa_case": "QA-SIM-09",
+    "owner": "BE",
+    "record_status": "차단"
+  }
+]

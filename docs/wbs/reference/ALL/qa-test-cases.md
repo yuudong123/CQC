@@ -276,8 +276,8 @@ sql "SELECT inspection_id, inspection_status, target_bin_code, error_code FROM i
 #### QA-DEP-07 비밀값 저장소 제외 · P2
 
 - 근거: NFR-05
-- 절차: `git ls-files | grep -E "(^|/)\.env$"`, `git grep -n -I -E "MYSQL_(ROOT_)?PASSWORD=[^c$]" -- . ':!*.md'`
-- 기대 결과: 두 명령 모두 출력이 없다. `.env.example`의 비밀번호는 `change_me`뿐이다.
+- 절차: `git ls-files | grep -E "(^|/)\.env$"`, `git grep -n -I -E "MYSQL_(ROOT_)?PASSWORD=[^c$]" -- . ':!*.md'`. 두 번째 명령에 일치 항목이 있으면 값을 공유하지 말고 해당 줄이 고정 비밀값인지, 환경변수·동적 시험 비밀번호를 구성하는 코드인지 확인한다.
+- 기대 결과: 추적된 `.env`가 없고, 검토한 일치 항목에 고정 비밀값이 없다. `.env.example`의 MySQL 비밀번호는 `change_me`뿐이다. 단순 정규식의 출력 자체를 곧바로 유출 판정으로 사용하지 않는다.
 
 ### 5.2 Inference API (QA-INF)
 
@@ -1294,13 +1294,13 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 
 | 케이스 | 담당 | 결과 (통과/실패/차단) | 실행자 | 일시 | 커밋·모델 | 비고·결함 번호 |
 |---|---|---|---|---|---|---|
-| QA-DEP-01 | MO | | | | |  |
+| QA-DEP-01 | MO | 통과 | MO-09 재검증 | 2026-10-07 09:51 KST | `328baaaf702f` (#115 이미지 digest 대조) | E1 7개 서비스 healthy·재시작 정책 확인. [자동 점검 결과](../../results/qa-mo-20261007-evidence/live-results.json). |
 | QA-DEP-02 | DM | | | | |  |
 | QA-DEP-03 | DM | | | | |  |
-| QA-DEP-04 | MO | | | | |  |
-| QA-DEP-05 | MO | | | | |  |
-| QA-DEP-06 | MO | | | | |  |
-| QA-DEP-07 | MO | | | | |  |
+| QA-DEP-04 | MO | 통과 | MO-09 재검증 | 2026-10-07 09:51 KST | `328baaaf702f` (#115 이미지 digest 대조) / `cqc-apple-separate12-focal-v2-cal-20260930` | Backend health·임계값·Inference URL·이미지 경로 일치. [자동 점검 결과](../../results/qa-mo-20261007-evidence/live-results.json). |
+| QA-DEP-05 | MO | 통과 | MO QA | 2026-10-07 11:50:32 KST | `328baaaf702f` (#115 이미지 ID 고정·대조) | 격리 `cqc-mo09-e2-final-20261007`: `20260929_02 (head)`, 13개 bin 조합·재검사·활성 상태 일치. 시험 컨테이너·전용 볼륨 정리. [원자료](../../results/qa-mo-20261007-evidence/e2-final-restart-evidence.json). |
+| QA-DEP-06 | MO | 통과 | MO QA | 2026-10-07 11:50:55 KST | `328baaaf702f` (#115 이미지 ID 고정·대조) | 격리 E2 재시작 전후 이력 17→17·검사 ID 동일·전체 이미지 ID 100개 동일·미리보기 SHA-256 동일, 새 정상 검사 제어·저장 `SUCCEEDED`. [원자료](../../results/qa-mo-20261007-evidence/e2-final-restart-evidence.json). |
+| QA-DEP-07 | MO | 통과 | MO-09 재검증 | 2026-10-07 10:22 KST | 작업 HEAD `0ebee874`; 배포 SHA 무관 | 추적 `.env` 없음, `.env.example` MySQL 비밀번호는 `change_me`. 정규식 일치 1건은 동적 시험 비밀번호 설정 코드로 확인. [검토 기록](../../results/qa-mo-20261007.md#history). |
 | QA-INF-01 | DM | | | | |  |
 | QA-INF-02 | DM | | | | |  |
 | QA-INF-03 | DM | | | | |  |
@@ -1347,7 +1347,7 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 | QA-IMG-04 | BE | | | | |  |
 | QA-IMG-05 | BE | | | | |  |
 | QA-IMG-06 | BE | | | | |  |
-| QA-IMG-07 | MO | | | | |  |
+| QA-IMG-07 | MO | 통과 | MO QA | 2026-10-07 11:50:55 KST | `328baaaf702f` (#115 이미지 ID 고정·대조) | QA-IMG-06 조건의 시스템 오류 이미지 100장 생성 후 Backend 재시작. 전체 100개 ID 동일·미리보기 HTTP 200 및 SHA-256 동일. [원자료](../../results/qa-mo-20261007-evidence/e2-final-restart-evidence.json). |
 | QA-WEB-01 | FE | | | | |  |
 | QA-WEB-02 | FE | | | | |  |
 | QA-WEB-03 | FE | | | | |  |
@@ -1369,14 +1369,14 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 | QA-WEB-18 | FE | | | | |  |
 | QA-WEB-19 | FE | | | | |  |
 | QA-OPS-16 | BE | | | | |  |
-| QA-SIM-01 | MO | | | | |  |
-| QA-SIM-02 | MO | | | | |  |
+| QA-SIM-01 | MO | 통과 | MO QA | 2026-10-07 11:50:30 KST | `328baaaf702f` (#115 이미지 ID 고정·대조) | 격리 E2 기동 12.892초 후 `healthy`, running=true, concurrency=1, intervalMs=2000, revision=0. 오늘 검사 4→5 증가. E1 기동 관찰 대체 여부 공동 확인 필요. [원자료](../../results/qa-mo-20261007-evidence/e2-final-restart-evidence.json). |
+| QA-SIM-02 | MO | 통과 | MO-09 재검증 | 2026-10-07 09:51~09:54 KST | `328baaaf702f` (#115 이미지 digest 대조) / `cqc-apple-separate12-focal-v2-cal-20260930` | 새 100건: 중앙값 2.002초·p90 2.163초·최대 2.398초·0.501건/초·시간 초과 0. [원자료](../../results/qa-mo-20261007-evidence/live-normal-100.json). 10-06 p90 2.233초 실패 이력·원인 미확정은 유지. |
 | QA-SIM-03 | BE | | | | |  |
 | QA-SIM-04 | BE | | | | |  |
 | QA-SIM-05 | BE | | | | |  |
 | QA-SIM-06 | BE | | | | |  |
 | QA-SIM-07 | BE | | | | |  |
-| QA-SIM-08 | MO | | | | |  |
+| QA-SIM-08 | MO | 통과 | MO QA | 2026-10-07 11:51:55~11:52:13 KST | `328baaaf702f` (#115 이미지 ID 고정·대조) | `CONTROL_FAILED`/ALL·동시2 설정 후 재시작. 이전 묶음 index 20, 재기동 후 21·22·23 순서. faults=[]·동시1·간격2000·running=true·revision=0. [원자료](../../results/qa-mo-20261007-evidence/e2-final-restart-evidence.json). |
 | QA-SIM-09 | BE | | | | | #45 |
 | QA-SIM-10 | BE | | | | |  |
 | QA-SIM-11 | BE | | | | |  |
@@ -1425,6 +1425,14 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 - 격리 자동 회귀 최신 회차(`outputs/mo09-latest-isolated-final-20261006/`)는 7개 항목 통과. QA-IMG-06은 Windows `WinError 5` 원문을 보존하고 Linux 컨테이너에서 1 passed로 재확인했다.
 - E2 상세 장애 회차(`outputs/mo09-e2-detailed-20261006/`)는 장애 6종의 상태·NEXT 해제·후속 정상 저장, 추론 장애 이미지 12장, 제어 시도 횟수를 확인했다. 전체 통계·중단 복구는 남았다.
 - 14:07 시작한 첫 재측정은 14:12경 Compose 컨테이너 교체로 차단됐다. 배포 후 10분 안정 시간을 기다린 14:23~14:25 새 100건은 중앙값 1.996초·p90 2.233초·최대 2.500초·처리량 0.500건/초·재검사 12·오류 0이다. QA-SIM-13 제안 기준은 관찰상 충족했으나 기준 합의 전 기록표는 차단, QA-SIM-02는 p90 2.2초 기준을 0.033초 초과해 실패다. 원문은 `outputs/mo09-live-repeat-stable-20261006-1413/`에 보존했다.
+
+### 6.7 MO 재검증·출처 보완 (2026-10-07)
+
+- MO 담당 9건의 최신 실행 기대값 충족. 6.4에 E1 관찰·저장소 검토·격리 E2 결과를 환경별로 기록.
+- QA-SIM-02 새 100건 p90 2.163초 통과. 10-06 두 회차 실패 및 원인 미확정 유지.
+- 현재 배포는 Jenkins #115 / `328baaaf702f` 이미지 digest 4/4 대조. 최종 E2 서비스 이미지도 같은 빌드 ID로 고정·3/3 대조.
+- QA-SIM-13 제안 기준 승인은 미정. SIM-01의 E2 기동 증거를 E1 신규 배포 관찰로 대체할지, BE-10 증거 재사용 범위는 공동 확인 필요.
+- [보존본·최종 E2 결과](../../results/qa-mo-20261007.md#summary), [회의 검토안](../../results/qa-mo-20261007.md#meeting), [이슈 초안](../../results/qa-mo-20261007.md#drafts) 준비. #65 전체 수용 완료 판정은 미실행.
 
 ## 7. 갱신 규칙
 
