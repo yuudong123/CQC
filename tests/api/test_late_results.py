@@ -4,11 +4,12 @@ import asyncio
 import json
 from io import BytesIO
 
+import httpx
 import pytest
 from fastapi import UploadFile
 from fastapi.testclient import TestClient
 
-from src.api.clients.inference import MockInferenceClient
+from src.api.clients.inference import HttpInferenceClient, MockInferenceClient
 from src.api.control.virtual_control import MockVirtualControl
 from src.api.core.config import Settings
 from src.api.main import create_app
@@ -22,6 +23,74 @@ from src.api.services.inspections import InspectionService
 from src.api.services.late_results import LateResultManager
 
 from .fakes import FakeBinMappingRepository, RecordingPersistence
+
+
+@pytest.mark.parametrize(
+    "updates",
+    [
+        pytest.param({}, id="valid"),
+        pytest.param(
+            {"quality_probabilities": {"L": 0.8, "M": 0.2, "S": 0.2}}, id="sum"
+        ),
+        pytest.param({"quality_confidence": 0.7}, id="confidence"),
+        pytest.param({"predicted_grade": "M"}, id="prediction"),
+        pytest.param({"inference_time_ms": float("inf")}, id="infinity"),
+    ],
+)
+def test_late_http_response_uses_shared_validation(
+    updates: dict[str, object],
+) -> None:
+    async def run() -> None:
+        request = InferenceRequest(
+            inspection_id="late-http-validation",
+            images=[b"image"],
+            metadata=_metadata_items(),
+        )
+        payload = (await MockInferenceClient().predict(request)).model_dump()
+        payload.update(updates)
+
+        async def respond(_: httpx.Request) -> httpx.Response:
+            await asyncio.sleep(0.03)
+            return httpx.Response(200, content=json.dumps(payload).encode())
+
+        manager = LateResultManager(hard_timeout_ms=200, max_tasks=4)
+        persistence = RecordingPersistence()
+        control = MockVirtualControl()
+        async with httpx.AsyncClient(
+            transport=httpx.MockTransport(respond)
+        ) as transport:
+            service = InspectionService(
+                HttpInferenceClient("http://inference/v1/predict", client=transport),
+                control,
+                cultivar_confidence_threshold=0.50,
+                quality_confidence_threshold=0.60,
+                inference_business_deadline_ms=1,
+                late_result_manager=manager,
+                bin_mapping_repository=FakeBinMappingRepository(),
+                persistence=persistence,
+            )
+            response = await service.inspect(
+                inspection_id=request.inspection_id,
+                images=_upload_files(),
+                metadata=request.metadata,
+                virtual_brix=12.0,
+            )
+            fixed = response.model_dump()
+            await manager.wait_until_idle()
+
+        assert response.model_dump() == fixed
+        assert response.decision_reason == "INFERENCE_DEADLINE_EXCEEDED"
+        assert response.target_bin_code == "TEST_REINSPECTION_BIN"
+        assert control.call_count == 1
+        assert manager.active_count == 0
+        if updates:
+            assert not manager.results
+            assert not persistence.late_results
+        else:
+            assert len(manager.results) == 1
+            assert persistence.late_results[0][2] == payload
+
+    asyncio.run(run())
 
 
 class ConfidenceInferenceClient(MockInferenceClient):
