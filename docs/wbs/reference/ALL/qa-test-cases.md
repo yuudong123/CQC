@@ -1057,7 +1057,7 @@ const d = document.documentElement;
 | a | `curl -s $W/unknown` | 404 `NOT_FOUND` |
 | b | `curl -s -X POST $W/snapshot` | 405 (Next가 직접 응답하면 본문이 비어 있을 수 있다) |
 | c | `curl -s -X DELETE $W/fault-images -H "Origin: http://evil.example" -d '{"ids":[]}'` | 403 `CROSS_ORIGIN_WRITE` |
-| d | `DELETE $W/fault-images` 본문 8,193바이트 이상 | 413 `BODY_TOO_LARGE` |
+| d | `DELETE $W/fault-images` 본문 16,385바이트 이상(검수 이미지 300장 ID 약 11.4KB는 통과) | 413 `BODY_TOO_LARGE` |
 | e | `curl -s $W/snapshot` (정상) | 200, `Cache-Control: no-store`, `X-Content-Type-Options: nosniff` |
 | f | `CQC_QUALITY_BACKEND_URL` 없이 실행 후 `curl -s $W/snapshot` | 503 `BACKEND_UNCONFIGURED` |
 | g | Backend 정지 중 `curl -s $W/snapshot` | 503 `BACKEND_UNAVAILABLE` |

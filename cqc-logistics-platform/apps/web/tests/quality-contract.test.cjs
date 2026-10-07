@@ -6,7 +6,7 @@ const ts = require("typescript");
 require.extensions[".ts"] = (module, filename) => module._compile(ts.transpileModule(fs.readFileSync(filename, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, filename);
 const { QualityReferenceService } = require("../src/lib/quality-reference.ts");
 const { parseSnapshot, parseHistory } = require("../src/lib/quality-api.ts");
-const { proxyQuality, CSV_TIMEOUT_MS } = require("../src/lib/quality-proxy.ts");
+const { proxyQuality, CSV_TIMEOUT_MS, MAX_BODY_BYTES } = require("../src/lib/quality-proxy.ts");
 const { summarizeInspections } = require("../src/lib/quality-statistics.ts");
 const { classifyResult } = require("../src/lib/quality-runtime.ts");
 const openapi = require("../scripts/quality-openapi.cjs");
@@ -192,6 +192,11 @@ test("proxy restricts routes, methods, origins, content types and sanitizes back
     assert.equal((await proxyQuality(deployed({ origin: "http://evil.example", host: "192.168.133.106:3100" }), "fault-images")).status, 403);
     assert.equal((await proxyQuality(deployed({ origin: "http://192.168.133.106:3100", host: "192.168.133.106:3100", "sec-fetch-site": "cross-site" }), "fault-images")).status, 403);
     assert.equal((await proxyQuality(deployed({ origin: "null", host: "192.168.133.106:3100" }), "fault-images")).status, 403);
+    // 검수 이미지 전체 삭제: 한도 300장 ID(약 11.4KB)는 통과, 한도를 넘는 본문은 413
+    const ids = Array.from({ length: 300 }, (_, i) => `${"a".repeat(32)}_${String(i % 12).padStart(2, "0")}`);
+    const bulk = (body) => new Request("http://localhost:3000/api/quality/fault-images", { method: "DELETE", body });
+    assert.equal((await proxyQuality(bulk(JSON.stringify({ ids })), "fault-images")).status, 200);
+    assert.equal((await proxyQuality(bulk("x".repeat(MAX_BODY_BYTES + 1)), "fault-images")).status, 413);
     // 대량 CSV는 5초에 끊지 않는다(#109): 6초 걸리는 CSV도 받고, 같은 지연의 snapshot은 끊긴다
     assert.ok(CSV_TIMEOUT_MS >= 60_000);
     const slow = (body, type) => async (url, options) => {
