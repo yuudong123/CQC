@@ -689,13 +689,13 @@ sweetness_band: &lt;14 | ≥14
     <tr><td>DM</td><td>17</td><td class="pass">17</td><td>—</td><td>모델·판정·정상 100건 기준</td></tr>
     <tr><td>FE</td><td>21</td><td class="pass">21</td><td>—</td><td>관리자 페이지 분리 뒤 6개 다시 확인</td></tr>
     <tr><td>MO</td><td>9</td><td class="pass">9</td><td>10-12 정상 100건 재측정</td><td>배포·재시작·보존</td></tr>
-    <tr><td>BE</td><td>44</td><td class="pass">20<small>부분 검증 8 · 보완 2</small></td><td>E2 장애·조작 13, MySQL 통합 1, 대행분 보완 10</td><td>INS-13 응답시간 보류(KI-10)</td></tr>
+    <tr><td>BE</td><td>44</td><td class="pass">16<small>대행 PASS 후보 5 · 부분 8 · 보완 2</small></td><td>E2 장애·조작 13, MySQL 통합 1, 대행분 보완 10</td><td>INS-13 응답시간 보류(KI-10)</td></tr>
   </tbody></table>
   <div class="qa-grid">
     <div class="panel"><h3>수용 기준 (10-07 확정)</h3><ul><li>처리량 0.5 ± 0.05건/초</li><li>완료 간격 중앙값 2.0 ± 0.1초 · 최대 4초 미만</li><li>운영 100건 재검사 20% 이하 · 시간 초과·추론 오류 0건</li><li>다른 QA·배포와 겹친 회차는 판정에서 제외</li></ul></div>
     <div class="panel"><h3>10-12 진행 순서</h3><ol><li>배포 기준선 확인 → 정상 100건 자동 측정</li><li>격리 환경 장애 5종 (시간 초과·추론 오류·DB 오류·명령 거부·제어 무응답)</li><li>순환 삭제·재시작 복구·CSV</li><li>기록표·이슈 정리 → 10-13 동결 판단</li></ol></div>
   </div>
-  <p class="research-small">파트를 넘어 대행: 10-08 BE 담당 16개 중 15개를 DM·FE가 실행하고 증거를 공유했다. BE 검수 결과 5개 PASS, 8개 부분 검증, 2개 원문 조건 보완. 진행 현황: <a class="deck-link" href="https://docs.google.com/spreadsheets/d/18KZXwZNBsnAg9rItxES3NC63_JvINu1rF1lnE00VaQc/edit?gid=0#gid=0" target="_blank" rel="noopener">CQC QA 진행표 (Google Sheets)</a></p>
+  <p class="research-small">파트를 넘어 대행: 10-08 BE 담당 16개 중 15개를 DM·FE가 실행하고 증거를 공유했다. BE 검수 결과 PASS 후보 5개, 부분 검증 8개, 원문 조건 보완 2개. 진행 현황: <a class="deck-link" href="https://docs.google.com/spreadsheets/d/18KZXwZNBsnAg9rItxES3NC63_JvINu1rF1lnE00VaQc/edit?gid=0#gid=0" target="_blank" rel="noopener">CQC QA 진행표 (Google Sheets)</a></p>
   <div class="source">근거: QA 목록 기록표(10-08), 수용 기준 결정(10-07), 10-12 수용시험 진행표, BE 대행 결과</div><div class="footer"><span>CQC · 최종 발표 초안</span><span>38</span></div>
 </section>
 

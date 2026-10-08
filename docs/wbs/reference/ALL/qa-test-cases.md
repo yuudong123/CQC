@@ -593,9 +593,15 @@ done
 
 - 근거: FR-21·28·29
 - 환경: E2. 먼저 Simulator를 정지하고(QA-SIM-03 절차 1) 끝나면 재개한다.
+- 요청 조건 (10-08 #103 BE·DM 합의): 5건 모두 **운영과 같은 2초 라인 조건의 인증된 Simulator 요청**으로 보낸다.
+  - 헤더: `x-cqc-simulator-token: $SIMULATOR_FAULT_TOKEN`(E2 Compose 값), `x-cqc-simulator-interval-ms: 2000`, `x-cqc-simulator-bundle-id: <보내는 묶음 폴더 이름>`(예 `demo-601031008000-000`, B-BROKEN은 `qa-tmp-broken`). `x-cqc-simulator-faults`는 보내지 않는다. 묶음 ID가 없으면 422, 토큰이 틀리면 403이다(`src/api/routers/inspections.py`).
+  - 적용 정책: Inference 업무 기한 2000ms(라인 간격), hard timeout 3000ms(2000 + `INFERENCE_HARD_TIMEOUT_GRACE_MS` 1000), 기한 뒤 도착한 결과는 판정을 바꾸지 않고 진단으로만 남긴다(#87).
+  - 이 조건은 OPS-02에만 적용한다. 인증 없는 직접 요청의 업무 기한 500ms(`INFERENCE_BUSINESS_DEADLINE_MS` 기본값)는 그대로다. 입력 5건과 기대 증가량은 바꾸지 않는다.
+  - 예: `curl -s -X POST "$BE/v1/inspections" -H "x-cqc-simulator-token: $SIMULATOR_FAULT_TOKEN" -H "x-cqc-simulator-interval-ms: 2000" -H "x-cqc-simulator-bundle-id: demo-601031008000-000" -F "inspection_id=$RUN-ops02-fl" -F "metadata=$meta" -F "virtual_brix=13.9" -F "images=@…"` (12장)
+  - 10-08 이전의 직접 요청 회차(시간 초과 2회·정상 1회, BE E2)는 기록으로 남기고 이 조건 변경으로 PASS 처리하지 않는다.
 - 절차:
   1. snapshot `state.today`를 저장(전)
-  2. 정상 2건(B-FL 13.9, B-YS 14.0), 품질 저신뢰 1건(B-LQ 15.0), 당도 누락 1건(B-FM), Inference 오류 1건(B-BROKEN 1장) 보낸다.
+  2. 위 요청 조건으로 정상 2건(B-FL 13.9, B-YS 14.0), 품질 저신뢰 1건(B-LQ 15.0), 당도 누락 1건(B-FM), Inference 오류 1건(B-BROKEN 1장) 보낸다.
   3. snapshot `state.today`를 다시 저장(후)
 - 기대 증가량 (후 − 전):
 
@@ -1299,7 +1305,7 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 
 ### 6.4 기록표
 
-> 10-08 BE 대행 16개는 [#103 BE 검수](https://github.com/yuudong123/CQC/issues/103) 판정을 결과 칸에 반영했다(PASS 5·부분 검증 8·원문 미충족 2·미실행 1). 보완 조건은 #103 검수 댓글을 따른다.
+> 10-08 BE 대행 16개는 [#103 BE 검수](https://github.com/yuudong123/CQC/issues/103) 판정을 결과 칸에 반영했다(PASS 후보 5·부분 검증 8·원문 미충족 2·미실행 1). PASS 후보는 BE가 공식 완료로 옮길 때까지 BE 확정 수에 넣지 않는다(10-08 기준 BE 확정 16/44, 후보 포함 21/44). 보완 증거는 [대행 결과 README 보완 절](../../results/qa-be-proxy-20261008/README.md) 참고. 보완 조건은 #103 검수 댓글을 따른다.
 
 2026-10-06 BE-10 증거 인계: 6.2의 동일 기대값 재사용 규칙에 따라 아래 행에 기존 실행 결과를 연결했다. 새 시험은 실행하지 않았다. 실행자 `BE-10 기록`은 원 실행 기록의 인계 표기이며 담당자·담당 파트를 변경하지 않는다. 일시는 원 실행일, 커밋·모델은 링크한 실행 절의 기준선이다. `차단(부분 증거)`는 해당 기대값은 검증됐지만 케이스 전체의 입력·환경·E1 확인이나 다른 기대값은 미확인이라는 뜻이다. ALL-04 전체 완료를 뜻하지 않으며 #66 완료와 후속 수용 경계는 6.4.1을 따른다.
 
@@ -1328,19 +1334,19 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 | QA-INS-06 | DM | 통과(BE-10 갈음) | 조현재(에이전트) | 2026-10-07 10:40~11:20 | dev da6872f 웹 / E1 조회 + QA 중계 | 노트북에 Docker가 없어 E2 미실행. BE-10 INS-02(품종 저신뢰)·INS-04(둘 다 저신뢰) PASS로 갈음 |
 | QA-INS-07 | BE | 통과 | BE(#103 보고) | 2026-10-07 | E1 `24e49e1` | 잘못된 ID 422·점 포함 200·중복 409, 중복 전후 공개 history·이미지 불변. DB 직접 비교 없이 공개 응답·데이터 근거로 통과(10-07 DM·FE 합의). [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
 | QA-INS-08 | BE | 통과 | BE(#103 보고) | 2026-10-08 | E1 `45c33f5` | 손상 PNG 1장 → 200·`REINSPECTION_REQUIRED`·`INFERENCE_HTTP_ERROR`·`TEST_REINSPECTION_BIN`, 제어·저장 성공, 검수 이미지 1장. 시스템 오류 100장 유지·가장 오래된 1장 순환 삭제(허용된 보존 정책). [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
-| QA-INS-09 | BE | 통과(대행, BE 검수 PASS) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | 노트북 로컬 · `1e6ff23` | 지정 pytest 2 passed(노트북 Python 3.11, `1e6ff23`). [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [INS-09](../../BE-10-results.md): ID/frames/null/JSON/필수 field 오류 정책 PASS; 지정 케이스 전체 조합은 담당 대조 필요 |
+| QA-INS-09 | BE | PASS 후보(대행, BE 검수) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | 노트북 로컬 · `1e6ff23` | 지정 pytest 2 passed(노트북 Python 3.11, `1e6ff23`). [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [INS-09](../../BE-10-results.md): ID/frames/null/JSON/필수 field 오류 정책 PASS; 지정 케이스 전체 조합은 담당 대조 필요 |
 | QA-INS-10 | BE | 통과 | BE(#103 보고) | 2026-10-08 | E2 `45c33f5` | 닫힌 포트 연결 실패 → 200·843.8ms, `INFERENCE_CONNECTION_ERROR`, 재검사·통계 제외, 오류 이미지 12장, 제어·저장 성공. [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
 | QA-INS-11 | BE | 통과 | BE(#103 보고) | 2026-10-08 | E2 `45c33f5` | Inference 중단 → 200·1096.4ms 연결 오류·재검사, 복구 뒤 다음 검사 정상·Backend 재시작 없음. [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
 | QA-INS-12 | BE | 통과 | BE(#103 보고) | 2026-10-08 | E2 `45c33f5` | 업무 기한 50ms → 200·797.3ms `INFERENCE_DEADLINE_EXCEEDED`, 예측 null·이미지 12장·통계 제외, late 결과가 판정·제어를 덮어쓰지 않음. [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
 | QA-INS-13 | BE | 실패 | BE·MO(#117) | 2026-10-08 | E2 `45c33f5` | DB 장애 중 정상 판정·LKG bin·제어 성공, 저장 FAILED 분리, 복구 뒤 재시작 없이 저장 재개는 통과. **HTTP 응답 4.307초로 2초 기준 초과**(이전 MO 회차 4.938초). 원인은 Docker 이름 조회 지연(약 3.3초). **최종까지 보류 확정, 수용 판정에서 응답시간 조건만 예외(KI-10, [#117](https://github.com/yuudong123/CQC/issues/117))** |
 | QA-INS-14 | BE | | | | |  |
-| QA-INS-15 | BE | 차단(부분 증거) | BE-10 기록 | 2026-10-05 | 2/4 §9 기준선 | [INS-10~12](../../BE-10-results.md): 거부 시 대체1회·무응답 추가호출 없음·실패 상태 PASS; QA 케이스 전체 조건은 담당 대조 필요 |
+| QA-INS-15 | BE | 통과 | BE(#103 보고) | 2026-10-08 | BE-10 Linux 회귀 `2c859dd`(475 passed / 1 skipped) | 거부 시 재검사 bin 대체 1회·재거부 재시도 없음·NO_RESPONSE/FAILED 반복 없음·시도 순서와 attempt_no. 지정 자동 시험 9개 개별 PASS 재사용. 실제 MySQL 두 행 직접 SQL은 미확보. [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
 | QA-INS-16 | BE | | | | |  |
 | QA-INS-17 | BE | | | | |  |
 | QA-OPS-01 | BE | 통과 | BE(#103 보고) | 2026-10-07 | E1 `24e49e1` | snapshot 전체 필드 기대값 충족. [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
 | QA-OPS-02 | BE | 차단(부분 증거) | BE-10 기록 | 2026-10-06 | Linux MySQL8.4, 3/4 §11 | [OPS-02](../../BE-10-results.md): 20건 total20/normal16/excluded4/reinspection8 SQL/API 일치. 이 케이스의 지정5건 분포를 실행한 기록과 구분 |
-| QA-OPS-03 | BE | 통과(대행, BE 검수 PASS) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | B-FL 13.9 행 필드·시각 3형식·내림차순·bins 일치. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [OPS-01·§13.4](../../BE-10-results.md): 실제 DB 이력 변환/정상100 PASS; 전체 지정 행 기대값 대조는 후속 |
-| QA-OPS-04 | BE | 통과(대행, BE 검수 PASS) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | INS-01·03·04·08 행 변환 일치. INS-10·12 행은 E2 전용(BE E2 INS-10·12 통과로 보완). [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [INS-02~09·OPS-02](../../BE-10-results.md): 정상/저신뢰/오류/timeout 상태·통계 정책 PASS; QA 지정 입력 전체는 별도 대조 |
+| QA-OPS-03 | BE | PASS 후보(대행, BE 검수) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | B-FL 13.9 행 필드·시각 3형식·내림차순·bins 일치. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [OPS-01·§13.4](../../BE-10-results.md): 실제 DB 이력 변환/정상100 PASS; 전체 지정 행 기대값 대조는 후속 |
+| QA-OPS-04 | BE | PASS 후보(대행, BE 검수) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | INS-01·03·04·08 행 변환 일치. INS-10·12 행은 E2 전용(BE E2 INS-10·12 통과로 보완). [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [INS-02~09·OPS-02](../../BE-10-results.md): 정상/저신뢰/오류/timeout 상태·통계 정책 PASS; QA 지정 입력 전체는 별도 대조 |
 | QA-OPS-05 | BE | 부분 검증(대행, BE 검수) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | a~n 필터 정합·본인 행 포함. g·k의 `$RUN-ins12`는 E2 전용, l OTHER는 오늘 지정 행 0건. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [OPS-01](../../BE-10-results.md): 현행 API 필터·SQL ID 대조 PASS; QA 필터 조합별 전체 확인은 후속. model 필터는 #68 |
 | QA-OPS-06 | BE | 보완 필요(대행, BE 검수: 원문 미충족) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 50+50 중복 0, 100·200, pageSize 20·page 0 → 422, 마지막+1 빈 목록. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [OPS-01](../../BE-10-results.md): 최신순225건·200+25 pagination PASS; 50/100 및 invalid 쿼리 전체 매트릭스 확인은 별도 |
 | QA-OPS-07 | BE | 통과(기존 증거 재사용) | BE-10 기록 | 2026-10-06 | Linux MySQL8.4, 3/4 §11 | [OPS-01·03](../../BE-10-results.md): 조회 snapshotAt 고정 후 신규 검사 제외, 현재 조회와 구분 PASS |
@@ -1354,9 +1360,9 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 | QA-OPS-15 | BE | 통과 | BE(#103 보고) | 2026-10-08 09:20 | E1 `45c33f5` | KI-6. 10건 저장 10/10·시간 초과 0, `periodTotals["1"]` 39 = 직전 60초 history 39, points 합 23 = history 23. 10-07 회차(시간 초과 5건)는 dev 푸시 부하와 겹쳐 판정 제외. [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
 | QA-IMG-01 | BE | 부분 검증(대행, BE 검수) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 본인 저신뢰 12장 LOW_CONFIDENCE, 정상·당도 누락 0장. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [IMG-01·§13.4](../../BE-10-results.md): 정상/당도누락 이미지0, 저신뢰3종/시스템오류4종 보관·sidecar 정책 PASS. QA 지정 입력/장수 전체와 구분 |
 | QA-IMG-02 | BE | 부분 검증(대행, BE 검수) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 300장·최신순·키 12개·필터·본인 ins08 항목. 시간 초과 항목 표시는 E2 전용. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [IMG-01~03](../../BE-10-results.md): category/inspectionId 목록·sidecar confidence/threshold/error 정책 PASS; 전체 QA 응답 필드 대조는 후속 |
-| QA-IMG-03 | BE | 통과(대행, BE 검수 PASS) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 200 png no-store·SHA-256 일치, 잘못된 id 410·410·404. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [IMG-03~05·§13.3](../../BE-10-results.md): preview·삭제 후410 PASS; PNG hash/모든 잘못된 경로 조합 확인은 별도 |
+| QA-IMG-03 | BE | PASS 후보(대행, BE 검수) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 200 png no-store·SHA-256 일치, 잘못된 id 410·410·404. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [IMG-03~05·§13.3](../../BE-10-results.md): preview·삭제 후410 PASS; PNG hash/모든 잘못된 경로 조합 확인은 별도 |
 | QA-IMG-04 | BE | 부분 검증(대행, BE 검수) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 본인 이미지 2장 삭제·중복/없는 id 무시·미리보기 410·이력·CSV 유지. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [IMG-05·§13.3](../../BE-10-results.md): 선택 삭제·잔존 목록·preview410 PASS; 전체 지정 선택 조합은 담당 대조 필요 |
-| QA-IMG-05 | BE | 통과(대행, BE 검수 PASS) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 빈 목록 200, 나머지 4종 422 INVALID_IDS, 이미지 그대로. [대행 결과](../../results/qa-be-proxy-20261008/README.md) |
+| QA-IMG-05 | BE | PASS 후보(대행, BE 검수) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 빈 목록 200, 나머지 4종 422 INVALID_IDS, 이미지 그대로. [대행 결과](../../results/qa-be-proxy-20261008/README.md) |
 | QA-IMG-06 | BE | 통과(기존 증거 재사용) | BE-10 기록 | 2026-10-06 | Linux 저장소, 3/4 §11 | [IMG-02](../../BE-10-results.md): 시스템101→100/저신뢰201→200, 독립 oldest 삭제·최신 유지 PASS; Windows #99와 구분 |
 | QA-IMG-07 | MO | 통과 | MO QA | 2026-10-07 11:50:55 KST | `328baaaf702f` (#115 이미지 ID 고정·대조) | QA-IMG-06 조건의 시스템 오류 이미지 100장 생성 후 Backend 재시작. 전체 100개 ID 동일·미리보기 HTTP 200 및 SHA-256 동일. [원자료](../../results/qa-mo-20261007-evidence/e2-final-restart-evidence.json). |
 | QA-WEB-01 | FE | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | 제목·부제·배지 서버 관제 |
