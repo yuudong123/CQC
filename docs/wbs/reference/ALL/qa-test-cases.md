@@ -1319,18 +1319,18 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 | QA-INS-04 | DM | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | LQ 0.466·LQ2 0.581·MIS 0.512 모두 LOW_QUALITY_CONFIDENCE, sweet |
 | QA-INS-05 | DM | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | EDGE 0.629→BIN_01, EDGE2 0.647→BIN_05 |
 | QA-INS-06 | DM | 통과(BE-10 갈음) | 조현재(에이전트) | 2026-10-07 10:40~11:20 | dev da6872f 웹 / E1 조회 + QA 중계 | 노트북에 Docker가 없어 E2 미실행. BE-10 INS-02(품종 저신뢰)·INS-04(둘 다 저신뢰) PASS로 갈음 |
-| QA-INS-07 | BE | | | | |  |
-| QA-INS-08 | BE | | | | |  |
+| QA-INS-07 | BE | 통과 | BE(#103 보고) | 2026-10-07 | E1 `24e49e1` | 잘못된 ID 422·점 포함 200·중복 409, 중복 전후 공개 history·이미지 불변. DB 직접 비교 없이 공개 응답·데이터 근거로 통과(10-07 DM·FE 합의). [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
+| QA-INS-08 | BE | 통과 | BE(#103 보고) | 2026-10-08 | E1 `45c33f5` | 손상 PNG 1장 → 200·`REINSPECTION_REQUIRED`·`INFERENCE_HTTP_ERROR`·`TEST_REINSPECTION_BIN`, 제어·저장 성공, 검수 이미지 1장. 시스템 오류 100장 유지·가장 오래된 1장 순환 삭제(허용된 보존 정책). [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
 | QA-INS-09 | BE | 차단(부분 증거) | BE-10 기록 | 2026-10-05 | 2/4 §9 기준선 | [INS-09](../../BE-10-results.md): ID/frames/null/JSON/필수 field 오류 정책 PASS; 지정 케이스 전체 조합은 담당 대조 필요 |
-| QA-INS-10 | BE | 차단(부분 증거) | BE-10 기록 | 2026-10-05 | 2/4 §9 기준선 | [INS-07](../../BE-10-results.md): 실제 연결 거부/ConnectTimeout 분류·재검사·통계 제외 PASS; 지정 입력 조건 전체 대조는 후속 |
-| QA-INS-11 | BE | 차단(부분 증거) | BE-10 기록 | 2026-10-05 | 2/4 §9 기준선 | KI-3 (#67): [INS-07~08](../../BE-10-results.md) 오류 정책 PASS. 목표 서버 Inference container 중단/복구를 수행한 증거로 확대하지 않음 |
-| QA-INS-12 | BE | 차단(부분 증거) | BE-10 기록 | 2026-10-05 | 2/4 §9 기준선 | [TIM-01~07 및 §11 late DB](../../BE-10-results.md): 실제 socket late 진단·판정/제어/통계 불변·hard cancel PASS. 지정 50ms/12-view 조건 및 목표 배포 재주입은 별도 |
-| QA-INS-13 | BE | 차단(부분 증거) | BE-10 기록 | 2026-10-06 | Linux MySQL8.4, 3/4 §11 기준선 | KI-1 해결: [DB-01~02](../../BE-10-results.md) 실제 MySQL 중단 중 정상 제어/저장 FAILED·복구 후 SUCCEEDED PASS. 지정 bin/라인 내 응답시간까지 전체 검증한 것으로 확대하지 않음 |
+| QA-INS-10 | BE | 통과 | BE(#103 보고) | 2026-10-08 | E2 `45c33f5` | 닫힌 포트 연결 실패 → 200·843.8ms, `INFERENCE_CONNECTION_ERROR`, 재검사·통계 제외, 오류 이미지 12장, 제어·저장 성공. [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
+| QA-INS-11 | BE | 통과 | BE(#103 보고) | 2026-10-08 | E2 `45c33f5` | Inference 중단 → 200·1096.4ms 연결 오류·재검사, 복구 뒤 다음 검사 정상·Backend 재시작 없음. [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
+| QA-INS-12 | BE | 통과 | BE(#103 보고) | 2026-10-08 | E2 `45c33f5` | 업무 기한 50ms → 200·797.3ms `INFERENCE_DEADLINE_EXCEEDED`, 예측 null·이미지 12장·통계 제외, late 결과가 판정·제어를 덮어쓰지 않음. [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
+| QA-INS-13 | BE | 실패 | BE·MO(#117) | 2026-10-08 | E2 `45c33f5` | DB 장애 중 정상 판정·LKG bin·제어 성공, 저장 FAILED 분리, 복구 뒤 재시작 없이 저장 재개는 통과. **HTTP 응답 4.307초로 2초 기준 초과**(이전 MO 회차 4.938초). 원인 계측·수정 → [#117](https://github.com/yuudong123/CQC/issues/117) |
 | QA-INS-14 | BE | | | | |  |
 | QA-INS-15 | BE | 차단(부분 증거) | BE-10 기록 | 2026-10-05 | 2/4 §9 기준선 | [INS-10~12](../../BE-10-results.md): 거부 시 대체1회·무응답 추가호출 없음·실패 상태 PASS; QA 케이스 전체 조건은 담당 대조 필요 |
 | QA-INS-16 | BE | | | | |  |
 | QA-INS-17 | BE | | | | |  |
-| QA-OPS-01 | BE | | | | |  |
+| QA-OPS-01 | BE | 통과 | BE(#103 보고) | 2026-10-07 | E1 `24e49e1` | snapshot 전체 필드 기대값 충족. [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
 | QA-OPS-02 | BE | 차단(부분 증거) | BE-10 기록 | 2026-10-06 | Linux MySQL8.4, 3/4 §11 | [OPS-02](../../BE-10-results.md): 20건 total20/normal16/excluded4/reinspection8 SQL/API 일치. 이 케이스의 지정5건 분포를 실행한 기록과 구분 |
 | QA-OPS-03 | BE | 차단(부분 증거) | BE-10 기록 | 2026-10-06 | 3/4 §11 및 #112/35ac952 | [OPS-01·§13.4](../../BE-10-results.md): 실제 DB 이력 변환/정상100 PASS; 전체 지정 행 기대값 대조는 후속 |
 | QA-OPS-04 | BE | 차단(부분 증거) | BE-10 기록 | 2026-10-05~06 | 2/4 §9·3/4 §11 | [INS-02~09·OPS-02](../../BE-10-results.md): 정상/저신뢰/오류/timeout 상태·통계 정책 PASS; QA 지정 입력 전체는 별도 대조 |
@@ -1344,7 +1344,7 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 | QA-OPS-12 | BE | 통과(기존 증거 재사용) | BE-10 기록 | 2026-10-06 | Linux MySQL8.4, 3/4 §11 | [OPS-02](../../BE-10-results.md): DB/API/snapshot의 total·normal·excluded·품종/품질/bin·inferenceCount 일치. §13.4 정상100 전후 증가량도 일치 |
 | QA-OPS-13 | BE | | | | |  |
 | QA-OPS-14 | BE | 통과(기존 증거 재사용) | BE-10 기록 | 2026-10-06 | Linux MySQL8.4, 3/4 §11 | [DB-01~02·LOG-01](../../BE-10-results.md): 실제 MySQL 중단 중 조회5 API503, Backend 재시작 없이 복구200·DB 오류 로그 연결 PASS |
-| QA-OPS-15 | BE | | | | | KI-6 |
+| QA-OPS-15 | BE | 통과 | BE(#103 보고) | 2026-10-08 09:20 | E1 `45c33f5` | KI-6. 10건 저장 10/10·시간 초과 0, `periodTotals["1"]` 39 = 직전 60초 history 39, points 합 23 = history 23. 10-07 회차(시간 초과 5건)는 dev 푸시 부하와 겹쳐 판정 제외. [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
 | QA-IMG-01 | BE | 차단(부분 증거) | BE-10 기록 | 2026-10-06 | Linux MySQL8.4, 3/4 §11 | [IMG-01·§13.4](../../BE-10-results.md): 정상/당도누락 이미지0, 저신뢰3종/시스템오류4종 보관·sidecar 정책 PASS. QA 지정 입력/장수 전체와 구분 |
 | QA-IMG-02 | BE | 차단(부분 증거) | BE-10 기록 | 2026-10-06 | Linux 저장소, 3/4 §11 | [IMG-01~03](../../BE-10-results.md): category/inspectionId 목록·sidecar confidence/threshold/error 정책 PASS; 전체 QA 응답 필드 대조는 후속 |
 | QA-IMG-03 | BE | 차단(부분 증거) | BE-10 기록 | 2026-10-06 | 3/4 §11 및 #112/35ac952 | [IMG-03~05·§13.3](../../BE-10-results.md): preview·삭제 후410 PASS; PNG hash/모든 잘못된 경로 조합 확인은 별도 |
@@ -1367,12 +1367,12 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 | QA-WEB-12 | FE | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | 제목·부사/특 필터·100행·페이지 이동·이전 비활성·새로고침 문구·날짜 역전 경고·CSV 비활성. 오판 지정(12번)은 #110 BE-10 PASS로 갈음 |
 | QA-WEB-13 | FE | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | 부사 필터 CSV 28,340행·BOM·25초 다운로드(#111 이후). Backend 대조는 BE-10 §13.2 / 이전: [§13.2](../../BE-10-results.md): #109 FE200 실제 다운로드40392행·Backend bytes/필드/BOM 일치 PASS. 지정 FE 필터 조작 전체 수용은 FE 담당 후속 |
 | QA-WEB-14 | FE | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | 기간 통계 창 표시(전체 1,460·재검사 10.8%·평균 추론 143ms) |
-| QA-WEB-15 | FE | 통과(수정 반영 조건) | 조현재(에이전트) | 2026-10-07 | dev 328baaa + feat/front 0c679cd | 1~4·6~8 통과(E1, 본인 qa 이미지 1장 삭제 12→11). 5번 전체 삭제는 300장 ID 본문 11,409바이트가 프록시 한도 8,192바이트를 넘어 413이었음(원인 확인). 한도를 16,384바이트로 올리고 300장 삭제 시험을 추가해 수정(0c679cd). 확인 시점 300장만 보내고 새 이미지는 제외하는 로직은 정상. 배포 뒤 서버에서 한 번 더 확인 |
+| QA-WEB-15 | FE | 통과 | 조현재(에이전트) | 2026-10-07 | E1 `24e49e1`(PR #115 포함) | 1~4·6~8 통과(E1, 본인 qa 이미지 1장 삭제 12→11). 5번 전체 삭제는 300장 ID 본문 11,409바이트가 프록시 한도 8,192바이트를 넘어 413이었음(원인 확인). 한도를 16,384바이트로 올리고 300장 삭제 시험을 추가해 수정(0c679cd). 확인 시점 300장만 보내고 새 이미지는 제외하는 로직은 정상. 배포 뒤 서버에서 한 번 더 확인 **서버 재확인(10-07, 수정 배포 뒤): 존재하지 않는 ID 300개(본문 약 11.7KB)로 전체 삭제 요청 → 200, 공용 이미지 300장은 그대로 유지.** |
 | QA-WEB-16 | FE | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | 메인 화면 20초: 처리 중 사과 live_ 미리보기 120건, 검수 원본 미리보기 0건(기대값을 live_ 제외로 정정) |
 | QA-WEB-17 | FE | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | 10-06 FE-08 결과 갈음: 서버 3100 7개 크기 |
 | QA-WEB-18 | FE | 통과 | 조현재(에이전트) | 2026-10-07 | dev da6872f 웹 / E1 조회 + QA 중계 | a~e는 E1 3100(a 404·b 405·c 403·d 413·e 헤더). f: Backend 주소 빈 값으로 실행 → 503 BACKEND_UNCONFIGURED. g: 중계 끊김 → 503 BACKEND_UNAVAILABLE |
 | QA-WEB-19 | FE | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | 10-06 FE-08 결과 갈음: 3시간 25분 누수 없음(#73) |
-| QA-OPS-16 | BE | | | | |  |
+| QA-OPS-16 | BE | 통과 | BE(#103 보고) | 2026-10-07 | E1 `24e49e1` | OTHER 지정·판정 불변·통계 0→1, NONE 복구 1→0, 잘못된 값 422·없는 ID 404. [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
 | QA-SIM-01 | MO | 통과 | MO QA | 2026-10-07 11:50:30 KST | `328baaaf702f` (#115 이미지 ID 고정·대조) | 격리 E2 기동 12.892초 후 `healthy`, running=true, concurrency=1, intervalMs=2000, revision=0. 오늘 검사 4→5 증가. E1 기동 관찰 대체 여부 공동 확인 필요. [원자료](../../results/qa-mo-20261007-evidence/e2-final-restart-evidence.json). |
 | QA-SIM-02 | MO | 통과 | MO-09 재검증 | 2026-10-07 09:51~09:54 KST | `328baaaf702f` (#115 이미지 digest 대조) / `cqc-apple-separate12-focal-v2-cal-20260930` | 새 100건: 중앙값 2.002초·p90 2.163초·최대 2.398초·0.501건/초·시간 초과 0. [원자료](../../results/qa-mo-20261007-evidence/live-normal-100.json). 10-06 p90 2.233초 실패 이력·원인 미확정은 유지. |
 | QA-SIM-03 | BE | | | | |  |
@@ -1382,7 +1382,7 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 | QA-SIM-07 | BE | | | | |  |
 | QA-SIM-08 | MO | 통과 | MO QA | 2026-10-07 11:51:55~11:52:13 KST | `328baaaf702f` (#115 이미지 ID 고정·대조) | `CONTROL_FAILED`/ALL·동시2 설정 후 재시작. 이전 묶음 index 20, 재기동 후 21·22·23 순서. faults=[]·동시1·간격2000·running=true·revision=0. [원자료](../../results/qa-mo-20261007-evidence/e2-final-restart-evidence.json). |
 | QA-SIM-09 | BE | | | | | #45 |
-| QA-SIM-10 | BE | | | | |  |
+| QA-SIM-10 | BE | 통과 | BE(#103 보고) | 2026-10-07 | E1 `24e49e1` | 토큰 없음·잘못된 토큰 403, 공개 history·이미지 부작용 없음, 일반 요청 200. 공개 데이터 근거로 통과(10-07 DM·FE 합의). [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
 | QA-SIM-11 | BE | | | | |  |
 | QA-SIM-12 | BE | | | | |  |
 | QA-SIM-13 | DM | 통과 | 조현재(에이전트)·MO-09·BE-10 | 2026-10-06~07 | dev 328baaa / cal-20260930 | 제안 기준(간격 중앙 2.0±0.1초·최대 4초 미만·시간 초과/오류 0·재검사 20% 이하·0.5±0.05건/초)으로 판정. 다른 시험과 겹치지 않은 회차: 10-06 14:23(중앙 1.996·최대 2.500·0.500건/초·오류 0, MO-09), 10-07 09:23(중앙 1.997·p90 2.182·최대 3.013·재검사 10%·오류 0). 다른 시험과 겹친 10-06 11:04·10-07 09:27 회차는 판정에서 제외. 저장·통계·CSV 100건 일치는 BE-10 E2E-01 |
