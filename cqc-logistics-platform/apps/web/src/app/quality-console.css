@@ -368,39 +368,49 @@
   flex: 1 1 auto;
   min-height: 130px;
 }
-/* 처리 현황: 추이 차트가 패널 높이를 채우고, 오늘 집계는 아래에 2칸으로 압축한다. */
+/* 처리 현황: 왼쪽은 처리량 추이, 오른쪽은 오늘 선별함 지도. 나란히 두어 패널 안에서 스크롤이 생기지 않게 한다. */
 .qc-trend-body {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: 1fr auto;
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 12px;
 }
 .qc-trend-main {
   display: flex;
   flex-direction: column;
 }
+.qc-trend-body .qc-trend {
+  min-height: 100px;
+}
 .qc-trend-side {
-  border-top: 1px solid var(--line);
-  padding-top: 8px;
+  border-left: 1px solid var(--line);
+  padding-left: 12px;
   min-width: 0;
 }
 .qc-trend-panel .qc-trend-side p {
   margin: 0 0 6px;
 }
-.qc-trend-side .qc-distributions {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px 18px;
-}
-.qc-trend-foot {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  gap: 6px 14px;
-  flex-wrap: wrap;
-}
-.qc-trend-foot button {
-  margin-left: auto;
-}
+/* 오늘 선별함 지도: 품종 2줄 × (등급 3 × 당도 2) + 오른쪽 재검사함. 칸 높이가 고정이라 패널이 스크롤되지 않는다. */
+.qc-bin-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.qc-bin-head strong { font-size: 13px; }
+.qc-bin-head small { font-size: 11px; color: var(--muted); }
+.qc-binmap { display: grid; grid-template-columns: 34px repeat(6, minmax(0, 1fr)) minmax(56px, 1.3fr); grid-template-rows: auto auto 44px 44px; gap: 3px; align-items: stretch; }
+.qc-bin-grade { grid-column: span 2; text-align: center; font-size: 12px; font-weight: 700; color: var(--ink); border-bottom: 2px solid #e7ccd1; }
+.qc-bin-band { text-align: center; font-size: 10px; color: var(--muted); }
+.qc-bin-corner { display: block; }
+.qc-bin-variety { display: flex; flex-direction: column; justify-content: center; font-size: 12px; font-weight: 700; }
+.qc-bin-variety small { font-size: 10px; font-weight: 400; color: var(--muted); }
+.qc-bin { position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #ecdfe1; border-radius: 6px; background: linear-gradient(to top, #f0d3d7 var(--fill, 0%), #fff var(--fill, 0%)); min-width: 0; }
+.qc-bin span { font-size: 10px; color: #7d4750; line-height: 1; }
+.qc-bin strong { font-size: 13px; line-height: 1.2; color: var(--ink); }
+.qc-bin.ugly { border-color: #e0a800; }
+.qc-bin.recent { animation: qc-bin-hit 1.6s ease-out; }
+@keyframes qc-bin-hit { 0% { box-shadow: 0 0 0 3px #944651; } 100% { box-shadow: 0 0 0 0 transparent; } }
+.qc-bin-review { grid-column: 8; grid-row: 1 / 5; background: #fbf3e8; border-color: #f0d6b0; gap: 2px; }
+.qc-bin-review strong { font-size: 20px; }
+.qc-bin-review small { font-size: 10px; color: var(--muted); text-align: center; line-height: 1.3; }
+.qc-bin-review.alert { background: #fde8e8; border-color: #e7a1a1; }
+.qc-bin-review.alert strong { color: #b42318; }
 .qc-trend-panel .qc-trend-side p.qc-muted {
   margin: 6px 0 0;
   font-size: 12px;
@@ -482,15 +492,6 @@
 }
 .qc-preview-image img {
   object-fit: contain;
-}
-.qc-distributions {
-  display: grid;
-  gap: 10px;
-  font-size: 13px;
-  line-height: 1.6;
-}
-.qc-distributions button {
-  justify-self: start;
 }
 .qc-summary-grid {
   display: grid;
@@ -632,39 +633,6 @@
   font-size: 13px;
   font-weight: 400;
   color: var(--muted);
-}
-.qc-ratio {
-  display: grid;
-  gap: 5px;
-}
-.qc-ratio-bar {
-  display: flex;
-  height: 14px;
-  border-radius: 7px;
-  overflow: hidden;
-  background: #f3eced;
-}
-.qc-ratio-bar span {
-  min-width: 2px;
-}
-.qc-ratio [data-index="0"] { --tone: var(--rose-dark); }
-.qc-ratio [data-index="1"] { --tone: #d27b86; }
-.qc-ratio [data-index="2"] { --tone: #ecc2c7; }
-.qc-ratio-bar span { background: var(--tone); }
-.qc-ratio-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-  font-size: 12px;
-}
-.qc-ratio-legend span::before {
-  content: "";
-  display: inline-block;
-  width: 9px;
-  height: 9px;
-  border-radius: 2px;
-  margin-right: 4px;
-  background: var(--tone);
 }
 @media (max-width: 650px) {
   .quality-canvas .qc-console .stat strong small {
