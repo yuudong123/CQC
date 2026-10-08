@@ -141,6 +141,6 @@
 ## 9. 문서 위치
 
 - 일정·책임: [WBS](WBS.md), [문서 안내](README.md)
-- 기능·수용 기준: [QA 목록](reference/ALL/qa-test-cases.md), [요구사항](../planning/requirements.md), [기획](../project-plan.md), [결정 기록](../planning/decision-log.md)
+- 기능·수용 기준: [QA 목록](reference/ALL/qa-test-cases.md), [QA 진행표 시트](https://docs.google.com/spreadsheets/d/18KZXwZNBsnAg9rItxES3NC63_JvINu1rF1lnE00VaQc/edit?gid=0#gid=0), [10-12 수용시험 진행표](reference/ALL/acceptance-1012-runbook.md), [요구사항](../planning/requirements.md), [기획](../project-plan.md), [결정 기록](../planning/decision-log.md)
 - 파트 결과: [BE-10 결과](BE-10-results.md), [MO-09](MO-09.md), [FE-08](FE-08.md), [DM-09](<[DM-09] 최종 Test·모델 카드.md>), [MO-03 배포 기준선](reference/MO/mo-03-deployment-baseline.md)
 - 발표: [최종 발표](../최종발표/), [10-08 자료](../중간발표/10월%208일/), [10-13 자료](../중간발표/10월%2013일/), [문제 해결 사례](../최종발표/개발%20중%20문제%20해결%20사례.md)

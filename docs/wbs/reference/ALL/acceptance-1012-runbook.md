@@ -1,6 +1,6 @@
 # 10-12 최종 수용시험 진행표 (ALL-04, #65)
 
-> 2026-10-08 작성. 케이스 원문은 [QA 목록](qa-test-cases.md), 자동화는 [MO-09](../../MO-09.md), 결과는 QA 목록 6.4 기록표와 #65에 남긴다.
+> 2026-10-08 작성. 케이스 원문은 [QA 목록](qa-test-cases.md), 자동화는 [MO-09](../../MO-09.md), 결과는 QA 목록 6.4 기록표와 #65에 남긴다. 전체 진행 현황은 [QA 진행표 시트](https://docs.google.com/spreadsheets/d/18KZXwZNBsnAg9rItxES3NC63_JvINu1rF1lnE00VaQc/edit?gid=0#gid=0)에서 본다.
 > 이 표는 순서·담당·명령을 한 장에 모은 것이다. 기대값을 새로 정하지 않는다.
 
 ## 1. 판정 기준 (10-07 #65 확정)

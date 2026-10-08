@@ -121,6 +121,7 @@ body.nav-open .deck-nav{transform:none}
 .collab-shot{margin:0;display:flex;flex-direction:column}
 .collab-shot .shot{flex:none}
 .collab-shot img{display:block;width:100%;height:auto}
+.deck-link{color:#2f6b3a;font-weight:700;text-decoration:underline}
 /* model-select:start */
 .sel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5mm;margin-top:7mm}
 .sel-card{background:#fff;border:.3mm solid var(--line);padding:3.5mm 3.5mm 2mm}
@@ -653,8 +654,8 @@ sweetness_band: &lt;14 | ≥14
     <tr><td>MO·배포</td><td class="role">운영 중</td><td>Compose 7서비스·Jenkins 시험 후 배포·실패 시 이전 버전 복구<br>재생 위치 복구·로그 순환·수용시험 자동화</td><td>발표 버전 태그·복구 절차 동결</td></tr>
     <tr><td>거래·물류</td><td class="role">확장 시연</td><td>브라우저 가상 출품·입찰·결제·배차<br>QC 이력 참조 / MVP 제외(10-01 결정)</td><td>실거래·물류 API 통합은<br>MVP 이후 범위</td></tr>
   </tbody></table>
-  <p class="research-small" style="margin-top:5mm">기능 연결은 서버에서 확인했다. 정상 100건·장애 5종 통과 여부는 10-12 최종 수용시험으로 판정한다.</p>
-  <div class="source">근거: 진행 현황(10-07), 파트별 통합시험·서버 검증 기록, WBS 일정</div><div class="footer"><span>CQC · 최종 발표 초안</span><span>36</span></div>
+  <p class="research-small" style="margin-top:5mm">기능 연결은 서버에서 확인했다. 정상 100건·장애 5종 통과 여부는 10-12 최종 수용시험으로 판정한다.<br>QA 91개 케이스의 파트별 진행 현황: <a class="deck-link" href="https://docs.google.com/spreadsheets/d/18KZXwZNBsnAg9rItxES3NC63_JvINu1rF1lnE00VaQc/edit?gid=0#gid=0" target="_blank" rel="noopener">CQC QA 진행표 (Google Sheets)</a></p>
+  <div class="source">근거: 진행 현황(10-07), 파트별 통합시험·서버 검증 기록, WBS 일정, QA 진행표 시트</div><div class="footer"><span>CQC · 최종 발표 초안</span><span>36</span></div>
 </section>
 
 <section class="page">
