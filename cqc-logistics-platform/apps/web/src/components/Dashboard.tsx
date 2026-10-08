@@ -125,11 +125,13 @@ export function AppHeader() {
           <strong>CQC 스마트 APC</strong>
         </div>
       </div>
-      <span className="simulation-label">SIMULATION</span>
+      {/* 품질 관리는 실제 검사 데이터를 다루므로 가상 표시를 붙이지 않는다. */}
+      {pathname !== "/admin" && <span className="simulation-label">SIMULATION</span>}
       <nav aria-label="주요 메뉴">
         {(
           [
             { href: "/", label: "품질 검사", icon: "camera" },
+            { href: "/admin", label: "품질 관리", icon: "document" },
             { href: "/market", label: "입찰 시장", icon: "market" },
             { href: "/control", label: "차량 관제", icon: "truck" },
           ] as const

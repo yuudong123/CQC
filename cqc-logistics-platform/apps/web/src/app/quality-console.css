@@ -1,6 +1,16 @@
 /* 관제 화면은 뷰포트를 유지하고 패널 내부에서만 필요한 스크롤을 사용합니다. */
 .qc-line { color: #98545f; background: #f8ecee; border: 1px solid #e7ccd1; border-radius: 20px; padding: 5px 12px; font-size: 12px; white-space: nowrap; }
 .qc-market-link { font-size: 13px; color: #98545f; padding: 7px; }
+.qc-admin-link { font-size: 13px; color: white; background: var(--rose); border-radius: 6px; padding: 7px 12px; }
+/* 관리자 페이지: 관제 화면과 달리 페이지 전체가 스크롤된다. 탭으로 이력·통계·검수 이미지·시연 설정을 오간다. */
+.qc-admin { display: grid; gap: 12px; padding: 16px 24px 32px; max-width: 1480px; margin: 0 auto; min-width: 0; }
+.qc-admin .qc-notices:empty { display: none; }
+.qc-admin-tabs { display: flex; gap: 6px; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
+.qc-admin .qc-admin-tabs button { border: 1px solid var(--line); border-bottom: none; border-radius: 8px 8px 0 0; padding: 9px 16px; background: #f8f5f5; color: var(--muted); }
+.qc-admin .qc-admin-tabs button[aria-pressed="true"] { background: white; color: #944651; font-weight: 700; }
+.qc-admin-body { background: var(--paper); border: 1px solid var(--line); border-top: none; border-radius: 0 0 12px 12px; padding: 18px; min-width: 0; }
+.qc-admin .qc-actions { align-items: center; gap: 10px; flex-wrap: wrap; }
+.qc-admin-export { margin-bottom: 14px; }
 .market-page .apple-thumbs { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 54px; }
 .market-page .apple-thumbs img { height: 54px; object-fit: contain; }
 /* 사과 사진은 정사각형이라 칸도 정사각형으로 두고 패널 너비를 꽉 채운다. 패널 높이는 사진 높이를 따른다. */
@@ -16,6 +26,18 @@
 .auto-auction-demo p { margin: 8px 0; }
 .auto-auction-demo small, .auto-auction-demo ol { color: var(--muted); font-size: 12px; }
 .auto-auction-demo ol { display: flex; flex-wrap: wrap; gap: 8px 24px; padding-left: 18px; }
+/* 낙찰자 결제 팝업: 화면 가운데에 잠깐 떴다가 저절로 닫힌다. 아래 화면 조작은 막지 않는다. */
+.payment-popup { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; background: #25151d40; pointer-events: none; animation: payment-in .2s ease-out; }
+.payment-card { width: min(380px, calc(100vw - 32px)); background: white; border-radius: 14px; padding: 22px 24px; box-shadow: 0 18px 48px #25151d40; display: grid; gap: 10px; }
+.payment-card small { color: var(--muted); font-size: 12px; }
+.payment-card strong { color: #944651; font-size: 22px; }
+.payment-card dl { display: grid; gap: 6px; margin: 4px 0; font-size: 14px; }
+.payment-card dl div { display: flex; justify-content: space-between; gap: 12px; }
+.payment-card dt { color: var(--muted); }
+.payment-card dd { margin: 0; font-weight: 600; }
+.payment-card p { margin: 0; padding: 10px 12px; border-radius: 8px; background: #f8ecee; color: #7d4750; font-size: 13px; }
+.payment-card p.paid { background: #e8f3ea; color: #2e6b3a; }
+@keyframes payment-in { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: none; } }
 .qc-console {
   height: 100%;
   width: 100%;
@@ -41,8 +63,10 @@
 }
 .qc-console button,
 .qc-dialog button,
+.qc-admin button,
 .qc-console select,
-.qc-dialog select {
+.qc-dialog select,
+.qc-admin select {
   border: 1px solid var(--line);
   border-radius: 6px;
   background: white;
@@ -53,16 +77,19 @@
   cursor: pointer;
 }
 .qc-console button:focus-visible,
-.qc-dialog button:focus-visible {
+.qc-dialog button:focus-visible,
+.qc-admin button:focus-visible {
   outline: 3px solid #b85360;
   outline-offset: 2px;
 }
 .qc-console button:disabled,
-.qc-dialog button:disabled {
+.qc-dialog button:disabled,
+.qc-admin button:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }
-.qc-console .qc-run {
+.qc-console .qc-run,
+.qc-admin .qc-run {
   background: var(--rose);
   color: white;
 }
@@ -425,7 +452,8 @@
   min-height: 0;
   flex: 1;
 }
-.qc-dialog .qc-faults {
+.qc-dialog .qc-faults,
+.qc-admin .qc-faults {
   display: grid;
   gap: 18px;
   margin: 24px 0;
@@ -472,10 +500,12 @@
 }
 .qc-summary-grid > div { padding: 16px; background: white; border: 1px solid var(--line); border-radius: 8px; }
 .qc-summary-grid strong { display: block; margin-top: 10px; font-size: 22px; }
-.qc-dialog td {
+.qc-dialog td,
+.qc-admin td {
   overflow-wrap: anywhere;
 }
-.qc-dialog .quality-history {
+.qc-dialog .quality-history,
+.qc-admin .quality-history {
   display: grid;
   gap: 14px;
 }
@@ -500,10 +530,12 @@
 .quality-history .panel-heading {
   flex-wrap: wrap;
 }
-.qc-dialog table {
+.qc-dialog table,
+.qc-admin table {
   font-size: 13px;
 }
-.qc-dialog .panel {
+.qc-dialog .panel,
+.qc-admin .panel {
   overflow: auto;
 }
 @media (max-width: 1100px) {
