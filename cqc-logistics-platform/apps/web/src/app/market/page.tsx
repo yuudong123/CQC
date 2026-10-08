@@ -5,6 +5,7 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 import { Badge, Empty, Icon, Panel, Stats } from "@/components/Dashboard";
 import { sampleApples } from "@/lib/sample-apples";
 import { AutoAuctionDemo, useDemo } from "@/components/DemoProvider";
+import { DEMO_AUCTION_MS } from "@/lib/auction-demo";
 import { logisticsApiUrl, logisticsFetch, logisticsLive } from "@/lib/logistics-client";
 
 type Lot = {
@@ -326,7 +327,7 @@ export default function MarketPage() {
                   </p>
                   <small>
                     <Icon name="clock" />{" "}
-                    {lot.cqcId.startsWith("FE-DEMO-") ? "시연 구매자 자동 입찰 · 12초 마감" : now ? remaining(lot.closesAt, now) : "—"}
+                    {lot.cqcId.startsWith("FE-DEMO-") ? `시연 구매자 자동 입찰 · ${DEMO_AUCTION_MS / 1000}초 마감` : now ? remaining(lot.closesAt, now) : "—"}
                   </small>
                 </div>
                 <span className="chevron">›</span>
