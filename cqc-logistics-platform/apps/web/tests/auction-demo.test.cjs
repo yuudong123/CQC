@@ -10,16 +10,16 @@ const { sampleApples } = require("../src/lib/sample-apples.ts");
 const base = Date.parse("2026-09-29T00:00:00Z");
 const result = step(step(initialRuntime(), base), base + 1000).history[0];
 const rows = Array.from({ length: 4 }, (_, i) => ({ ...result, id: `APPLE-${i}` }));
-test("분류별 통과 4개 누적 및 중복·검수·오류 제외", () => {
+test("같은 선별함 통과 2개 누적 및 중복·검수·오류 제외", () => {
   const seen = new Set(), buckets = new Map();
   const bad = [{ ...result, id: "review", reviewRequired: true }, { ...result, id: "error", excluded: true }, { ...result, id: "failed", control: "NO_RESPONSE" }];
-  assert.equal(collectBatches([...rows.slice(0, 2), ...bad], seen, buckets).length, 0);
-  assert.equal(collectBatches(rows, seen, buckets).length, 1);
+  assert.equal(collectBatches([rows[0], ...bad], seen, buckets).length, 0);
+  assert.equal(collectBatches(rows, seen, buckets).length, 2);
   assert.equal(collectBatches(rows, seen, buckets).length, 0);
   assert.equal(buckets.size, 0);
 });
 test("당도 구간과 품종·등급을 섞지 않음", () => {
-  const split = rows.map((row, i) => ({ ...row, bin: i % 2 ? "DEMO_BIN_01" : "DEMO_BIN_02" }));
+  const split = rows.slice(0, 2).map((row, i) => ({ ...row, bin: i % 2 ? "DEMO_BIN_01" : "DEMO_BIN_02" }));
   const buckets = new Map();
   assert.equal(collectBatches(split, new Set(), buckets).length, 0);
   assert.equal(buckets.size, 2);
@@ -54,14 +54,14 @@ function server() {
     if (path.endsWith("/open")) { lots[0].auctionStatus = "OPEN"; return lots[0]; }
     if (path.endsWith("/bids")) { if (body) bids.push(body); return body ?? bids; }
     if (path === "/control/overview") return { orders };
-    if (path.endsWith("/close")) { lots[0].auctionStatus = "AWARDED"; const order = { orderId: "ORDER-1", lotId: "LOT-1", status: "MATCHED" }; orders.push(order); return { order }; }
+    if (path.endsWith("/close")) { lots[0].auctionStatus = "AWARDED"; const order = { orderId: "ORDER-1", lotId: "LOT-1", status: "MATCHED", buyerId: "시연 유통사-FE-DEMO-1", priceWon: 6500 }; orders.push(order); return { order }; }
     if (path.endsWith("/dispatch")) { orders[0].status = "ASSIGNED"; return { order: orders[0] }; }
     if (path === "/orders/ORDER-1") return orders[0];
     throw new Error(path);
   };
   return { api, lots, bids, orders, calls };
 }
-test("자동 출품→입찰 3회→낙찰→배차 및 응답 유실 단계 재시도", async () => {
+test("자동 출품→입찰 3회→낙찰→결제 팝업 시간 뒤 배차 및 응답 유실 단계 재시도", async () => {
   const s = server();
   const task = { cqcId: "FE-DEMO-1", batch: { key: "bin", rows }, stage: 0, bidCount: 0 };
   for (let i = 0; i < 3; i++) await advanceTask(task, s.api, base + i * 1500);
@@ -71,7 +71,7 @@ test("자동 출품→입찰 3회→낙찰→배차 및 응답 유실 단계 재
   await advanceTask(task, s.api, base + 6000);
   for (let i = 0; i < 3; i++) await advanceTask(task, s.api, base + 7500 + i * 1500);
   task.bidCount = 2;
-  await advanceTask(task, s.api, base + 12000);
+  await advanceTask(task, s.api, base + 11500); // 경매 6초 안: 이미 넣은 세 번째 입찰은 다시 넣지 않는다
   assert.equal(s.bids.length, 3);
   await advanceTask(task, s.api, base + 20000);
   await advanceTask(task, s.api, base + 21500);
@@ -79,8 +79,10 @@ test("자동 출품→입찰 3회→낙찰→배차 및 응답 유실 단계 재
   await advanceTask(task, s.api, base + 23000);
   assert.equal(s.orders.length, 1);
   assert.match(await advanceTask(task, s.api, base + 24500), /결제 완료\(가상\)/);
+  assert.deepEqual(task.payment, { lotId: "LOT-1", buyerId: "시연 유통사-FE-DEMO-1", priceWon: 6500 });
   assert.equal(s.calls.filter(([path]) => path.endsWith("/dispatch")).length, 0);
-  await advanceTask(task, s.api, base + 26000);
+  assert.equal(await advanceTask(task, s.api, base + 26000), "", "결제 팝업이 떠 있는 3초 동안은 배차하지 않는다");
+  assert.equal(s.calls.filter(([path]) => path.endsWith("/dispatch")).length, 0);
   task.stage = 5;
   await advanceTask(task, s.api, base + 27500);
   assert.equal(s.calls.filter(([path]) => path.endsWith("/dispatch")).length, 1);

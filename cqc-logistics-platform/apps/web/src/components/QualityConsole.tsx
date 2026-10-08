@@ -2,71 +2,28 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { Badge, Icon, Panel } from "./Dashboard";
-import QualityHistory from "./QualityHistory";
-import QualityStatistics from "./QualityStatistics";
+import QualityImage from "./QualityImage";
 import ThroughputChart from "./ThroughputChart";
 import { useDemo } from "./DemoProvider";
-import {
-  CATEGORY_LABEL,
-  IMAGE_LIMIT,
-  imageCategory,
-  imageEvidence,
-  imageReason,
-  type FaultImage,
-  type ImageCategory,
-} from "@/lib/quality-fault-images";
-import { downloadQualityCsv } from "@/lib/quality-api";
 import { sampleApples } from "@/lib/sample-apples";
 import { formatPercent } from "@/lib/quality-format";
 import {
-  MISCLASSIFICATION_LABEL,
-  type MisclassificationType,
-} from "@/lib/quality-contract";
-import {
   FAULTS,
   imageIndexForJob,
-  LINE_INTERVALS,
   recentThroughput,
-  csvCell,
   kst,
   periodPoints,
   throughputSeries,
   exceptionOf,
   displayedJobs,
   CONFIDENCE_MIN,
-  type Fault,
   type Job,
   type Result,
-  type Runtime,
 } from "@/lib/quality-runtime";
 
-type Tab = "history" | "images" | "faults" | "statistics" | null;
-function QualityImage({
-  src,
-  alt,
-  remote,
-}: {
-  src?: string;
-  alt: string;
-  remote: boolean;
-}) {
-  const [failed, setFailed] = useState(false);
-  return !src || failed ? (
-    <p className="qc-muted">이미지 조회 불가 · 만료 또는 연결 끊김</p>
-  ) : (
-    <Image
-      src={src}
-      alt={alt}
-      fill
-      sizes="(max-width:650px) 40vw, 500px"
-      loading="eager"
-      unoptimized={remote}
-      onError={() => setFailed(true)}
-    />
-  );
-}
+// 이 화면은 계속 지켜볼 정보만 둔다. 이력·통계·검수 이미지·시연 설정처럼 조작이 많은 기능은 관리자 페이지(/admin)에 있다.
 /** 마지막으로 처리한 사과의 판정 요약. 이력에 아직 없으면 반영 중으로 둔다. */
 function heldResult(row: Result | undefined) {
   if (!row) return "판정 반영 중";
@@ -74,243 +31,8 @@ function heldResult(row: Result | undefined) {
   if (exception) return `${exception.kind === "error" ? "오류" : "재검사"} · ${exception.reason}`;
   return `${row.variety ?? "—"} ${row.grade ?? "—"}`;
 }
-function Modal({
-  title,
-  close,
-  children,
-}: {
-  title: string;
-  close: () => void;
-  children: ReactNode;
-}) {
-  const ref = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
-    const dialog = ref.current;
-    const previous = document.activeElement as HTMLElement | null;
-    dialog?.showModal();
-    return () => {
-      dialog?.close();
-      previous?.focus();
-    };
-  }, []);
-  return (
-    <dialog ref={ref} className="qc-dialog" onCancel={close} aria-label={title}>
-      <div className="qc-dialog-heading">
-        <h2>{title}</h2>
-        <button onClick={close} autoFocus>
-          닫기
-        </button>
-      </div>
-      <div className="qc-dialog-body">{children}</div>
-    </dialog>
-  );
-}
-function FaultImages({
-  state,
-  images,
-  imageSource,
-  retained,
-  loadError,
-  classify,
-  removeImages,
-  remote,
-  pending,
-  allowReview,
-  allowDelete,
-}: {
-  state: Runtime;
-  images: FaultImage[];
-  imageSource: (id: string) => string | undefined;
-  retained: number;
-  loadError: string;
-  classify: (id: string, value: MisclassificationType) => Promise<void>;
-  removeImages: (ids: string[]) => Promise<void>;
-  remote: boolean;
-  pending: boolean;
-  allowReview: boolean;
-  allowDelete: boolean;
-}) {
-  const [selected, setSelected] = useState<string | null>(null);
-  const [category, setCategory] = useState("ALL");
-  const [kind, setKind] = useState<"ALL" | ImageCategory>("ALL");
-  const [confirmation, setConfirmation] = useState<string[] | null>(null);
-  const [error, setError] = useState("");
-  const entries = images.map(image => {
-    const record = state.images.find(row => row.id === image.inspectionId) ?? state.history.find(row => row.id === image.inspectionId);
-    return { ...image, misclassification: record?.misclassification ?? "NONE", hasRecord: !!record };
-  });
-  const rows = entries.filter(
-    (row) =>
-      (kind === "ALL" || imageCategory(row) === kind) &&
-      (category === "ALL" || row.misclassification === category),
-  );
-  const kept = (c: ImageCategory) => images.filter((row) => imageCategory(row) === c).length;
-  const preview = entries.find((row) => row.id === selected);
-  async function remove() {
-    if (!confirmation) return;
-    try {
-      await removeImages(confirmation);
-      if (selected && confirmation.includes(selected)) setSelected(null);
-      setConfirmation(null);
-      setError("");
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "삭제 실패");
-    }
-  }
-  return (
-    <>
-      <div className="qc-actions">
-        <label>
-          구분{" "}
-          <select
-            value={kind}
-            onChange={(event) => setKind(event.target.value as "ALL" | ImageCategory)}
-          >
-            <option value="ALL">전체</option>
-            {Object.entries(CATEGORY_LABEL).map(([key, label]) => (
-              <option key={key} value={key}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          오판 의심 필터{" "}
-          <select
-            value={category}
-            onChange={(event) => setCategory(event.target.value)}
-          >
-            <option value="ALL">전체</option>
-            {Object.entries(MISCLASSIFICATION_LABEL).map(([key, label]) => (
-              <option key={key} value={key}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <span>
-          {rows.length}장 표시 · 보존 {retained}장 (시스템 오류 {kept("SYSTEM_ERROR")}/{IMAGE_LIMIT.SYSTEM_ERROR} · 저신뢰 {kept("LOW_CONFIDENCE")}/{IMAGE_LIMIT.LOW_CONFIDENCE})
-        </span>
-        <button
-          disabled={!images.length || pending || !allowDelete}
-          onClick={() => setConfirmation(images.map((row) => row.id))}
-        >
-          전체 이미지 삭제
-        </button>
-      </div>
-      <p className="qc-muted">
-        {remote
-          ? "서버에 보관된 검수 이미지입니다. 시스템 오류와 저신뢰 재검사 사과를 사유와 함께 보관합니다."
-          : "예시 이미지 관리 · 삭제는 이 브라우저의 목록에만 적용됩니다."}{" "}
-        검사 이력은 유지됩니다.
-      </p>
-      {loadError && (
-        <p role="alert" className="qc-warning">
-          {loadError}
-        </p>
-      )}
-      {error && (
-        <p role="alert" className="qc-warning">
-          {error}
-        </p>
-      )}
-      {confirmation && (
-        <div className="qc-warning" role="alert">
-          <span>
-            선택한 이미지 {confirmation.length}장을 삭제할까요? 확인 이후 새로
-            들어온 이미지는 유지됩니다.
-          </span>
-          <button disabled={pending} onClick={remove}>
-            삭제 확인
-          </button>
-          <button disabled={pending} onClick={() => setConfirmation(null)}>
-            취소
-          </button>
-        </div>
-      )}
-      {preview && (
-        <div className="qc-preview">
-          <div className="qc-preview-image">
-            <QualityImage
-              key={preview.id}
-              remote={remote}
-              src={
-                remote ? preview.previewUrl : imageSource(preview.id)
-              }
-              alt={`${preview.id} 검수 이미지`}
-            />
-          </div>
-          <div>
-            <h3>{preview.id}</h3>
-            <p>{preview.inspectionId} · view {preview.imageIndex} · {CATEGORY_LABEL[imageCategory(preview)]} · {imageReason(preview)}</p>
-            {imageEvidence(preview) && <p>{imageEvidence(preview)}</p>}
-            <button onClick={() => setSelected(null)}>미리보기 닫기</button>
-          </div>
-        </div>
-      )}
-      <table>
-        <thead>
-          <tr>
-            <th>검사 ID</th>
-            <th>발생 시각</th>
-            <th>구분</th>
-            <th>사유</th>
-            <th>오판 의심</th>
-            <th>이미지</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr key={row.id}>
-              <td>{row.inspectionId}<br /><small>view {row.imageIndex} · {row.id}</small></td>
-              <td>{kst(row.createdAt).slice(11, 19)}</td>
-              <td>{CATEGORY_LABEL[imageCategory(row)]}</td>
-              <td>
-                {imageReason(row)}
-                {imageEvidence(row) && <><br /><small>{imageEvidence(row)}</small></>}
-              </td>
-              <td>
-                <select
-                  aria-label={`${row.id} 오판 의심`}
-                  value={row.misclassification}
-                  disabled={pending || !allowReview || !row.hasRecord}
-                  onChange={(event) =>
-                    void classify(
-                      row.inspectionId,
-                      event.target.value as MisclassificationType,
-                    ).catch((cause) => setError(cause.message))
-                  }
-                >
-                  {Object.entries(MISCLASSIFICATION_LABEL).map(
-                    ([key, label]) => (
-                      <option key={key} value={key}>
-                        {label}
-                      </option>
-                    ),
-                  )}
-                </select>
-              </td>
-              <td>
-                <button onClick={() => setSelected(row.id)}>미리보기</button>
-                <button
-                  disabled={pending || !allowDelete}
-                  onClick={() => setConfirmation([row.id])}
-                >
-                  삭제
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {!rows.length && (
-        <p className="qc-empty">보관된 검수 이미지가 없습니다.</p>
-      )}
-    </>
-  );
-}
 // 이 화면은 농장 한 곳의 선별 라인을 관제한다. 배포마다 농장 이름만 바꿔 쓴다.
-const FARM_NAME = process.env.NEXT_PUBLIC_FARM_NAME || "CQC 사과농장";
+export const FARM_NAME = process.env.NEXT_PUBLIC_FARM_NAME || "CQC 사과농장";
 // 오늘 재검사율이 이 값(%)을 넘으면 빨갛게 표시한다(수용시험 기준 20% 이하).
 const REINSPECTION_ALERT = 20;
 // 선별함 코드를 사람이 읽는 이름으로 바꾼다(코드는 툴팁·이력·CSV에 남는다).
@@ -375,38 +97,7 @@ export default function QualityConsole({
 }) {
   const remote = mode === "api";
   const demo = useDemo();
-  const {
-    state,
-    snapshot,
-    error,
-    pending,
-    connectedAt,
-    stale,
-    configure,
-    classify,
-    removeImages,
-    faultImages,
-    faultImageError,
-    faultImageSource,
-  } = demo.connection;
-  const [actionError, setActionError] = useState("");
-  const action = (operation: Promise<void>) => {
-    setActionError("");
-    void operation.catch((cause) =>
-      setActionError(cause instanceof Error ? cause.message : "요청 실패"),
-    );
-  };
-  const disabled = pending || (remote && (stale || !snapshot));
-  const allowControl =
-    !remote || (!!snapshot?.capabilities.control && state.concurrency !== undefined);
-  const intervalOptions = remote
-    ? (snapshot?.capabilities.intervals ?? [])
-    : LINE_INTERVALS;
-  const allowSpeed =
-    !remote || (intervalOptions.length > 0 && state.intervalMs !== undefined);
-  const allowFaults =
-    !remote || (!!snapshot?.capabilities.faults && state.scope !== undefined);
-  const [tab, setTab] = useState<Tab>(null);
+  const { state, snapshot, error, connectedAt, stale } = demo.connection;
   const [exceptionKind, setExceptionKind] = useState<
     "all" | "reinspection" | "error"
   >("all");
@@ -489,76 +180,9 @@ export default function QualityConsole({
   const count = remote
     ? (snapshot?.periodTotals[String(minutes) as "1" | "5" | "10" | "30"] ?? 0)
     : period.reduce((sum, point) => sum + point.count, 0);
-  function exportStats() {
-    if (remote) {
-      action(
-        downloadQualityCsv(
-          `statistics.csv?minutes=${minutes}`,
-          "cqc-statistics.csv",
-        ),
-      );
-      return;
-    }
-    const rows: unknown[][] = [
-      ["mode", "date_kst", "section", "key", "value", "last_saved_at"],
-    ];
-    const add = (section: string, key: string, value: number) =>
-      rows.push([
-        "DEMO",
-        state.today.date,
-        section,
-        key,
-        value,
-        state.lastSaved ? kst(state.lastSaved).replace("Z", "+09:00") : "",
-      ]);
-    add("today", "total", state.today.total);
-    add("today", "excluded", state.today.excluded);
-    add("today", "reinspection", state.today.reinspection);
-    add(
-      "today",
-      "reinspection_ratio",
-      state.today.total ? state.today.reinspection / state.today.total : 0,
-    );
-    add(
-      "today",
-      "average_inference_ms",
-      state.today.inferenceCount
-        ? state.today.inferenceTotalMs / state.today.inferenceCount
-        : 0,
-    );
-    for (const [key, value] of Object.entries(state.today.suspicions))
-      add("suspicions", key, value);
-    for (const [key, value] of Object.entries(state.today.grades))
-      add("grade", key, value);
-    for (const [key, value] of Object.entries(state.today.varieties))
-      add("variety", key, value);
-    for (const [key, value] of Object.entries(state.today.bins))
-      add("successful_bin", key, value);
-    for (const point of period)
-      add(`last_${minutes}_minutes`, kst(point.at).slice(11, 23), point.count);
-    const url = URL.createObjectURL(
-      new Blob(
-        ["\uFEFF" + rows.map((row) => row.map(csvCell).join(",")).join("\r\n")],
-        { type: "text/csv;charset=utf-8" },
-      ),
-    );
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "cqc-demo-statistics.csv";
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 0);
-  }
   const activeFaults = [
     ...new Set([...state.faults, ...state.jobs.flatMap((job) => job.faults)]),
   ];
-  const toggle = (fault: Fault) =>
-    action(
-      configure({
-        faults: state.faults.includes(fault)
-          ? state.faults.filter((item) => item !== fault)
-          : [...state.faults, fault],
-      }),
-    );
   const components: [string, string, string][] =
     remote && snapshot
       ? Object.entries(snapshot.components).map(([name, component]) => [
@@ -623,21 +247,8 @@ export default function QualityConsole({
                 : "서버 관제"}
         </Badge>
         <div className="qc-actions">
+          <Link href="/admin" className="qc-admin-link">품질 관리 →</Link>
           <Link href="/market" className="qc-market-link">입찰 시장 →</Link>
-          <button disabled={demo.count >= 3} onClick={demo.toggle}>{demo.enabled ? "자동 경매 정지" : demo.count >= 3 ? "자동 경매 완료" : "자동 경매 시연"}</button>
-          <button onClick={() => setTab("history")}>검사 이력</button>
-          <button onClick={() => setTab("statistics")}>기간 통계</button>
-          <button onClick={() => setTab("images")}>
-            검수 이미지 {remote ? (snapshot?.retention.images ?? 0) : faultImages.length}장
-          </button>
-          <button onClick={() => setTab("faults")}>시연 설정</button>
-          <button
-            className="qc-run"
-            disabled={disabled || !allowControl}
-            onClick={() => action(configure({ running: !state.running }))}
-          >
-            {state.running ? "입력 정지" : "입력 재개"}
-          </button>
         </div>
       </section>
       <div className="qc-notices" aria-live="polite">
@@ -648,12 +259,6 @@ export default function QualityConsole({
             {connectedAt
               ? `마지막 수신 ${kst(connectedAt).slice(11, 19)} · 기존 화면 유지`
               : "수신 전 · 표시 수치는 집계 결과가 아닙니다."}
-          </div>
-        )}
-        {actionError && (
-          <div className="qc-warning" role="alert">
-            {actionError}
-            <button onClick={() => setActionError("")}>닫기</button>
           </div>
         )}
         {activeFaults.length > 0 && (
@@ -913,7 +518,6 @@ export default function QualityConsole({
                         </p>
                       ))}
                     </details>
-                    <button onClick={exportStats}>통계 CSV</button>
                   </div>
                 </div>
                 <p className="qc-muted">
@@ -1010,148 +614,6 @@ export default function QualityConsole({
           </Panel>
         </div>
       </div>
-      {tab && (
-        <Modal
-          title={
-            tab === "statistics"
-              ? "기간 통계 분석"
-              : tab === "history"
-                ? "검사 이력 관리"
-                : tab === "images"
-                  ? "검수 이미지 관리"
-                  : "시연 설정"
-          }
-          close={() => setTab(null)}
-        >
-          {actionError && <p role="alert" className="qc-warning">{actionError}</p>}
-          {tab === "statistics" && (
-            <QualityStatistics
-              remote={remote}
-              records={state.history}
-              reference={!remote || snapshot?.source === "reference"}
-            />
-          )}
-          {tab === "history" && (
-            <QualityHistory
-              records={state.history}
-              remote={remote}
-              allowReview={!remote || !!snapshot?.capabilities.review}
-              classify={classify}
-            />
-          )}
-          {tab === "images" && (
-            <FaultImages
-              images={faultImages}
-              imageSource={faultImageSource}
-              retained={remote ? (snapshot?.retention.images ?? 0) : faultImages.length}
-              loadError={faultImageError}
-              state={state}
-              remote={remote}
-              pending={disabled}
-              allowReview={!remote || !!snapshot?.capabilities.review}
-              allowDelete={!remote || !!snapshot?.capabilities.deleteImages}
-              classify={classify}
-              removeImages={removeImages}
-            />
-          )}
-          {tab === "faults" && (
-            <>
-              <p>
-                {remote
-                  ? "서버가 허용한 설정만 조작할 수 있습니다. 응답 성공 후 적용됩니다."
-                  : "브라우저 예시 시연입니다. 새로고침하면 설정이 초기화됩니다."}
-              </p>
-              <div className="qc-actions">
-                <label>
-                  라인 속도{" "}
-                  <select
-                    aria-label="라인 속도"
-                    value={state.intervalMs ?? ""}
-                    disabled={disabled || !allowSpeed}
-                    onChange={(event) =>
-                      action(
-                        configure({ intervalMs: Number(event.target.value) }),
-                      )
-                    }
-                  >
-                    {!allowSpeed && <option value="">제공 안 됨</option>}
-                    {intervalOptions.map((value) => (
-                      <option key={value} value={value}>
-                        {value / 1000}초마다 1묶음
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  처리 방식{" "}
-                  <select
-                    aria-label="동시 처리 수"
-                    value={state.concurrency ?? ""}
-                    disabled={disabled || !allowControl}
-                    onChange={(event) =>
-                      action(
-                        configure({ concurrency: Number(event.target.value) }),
-                      )
-                    }
-                  >
-                    {(remote
-                      ? (snapshot?.capabilities.concurrency ?? [])
-                      : [1, 2, 4]
-                    ).map((value) => (
-                      <option key={value} value={value}>
-                        {value === 1 ? "순차 1개" : `병렬 ${value}개`}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  적용 범위{" "}
-                  <select
-                    aria-label="장애 적용 범위"
-                    value={state.scope ?? ""}
-                    disabled={disabled || !allowFaults}
-                    onChange={(event) =>
-                      action(
-                        configure({
-                          scope: event.target.value as Runtime["scope"],
-                        }),
-                      )
-                    }
-                  >
-                    <option value="ALL">전체 신규 요청</option>
-                    <option value="NEXT">다음 1건</option>
-                  </select>
-                </label>
-              </div>
-              <div className="qc-faults">
-                {Object.entries(FAULTS).map(([code, label]) => (
-                  <label key={code}>
-                    <input
-                      type="checkbox"
-                      checked={state.faults.includes(code as Fault)}
-                      disabled={disabled || !allowFaults}
-                      onChange={() => toggle(code as Fault)}
-                    />
-                    {label}
-                  </label>
-                ))}
-              </div>
-              <button
-                disabled={disabled || !allowFaults}
-                onClick={() => action(configure({ faults: [] }))}
-              >
-                장애 토글 모두 해제
-              </button>
-              <p className="qc-muted">
-                진행 중인 요청은 접수 당시 설정으로 완료됩니다. 실제 서비스의
-                동시 처리 수는 서버가 제공한 허용 목록을 따릅니다. 라인 속도는
-                사과 묶음 투입을 시작하는 간격이며, 한 건 처리가 더 오래 걸리면
-                끝나는 대로 다음 묶음을 넣습니다.
-              </p>
-            </>
-          )}
-        </Modal>
-      )}
     </main>
   );
 }
