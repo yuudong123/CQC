@@ -9,6 +9,7 @@ import ThroughputChart from "./ThroughputChart";
 import { useDemo } from "./DemoProvider";
 import { sampleApples } from "@/lib/sample-apples";
 import { formatPercent } from "@/lib/quality-format";
+import { qualityBins } from "@/lib/quality-bins";
 import {
   FAULTS,
   imageIndexForJob,
@@ -50,42 +51,71 @@ function componentTone(status: string, text: string) {
 }
 const percent = (value: number, total: number) =>
   total ? ((value / total) * 100).toFixed(1) : "0.0";
-function RatioBar({
-  label,
-  values,
-  total,
+// 선별함 13칸(품종 2 × 등급 3 × 당도 2 + 재검사함)에 오늘 들어간 사과 수를 그린다.
+// 칸 색이 진할수록 많이 들어갔고, 방금 처리한 사과가 들어간 칸은 잠깐 테두리가 반짝인다.
+const GRADES = ["특", "상", "보통"] as const;
+const VARIETIES = ["부사", "양광"] as const;
+// 외관은 보통이지만 당도가 높은 칸. 발표의 "못난이 사과" 후보다.
+const UGLY_BINS = new Set(["DEMO_BIN_06", "DEMO_BIN_12"]);
+function BinMap({
+  bins,
+  reinspectionRatio,
+  recent,
 }: {
-  label: string;
-  values: Record<string, number>;
-  total: number;
+  bins: Record<string, number>;
+  reinspectionRatio: string;
+  recent?: { id: string; bin: string };
 }) {
-  const entries = Object.entries(values);
-  return (
-    <div className="qc-ratio">
-      <strong>{label}</strong>
+  const count = (code: string) => Math.round(bins[code] ?? 0);
+  const max = Math.max(1, ...qualityBins.map((bin) => count(bin.code)));
+  const review = count("TEST_REINSPECTION_BIN");
+  const cell = (code: string, label: string) => {
+    const value = count(code);
+    const isRecent = recent?.bin === code;
+    return (
       <div
-        className="qc-ratio-bar"
-        role="img"
-        aria-label={`${label} ${entries.map(([key, value]) => `${key} ${percent(value, total)}%`).join(", ")}`}
+        // 같은 칸에 연달아 들어와도 반짝임이 다시 시작되도록 최근 검사 ID를 key에 넣는다.
+        key={isRecent ? `${code}-${recent?.id}` : code}
+        className={`qc-bin${UGLY_BINS.has(code) ? " ugly" : ""}${isRecent ? " recent" : ""}`}
+        style={{ "--fill": `${Math.round((value / max) * 100)}%` } as React.CSSProperties}
+        title={`${code} · ${label} · ${value.toLocaleString("ko-KR")}건`}
       >
-        {entries.map(
-          ([key, value], index) =>
-            value > 0 && (
-              <span
-                key={key}
-                data-index={index}
-                style={{ flexGrow: value }}
-                title={`${key} ${value}건`}
-              />
-            ),
-        )}
+        <span>{code.slice(-2)}{UGLY_BINS.has(code) && " ★"}</span>
+        <strong>{value}</strong>
       </div>
-      <div className="qc-ratio-legend">
-        {entries.map(([key, value], index) => (
-          <span key={key} data-index={index}>
-            {key} {value}건 ({percent(value, total)}%)
-          </span>
-        ))}
+    );
+  };
+  return (
+    <div className="qc-binmap" aria-label="오늘 선별함별 사과 수">
+      <span className="qc-bin-corner" />
+      {GRADES.map((grade) => (
+        <span key={grade} className="qc-bin-grade">{grade}</span>
+      ))}
+      <span className="qc-bin-corner" />
+      {GRADES.flatMap((grade) =>
+        ["14° 미만", "14° 이상"].map((band) => (
+          <span key={`${grade}-${band}`} className="qc-bin-band">{band === "14° 미만" ? "<14" : "≥14"}</span>
+        )),
+      )}
+      {VARIETIES.map((variety) => {
+        const row = qualityBins.filter((bin) => bin.variety === variety);
+        const total = row.reduce((sum, bin) => sum + count(bin.code), 0);
+        return [
+          <span key={variety} className="qc-bin-variety">
+            {variety}
+            <small>{total.toLocaleString("ko-KR")}</small>
+          </span>,
+          ...row.map((bin) => cell(bin.code, `${bin.variety} ${bin.grade} 당도 ${bin.sweetness}`)),
+        ];
+      })}
+      <div
+        key={recent?.bin === "TEST_REINSPECTION_BIN" ? `review-${recent.id}` : "review"}
+        className={`qc-bin qc-bin-review${Number(reinspectionRatio) > REINSPECTION_ALERT ? " alert" : ""}${recent?.bin === "TEST_REINSPECTION_BIN" ? " recent" : ""}`}
+        title={`TEST_REINSPECTION_BIN · ${review.toLocaleString("ko-KR")}건`}
+      >
+        <span>재검사함</span>
+        <strong>{review.toLocaleString("ko-KR")}</strong>
+        <small>재검사율<br />{reinspectionRatio}%</small>
       </div>
     </div>
   );
@@ -485,46 +515,18 @@ export default function QualityConsole({
                 </div>
               </div>
               <div className="qc-trend-side">
-                <p>
-                  오늘 품종·품질 집계 대상 {state.today.normal}건 · 시간 초과·추론
-                  오류 제외
-                </p>
-                <div className="qc-distributions">
-                  <RatioBar
-                    label="등급"
-                    values={state.today.grades ?? {}}
-                    total={state.today.normal}
-                  />
-                  <RatioBar
-                    label="품종"
-                    values={state.today.varieties ?? {}}
-                    total={state.today.normal}
-                  />
-                  <div className="qc-trend-foot">
-                    <span>
-                      오늘 재검사 {state.today.reinspection}건 · {reinspectionRatio}% ·
-                      오판 의심{" "}
-                      {Object.values(state.today.suspicions).reduce(
-                        (sum, value) => sum + value,
-                        0,
-                      )}
-                      건
-                    </span>
-                    <details>
-                      <summary>선별 목적지별 성공 명령</summary>
-                      {Object.entries(state.today.bins ?? {}).map(([key, value]) => (
-                        <p key={key}>
-                          {key} · {value}건
-                        </p>
-                      ))}
-                    </details>
-                  </div>
+                <div className="qc-bin-head">
+                  <strong>오늘 선별함</strong>
+                  <small>선별 명령 성공 기준 · ★ 못난이 사과 후보</small>
                 </div>
-                <p className="qc-muted">
-                  {!remote || snapshot?.source === "reference"
-                    ? "참조 시연 수치이며 실제 모델 성능이 아닙니다."
-                    : "서버 저장 결과 기준 · 시간 초과와 추론 오류는 품종·품질 집계에서 제외"}
-                </p>
+                <BinMap
+                  bins={state.today.bins ?? {}}
+                  reinspectionRatio={reinspectionRatio}
+                  recent={state.history[0] && { id: state.history[0].id, bin: state.history[0].bin }}
+                />
+                {(!remote || snapshot?.source === "reference") && (
+                  <p className="qc-muted">참조 시연 수치이며 실제 모델 성능이 아닙니다.</p>
+                )}
               </div>
             </div>
           </Panel>
