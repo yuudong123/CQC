@@ -71,3 +71,45 @@
 - 라벨은 특·상·보통뿐이고 결점(상처) 라벨이 없다. 상처가 큰 사과처럼 등급 밖(불합격) 사례를 판정할 근거가 없고, 그런 사과가 저신뢰 재검사로 빠지는지도 검증하지 못했다.
 - AI Hub는 "농산물 품질 기준으로 특, 상, 보통 품으로 분류"라고만 밝히고 착색·크기·결점의 세부 수치 기준을 공개하지 않는다. 등급 판정 근거는 등급별 대표 사진과 모델 확률로 보여준다.
 - 서버컴 성능은 실제 시연 사진으로 확인했다(추론 서버 내부 p95 309ms, 운영 간격 2초에서 시간 초과 0건). 초당 2건 목표는 현재 구조로 미달이다.
+
+## 동결 후 최종 Test (DM-09, #75) — 10-13 동결 뒤 1회
+
+> 2026-10-08 미리 작성. 아래 결과 칸만 동결 뒤 채운다. Test 27그룹은 v1 분석과 v2 회귀 비교(1.0000)에 이미 쓰였으므로, 이 실행은 **동결 버전의 재확인**이며 독립 승인 근거로 쓰지 않는다.
+
+### 실행 전 확인 (10-08 노트북에서 확인함)
+
+| 항목 | 값 |
+|---|---|
+| 체크포인트 | `models/selected/model.pt` = `model_v2-focal-cal-20260930/model.pt`, SHA-256 `b254206e…2ba8753a`, 필드 `model_state·config·epoch(4)·metrics` 있음 |
+| 입력 | `data/processed/manifest.csv`(SHA-256 `1a817020…08b3bbec`), `configs/splits/seed-42.csv`(`375afc73…b078cbe1`), 원본 `data/raw/` |
+| 실행 환경 | 노트북 CPU, torch 2.14.0+cpu |
+| 보정 | 온도 보정은 확률 크기만 바꾸고 예측 순위는 그대로라 Macro F1·혼동행렬은 보정 전과 같다. 신뢰도·재검사율은 `model.json`의 온도로 따로 계산한다 |
+
+### 실행 명령
+
+`evaluate.py`는 체크포인트 옆에 `.final-test.lock`을 만들어 두 번째 실행을 막는다. 서비스 모델 폴더(`models/selected/`, Docker 복사 대상)에 잠금 파일이 생기지 않도록, Git 제외 폴더에 복사본을 두고 SHA를 대조한 뒤 실행한다.
+
+```powershell
+New-Item -ItemType Directory -Force outputs\dm09-final | Out-Null
+Copy-Item models\selected\model.pt outputs\dm09-final\model.pt
+(Get-FileHash outputs\dm09-final\model.pt -Algorithm SHA256).Hash  # b254206e…2ba8753a 확인
+python -m src.training.evaluate --checkpoint outputs\dm09-final\model.pt --output outputs\dm09-final\final-test-v2.json --device cpu --confirm-final-test RUN_FINAL_TEST_ONCE
+```
+
+### 결과 (동결 뒤 채움)
+
+| 항목 | 값 |
+|---|---|
+| 실행 일시·동결 커밋 | |
+| 표본 | 27그룹 |
+| 품종 Macro F1 | |
+| 품질(외관) Macro F1 | |
+| 품질 혼동행렬 L/M/S | |
+| 승인 기준(각 0.90 이상) | |
+| 10-06 회귀 비교(1.0000)와 차이 | |
+| 결과 파일 | `outputs/dm09-final/final-test-v2.json` → `docs/wbs/results/`에 복사 |
+
+### 확정할 문구
+
+- 승인 상태는 바이너리·`model.json`의 `unverified_candidate`를 바꾸지 않는다. 카드에는 "동결 버전 재확인 결과"로만 적는다.
+- 발표·문서에는 개발 CV 0.8844, source 0.7932, 동결 재확인 결과를 함께 적는다.
