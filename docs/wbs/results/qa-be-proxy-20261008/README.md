@@ -27,3 +27,25 @@
 | QA-INS-09 | 통과 | 지정 자동 시험 | `tests/api/test_inspection_service.py::test_service_rejects_mismatched_inference_response` 2 passed(노트북, Python 3.11, 저장소 `1e6ff23`) | — |
 | QA-AUTO-01 | 통과(KI-8) | `pytest tests data/sampling/tests` | 노트북 Windows: 563 통과·91 건너뜀·2 실패. 실패 2개는 모두 `WinError 5` 폴더 이름 변경(KI-8): `test_review_images.py::test_independent_100_200_retention_and_bulk_api`, `test_simulator_faults.py::test_fault_injection_is_request_local_and_retains_only_inference_images[INFERENCE_ERROR…]`. 두 시험은 Linux [PR #119 python 검사](https://github.com/yuudong123/CQC/actions/runs/37730404036/job/113157984172)에서 통과. 건너뜀 91개는 모두 `CQC_TEST_DATABASE_URL`·`CQC_BE10_*_DATABASE_URL` 미지정 | — |
 | QA-AUTO-02 | 미실행 | 실제 MySQL 통합 시험 건너뜀 없이 통과 | 노트북에 Docker·MySQL이 없어 실행하지 못함 | **BE·MO E2 MySQL로 반환** |
+
+## 보완 (2026-10-08 16:27~16:36, #103 BE 검수 요청)
+
+BE 검수 댓글의 누락 증거·원문 조건만 다시 확인했다. 원자료는 [supplement/](supplement/)에 있다([supplement.json](supplement/supplement.json)).
+
+**실행 시각 바로잡기**: 위 E1 15:27~15:33, #103 댓글의 15:27~15:50은 잘못 적은 범위다. 실제는 E1 첫 실행 15:26(실행 ID `qa-be-10081526`, 스크립트 오류로 중단) → 재실행 15:27:27~15:28:07(`e1-results.json`), 로컬 시험 15:28~15:33이다.
+
+| 요청 | 보완 결과 | 파일 |
+|---|---|---|
+| OPS-06 같은 total | 1쪽 응답의 `snapshotAt`으로 2쪽·마지막+1쪽 고정 → total 78,277 세 번 같음, 중복 0, 빈 목록 | supplement.json |
+| OPS-08 f no-store | `/statistics?minutes=1` → 422 UNKNOWN_QUERY_FIELD, `Cache-Control: no-store` | supplement.json |
+| OPS-10 행 수 정확 일치·원본 | 같은 `snapshotAt`으로 history total 11,449 = CSV 11,449행. 원본 CSV·응답 헤더 첨부. Excel 직접 열기는 미실행(Excel 없음) | ops10-inspections.csv, ops10-headers.json |
+| OPS-13 suspicions 섹션 | 오판 의심 0건이면 `suspicions` 행이 없고, 본인 행을 OTHER로 지정하면 생긴다(지정 → CSV → NONE 복구). 빈 집계 표현을 원문 기준으로 어떻게 볼지 BE 판단 필요 | ops13-statistics-today-with-other.csv, -after-restore.csv |
+| OPS-05 g·k·l | g·k: E1 시간 초과 행으로 필터 정합 확인, 본인 실행 ID의 시간 초과 행 포함. l: 본인 행 OTHER 지정 → OTHER 필터 포함·NONE 필터 제외 → NONE 복구 | supplement.json |
+| IMG-01 정상 12건 | 원문대로 정상 12건(선별함 01~12) 전송 → 각 검사 ID 저장 사진 0장(`qa-be-10081636t-*`). 16:27 1차 회차는 16:24 dev 푸시의 Jenkins 빌드와 겹쳐 1건이 시간 초과라 판정 제외 | supplement.json |
+| IMG-02 전체 필드 | 300개 항목 키·타입·범위 모두 정상. `INFERENCE_TIMEOUT` 항목도 E1 목록에서 확인. 참고: `createdAt`·`snapshotAt`이 정수값인데 `…361.0`처럼 소수 표기로 온다 | img02-fault-images.json |
+| IMG-04 삭제 전후 ID | 본인 이미지 2장 삭제 전후 전체 ID 집합 차이 = 그 2개뿐(사이 신규 0) | img04-ids-before.json, img04-ids-after.json |
+| AUTO-01 원문 로그 | Windows 전체 범위 562 통과·91 건너뜀·3 실패(WinError 5), Windows CI 범위 463·91·5(WinError 5 2 + 시간 민감 3). 실패 시험이 회차마다 달라 Windows로는 확정 불가 → **부분 유지**, Linux 전체 범위는 BE·MO 환경 필요 | auto01-windows-*.log, *.xml |
+| E1 배포 SHA 연결 | Backend가 빌드·커밋 정보를 내보내지 않아 DM·FE 쪽에서는 연결 불가. 대행 당시 코드에 영향 있는 마지막 병합은 PR #118(`e960d1f`). 배포 기준선 확인은 MO 도구 필요 | — |
+
+- 우연 증거: 16:27 회차에서 생긴 본인 시간 초과 행 `qa-be-10081626s-ins01-FS-15.0`이 OPS-04 시간 초과 행(FAIL/TIMEOUT/INFERENCE_TIMEOUT/예측 null/재검사함)과 IMG-02 `INFERENCE_TIMEOUT` 이미지 12장을 E1에서 직접 보여준다.
+- 본인 데이터만 사용: 보완 회차 검사 25건(정상 12건 × 2회, 저신뢰 1건. 1차 정상 12건 중 1건은 시간 초과), 오판 의심 지정은 본인 행 1건을 OTHER → NONE으로 복구, 삭제는 본인 이미지 2장.

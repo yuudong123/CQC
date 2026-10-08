@@ -1,0 +1,478 @@
+{
+ "run_previous": "qa-be-10081526",
+ "run_supplement": "qa-be-10081626s",
+ "date_kst": "2026-10-08",
+ "started_kst": "2026-10-08T16:27:55.637461+09:00",
+ "cases": {
+  "QA-IMG-01": {
+   "result": "통과",
+   "run": "qa-be-10081636t",
+   "started_kst": "2026-10-08T16:36:02.587536+09:00",
+   "finished_kst": "2026-10-08T16:36:26.622987+09:00",
+   "sent": [
+    {
+     "id": "qa-be-10081636t-ins01-FL-13.9",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_01"
+    },
+    {
+     "id": "qa-be-10081636t-ins01-FL-15.0",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_02"
+    },
+    {
+     "id": "qa-be-10081636t-ins01-FM-13.9",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_03"
+    },
+    {
+     "id": "qa-be-10081636t-ins01-FM-15.0",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_04"
+    },
+    {
+     "id": "qa-be-10081636t-ins01-FS-13.9",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_05"
+    },
+    {
+     "id": "qa-be-10081636t-ins01-FS-15.0",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_06"
+    },
+    {
+     "id": "qa-be-10081636t-ins01-YL-13.9",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_07"
+    },
+    {
+     "id": "qa-be-10081636t-ins01-YL-15.0",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_08"
+    },
+    {
+     "id": "qa-be-10081636t-ins01-YM-13.9",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_09"
+    },
+    {
+     "id": "qa-be-10081636t-ins01-YM-15.0",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_10"
+    },
+    {
+     "id": "qa-be-10081636t-ins01-YS-13.9",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_11"
+    },
+    {
+     "id": "qa-be-10081636t-ins01-YS-15.0",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_12"
+    }
+   ],
+   "stored_images_per_inspection": {
+    "qa-be-10081636t-ins01-FL-13.9": 0,
+    "qa-be-10081636t-ins01-FL-15.0": 0,
+    "qa-be-10081636t-ins01-FM-13.9": 0,
+    "qa-be-10081636t-ins01-FM-15.0": 0,
+    "qa-be-10081636t-ins01-FS-13.9": 0,
+    "qa-be-10081636t-ins01-FS-15.0": 0,
+    "qa-be-10081636t-ins01-YL-13.9": 0,
+    "qa-be-10081636t-ins01-YL-15.0": 0,
+    "qa-be-10081636t-ins01-YM-13.9": 0,
+    "qa-be-10081636t-ins01-YM-15.0": 0,
+    "qa-be-10081636t-ins01-YS-13.9": 0,
+    "qa-be-10081636t-ins01-YS-15.0": 0
+   },
+   "bins": [
+    "DEMO_BIN_01",
+    "DEMO_BIN_02",
+    "DEMO_BIN_03",
+    "DEMO_BIN_04",
+    "DEMO_BIN_05",
+    "DEMO_BIN_06",
+    "DEMO_BIN_07",
+    "DEMO_BIN_08",
+    "DEMO_BIN_09",
+    "DEMO_BIN_10",
+    "DEMO_BIN_11",
+    "DEMO_BIN_12"
+   ],
+   "note": "서버 안정 확인(16:32~16:35 최근 100건 간격 중앙 2.0초·최대 3.7초·오류 0) 뒤 다시 보냄. 정상 12건이 선별함 01~12에 하나씩, 각 검사 ID로 저장된 사진 0장. 저신뢰 12장 보존은 1차 qa-be-10081526-ins04-LQ"
+  },
+  "QA-IMG-02": {
+   "result": "통과(부분)",
+   "items": 300,
+   "invalid_items": [],
+   "by_category_errorCode": {
+    "LOW_CONFIDENCE/None": 200,
+    "SYSTEM_ERROR/INFERENCE_TIMEOUT": 12,
+    "SYSTEM_ERROR/INFERENCE_CONNECTION_ERROR": 87,
+    "SYSTEM_ERROR/INFERENCE_HTTP_ERROR": 1
+   },
+   "createdAt_float_notation": 300,
+   "note": "300개 항목 모두 키·타입·범위 확인(신뢰도·임계값 0~1 또는 null, 저신뢰는 errorCode null, 시스템 오류는 errorCode 있음). INFERENCE_TIMEOUT 항목도 E1 목록에 있음. 참고: createdAt·snapshotAt이 정수값이지만 JSON에서 1791444491361.0처럼 소수 표기로 온다(값은 epoch ms 정수)"
+  },
+  "QA-IMG-04": {
+   "result": "통과",
+   "delete": [
+    200,
+    {
+     "deletedIds": [
+      "edaa908075864b29a6c17de270c74156_11",
+      "edaa908075864b29a6c17de270c74156_10"
+     ]
+    }
+   ],
+   "removed_ids": [
+    "edaa908075864b29a6c17de270c74156_10",
+    "edaa908075864b29a6c17de270c74156_11"
+   ],
+   "added_ids_between_snapshots": [],
+   "note": "삭제 전후 전체 ID 집합에서 빠진 것은 A·B 두 개뿐. 사이에 Simulator가 새로 넣은 ID(added)는 순환 정책으로 다른 오래된 항목을 밀어낼 수 있어 따로 적음"
+  },
+  "QA-OPS-05": {
+   "g_TIMEOUT": {
+    "total": 4,
+    "rows": [
+     [
+      "qa-be-10081626s-img04-LQ",
+      "TIMEOUT",
+      "INFERENCE_TIMEOUT"
+     ],
+     [
+      "qa-be-10081626s-ins01-FS-15.0",
+      "TIMEOUT",
+      "INFERENCE_TIMEOUT"
+     ],
+     [
+      "2e2765b1-b72f-489d-9742-2a470a9b821c",
+      "TIMEOUT",
+      "INFERENCE_TIMEOUT"
+     ],
+     [
+      "1fdd4828-2c0e-4e25-b5ff-2c567d9f46f0",
+      "TIMEOUT",
+      "INFERENCE_TIMEOUT"
+     ]
+    ]
+   },
+   "k_INFERENCE_TIMEOUT": {
+    "total": 4,
+    "rows": [
+     [
+      "qa-be-10081626s-img04-LQ",
+      "TIMEOUT",
+      "INFERENCE_TIMEOUT"
+     ],
+     [
+      "qa-be-10081626s-ins01-FS-15.0",
+      "TIMEOUT",
+      "INFERENCE_TIMEOUT"
+     ],
+     [
+      "2e2765b1-b72f-489d-9742-2a470a9b821c",
+      "TIMEOUT",
+      "INFERENCE_TIMEOUT"
+     ],
+     [
+      "1fdd4828-2c0e-4e25-b5ff-2c567d9f46f0",
+      "TIMEOUT",
+      "INFERENCE_TIMEOUT"
+     ]
+    ]
+   },
+   "l_OTHER": {
+    "patch_other": [
+     200,
+     {
+      "inspectionId": "qa-be-10081526-ins01-FL-13.9",
+      "misclassification": "OTHER"
+     }
+    ],
+    "other_ids": [
+     "qa-be-10081526-ins01-FL-13.9"
+    ],
+    "target_in_other": true,
+    "target_in_none_while_other": false,
+    "patch_restore_none": [
+     200,
+     {
+      "inspectionId": "qa-be-10081526-ins01-FL-13.9",
+      "misclassification": "NONE"
+     }
+    ],
+    "other_after_restore": 0
+   },
+   "result": "통과(부분)",
+   "note": "g·k는 E1의 기존 시간 초과 행으로 필터 정합 확인(E2 `$RUN-ins12` 포함 조건은 BE E2 자료). l은 본인 행을 OTHER로 지정→OTHER 필터에 포함·NONE 필터에서 빠짐→NONE으로 복구 / 추가: g·k 결과에 본인 시간 초과 행(qa-be-10081626s-ins01-FS-15.0, -img04-LQ)이 포함됨(incidental_timeout_evidence)"
+  },
+  "QA-OPS-13": {
+   "sections_with_other": [
+    "bins",
+    "grades",
+    "last_1_minutes",
+    "suspicions",
+    "today",
+    "varieties"
+   ],
+   "sections_after_restore": [
+    "bins",
+    "grades",
+    "last_1_minutes",
+    "today",
+    "varieties"
+   ],
+   "patch": [
+    200,
+    200
+   ],
+   "suspicion_rows_with_other": [
+    [
+     "BACKEND",
+     "2026-10-08",
+     "suspicions",
+     "OTHER",
+     "1",
+     "2026-10-08T16:28:27.080+09:00"
+    ]
+   ],
+   "note": "오판 의심이 0건이면 suspicions 섹션 행이 없고, 1건 이상이면 생긴다(원문 b의 \"suspicions 섹션\" 표기를 빈 집계 기준으로 어떻게 볼지 BE 판단 필요)"
+  },
+  "QA-OPS-06": {
+   "result": "통과",
+   "snapshotAt": 1791444511684.0,
+   "totals": [
+    78277,
+    78277,
+    78277
+   ],
+   "overlap": 0,
+   "last_plus_one_items": 0,
+   "note": "1쪽 응답의 snapshotAt으로 2쪽·마지막+1쪽을 고정해 같은 시점 total 비교"
+  },
+  "QA-OPS-08": {
+   "f": {
+    "status": 422,
+    "body": {
+     "code": "UNKNOWN_QUERY_FIELD"
+    },
+    "cache_control": "no-store"
+   },
+   "result": "통과"
+  },
+  "QA-OPS-10": {
+   "snapshotAt": 1791444514202.0,
+   "history_total": 11449,
+   "csv_rows": 11449,
+   "equal": true,
+   "headers": {
+    "Content-Type": "text/csv; charset=utf-8",
+    "Content-Disposition": "attachment; filename=\"cqc-inspections.csv\"",
+    "Cache-Control": "no-store"
+   },
+   "bom": "efbbbf",
+   "result": "통과(부분)",
+   "note": "Excel 직접 열기는 미실행(노트북에 Excel 없음). 원본 CSV를 첨부"
+  },
+  "QA-IMG-01_first_attempt_excluded": {
+   "result": "확인 필요",
+   "sent": [
+    {
+     "id": "qa-be-10081626s-ins01-FL-13.9",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_01",
+     "reused_from_history": true
+    },
+    {
+     "id": "qa-be-10081626s-ins01-FL-15.0",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_02",
+     "reused_from_history": true
+    },
+    {
+     "id": "qa-be-10081626s-ins01-FM-13.9",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_03",
+     "reused_from_history": true
+    },
+    {
+     "id": "qa-be-10081626s-ins01-FM-15.0",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_04",
+     "reused_from_history": true
+    },
+    {
+     "id": "qa-be-10081626s-ins01-FS-13.9",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_05",
+     "reused_from_history": true
+    },
+    {
+     "id": "qa-be-10081626s-ins01-FS-15.0",
+     "status": 200,
+     "inspection_status": "FAIL",
+     "decision_reason": null,
+     "target_bin_code": "TEST_REINSPECTION_BIN",
+     "reused_from_history": true
+    },
+    {
+     "id": "qa-be-10081626s-ins01-YL-13.9",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_07",
+     "reused_from_history": true
+    },
+    {
+     "id": "qa-be-10081626s-ins01-YL-15.0",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_08",
+     "reused_from_history": true
+    },
+    {
+     "id": "qa-be-10081626s-ins01-YM-13.9",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_09",
+     "reused_from_history": true
+    },
+    {
+     "id": "qa-be-10081626s-ins01-YM-15.0",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_10",
+     "reused_from_history": true
+    },
+    {
+     "id": "qa-be-10081626s-ins01-YS-13.9",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_11",
+     "reused_from_history": true
+    },
+    {
+     "id": "qa-be-10081626s-ins01-YS-15.0",
+     "status": 200,
+     "inspection_status": "COMPLETED",
+     "decision_reason": "NORMAL",
+     "target_bin_code": "DEMO_BIN_12",
+     "reused_from_history": true
+    }
+   ],
+   "stored_images_per_inspection": {
+    "qa-be-10081626s-ins01-FL-13.9": 0,
+    "qa-be-10081626s-ins01-FL-15.0": 0,
+    "qa-be-10081626s-ins01-FM-13.9": 0,
+    "qa-be-10081626s-ins01-FM-15.0": 0,
+    "qa-be-10081626s-ins01-FS-13.9": 0,
+    "qa-be-10081626s-ins01-FS-15.0": 12,
+    "qa-be-10081626s-ins01-YL-13.9": 0,
+    "qa-be-10081626s-ins01-YL-15.0": 0,
+    "qa-be-10081626s-ins01-YM-13.9": 0,
+    "qa-be-10081626s-ins01-YM-15.0": 0,
+    "qa-be-10081626s-ins01-YS-13.9": 0,
+    "qa-be-10081626s-ins01-YS-15.0": 0
+   },
+   "bins": [
+    "DEMO_BIN_01",
+    "DEMO_BIN_02",
+    "DEMO_BIN_03",
+    "DEMO_BIN_04",
+    "DEMO_BIN_05",
+    "DEMO_BIN_07",
+    "DEMO_BIN_08",
+    "DEMO_BIN_09",
+    "DEMO_BIN_10",
+    "DEMO_BIN_11",
+    "DEMO_BIN_12",
+    "TEST_REINSPECTION_BIN"
+   ],
+   "note": "16:27~16:28 회차. 16:24 dev 푸시(88a4ce3)의 Jenkins 빌드·배포와 겹쳐 FS-15.0이 시간 초과(시스템 오류 이미지 12장). 부하 겹친 회차로 판정 제외"
+  },
+  "QA-AUTO-01": {
+   "result": "부분 검증(유지)",
+   "windows_full": "tests data/sampling/tests → 562 passed·91 skipped·3 failed(모두 PermissionError WinError 5, KI-8)",
+   "windows_ci_scope": "tests/api tests/simulator tests/ci tests/test_service_logging.py → 463 passed·91 skipped·5 failed(WinError 5 2건 + 시간 민감 시험 3건: late_result·line_deadlines·runner)",
+   "linux_ci": "PR #119 Actions python: 같은 CI 범위 467 passed·92 skipped(https://github.com/yuudong123/CQC/actions/runs/37730404036/job/113157984172)",
+   "files": [
+    "auto01-windows-full.log",
+    "auto01-windows-full.xml",
+    "auto01-windows-ci-scope.log",
+    "auto01-windows-ci-scope.xml"
+   ],
+   "note": "Windows 실패 시험이 회차마다 달라지고(WinError 5·시간 민감) Linux에서 전체 범위(tests data/sampling/tests)를 돌린 결과가 없어 부분 검증 유지. Linux 전체 범위 실행은 Docker가 있는 BE·MO 환경 필요"
+  }
+ },
+ "finished_kst": "2026-10-08T16:28:35.815453+09:00",
+ "timeline": {
+  "first_e1_run": "15:26 시작(실행 ID qa-be-10081526), 본인 검사 6건 생성 뒤 OPS-13 저장 중 스크립트 오류로 중단",
+  "second_e1_run": "15:27:27~15:28:07(같은 본인 검사 재사용, e1-results.json)",
+  "local_tests": "INS-09 15:28 전후, AUTO-01 15:30~15:32:53",
+  "correction": "README의 E1 15:27~15:33와 #103 댓글의 15:27~15:50은 잘못된 범위. 실제는 E1 15:26~15:28, 로컬 15:28~15:33",
+  "supplement": "보완 E1 16:27:55~16:28:35(IMG-01 1차는 16:24 푸시 빌드와 겹쳐 제외), IMG-01 재실행 16:36, AUTO-01 원문 로그 16:29~16:35"
+ },
+ "deployment_sha": "E1 Backend는 /health·snapshot에 빌드·커밋 정보를 내보내지 않아 DM·FE 쪽에서 실행 이미지 ↔ 소스 SHA를 직접 연결할 수 없음. 대행 당시 dev 최신은 1e6ff23(문서 커밋), 실행 코드에 영향 있는 마지막 병합은 PR #118(e960d1f). 배포 기준선 확인은 MO 도구(collect_mo09_followup) 필요",
+ "incidental_timeout_evidence": {
+  "id": "qa-be-10081626s-ins01-FS-15.0",
+  "history": {
+   "status": "FAIL",
+   "processingStatus": "TIMEOUT",
+   "errorCode": "INFERENCE_TIMEOUT",
+   "variety": null,
+   "grade": null,
+   "excluded": true,
+   "bin": "TEST_REINSPECTION_BIN",
+   "faults": [
+    "INFERENCE_TIMEOUT"
+   ],
+   "confidence": null,
+   "cultivarConfidence": null,
+   "inferenceMs": null,
+   "modelVersion": null
+  },
+  "fault_images": "12장, 모두 SYSTEM_ERROR/INFERENCE_TIMEOUT",
+  "also": "qa-be-10081626s-img04-LQ도 같은 회차 시간 초과",
+  "note": "빌드 부하와 겹친 회차에서 생긴 본인 실행 ID의 실제 시간 초과다. 일부러 넣은 장애는 아니지만, OPS-04 시간 초과 행 변환, OPS-05 g·k 필터에 본인 행 포함, IMG-02 INFERENCE_TIMEOUT 표시를 E1에서 직접 보여준다"
+ }
+}
