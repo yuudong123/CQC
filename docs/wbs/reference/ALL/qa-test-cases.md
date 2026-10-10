@@ -1305,6 +1305,8 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 
 ### 6.4 기록표
 
+> **2026-10-10 BE 공식 집계: 28/44 확정 PASS, 잔여 16/44.** [#103 기존 확정 26/44](https://github.com/yuudong123/CQC/issues/103#issuecomment-6055656308)에 포함되지 않았던 OPS-05·OPS-02를 최종 증거 검수 후 각각 PASS로 추가했다(26 + 2 = 28). 아래 10-08 후보 집계 설명은 당시 이력이며, 기존 대행 10개 최종 PASS는 #103 최종 판정을 따른다. 이번 변경은 OPS-05·OPS-02 결과와 최신 집계만 갱신하고 다른 QA 판정은 변경하지 않는다. [10-10 통합 보고](../../results/qa-be-20261010.md). [#103 통합 보고 등록](https://github.com/yuudong123/CQC/issues/103#issuecomment-6094439075).
+
 > 10-08 BE 대행 16개는 [#103 BE 검수](https://github.com/yuudong123/CQC/issues/103) 판정을 결과 칸에 반영했다(PASS 후보 5·부분 검증 8·원문 미충족 2·미실행 1). PASS 후보는 BE가 공식 완료로 옮길 때까지 BE 확정 수에 넣지 않는다(10-08 기준 BE 확정 16/44, 후보 포함 21/44). 보완 증거는 [대행 결과 README 보완 절](../../results/qa-be-proxy-20261008/README.md) 참고. 보완 조건은 #103 검수 댓글을 따른다.
 
 2026-10-06 BE-10 증거 인계: 6.2의 동일 기대값 재사용 규칙에 따라 아래 행에 기존 실행 결과를 연결했다. 새 시험은 실행하지 않았다. 실행자 `BE-10 기록`은 원 실행 기록의 인계 표기이며 담당자·담당 파트를 변경하지 않는다. 일시는 원 실행일, 커밋·모델은 링크한 실행 절의 기준선이다. `차단(부분 증거)`는 해당 기대값은 검증됐지만 케이스 전체의 입력·환경·E1 확인이나 다른 기대값은 미확인이라는 뜻이다. ALL-04 전체 완료를 뜻하지 않으며 #66 완료와 후속 수용 경계는 6.4.1을 따른다.
@@ -1344,10 +1346,10 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 | QA-INS-16 | BE | | | | |  |
 | QA-INS-17 | BE | | | | |  |
 | QA-OPS-01 | BE | 통과 | BE(#103 보고) | 2026-10-07 | E1 `24e49e1` | snapshot 전체 필드 기대값 충족. [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
-| QA-OPS-02 | BE | 차단(부분 증거) | BE-10 기록 | 2026-10-06 | Linux MySQL8.4, 3/4 §11 | [OPS-02](../../BE-10-results.md): 20건 total20/normal16/excluded4/reinspection8 SQL/API 일치. 이 케이스의 지정5건 분포를 실행한 기록과 구분 |
+| QA-OPS-02 | BE | PASS | BE (Codex) | 2026-10-10 13:50:35~13:51:47 KST | E2 `cqc-qa-e2`, HEAD `6f445db`, Backend image source `45c33f5`, cal-20260930 | 인증 Simulator·2000ms 합의 조건의 지정 5건 HTTP200, 통계 total/normal/excluded +5/+4/+1, review/reinspection +2/+3, 품종·품질·bin·inferenceCount 및 SQL 일치. 기존 500ms 직접 요청 FAIL 기록 유지·소급 PASS 아님. 로컬 원자료 `outputs/qa-be-ops02-auth2s-final-20261010/RESULT.md`. [최종 보고](../../results/qa-be-20261010.md). |
 | QA-OPS-03 | BE | PASS 후보(대행, BE 검수) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | B-FL 13.9 행 필드·시각 3형식·내림차순·bins 일치. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [OPS-01·§13.4](../../BE-10-results.md): 실제 DB 이력 변환/정상100 PASS; 전체 지정 행 기대값 대조는 후속 |
 | QA-OPS-04 | BE | PASS 후보(대행, BE 검수) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | INS-01·03·04·08 행 변환 일치. INS-10·12 행은 E2 전용(BE E2 INS-10·12 통과로 보완). [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [INS-02~09·OPS-02](../../BE-10-results.md): 정상/저신뢰/오류/timeout 상태·통계 정책 PASS; QA 지정 입력 전체는 별도 대조 |
-| QA-OPS-05 | BE | 부분 검증(대행, BE 검수) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | a~n 필터 정합·본인 행 포함. g·k의 `$RUN-ins12`는 E2 전용, l OTHER는 오늘 지정 행 0건. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [OPS-01](../../BE-10-results.md): 현행 API 필터·SQL ID 대조 PASS; QA 필터 조합별 전체 확인은 후속. model 필터는 #68 |
+| QA-OPS-05 | BE | PASS | E1 조현재(에이전트), E2 보완 BE (Codex) | E1 2026-10-08, E2 2026-10-10 13:12:58~13:13:00 KST | E2 `cqc-qa-e2`, HEAD `6f445db`, Backend image source `45c33f5`; E1 배포 SHA 연결 후속 유지 | 기존 대행 a~f·h~j·l~n 및 supplement OTHER 조건 재사용, E2 g TIMEOUT·k INFERENCE_TIMEOUT에서 `qa-e2-095231-01757e-ins12` 각 1회 포함. 검사일 10-08, HTTP200/no-store, total4/items4 및 동일 snapshot 2쪽 items0 확인. 로컬 원자료 `outputs/qa-be-ops05-20261010/`. [최종 보고](../../results/qa-be-20261010.md). |
 | QA-OPS-06 | BE | 보완 필요(대행, BE 검수: 원문 미충족) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 50+50 중복 0, 100·200, pageSize 20·page 0 → 422, 마지막+1 빈 목록. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [OPS-01](../../BE-10-results.md): 최신순225건·200+25 pagination PASS; 50/100 및 invalid 쿼리 전체 매트릭스 확인은 별도 |
 | QA-OPS-07 | BE | 통과(기존 증거 재사용) | BE-10 기록 | 2026-10-06 | Linux MySQL8.4, 3/4 §11 | [OPS-01·03](../../BE-10-results.md): 조회 snapshotAt 고정 후 신규 검사 제외, 현재 조회와 구분 PASS |
 | QA-OPS-08 | BE | 부분 검증(대행, BE 검수) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 4개 엔드포인트 × a~e·f 모두 422와 지정 code·no-store. [대행 결과](../../results/qa-be-proxy-20261008/README.md) |
