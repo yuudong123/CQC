@@ -37,6 +37,11 @@
 .payment-card dd { margin: 0; font-weight: 600; }
 .payment-card p { margin: 0; padding: 10px 12px; border-radius: 8px; background: #f8ecee; color: #7d4750; font-size: 13px; }
 .payment-card p.paid { background: #e8f3ea; color: #2e6b3a; }
+.payment-card p.failed { background: #fdecea; color: #a1352a; }
+.payment-card p a { color: inherit; font-weight: 700; }
+.payment-card { pointer-events: auto; }
+.payment-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.payment-actions:empty { display: none; }
 @keyframes payment-in { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: none; } }
 .qc-console {
   height: 100%;
