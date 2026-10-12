@@ -94,7 +94,8 @@ test("자동 경매 시연 6단계가 가상 물류로 끝까지 진행된다", 
   const row = { id: "i1", variety: "부사", grade: "특", confidence: 97, modelVersion: "v2", virtualBrix: 15, bin: "DEMO_BIN_02" };
   const task = { cqcId: "FE-DEMO-s-0", batch: { key: "k", rows: [row, row, row, row] }, stage: 0, bidCount: 0 };
   const messages = [];
-  for (let i = 0; i < 20 && task.stage < 6; i++) { messages.push(await advanceTask(task, api, now())); advance(2000); }
+  // 결제 창에서 결제를 마친 것으로 보고 진행한다(결제 전에는 배차하지 않는다).
+  for (let i = 0; i < 20 && task.stage < 6; i++) { if (task.payment) task.paid = true; messages.push(await advanceTask(task, api, now())); advance(2000); }
   assert.equal(task.stage, 6);
   assert.ok(messages.some((message) => message.includes("자동 배차 완료")), messages.join(" / "));
   assert.equal(store.state.orders[task.orderId].status, "ASSIGNED");

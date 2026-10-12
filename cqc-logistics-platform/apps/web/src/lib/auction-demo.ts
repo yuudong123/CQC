@@ -3,9 +3,8 @@ import type { Result } from "./quality-runtime";
 // 같은 선별함 2개를 한 출품으로 묶는다(4개는 2초 간격에서 첫 출품까지 1~2분 걸려 시연이 늘어졌다).
 export const DEMO_LOT_SIZE = 2;
 export const DEMO_LOT_LIMIT = 3;
-/** 경매를 여는 시간과, 낙찰자 결제 팝업을 보여 주고 배차로 넘어가기까지의 시간. */
+/** 경매를 여는 시간. */
 export const DEMO_AUCTION_MS = 6_000;
-export const DEMO_PAYMENT_MS = 3_000;
 export type DemoBatch = { key: string; rows: Result[] };
 
 /** 통과·저장·선별 성공 건만 묶습니다. 당도 경계는 검사 결과의 선별 목적지를 따릅니다. */
@@ -26,7 +25,7 @@ type Lot = { lotId: string; cqcId: string; auctionStatus: string };
 type Order = { orderId: string; lotId: string; status: string; buyerId?: string; priceWon?: number };
 export type DemoPayment = { lotId: string; buyerId: string; priceWon: number };
 type Api = <T>(path: string, body?: unknown) => Promise<T>;
-export type DemoTask = { cqcId: string; batch: DemoBatch; stage: number; bidCount: number; lotId?: string; orderId?: string; openedAt?: number; paid?: boolean; paidAt?: number; payment?: DemoPayment };
+export type DemoTask = { cqcId: string; batch: DemoBatch; stage: number; bidCount: number; lotId?: string; orderId?: string; openedAt?: number; paid?: boolean; payment?: DemoPayment };
 
 /** 서버 조회로 진행 단계를 복구하여 응답 유실 후에도 출품·낙찰·배차를 중복 생성하지 않습니다. */
 export async function advanceTask(task: DemoTask, api: Api, now: number): Promise<string> {
@@ -89,17 +88,18 @@ export async function advanceTask(task: DemoTask, api: Api, now: number): Promis
   if (task.stage === 5) {
     const order = await api<Order>(`/orders/${task.orderId}`);
     if (order.status === "CANCELLED") { task.stage = 6; return `${task.lotId} 주문 취소 · 배차하지 않음`; }
-    // 결제 API는 없으므로 낙찰과 배차 사이에 가상 결제 단계만 한 번 보여줍니다.
-    // 낙찰자 화면의 결제 팝업이 떠 있는 동안(DEMO_PAYMENT_MS)은 배차하지 않습니다.
-    if (!task.paid) {
-      task.paid = true; task.paidAt = now;
-      if (order.buyerId && order.priceWon !== undefined) task.payment = { lotId: task.lotId!, buyerId: order.buyerId, priceWon: order.priceWon };
-      return `${task.lotId} 결제 완료(가상) · 실결제 없음`;
+    // 낙찰자가 결제 창에서 결제를 마칠 때까지(task.paid) 배차하지 않습니다. 결제 창은 저절로 닫히지 않습니다.
+    if (!task.payment && !task.paid) {
+      if (order.buyerId && order.priceWon !== undefined) {
+        task.payment = { lotId: task.lotId!, buyerId: order.buyerId, priceWon: order.priceWon };
+        return `${task.lotId} 낙찰자 결제 대기`;
+      }
+      task.paid = true;
     }
-    if (task.paidAt !== undefined && now - task.paidAt < DEMO_PAYMENT_MS) return "";
+    if (!task.paid) return "";
     if (order.status === "MATCHED" || order.status === "DISPATCHING") await api(`/orders/${task.orderId}/dispatch`, {});
     task.stage++;
-    return `${task.lotId} 자동 배차 완료 · 관제에서 확인`;
+    return `${task.lotId} 결제 확인 · 자동 배차 완료`;
   }
   return "";
 }
