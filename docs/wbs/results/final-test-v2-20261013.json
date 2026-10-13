@@ -1,0 +1,532 @@
+{
+  "checkpoint": "outputs\\dm09-final\\model.pt",
+  "checkpoint_epoch": 4,
+  "config": {
+    "model_kind": "separate",
+    "views": 12,
+    "epoch_selection": "explicit_development_selection",
+    "fold_best_epochs": [],
+    "epochs": 4,
+    "quality_loss": "focal",
+    "dropout": 0.4,
+    "focal_gamma": 2.0,
+    "ordinal_weight": 0.25,
+    "data_scope": "all_non_test_groups",
+    "test_used": false,
+    "output_dir": "outputs\\final-training-brix-v1\\separate-12view-focal-e4",
+    "manifest": "data\\processed\\manifest.csv",
+    "splits": "configs\\splits\\seed-42.csv",
+    "raw_root": "data\\raw",
+    "batch_size": 2,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0005,
+    "image_size": 224,
+    "seed": 42,
+    "workers": 0,
+    "device": "cuda",
+    "pretrained": true,
+    "train_groups": 152,
+    "view_sampling": "fixed"
+  },
+  "test": {
+    "loss": 0.39009158878966615,
+    "samples": 27,
+    "cultivar": {
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "precision": [
+        1.0,
+        1.0
+      ],
+      "recall": [
+        1.0,
+        1.0
+      ],
+      "f1": [
+        1.0,
+        1.0
+      ],
+      "confusion_matrix": [
+        [
+          10,
+          0
+        ],
+        [
+          0,
+          17
+        ]
+      ]
+    },
+    "quality": {
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "precision": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "recall": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "f1": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "confusion_matrix": [
+        [
+          7,
+          0,
+          0
+        ],
+        [
+          0,
+          12,
+          0
+        ],
+        [
+          0,
+          0,
+          8
+        ]
+      ]
+    },
+    "predictions": [
+      {
+        "group_no": "601031011000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9922896027565002,
+          0.007710335310548544
+        ],
+        "quality_target_index": 0,
+        "quality_prediction_index": 0,
+        "quality_probabilities": [
+          0.671675443649292,
+          0.25788748264312744,
+          0.07043708115816116
+        ]
+      },
+      {
+        "group_no": "601031015000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9644991755485535,
+          0.035500817000865936
+        ],
+        "quality_target_index": 0,
+        "quality_prediction_index": 0,
+        "quality_probabilities": [
+          0.6277665495872498,
+          0.32005447149276733,
+          0.05217890068888664
+        ]
+      },
+      {
+        "group_no": "601031016000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9970043301582336,
+          0.0029956630896776915
+        ],
+        "quality_target_index": 0,
+        "quality_prediction_index": 0,
+        "quality_probabilities": [
+          0.6625280380249023,
+          0.27821826934814453,
+          0.05925372615456581
+        ]
+      },
+      {
+        "group_no": "601032003000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9984245300292969,
+          0.0015754798660054803
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.09435081481933594,
+          0.5925708413124084,
+          0.3130783140659332
+        ]
+      },
+      {
+        "group_no": "601032015000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9998315572738647,
+          0.00016839499585330486
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.11299071460962296,
+          0.8062664866447449,
+          0.08074276149272919
+        ]
+      },
+      {
+        "group_no": "601032016000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9996021389961243,
+          0.000397899275412783
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.14807598292827606,
+          0.7733703851699829,
+          0.0785536840558052
+        ]
+      },
+      {
+        "group_no": "601032028000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.99703049659729,
+          0.0029694593977183104
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.15217754244804382,
+          0.7443822026252747,
+          0.1034402996301651
+        ]
+      },
+      {
+        "group_no": "601033003000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9879854321479797,
+          0.012014518491923809
+        ],
+        "quality_target_index": 2,
+        "quality_prediction_index": 2,
+        "quality_probabilities": [
+          0.03354513272643089,
+          0.15527398884296417,
+          0.8111808896064758
+        ]
+      },
+      {
+        "group_no": "601033013000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9984351992607117,
+          0.0015647626714780927
+        ],
+        "quality_target_index": 2,
+        "quality_prediction_index": 2,
+        "quality_probabilities": [
+          0.011762942187488079,
+          0.0718882828950882,
+          0.9163488149642944
+        ]
+      },
+      {
+        "group_no": "601033026000",
+        "cultivar_target_index": 0,
+        "cultivar_prediction_index": 0,
+        "cultivar_probabilities": [
+          0.9758376479148865,
+          0.024162285029888153
+        ],
+        "quality_target_index": 2,
+        "quality_prediction_index": 2,
+        "quality_probabilities": [
+          0.1762600541114807,
+          0.27078697085380554,
+          0.5529529452323914
+        ]
+      },
+      {
+        "group_no": "601141006000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.047227587550878525,
+          0.9527723789215088
+        ],
+        "quality_target_index": 0,
+        "quality_prediction_index": 0,
+        "quality_probabilities": [
+          0.626520574092865,
+          0.2535296678543091,
+          0.11994973570108414
+        ]
+      },
+      {
+        "group_no": "601141009000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.046234380453825,
+          0.9537656307220459
+        ],
+        "quality_target_index": 0,
+        "quality_prediction_index": 0,
+        "quality_probabilities": [
+          0.5474059581756592,
+          0.3009212017059326,
+          0.15167278051376343
+        ]
+      },
+      {
+        "group_no": "601141013000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.05619608610868454,
+          0.9438039660453796
+        ],
+        "quality_target_index": 0,
+        "quality_prediction_index": 0,
+        "quality_probabilities": [
+          0.6309654712677002,
+          0.22015264630317688,
+          0.1488819420337677
+        ]
+      },
+      {
+        "group_no": "601141014000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.07678814977407455,
+          0.9232118129730225
+        ],
+        "quality_target_index": 0,
+        "quality_prediction_index": 0,
+        "quality_probabilities": [
+          0.5490337014198303,
+          0.3034338057041168,
+          0.14753250777721405
+        ]
+      },
+      {
+        "group_no": "601142004000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.03372478857636452,
+          0.9662752151489258
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.24044254422187805,
+          0.5526971817016602,
+          0.20686028897762299
+        ]
+      },
+      {
+        "group_no": "601142010000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.034222133457660675,
+          0.9657778143882751
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.30230218172073364,
+          0.5261979103088379,
+          0.17149995267391205
+        ]
+      },
+      {
+        "group_no": "601142014000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.06081606447696686,
+          0.9391839504241943
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.27085375785827637,
+          0.6301894783973694,
+          0.09895667433738708
+        ]
+      },
+      {
+        "group_no": "601142015000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.017339447513222694,
+          0.9826605916023254
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.043932393193244934,
+          0.9439488053321838,
+          0.01211876142770052
+        ]
+      },
+      {
+        "group_no": "601142028000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.025103986263275146,
+          0.9748960137367249
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.03716636076569557,
+          0.6118960976600647,
+          0.35093754529953003
+        ]
+      },
+      {
+        "group_no": "601142029000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.051100730895996094,
+          0.9488992094993591
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.03961601108312607,
+          0.9084459543228149,
+          0.05193809047341347
+        ]
+      },
+      {
+        "group_no": "601142064000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.01450505293905735,
+          0.9854949712753296
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.03306068852543831,
+          0.6314194202423096,
+          0.33551982045173645
+        ]
+      },
+      {
+        "group_no": "601142075000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.021982746198773384,
+          0.9780173301696777
+        ],
+        "quality_target_index": 1,
+        "quality_prediction_index": 1,
+        "quality_probabilities": [
+          0.04737767577171326,
+          0.886696457862854,
+          0.06592589616775513
+        ]
+      },
+      {
+        "group_no": "601143008000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.07376514375209808,
+          0.9262348413467407
+        ],
+        "quality_target_index": 2,
+        "quality_prediction_index": 2,
+        "quality_probabilities": [
+          0.0382089763879776,
+          0.08106279373168945,
+          0.8807282447814941
+        ]
+      },
+      {
+        "group_no": "601143013000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.08458547294139862,
+          0.9154145121574402
+        ],
+        "quality_target_index": 2,
+        "quality_prediction_index": 2,
+        "quality_probabilities": [
+          0.1383301019668579,
+          0.2622430920600891,
+          0.599426805973053
+        ]
+      },
+      {
+        "group_no": "601143015000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.0621560662984848,
+          0.937843918800354
+        ],
+        "quality_target_index": 2,
+        "quality_prediction_index": 2,
+        "quality_probabilities": [
+          0.02292083390057087,
+          0.10537630319595337,
+          0.8717027902603149
+        ]
+      },
+      {
+        "group_no": "601143028000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.07964085787534714,
+          0.9203591346740723
+        ],
+        "quality_target_index": 2,
+        "quality_prediction_index": 2,
+        "quality_probabilities": [
+          0.0465899333357811,
+          0.2096480131149292,
+          0.7437620162963867
+        ]
+      },
+      {
+        "group_no": "601143034000",
+        "cultivar_target_index": 1,
+        "cultivar_prediction_index": 1,
+        "cultivar_probabilities": [
+          0.048431288450956345,
+          0.9515686631202698
+        ],
+        "quality_target_index": 2,
+        "quality_prediction_index": 2,
+        "quality_probabilities": [
+          0.00010118503269040957,
+          0.0036615615244954824,
+          0.9962372779846191
+        ]
+      }
+    ]
+  },
+  "test_used": true
+}

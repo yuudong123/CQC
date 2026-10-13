@@ -542,6 +542,7 @@ td,.research-table td,.qa-table td,.fin-table td{font-size:9.5pt}
 .fin-table{margin-top:1mm}
 .fin-table td{padding-top:1.5mm;padding-bottom:1.5mm}
 .fin-card h3{margin-bottom:1mm}
+.fin-table td small{display:block;font-size:8pt;font-weight:400;color:var(--muted);line-height:1.3}
 /* type-scale:end */
 </style>
 </head>
@@ -849,10 +850,10 @@ sweetness_band: &lt;14 | ≥14
         <tr><td>F1</td><td>0.6735<br><small>공통 19 epoch</small></td><td class="pick">0.8844</td><td>0.8592</td><td>0.6283<br><small>종합등급</small></td></tr>
         <tr><td>Source F1</td><td>—</td><td class="pick">0.7932</td><td>0.7675</td><td>0.6238</td></tr>
         <tr><td>강건 점수</td><td>—</td><td class="pick">0.7932</td><td>0.7640</td><td>0.3592</td></tr>
-        <tr><td>기존 Test*</td><td>0.7778</td><td class="pick">1.0000</td><td>0.9267</td><td>0.7157</td></tr>
+        <tr><td>Test*</td><td>0.7778</td><td class="pick">1.0000<br><small>10-13 동결 재확인</small></td><td>0.9267</td><td>0.7157</td></tr>
         <tr class="decision"><td>결정</td><td>재설계</td><td class="pick">채택</td><td>미채택</td><td>미채택</td></tr>
       </tbody></table>
-      <div class="fin-note"><b>v2 등급별</b> Recall 특 0.98 · 상 0.86 · 보통 0.84 / Precision 특 0.85 · 상 0.88 · 보통 0.96<br><b>v2 서버 실측</b> 실제 사진 12장 p95 309ms<br><b>신뢰도 보정</b> 재검사 23.7% → 16.4%<br>Precision·Recall·F1은 등급별 값의 평균(Macro) · 강건 점수 = min(최저 fold, Source) · 목표 F1 0.90은 CV 기준 미달<br>* v1 분석에 쓴 Test 27개 재평가 · 독립 승인 아님 · 학습 조건 다름</div>
+      <div class="fin-note"><b>v2 등급별</b> Recall 특 0.98 · 상 0.86 · 보통 0.84 / Precision 특 0.85 · 상 0.88 · 보통 0.96<br><b>v2 서버 실측</b> 실제 사진 12장 p95 309ms<br><b>신뢰도 보정</b> 재검사 23.7% → 16.4%<br>P·R·F1은 등급별 평균(Macro) · 강건 점수 = min(최저 fold, Source) · 목표 0.90은 CV 미달<br>* Test 27개 재사용(독립 승인 아님) · v2 10-13 동결 재확인 등급별 P·R·F1 모두 1.00</div>
     </div>
     <div class="fin-card"><h3>최종 선정 근거</h3>
       <div class="why">
