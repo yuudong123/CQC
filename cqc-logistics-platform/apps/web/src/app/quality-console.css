@@ -19,7 +19,7 @@
 .qc-frame-grid > div { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 5px; background: #f8f5f5; }
 .qc-frame-grid img { width: 100%; height: 100%; object-fit: contain; }
 .qc-frame-grid .qc-muted { margin: 0; padding: 4px; font-size: 11px; line-height: 1.3; }
-.qc-frame-grid span { position: absolute; bottom: 1px; right: 3px; color: #7d4750; background: #ffffffdf; border-radius: 3px; font-size: 9px; padding: 0 3px; }
+.qc-frame-grid span { position: absolute; bottom: 1px; right: 3px; color: #7d4750; background: #ffffffdf; border-radius: 3px; font-size: 10px; padding: 0 3px; }
 .auto-auction-demo { background: linear-gradient(110deg, #f8ecee, #fff); border: 1px solid #e7ccd1; border-radius: 12px; padding: 18px 22px; margin-bottom: 18px; }
 .auto-demo-heading { display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
 .auto-demo-heading strong { color: #944651; font-size: 19px; }
@@ -30,7 +30,7 @@
 .payment-popup { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; background: #25151d40; pointer-events: none; animation: payment-in .2s ease-out; }
 .payment-card { width: min(380px, calc(100vw - 32px)); background: white; border-radius: 14px; padding: 22px 24px; box-shadow: 0 18px 48px #25151d40; display: grid; gap: 10px; }
 .payment-card small { color: var(--muted); font-size: 12px; }
-.payment-card strong { color: #944651; font-size: 22px; }
+.payment-card strong { color: #944651; font-size: 24px; }
 .payment-card dl { display: grid; gap: 6px; margin: 4px 0; font-size: 14px; }
 .payment-card dl div { display: flex; justify-content: space-between; gap: 12px; }
 .payment-card dt { color: var(--muted); }
@@ -60,7 +60,7 @@
   flex-wrap: wrap;
 }
 .qc-top h1 {
-  font-size: 22px;
+  font-size: 24px;
   margin: 0;
 }
 .qc-top > .qc-actions {
@@ -142,7 +142,7 @@
   padding: 10px 14px;
 }
 .quality-canvas .qc-console .stat strong {
-  font-size: 26px;
+  font-size: 28px;
 }
 /* 열마다 위 패널은 내용 높이만, 아래 패널(목록·차트)이 남은 높이를 채운다. */
 .qc-body {
@@ -362,7 +362,7 @@
   margin-bottom: 6px;
 }
 .qc-period strong {
-  font-size: 25px;
+  font-size: 24px;
 }
 .qc-period span {
   font-size: 13px;
@@ -412,7 +412,7 @@
 .qc-bin.recent { animation: qc-bin-hit 1.6s ease-out; }
 @keyframes qc-bin-hit { 0% { box-shadow: 0 0 0 3px #944651; } 100% { box-shadow: 0 0 0 0 transparent; } }
 .qc-bin-review { grid-column: 8; grid-row: 1 / 5; background: #fbf3e8; border-color: #f0d6b0; gap: 2px; }
-.qc-bin-review strong { font-size: 20px; }
+.qc-bin-review strong { font-size: 19px; }
 .qc-bin-review small { font-size: 10px; color: var(--muted); text-align: center; line-height: 1.3; }
 .qc-bin-review.alert { background: #fde8e8; border-color: #e7a1a1; }
 .qc-bin-review.alert strong { color: #b42318; }
@@ -459,7 +459,7 @@
   border-bottom: 1px solid var(--line);
 }
 .qc-dialog-heading h2 {
-  font-size: 20px;
+  font-size: 19px;
 }
 .qc-dialog-body {
   padding: 18px;
@@ -505,7 +505,7 @@
   margin: 16px 0;
 }
 .qc-summary-grid > div { padding: 16px; background: white; border: 1px solid var(--line); border-radius: 8px; }
-.qc-summary-grid strong { display: block; margin-top: 10px; font-size: 22px; }
+.qc-summary-grid strong { display: block; margin-top: 10px; font-size: 24px; }
 .qc-dialog td,
 .qc-admin td {
   overflow-wrap: anywhere;
@@ -579,7 +579,7 @@
     min-height: 60px;
   }
   .quality-canvas .qc-console .stat strong {
-    font-size: 17px;
+    font-size: 16px;
   }
   .quality-canvas .qc-console .stat p {
     font-size: 11px;
@@ -645,9 +645,9 @@
   }
 }
 
-/* 멀리서도 보이도록 오늘 저장 검사·재검사율을 크게, 나머지 지표는 작게 묶는다. */
+/* 멀리서도 보이도록 오늘 검사 수·재검사율·오류율을 크게, 나머지 지표는 작게 묶는다. */
 .quality-canvas .qc-console .qc-kpis {
-  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.3fr) minmax(0, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1.3fr)) minmax(0, 0.9fr);
 }
 .quality-canvas .qc-console .qc-kpis .stat.hero {
   min-height: 104px;
@@ -657,7 +657,7 @@
   line-height: 1;
 }
 .quality-canvas .qc-console .qc-kpis .stat.hero strong small {
-  font-size: 20px;
+  font-size: 19px;
   margin-left: 6px;
   color: var(--muted);
   letter-spacing: 0;
@@ -688,11 +688,81 @@
 }
 .qc-kpi-mini dd {
   margin: 0;
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 700;
   color: #441d2b;
   font-variant-numeric: tabular-nums;
 }
 .qc-kpi-mini dl > .danger dd {
   color: #9d1626;
+}
+
+/* 상단 시스템 표시등: 정상이면 초록 점 4개만, 이상이 생긴 구성요소만 색과 이름·상태를 보여 준다. */
+.qc-lights {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.qc-light {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+.qc-light i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #1b9b4b;
+  box-shadow: 0 0 0 3px #1b9b4b26;
+}
+.qc-light.warning i {
+  background: #d98b1f;
+  box-shadow: 0 0 0 3px #d98b1f33;
+}
+.qc-light.danger i {
+  background: #c01c31;
+  box-shadow: 0 0 0 3px #c01c3133;
+  animation: qc-light-blink 1s steps(2, start) infinite;
+}
+.qc-light b {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 700;
+  background: #fff0d6;
+  color: #794614;
+}
+.qc-light.danger b {
+  background: #fdecee;
+  color: #9d1626;
+}
+@keyframes qc-light-blink {
+  50% { opacity: 0.35; }
+}
+.qc-top > .qc-actions .qc-segment {
+  margin-right: 4px;
+}
+
+/* 배치 프리셋 "사과 중심": 왼쪽 위 처리 중 사과(크게), 그 아래 재검사·오류 사과, 오른쪽은 처리 현황이 세로 전체를 쓴다. */
+.qc-body.qc-layout-apple {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+}
+.qc-layout-apple .qc-col > .qc-jobs-panel {
+  flex: 0 0 auto;
+}
+.qc-layout-apple .qc-trend-body {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+.qc-layout-apple .qc-trend-side {
+  border-left: none;
+  padding-left: 0;
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+@media (max-width: 650px) {
+  .qc-light b {
+    font-size: 11px;
+  }
 }

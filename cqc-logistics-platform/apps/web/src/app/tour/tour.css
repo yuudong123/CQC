@@ -1,0 +1,155 @@
+/* 통합 흐름 시연(/tour): 밝은 시연 화면 + 아래 자막 띠. 자막 띠는 시연 화면과 겹치지 않는다. */
+.tour-root {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) var(--cap-h);
+  background: var(--paper);
+  z-index: 50;
+}
+.tour-wrap { position: relative; min-height: 0; overflow: hidden; }
+.tour-stage { position: absolute; left: 50%; top: 50%; transform-origin: center center; background: var(--paper); overflow: hidden; }
+.tour-screen { position: absolute; inset: 0; display: flex; flex-direction: column; animation: tour-in 0.35s ease-out; }
+@keyframes tour-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* 강조: 화면은 그대로 밝게 두고 노란 테두리만 그린다. 누르는 곳은 테두리가 맥박처럼 뛴다. */
+.tour-spot { position: absolute; z-index: 20; border-radius: 10px; border: 4px solid #f2b705; box-shadow: 0 0 0 3px #fff, 0 0 18px #f2b70599; cursor: pointer; }
+.tour-spot.click { animation: tour-pulse 1.2s ease-in-out infinite; }
+.tour-spot.pressing { background: #f2b70526; }
+@keyframes tour-pulse { 50% { box-shadow: 0 0 0 3px #fff, 0 0 0 10px #f2b70555, 0 0 18px #f2b70599; } }
+.tour-hint { position: absolute; z-index: 21; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 18px; background: #f2b705; color: #2a1d10; font-size: 16px; font-weight: 800; white-space: nowrap; box-shadow: 0 3px 10px #0002; pointer-events: none; }
+.tour-hint.above { transform: translate(-50%, -100%); }
+.tour-hint b { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #2a1d10; color: #f2b705; font-size: 13px; }
+.tour-hand { width: 20px; height: 20px; fill: #2a1d10; animation: tour-tap 0.9s ease-in-out infinite; }
+@keyframes tour-tap { 50% { transform: translate(3px, 3px) scale(0.9); } }
+
+/* 자막 띠: 화면 아래 별도 영역. 지금 누구 화면인지 작은 표시와 함께 발표자 설명을 보여 준다. */
+.tour-caption { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 10px 40px; background: #fff; border-top: 1px solid var(--line); }
+.tour-caption p { margin: 0; max-width: 1240px; text-align: center; color: var(--ink); font-size: 24px; line-height: 1.45; font-weight: 700; letter-spacing: -0.3px; animation: tour-in 0.3s ease-out; word-break: keep-all; }
+.tour-role { flex: none; padding: 5px 12px; border-radius: 14px; font-size: 14px; font-weight: 800; white-space: nowrap; }
+.tour-role.farm { background: var(--blush); color: #8f3543; }
+.tour-role.buyer { background: #e3edf8; color: #24548a; }
+
+/* 시연 화면 공통 */
+.tour-app-header { min-height: 76px; }
+.tour-app-header nav { display: flex; gap: 10px; margin: 0 auto; }
+.tour-app-header nav span { display: flex; align-items: center; gap: 8px; background: #f8f0ef; border-radius: 30px; padding: 11px 22px; font-weight: 700; }
+.tour-app-header nav span.active { background: linear-gradient(120deg, #b25155, #ac5963); color: white; }
+.tour-app-header nav .icon { width: 20px; height: 20px; }
+.tour-user { padding: 8px 14px; border-radius: 20px; font-weight: 800; font-size: 14px; }
+.tour-user.farm { background: var(--blush); color: #8f3543; }
+.tour-user.buyer { background: #e3edf8; color: #24548a; }
+.tour-body { flex: 1; min-height: 0; display: grid; gap: 14px; padding: 16px; }
+.tour-body.two { grid-template-columns: 1fr 1fr; align-content: start; }
+.tour-body.three { grid-template-columns: 1fr 1.2fr 1fr; align-content: start; }
+.tour-body .panel { margin: 0; }
+.tour-empty { padding: 30px; text-align: center; color: var(--muted); font-size: 16px; }
+.tour-screen .primary-button { font-size: 16px; padding: 12px 22px; }
+.ok { color: #178648; font-weight: 700; }
+
+.tour-frames { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
+.tour-frames > div { position: relative; aspect-ratio: 1; border-radius: 6px; overflow: hidden; background: #f8f5f5; }
+.tour-frames img { width: 100%; height: 100%; object-fit: contain; }
+.tour-frames span { position: absolute; right: 3px; bottom: 2px; font-size: 10px; background: #ffffffdd; border-radius: 3px; padding: 0 3px; color: #7d4750; }
+.tour-frames.big { gap: 6px; }
+
+/* 관제 화면 */
+.tour-console { padding: 16px; gap: 12px; }
+.tour-qc-top { flex: none; }
+.tour-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; flex: none; }
+.tour-kpis article { background: #fff; border: 1px solid var(--line); border-radius: 9px; padding: 12px 20px; }
+.tour-kpis p { margin: 0 0 4px; font-weight: 700; color: var(--muted); }
+.tour-kpis strong { font-size: 46px; line-height: 1; transition: color 0.3s; }
+.tour-kpis strong small { font-size: 19px; color: var(--muted); font-weight: 400; }
+.tour-kpis .err strong { color: #c01c31; }
+.tour-console-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 1.15fr 1fr; gap: 12px; }
+.tour-col { display: grid; grid-template-rows: auto 1fr; gap: 12px; min-height: 0; }
+.tour-console-body .panel { margin: 0; min-height: 0; }
+.tour-jobs { display: grid; gap: 8px; border-radius: 8px; }
+.tour-jobs.shoot .tour-frames > div { animation: tour-flash 0.8s ease-out both; }
+.tour-jobs.shoot .tour-frames > div:nth-child(n) { animation-delay: calc(var(--i, 0) * 1ms); }
+@keyframes tour-flash { from { filter: brightness(2.2); opacity: 0.2; } to { filter: none; opacity: 1; } }
+.tour-jobs .tour-empty { height: 266px; display: grid; place-items: center; border: 2px dashed var(--line); border-radius: 8px; }
+.tour-job-info { display: flex; gap: 12px; align-items: baseline; font-size: 16px; min-height: 24px; }
+.tour-job-info .ok b { font-size: 16px; }
+.tour-exceptions { display: grid; gap: 6px; }
+.tour-review { display: grid; grid-template-columns: auto 80px 70px 1fr auto; gap: 10px; align-items: center; padding: 8px 10px; border-bottom: 1px solid var(--line); font-size: 14px; }
+.tour-review:not(:has(img)) { grid-template-columns: 80px 70px 1fr auto; }
+.tour-review img { border-radius: 6px; }
+.tour-review.fresh { background: #fff6e3; border-radius: 8px; animation: tour-in 0.4s ease-out; }
+.tour-trend { display: grid; gap: 10px; }
+.tour-period strong { font-size: 28px; margin-right: 10px; }
+.tour-period span { color: var(--muted); }
+.tour-chart { width: 100%; height: 170px; background: #fbf4f5; border-radius: 6px; }
+.tour-bins-head { display: flex; gap: 8px; align-items: baseline; margin-bottom: 6px; }
+.tour-bins-head small { color: var(--muted); }
+.tour-bin-grid { display: grid; grid-template-columns: 1fr 96px; grid-template-rows: auto auto; gap: 6px; }
+.tour-bin-row { display: grid; grid-template-columns: 46px repeat(6, 1fr); gap: 5px; align-items: stretch; }
+.tour-bin-row > span { align-self: center; font-weight: 700; }
+.tour-bin { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 56px; border: 1px solid #ecdfe1; border-radius: 6px; background: #f6e3e6; }
+.tour-bin small { font-size: 11px; color: var(--muted); }
+.tour-bin b { font-size: 19px; }
+.tour-bin.ugly { border-color: #e2b84d; }
+.tour-bin.review { grid-column: 2; grid-row: 1 / span 2; height: auto; background: #fff6e3; border-color: #ebcf8f; }
+.tour-bin.recent { animation: tour-bin 0.9s ease-in-out 3; border-color: #ae525c; }
+@keyframes tour-bin { 50% { box-shadow: 0 0 0 4px #ae525c66; background: #fff; } }
+
+/* 입찰 시장·결제·배차 */
+.tour-lot { display: flex; gap: 14px; padding: 12px; border: 1px solid #e7ccd1; border-radius: 10px; background: #fffafa; }
+.tour-lot img { border-radius: 8px; object-fit: cover; }
+.tour-lot > div { display: grid; gap: 4px; font-size: 16px; }
+.tour-lot strong { display: flex; gap: 8px; align-items: center; font-size: 19px; }
+.tour-ready { display: grid; gap: 12px; font-size: 16px; }
+.tour-ready p { margin: 0; }
+.tour-ready .primary-button { justify-self: start; }
+.tour-won { margin: 14px 16px 0; padding: 14px 18px; border-radius: 10px; background: #e3f3e8; color: #13602f; font-size: 19px; font-weight: 800; display: flex; gap: 10px; align-items: center; animation: tour-in 0.4s ease-out; }
+.tour-won .icon { width: 26px; height: 26px; }
+.tour-bid-form { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; font-size: 16px; }
+.tour-bid-form input, .tour-login-card input { width: 110px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 16px; text-align: right; }
+.tour-bids { width: 100%; border-collapse: collapse; font-size: 16px; }
+.tour-bids th, .tour-bids td { padding: 9px 8px; border-bottom: 1px solid var(--line); text-align: left; }
+.tour-bids tr.me td { background: #e3edf8; font-weight: 700; }
+.tour-login { display: grid; place-items: center; background: linear-gradient(140deg, #f8edef, #e3edf8); }
+.tour-login-card { width: 440px; display: grid; gap: 14px; padding: 32px; background: #fff; border-radius: 14px; box-shadow: 0 12px 40px #0002; font-size: 16px; }
+.tour-login-card label { display: grid; gap: 6px; font-weight: 700; color: var(--muted); }
+.tour-login-card input { width: 100%; text-align: left; }
+.tour-tabs { display: grid; grid-template-columns: 1fr 1fr; background: #f3eeee; border-radius: 8px; padding: 4px; }
+.tour-tabs span { text-align: center; padding: 8px; border-radius: 6px; font-weight: 700; color: var(--muted); }
+.tour-tabs span.active { background: #2f6db0; color: #fff; }
+.tour-order { display: grid; gap: 12px; margin: 0; font-size: 16px; }
+.tour-order div { display: flex; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+.tour-order dt { color: var(--muted); }
+.tour-order dd { margin: 0; font-weight: 700; }
+.tour-pay { display: grid; gap: 14px; font-size: 16px; }
+.tour-pay p { margin: 0; color: var(--muted); }
+.tour-methods { display: flex; gap: 8px; }
+.tour-methods span { padding: 10px 16px; border: 1px solid var(--line); border-radius: 8px; }
+.tour-methods span.active { border-color: #2f6db0; color: #2f6db0; font-weight: 800; }
+.tour-pay.done { justify-items: center; padding: 20px; text-align: center; color: #13602f; }
+.tour-pay.done .icon { width: 48px; height: 48px; }
+.tour-pay.done strong { font-size: 28px; }
+.tour-route { display: grid; gap: 16px; padding: 10px 4px; font-size: 16px; }
+.tour-route p { margin: 0; }
+.tour-route-line { position: relative; display: flex; justify-content: space-between; align-items: center; height: 70px; }
+.tour-route-line::before { content: ""; position: absolute; left: 110px; right: 90px; top: 50%; border-top: 3px dashed #d7c4c8; }
+.tour-route-line .end { position: relative; padding: 8px 12px; background: #fff; border: 1px solid var(--line); border-radius: 8px; font-weight: 700; }
+.tour-route-line i { position: absolute; left: 120px; top: 50%; transform: translateY(-50%); color: #ae525c; transition: left 2.4s ease-in-out; }
+.tour-route-line i.moving { left: calc(100% - 150px); }
+.tour-route-line .icon { width: 36px; height: 36px; }
+
+/* 마무리 요약 */
+.tour-summary { padding: 40px 60px; gap: 24px; justify-content: center; }
+.tour-summary h1 { margin: 0; font-size: 28px; }
+.tour-summary ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px; }
+.tour-summary li { display: grid; gap: 6px; padding: 16px 12px; border-radius: 10px; background: #fff; border-top: 5px solid #ae525c; animation: tour-in 0.4s ease-out both; }
+.tour-summary li.buyer { border-top-color: #2f6db0; }
+.tour-summary li:nth-child(2) { animation-delay: 0.1s; } .tour-summary li:nth-child(3) { animation-delay: 0.2s; }
+.tour-summary li:nth-child(4) { animation-delay: 0.3s; } .tour-summary li:nth-child(5) { animation-delay: 0.4s; }
+.tour-summary li:nth-child(6) { animation-delay: 0.5s; } .tour-summary li:nth-child(7) { animation-delay: 0.6s; }
+.tour-summary li:nth-child(8) { animation-delay: 0.7s; }
+.tour-summary time { color: var(--muted); font-size: 13px; }
+.tour-summary strong { font-size: 24px; }
+.tour-summary span { font-size: 14px; }
+.tour-summary > p { margin: 0; font-size: 16px; }
+.tour-summary > p .farm { color: #ae525c; font-weight: 800; }
+.tour-summary > p .buyer { color: #2f6db0; font-weight: 800; }
