@@ -107,7 +107,7 @@ export function AppHeader() {
   const pathname = usePathname();
   const [now, setNow] = useState<Date>();
   useEffect(() => {
-    if (pathname === "/") return;
+    if (pathname === "/" || pathname === "/tour") return;
     const tick = () => setNow(new Date());
     const start = window.setTimeout(tick, 0);
     const timer = window.setInterval(tick, 1000);
@@ -116,7 +116,8 @@ export function AppHeader() {
       clearInterval(timer);
     };
   }, [pathname]);
-  if (pathname === "/") return null;
+  // 관제 화면과 통합 흐름 시연(/tour)은 자기 머리 영역을 그린다.
+  if (pathname === "/" || pathname === "/tour") return null;
   return (
     <header className="app-header">
       <div className="brand">
