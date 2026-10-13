@@ -1,0 +1,18 @@
+{
+  "observed_result": "PASS",
+  "checks": {
+    "change_200": true,
+    "change_r_plus_1": true,
+    "actual_concurrency_2": true,
+    "backend_actual_state_agree": true,
+    "stale_409_revision_conflict": true,
+    "stale_settings_and_revision_unchanged": true,
+    "restore_200_r_plus_2": true,
+    "restored_original_settings": true,
+    "restore_backend_actual_state_agree": true,
+    "inspection_count_unchanged_no_jobs": true,
+    "response_cache_no_store": true
+  },
+  "initial_revision": 1,
+  "final_revision": 3
+}

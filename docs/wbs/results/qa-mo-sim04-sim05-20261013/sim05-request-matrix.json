@@ -1,0 +1,17 @@
+{
+  "endpoint": "http://127.0.0.1:28000/v1/quality/simulator",
+  "executed": false,
+  "common": "Use the current actual Simulator revision R as expectedRevision except case g; record GET /state immediately before and after each request. Expect HTTP 422, INVALID_SETTINGS, and unchanged actual revision/settings.",
+  "cases": [
+    {"case": "a", "additional_payload": {"concurrency": 3}},
+    {"case": "b", "additional_payload": {"concurrency": "2"}},
+    {"case": "c", "additional_payload": {"faults": ["DB_ERROR", "DB_ERROR"]}},
+    {"case": "d", "additional_payload": {"faults": ["UNKNOWN"]}},
+    {"case": "e", "additional_payload": {"running": null}},
+    {"case": "f", "additional_payload": {"speed": 1}},
+    {"case": "g", "omit_expectedRevision": true, "additional_payload": {"running": false}},
+    {"case": "h", "additional_payload": {"intervalMs": 1500}},
+    {"case": "i", "additional_payload": {"intervalMs": "2000"}},
+    {"case": "j", "additional_payload": {"intervalMs": null}}
+  ]
+}

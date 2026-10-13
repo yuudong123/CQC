@@ -1,0 +1,28 @@
+{
+  "started_kst": "2026-10-13T12:36:49.441177+09:00",
+  "finished_kst": "2026-10-13T12:36:49.507160+09:00",
+  "elapsed_ms": 65.97254100051941,
+  "request": {
+    "url": "http://127.0.0.1:8000/v1/quality/simulator",
+    "method": "PUT",
+    "body": {
+      "expectedRevision": 1,
+      "concurrency": 1
+    }
+  },
+  "response": {
+    "status": 409,
+    "headers": {
+      "date": "Tue, 13 Oct 2026 03:36:48 GMT",
+      "server": "uvicorn",
+      "cache-control": "no-store",
+      "content-length": "28",
+      "content-type": "application/json",
+      "connection": "close"
+    },
+    "body": {
+      "code": "REVISION_CONFLICT"
+    }
+  },
+  "transport": "Real HTTP from dedicated Backend container; no mock or in-process test client"
+}

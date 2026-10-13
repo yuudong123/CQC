@@ -1,0 +1,78 @@
+[
+  {
+    "name": "/cqc-mo103-sim0405-20261013-122650-backend-1",
+    "id": "72e230b50d035f6508c6fd10b4c92d051d6c73a5d5809bd3c719707a8d24f6de",
+    "image": "sha256:66cb3b275c1fd1cc7c3f072359fa27879c122cfad0d592b43bb3db65e0538afb",
+    "service": "backend",
+    "status": "running",
+    "health": "healthy",
+    "started_at": "2026-10-13T03:29:30.454119972Z",
+    "networks": [
+      "cqc-mo103-sim0405-20261013-122650_qa"
+    ],
+    "ports": {
+      "8000/tcp": []
+    },
+    "mounts": [
+      {
+        "type": "volume",
+        "name": "cqc-mo103-sim0405-20261013-122650_qa_backend_logs",
+        "destination": "/var/log/cqc",
+        "rw": true
+      },
+      {
+        "type": "volume",
+        "name": "cqc-mo103-sim0405-20261013-122650_qa_fault_images",
+        "destination": "/data/fault-images",
+        "rw": true
+      }
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0405-20261013-122650-mysql-1",
+    "id": "8190c3f3686f184de8c46f87ca83eb2a76b03e7ddfcd9d0fc28f3b776ab68c8b",
+    "image": "sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a",
+    "service": "mysql",
+    "status": "running",
+    "health": "healthy",
+    "started_at": "2026-10-13T03:27:04.156819764Z",
+    "networks": [
+      "cqc-mo103-sim0405-20261013-122650_qa"
+    ],
+    "ports": {
+      "3306/tcp": null,
+      "33060/tcp": null
+    },
+    "mounts": [
+      {
+        "type": "volume",
+        "name": "cqc-mo103-sim0405-20261013-122650_qa_mysql",
+        "destination": "/var/lib/mysql",
+        "rw": true
+      }
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0405-20261013-122650-inference-1",
+    "id": "cbe299d9455a566640f7dd495858fe3259f09ca3d88da7586b81752cbe4300b3",
+    "image": "sha256:06c57dce24ac8e96a369e40a07dbd77c3a31655e4b1b845505b11bebc197ed13",
+    "service": "inference",
+    "status": "running",
+    "health": "healthy",
+    "started_at": "2026-10-13T03:27:04.256795086Z",
+    "networks": [
+      "cqc-mo103-sim0405-20261013-122650_qa"
+    ],
+    "ports": {
+      "8001/tcp": []
+    },
+    "mounts": [
+      {
+        "type": "volume",
+        "name": "cqc-mo103-sim0405-20261013-122650_qa_inference_logs",
+        "destination": "/var/log/cqc",
+        "rw": true
+      }
+    ]
+  }
+]
