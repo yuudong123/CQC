@@ -1,0 +1,83 @@
+{
+  "official_qa_changed": false,
+  "docker_unhealthy": "UNVERIFIED",
+  "runtime_head": "f8a2002",
+  "git_head": "8e47f6d",
+  "status": "FUNCTIONAL_CONDITIONS_MET",
+  "initial_counts": {
+    "inspections": 3,
+    "control_attempts": 3,
+    "inspection_errors": 0
+  },
+  "before_stop_counts": {
+    "inspections": 5,
+    "control_attempts": 5,
+    "inspection_errors": 0
+  },
+  "after_stop_counts": {
+    "inspections": 5,
+    "control_attempts": 5,
+    "inspection_errors": 0
+  },
+  "ten_second_counts": [
+    5,
+    5,
+    5,
+    5,
+    5,
+    5
+  ],
+  "observation_seconds": 10.071921707000001,
+  "final_counts": {
+    "inspections": 6,
+    "control_attempts": 6,
+    "inspection_errors": 0
+  },
+  "initial_position": 3,
+  "stop_position": 5,
+  "expected_resume_bundle": "demo-601142012000-002",
+  "last_before_resume": {
+    "inspection_id": "163522d2-275d-463c-a49c-c58601c69182",
+    "source_reference": "demo-601031005000-001",
+    "created_at": "2026-10-13 05:36:28.702000",
+    "completed_at": "2026-10-13 05:36:29.455000",
+    "inspection_status": "COMPLETED",
+    "control_status": "SUCCEEDED",
+    "persistence_status": "SUCCEEDED",
+    "error_code": null,
+    "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+    "used_frame_count": 12,
+    "inference_time_ms": "155.838",
+    "target_bin_code": "DEMO_BIN_02"
+  },
+  "first_after_resume": {
+    "inspection_id": "9e5c6480-8489-4786-9861-e0b1920da47c",
+    "source_reference": "demo-601142012000-002",
+    "created_at": "2026-10-13 05:36:41.923000",
+    "completed_at": "2026-10-13 05:36:42.594000",
+    "inspection_status": "COMPLETED",
+    "control_status": "SUCCEEDED",
+    "persistence_status": "SUCCEEDED",
+    "error_code": null,
+    "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+    "used_frame_count": 12,
+    "inference_time_ms": "145.444",
+    "target_bin_code": "DEMO_BIN_10"
+  },
+  "final_position": {
+    "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+    "next_position": 6
+  },
+  "final_simulator": {
+    "revision": 5,
+    "running": false,
+    "concurrency": 1,
+    "intervalMs": 2000,
+    "faults": [],
+    "scope": "ALL",
+    "status": "stopped",
+    "lastSeenAt": 1791869802648.0
+  },
+  "auto_unchanged": true,
+  "final_stop_confirmed": true
+}

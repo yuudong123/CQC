@@ -1,0 +1,16 @@
+{
+  "started_at": "2026-10-13T05:36:25.960943+00:00",
+  "ended_at": "2026-10-13T05:36:25.973093+00:00",
+  "elapsed_ms": 12.128701000165165,
+  "method": "GET",
+  "url": "http://127.0.0.1:28002/state",
+  "request_body": null,
+  "status": 200,
+  "headers": {
+    "date": "Tue, 13 Oct 2026 05:36:25 GMT",
+    "server": "uvicorn",
+    "content-length": "126",
+    "content-type": "application/json"
+  },
+  "response_text": "{\"revision\":2,\"running\":true,\"concurrency\":1,\"intervalMs\":2000,\"faults\":[],\"scope\":\"ALL\",\"status\":\"healthy\",\"lastSeenAt\":null}"
+}

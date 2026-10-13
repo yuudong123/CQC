@@ -7,7 +7,7 @@
 
 ## 1. 한눈에
 
-- **10-13 BE 최신 집계: 35/44 PASS, 잔여 9개.** 기존 34/44에 OPS-13만 추가했다. [MO 증거 `d6de6b8`](results/qa-mo-be-followup-20261012/README.md)의 Jenkins #143 SUCCESS·배포 `0094807`에 수정 `ee2987f` 포함·실행 이미지 digest 4/4 및 Backend 파일 일치를 확인했다. 10/12 날짜 없는 CSV의 suspicions 3종 각 1행·0값과 동일 snapshotAt JSON 집계·비율·평균·형식은 새 보완 증거로, 기간·분 단위 CSV와 minutes=2 오류는 10/08 기존 E1 증거로 최종 검수했다. [OPS-13 최종 판정](results/qa-be-20261010.md#14-2026-10-13-ops-13-통계-csv-최종-판정). Docker daemon 동일성 재확인은 35초 timeout으로 미완료이며 성공으로 확대하지 않는다. AUTO-01·02 및 INS-14·17 등의 기존 PASS, INS-13 승인 보류와 Simulator 8건(SIM-03·04·05·06·07·09·11·12)의 기존 판정, #65 공식 성능 FAIL과 팀 전체 수용 기준은 유지한다. 다음 작업은 Simulator 잔여 검증이며 이번에는 신규 시험·E1/E2 API·DB 접속·환경 변경을 하지 않았다. C 여유 5.319→4.311GiB 감소 원인 미확정은 기존 운영 주의사항으로 유지한다. 이전 집계는 당시 이력이다.
+- **10-13 BE 최신 집계: 37/44 PASS, 잔여 7개.** 기존 35/44에 MO Docker 실제 시험 SIM-04·05만 추가했다. Jenkins #147 SUCCESS·배포 91e0cd0·증거 5165f21의 요청/응답·Backend snapshot·실제 Simulator 상태·DB 원자료를 최종 검수했다. [통합 검수](results/qa-be-20261010.md#15-2026-10-13-sim-030405-통합-증거-최종-검수), [SIM-03 로컬 증거](results/qa-be-sim03-local-20261013/README.md). SIM-03은 기능 조건 충족·Docker unhealthy 미검증·환경 대체 인정 미확정으로 PASS 보류다. INS-13 승인 보류와 SIM-03·06·07·09·11·12, #65 공식 성능 FAIL 및 기존 QA 판정은 유지한다. MO Backend exit137·OOMKilled=false·종료 원인 미확정은 공식 시험 완료 후의 별도 관찰사항이다. OPS-13 및 AUTO 증거·기존 운영 한계는 검수 보고의 이전 절에서 보존한다. 다음은 SIM-12 기능 검증과 SIM-03 Docker 증거 보완이며 이번에 신규 시험·환경 변경은 하지 않았다.
 
 - **기획 범위 기능 구현은 끝났다.** DM·FE·BE·MO 모두 동결 전 작업은 완료다. 남은 것은 ALL-04 수용 판정(10-08 기준 확정 뒤)과 10-13 동결 이후 작업이다.
 - **열린 이슈 8개**
