@@ -1,0 +1,52 @@
+{
+  "counts": {
+    "inspections": 72,
+    "control_attempts": 72,
+    "inspection_errors": 0
+  },
+  "position": {
+    "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+    "next_position": 72
+  },
+  "simulator": {
+    "revision": 13,
+    "running": false,
+    "concurrency": 1,
+    "intervalMs": 1000,
+    "faults": [],
+    "scope": "ALL",
+    "status": "stopped",
+    "lastSeenAt": 1791872197691.0
+  },
+  "snapshot_revision": 13,
+  "backend_state": {
+    "running": false,
+    "concurrency": 1,
+    "intervalMs": 1000,
+    "faults": [],
+    "scope": "ALL",
+    "jobs": []
+  },
+  "components": {
+    "Simulator": {
+      "status": "stopped",
+      "lastSeenAt": 1791872197691.0,
+      "detail": "정지"
+    },
+    "Inference": {
+      "status": "healthy",
+      "lastSeenAt": 1791872197932.0,
+      "detail": "추론 서비스 준비 완료"
+    },
+    "Backend": {
+      "status": "healthy",
+      "lastSeenAt": 1791872197932.0,
+      "detail": "관제 API 응답 중"
+    },
+    "MySQL": {
+      "status": "healthy",
+      "lastSeenAt": 1791872197932.0,
+      "detail": "검사 이력 조회 성공"
+    }
+  }
+}

@@ -1,0 +1,730 @@
+[
+  {
+    "request": {
+      "inspection_id": "965416ef-e124-485b-9535-bf5d6b3163c3",
+      "source_reference": "demo-601141007000-000",
+      "faults": [
+        "INFERENCE_TIMEOUT"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12462.43327046,
+      "started_utc": "2026-10-13T08:03:30.715494+00:00",
+      "kind": "request_start"
+    },
+    "response": {
+      "inspection_id": "965416ef-e124-485b-9535-bf5d6b3163c3",
+      "source_reference": "demo-601141007000-000",
+      "faults": [
+        "INFERENCE_TIMEOUT"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12462.43327046,
+      "started_utc": "2026-10-13T08:03:30.715494+00:00",
+      "kind": "request_end",
+      "ended_utc": "2026-10-13T08:03:31.221758+00:00",
+      "end_monotonic": 12462.93955697,
+      "http_status": 200,
+      "response": {
+        "inspection_id": "965416ef-e124-485b-9535-bf5d6b3163c3",
+        "crop_type": null,
+        "predicted_cultivar": null,
+        "cultivar_confidence": null,
+        "cultivar_probabilities": null,
+        "predicted_grade": null,
+        "quality_confidence": null,
+        "quality_probabilities": null,
+        "inference_time_ms": null,
+        "model_name": null,
+        "model_version": null,
+        "preprocessing_version": null,
+        "used_frame_count": null,
+        "inspection_status": "REINSPECTION_REQUIRED",
+        "review_required": true,
+        "exclude_from_normal_stats": true,
+        "decision_reason": "INFERENCE_DEADLINE_EXCEEDED",
+        "virtual_brix": 14.6,
+        "brix_is_measured": false,
+        "sweetness_band": "sweet",
+        "target_bin_code": "TEST_REINSPECTION_BIN",
+        "control_status": "SUCCEEDED",
+        "persistence_status": "SUCCEEDED"
+      },
+      "error_type": null
+    },
+    "db": {
+      "inspection_id": "965416ef-e124-485b-9535-bf5d6b3163c3",
+      "source_reference": "demo-601141007000-000",
+      "created_at": "2026-10-13 08:03:30.771000",
+      "completed_at": "2026-10-13 08:03:31.120000",
+      "inspection_status": "REINSPECTION_REQUIRED",
+      "control_status": "SUCCEEDED",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+      "model_version": null,
+      "used_frame_count": null,
+      "inference_time_ms": null,
+      "target_bin_code": "TEST_REINSPECTION_BIN"
+    },
+    "controls": [
+      {
+        "id": 1010,
+        "command_id": "226ac2c7-89bb-430f-948b-8017401c92ef",
+        "inspection_id": "965416ef-e124-485b-9535-bf5d6b3163c3",
+        "attempt_no": 1,
+        "requested_bin_code": "TEST_REINSPECTION_BIN",
+        "command_type": "ROUTE_TO_BIN",
+        "control_status": "SUCCEEDED",
+        "requested_at": "2026-10-13 08:03:31.120000",
+        "responded_at": "2026-10-13 08:03:31.120000",
+        "response_time_ms": "0.038",
+        "failure_reason": null
+      }
+    ],
+    "errors": [
+      {
+        "inspection_id": "965416ef-e124-485b-9535-bf5d6b3163c3",
+        "component": "inference",
+        "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+        "occurred_at": "2026-10-13 08:03:31.117000"
+      }
+    ],
+    "in_observation_window": true,
+    "boundary_during_clear": false
+  },
+  {
+    "request": {
+      "inspection_id": "11e020dc-9d1d-44f0-a1de-31a87eafe843",
+      "source_reference": "demo-601033013000-004",
+      "faults": [
+        "INFERENCE_TIMEOUT"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12464.717420768,
+      "started_utc": "2026-10-13T08:03:32.999644+00:00",
+      "kind": "request_start"
+    },
+    "response": {
+      "inspection_id": "11e020dc-9d1d-44f0-a1de-31a87eafe843",
+      "source_reference": "demo-601033013000-004",
+      "faults": [
+        "INFERENCE_TIMEOUT"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12464.717420768,
+      "started_utc": "2026-10-13T08:03:32.999644+00:00",
+      "kind": "request_end",
+      "ended_utc": "2026-10-13T08:03:33.521383+00:00",
+      "end_monotonic": 12465.239177244,
+      "http_status": 200,
+      "response": {
+        "inspection_id": "11e020dc-9d1d-44f0-a1de-31a87eafe843",
+        "crop_type": null,
+        "predicted_cultivar": null,
+        "cultivar_confidence": null,
+        "cultivar_probabilities": null,
+        "predicted_grade": null,
+        "quality_confidence": null,
+        "quality_probabilities": null,
+        "inference_time_ms": null,
+        "model_name": null,
+        "model_version": null,
+        "preprocessing_version": null,
+        "used_frame_count": null,
+        "inspection_status": "REINSPECTION_REQUIRED",
+        "review_required": true,
+        "exclude_from_normal_stats": true,
+        "decision_reason": "INFERENCE_DEADLINE_EXCEEDED",
+        "virtual_brix": 12.7,
+        "brix_is_measured": false,
+        "sweetness_band": "less_sweet",
+        "target_bin_code": "TEST_REINSPECTION_BIN",
+        "control_status": "SUCCEEDED",
+        "persistence_status": "SUCCEEDED"
+      },
+      "error_type": null
+    },
+    "db": {
+      "inspection_id": "11e020dc-9d1d-44f0-a1de-31a87eafe843",
+      "source_reference": "demo-601033013000-004",
+      "created_at": "2026-10-13 08:03:33.039000",
+      "completed_at": "2026-10-13 08:03:33.474000",
+      "inspection_status": "REINSPECTION_REQUIRED",
+      "control_status": "SUCCEEDED",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+      "model_version": null,
+      "used_frame_count": null,
+      "inference_time_ms": null,
+      "target_bin_code": "TEST_REINSPECTION_BIN"
+    },
+    "controls": [
+      {
+        "id": 1011,
+        "command_id": "1cd1221e-7ff8-4679-8856-086c0b2cc6a5",
+        "inspection_id": "11e020dc-9d1d-44f0-a1de-31a87eafe843",
+        "attempt_no": 1,
+        "requested_bin_code": "TEST_REINSPECTION_BIN",
+        "command_type": "ROUTE_TO_BIN",
+        "control_status": "SUCCEEDED",
+        "requested_at": "2026-10-13 08:03:33.474000",
+        "responded_at": "2026-10-13 08:03:33.474000",
+        "response_time_ms": "0.039",
+        "failure_reason": null
+      }
+    ],
+    "errors": [
+      {
+        "inspection_id": "11e020dc-9d1d-44f0-a1de-31a87eafe843",
+        "component": "inference",
+        "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+        "occurred_at": "2026-10-13 08:03:33.472000"
+      }
+    ],
+    "in_observation_window": true,
+    "boundary_during_clear": false
+  },
+  {
+    "request": {
+      "inspection_id": "e67898fa-f9de-4f60-8a57-5432820d7764",
+      "source_reference": "demo-601032005000-003",
+      "faults": [
+        "INFERENCE_TIMEOUT"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12466.740847064,
+      "started_utc": "2026-10-13T08:03:35.023071+00:00",
+      "kind": "request_start"
+    },
+    "response": {
+      "inspection_id": "e67898fa-f9de-4f60-8a57-5432820d7764",
+      "source_reference": "demo-601032005000-003",
+      "faults": [
+        "INFERENCE_TIMEOUT"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12466.740847064,
+      "started_utc": "2026-10-13T08:03:35.023071+00:00",
+      "kind": "request_end",
+      "ended_utc": "2026-10-13T08:03:35.483174+00:00",
+      "end_monotonic": 12467.200966832,
+      "http_status": 200,
+      "response": {
+        "inspection_id": "e67898fa-f9de-4f60-8a57-5432820d7764",
+        "crop_type": null,
+        "predicted_cultivar": null,
+        "cultivar_confidence": null,
+        "cultivar_probabilities": null,
+        "predicted_grade": null,
+        "quality_confidence": null,
+        "quality_probabilities": null,
+        "inference_time_ms": null,
+        "model_name": null,
+        "model_version": null,
+        "preprocessing_version": null,
+        "used_frame_count": null,
+        "inspection_status": "REINSPECTION_REQUIRED",
+        "review_required": true,
+        "exclude_from_normal_stats": true,
+        "decision_reason": "INFERENCE_DEADLINE_EXCEEDED",
+        "virtual_brix": 14.6,
+        "brix_is_measured": false,
+        "sweetness_band": "sweet",
+        "target_bin_code": "TEST_REINSPECTION_BIN",
+        "control_status": "SUCCEEDED",
+        "persistence_status": "SUCCEEDED"
+      },
+      "error_type": null
+    },
+    "db": {
+      "inspection_id": "e67898fa-f9de-4f60-8a57-5432820d7764",
+      "source_reference": "demo-601032005000-003",
+      "created_at": "2026-10-13 08:03:35.064000",
+      "completed_at": "2026-10-13 08:03:35.361000",
+      "inspection_status": "REINSPECTION_REQUIRED",
+      "control_status": "SUCCEEDED",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+      "model_version": null,
+      "used_frame_count": null,
+      "inference_time_ms": null,
+      "target_bin_code": "TEST_REINSPECTION_BIN"
+    },
+    "controls": [
+      {
+        "id": 1012,
+        "command_id": "0b1d4e3e-99f9-4b09-9d61-a1bfdee33248",
+        "inspection_id": "e67898fa-f9de-4f60-8a57-5432820d7764",
+        "attempt_no": 1,
+        "requested_bin_code": "TEST_REINSPECTION_BIN",
+        "command_type": "ROUTE_TO_BIN",
+        "control_status": "SUCCEEDED",
+        "requested_at": "2026-10-13 08:03:35.360000",
+        "responded_at": "2026-10-13 08:03:35.360000",
+        "response_time_ms": "0.040",
+        "failure_reason": null
+      }
+    ],
+    "errors": [
+      {
+        "inspection_id": "e67898fa-f9de-4f60-8a57-5432820d7764",
+        "component": "inference",
+        "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+        "occurred_at": "2026-10-13 08:03:35.358000"
+      }
+    ],
+    "in_observation_window": true,
+    "boundary_during_clear": false
+  },
+  {
+    "request": {
+      "inspection_id": "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+      "source_reference": "demo-601141012000-006",
+      "faults": [
+        "INFERENCE_TIMEOUT"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12468.720712055,
+      "started_utc": "2026-10-13T08:03:37.002937+00:00",
+      "kind": "request_start"
+    },
+    "response": {
+      "inspection_id": "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+      "source_reference": "demo-601141012000-006",
+      "faults": [
+        "INFERENCE_TIMEOUT"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12468.720712055,
+      "started_utc": "2026-10-13T08:03:37.002937+00:00",
+      "kind": "request_end",
+      "ended_utc": "2026-10-13T08:03:37.486204+00:00",
+      "end_monotonic": 12469.203997625,
+      "http_status": 200,
+      "response": {
+        "inspection_id": "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+        "crop_type": null,
+        "predicted_cultivar": null,
+        "cultivar_confidence": null,
+        "cultivar_probabilities": null,
+        "predicted_grade": null,
+        "quality_confidence": null,
+        "quality_probabilities": null,
+        "inference_time_ms": null,
+        "model_name": null,
+        "model_version": null,
+        "preprocessing_version": null,
+        "used_frame_count": null,
+        "inspection_status": "REINSPECTION_REQUIRED",
+        "review_required": true,
+        "exclude_from_normal_stats": true,
+        "decision_reason": "INFERENCE_DEADLINE_EXCEEDED",
+        "virtual_brix": 13.6,
+        "brix_is_measured": false,
+        "sweetness_band": "less_sweet",
+        "target_bin_code": "TEST_REINSPECTION_BIN",
+        "control_status": "SUCCEEDED",
+        "persistence_status": "SUCCEEDED"
+      },
+      "error_type": null
+    },
+    "db": {
+      "inspection_id": "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+      "source_reference": "demo-601141012000-006",
+      "created_at": "2026-10-13 08:03:37.065000",
+      "completed_at": "2026-10-13 08:03:37.412000",
+      "inspection_status": "REINSPECTION_REQUIRED",
+      "control_status": "SUCCEEDED",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+      "model_version": null,
+      "used_frame_count": null,
+      "inference_time_ms": null,
+      "target_bin_code": "TEST_REINSPECTION_BIN"
+    },
+    "controls": [
+      {
+        "id": 1013,
+        "command_id": "de712dfc-6842-4a8d-9755-d2fd086dd17d",
+        "inspection_id": "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+        "attempt_no": 1,
+        "requested_bin_code": "TEST_REINSPECTION_BIN",
+        "command_type": "ROUTE_TO_BIN",
+        "control_status": "SUCCEEDED",
+        "requested_at": "2026-10-13 08:03:37.412000",
+        "responded_at": "2026-10-13 08:03:37.412000",
+        "response_time_ms": "0.038",
+        "failure_reason": null
+      }
+    ],
+    "errors": [
+      {
+        "inspection_id": "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+        "component": "inference",
+        "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+        "occurred_at": "2026-10-13 08:03:37.410000"
+      }
+    ],
+    "in_observation_window": true,
+    "boundary_during_clear": false
+  },
+  {
+    "request": {
+      "inspection_id": "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+      "source_reference": "demo-601033006000-001",
+      "faults": [
+        "INFERENCE_TIMEOUT"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12470.895767274,
+      "started_utc": "2026-10-13T08:03:39.177991+00:00",
+      "kind": "request_start"
+    },
+    "response": {
+      "inspection_id": "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+      "source_reference": "demo-601033006000-001",
+      "faults": [
+        "INFERENCE_TIMEOUT"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12470.895767274,
+      "started_utc": "2026-10-13T08:03:39.177991+00:00",
+      "kind": "request_end",
+      "ended_utc": "2026-10-13T08:03:39.792984+00:00",
+      "end_monotonic": 12471.510789764,
+      "http_status": 200,
+      "response": {
+        "inspection_id": "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+        "crop_type": null,
+        "predicted_cultivar": null,
+        "cultivar_confidence": null,
+        "cultivar_probabilities": null,
+        "predicted_grade": null,
+        "quality_confidence": null,
+        "quality_probabilities": null,
+        "inference_time_ms": null,
+        "model_name": null,
+        "model_version": null,
+        "preprocessing_version": null,
+        "used_frame_count": null,
+        "inspection_status": "REINSPECTION_REQUIRED",
+        "review_required": true,
+        "exclude_from_normal_stats": true,
+        "decision_reason": "INFERENCE_DEADLINE_EXCEEDED",
+        "virtual_brix": 13.5,
+        "brix_is_measured": false,
+        "sweetness_band": "less_sweet",
+        "target_bin_code": "TEST_REINSPECTION_BIN",
+        "control_status": "SUCCEEDED",
+        "persistence_status": "SUCCEEDED"
+      },
+      "error_type": null
+    },
+    "db": {
+      "inspection_id": "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+      "source_reference": "demo-601033006000-001",
+      "created_at": "2026-10-13 08:03:39.216000",
+      "completed_at": "2026-10-13 08:03:39.712000",
+      "inspection_status": "REINSPECTION_REQUIRED",
+      "control_status": "SUCCEEDED",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+      "model_version": null,
+      "used_frame_count": null,
+      "inference_time_ms": null,
+      "target_bin_code": "TEST_REINSPECTION_BIN"
+    },
+    "controls": [
+      {
+        "id": 1014,
+        "command_id": "9cd465a7-130a-4cd3-ba9a-61f0666fb192",
+        "inspection_id": "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+        "attempt_no": 1,
+        "requested_bin_code": "TEST_REINSPECTION_BIN",
+        "command_type": "ROUTE_TO_BIN",
+        "control_status": "SUCCEEDED",
+        "requested_at": "2026-10-13 08:03:39.712000",
+        "responded_at": "2026-10-13 08:03:39.712000",
+        "response_time_ms": "0.038",
+        "failure_reason": null
+      }
+    ],
+    "errors": [
+      {
+        "inspection_id": "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+        "component": "inference",
+        "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+        "occurred_at": "2026-10-13 08:03:39.709000"
+      }
+    ],
+    "in_observation_window": true,
+    "boundary_during_clear": false
+  },
+  {
+    "request": {
+      "inspection_id": "38e572dd-8df9-444d-afd5-a64865e42936",
+      "source_reference": "demo-601033028000-007",
+      "faults": [
+        "INFERENCE_TIMEOUT"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12472.70813598,
+      "started_utc": "2026-10-13T08:03:40.990361+00:00",
+      "kind": "request_start"
+    },
+    "response": {
+      "inspection_id": "38e572dd-8df9-444d-afd5-a64865e42936",
+      "source_reference": "demo-601033028000-007",
+      "faults": [
+        "INFERENCE_TIMEOUT"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12472.70813598,
+      "started_utc": "2026-10-13T08:03:40.990361+00:00",
+      "kind": "request_end",
+      "ended_utc": "2026-10-13T08:03:41.608871+00:00",
+      "end_monotonic": 12473.326683123,
+      "http_status": 200,
+      "response": {
+        "inspection_id": "38e572dd-8df9-444d-afd5-a64865e42936",
+        "crop_type": null,
+        "predicted_cultivar": null,
+        "cultivar_confidence": null,
+        "cultivar_probabilities": null,
+        "predicted_grade": null,
+        "quality_confidence": null,
+        "quality_probabilities": null,
+        "inference_time_ms": null,
+        "model_name": null,
+        "model_version": null,
+        "preprocessing_version": null,
+        "used_frame_count": null,
+        "inspection_status": "REINSPECTION_REQUIRED",
+        "review_required": true,
+        "exclude_from_normal_stats": true,
+        "decision_reason": "INFERENCE_DEADLINE_EXCEEDED",
+        "virtual_brix": 12.2,
+        "brix_is_measured": false,
+        "sweetness_band": "less_sweet",
+        "target_bin_code": "TEST_REINSPECTION_BIN",
+        "control_status": "SUCCEEDED",
+        "persistence_status": "SUCCEEDED"
+      },
+      "error_type": null
+    },
+    "db": {
+      "inspection_id": "38e572dd-8df9-444d-afd5-a64865e42936",
+      "source_reference": "demo-601033028000-007",
+      "created_at": "2026-10-13 08:03:41.056000",
+      "completed_at": "2026-10-13 08:03:41.530000",
+      "inspection_status": "REINSPECTION_REQUIRED",
+      "control_status": "SUCCEEDED",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+      "model_version": null,
+      "used_frame_count": null,
+      "inference_time_ms": null,
+      "target_bin_code": "TEST_REINSPECTION_BIN"
+    },
+    "controls": [
+      {
+        "id": 1015,
+        "command_id": "b8f4477d-8880-496f-9f87-77d7feee21b4",
+        "inspection_id": "38e572dd-8df9-444d-afd5-a64865e42936",
+        "attempt_no": 1,
+        "requested_bin_code": "TEST_REINSPECTION_BIN",
+        "command_type": "ROUTE_TO_BIN",
+        "control_status": "SUCCEEDED",
+        "requested_at": "2026-10-13 08:03:41.530000",
+        "responded_at": "2026-10-13 08:03:41.530000",
+        "response_time_ms": "0.037",
+        "failure_reason": null
+      }
+    ],
+    "errors": [
+      {
+        "inspection_id": "38e572dd-8df9-444d-afd5-a64865e42936",
+        "component": "inference",
+        "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+        "occurred_at": "2026-10-13 08:03:41.527000"
+      }
+    ],
+    "in_observation_window": false,
+    "boundary_during_clear": true
+  },
+  {
+    "request": {
+      "inspection_id": "0f11eb33-5bcb-4091-a729-67ee126b2936",
+      "source_reference": "demo-601033006000-005",
+      "faults": [],
+      "intervalMs": "2000",
+      "start_monotonic": 12474.719049145,
+      "started_utc": "2026-10-13T08:03:43.001273+00:00",
+      "kind": "request_start"
+    },
+    "response": {
+      "inspection_id": "0f11eb33-5bcb-4091-a729-67ee126b2936",
+      "source_reference": "demo-601033006000-005",
+      "faults": [],
+      "intervalMs": "2000",
+      "start_monotonic": 12474.719049145,
+      "started_utc": "2026-10-13T08:03:43.001273+00:00",
+      "kind": "request_end",
+      "ended_utc": "2026-10-13T08:03:44.304426+00:00",
+      "end_monotonic": 12476.022219646,
+      "http_status": 200,
+      "response": {
+        "inspection_id": "0f11eb33-5bcb-4091-a729-67ee126b2936",
+        "crop_type": "apple",
+        "predicted_cultivar": "fuji",
+        "cultivar_confidence": 0.999998927116394,
+        "cultivar_probabilities": {
+          "fuji": 0.999998927116394,
+          "yanggwang": 1.0543141115704202e-06
+        },
+        "predicted_grade": "S",
+        "quality_confidence": 0.9534947276115417,
+        "quality_probabilities": {
+          "L": 0.004375985357910395,
+          "M": 0.0421292781829834,
+          "S": 0.9534947276115417
+        },
+        "inference_time_ms": 150.70503400056623,
+        "model_name": "mobilenet_v3_small_multiview",
+        "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+        "preprocessing_version": "rgb-resize-imagenet-v1",
+        "used_frame_count": 12,
+        "inspection_status": "COMPLETED",
+        "review_required": false,
+        "exclude_from_normal_stats": false,
+        "decision_reason": "NORMAL",
+        "virtual_brix": 13.5,
+        "brix_is_measured": false,
+        "sweetness_band": "less_sweet",
+        "target_bin_code": "DEMO_BIN_05",
+        "control_status": "SUCCEEDED",
+        "persistence_status": "SUCCEEDED"
+      },
+      "error_type": null
+    },
+    "db": {
+      "inspection_id": "0f11eb33-5bcb-4091-a729-67ee126b2936",
+      "source_reference": "demo-601033006000-005",
+      "created_at": "2026-10-13 08:03:43.037000",
+      "completed_at": "2026-10-13 08:03:44.257000",
+      "inspection_status": "COMPLETED",
+      "control_status": "SUCCEEDED",
+      "persistence_status": "SUCCEEDED",
+      "error_code": null,
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+      "used_frame_count": 12,
+      "inference_time_ms": "150.705",
+      "target_bin_code": "DEMO_BIN_05"
+    },
+    "controls": [
+      {
+        "id": 1016,
+        "command_id": "33e1efcc-be70-41f6-afaf-714568bdfc56",
+        "inspection_id": "0f11eb33-5bcb-4091-a729-67ee126b2936",
+        "attempt_no": 1,
+        "requested_bin_code": "DEMO_BIN_05",
+        "command_type": "ROUTE_TO_BIN",
+        "control_status": "SUCCEEDED",
+        "requested_at": "2026-10-13 08:03:44.257000",
+        "responded_at": "2026-10-13 08:03:44.257000",
+        "response_time_ms": "0.038",
+        "failure_reason": null
+      }
+    ],
+    "errors": [],
+    "in_observation_window": false,
+    "boundary_during_clear": false
+  },
+  {
+    "request": {
+      "inspection_id": "d22774e0-c090-498b-908d-82f35b2d7fac",
+      "source_reference": "demo-601141012000-003",
+      "faults": [],
+      "intervalMs": "2000",
+      "start_monotonic": 12476.695463302,
+      "started_utc": "2026-10-13T08:03:44.977685+00:00",
+      "kind": "request_start"
+    },
+    "response": {
+      "inspection_id": "d22774e0-c090-498b-908d-82f35b2d7fac",
+      "source_reference": "demo-601141012000-003",
+      "faults": [],
+      "intervalMs": "2000",
+      "start_monotonic": 12476.695463302,
+      "started_utc": "2026-10-13T08:03:44.977685+00:00",
+      "kind": "request_end",
+      "ended_utc": "2026-10-13T08:03:45.688267+00:00",
+      "end_monotonic": 12477.406062366,
+      "http_status": 200,
+      "response": {
+        "inspection_id": "d22774e0-c090-498b-908d-82f35b2d7fac",
+        "crop_type": "apple",
+        "predicted_cultivar": "yanggwang",
+        "cultivar_confidence": 0.9994230270385742,
+        "cultivar_probabilities": {
+          "fuji": 0.0005770009593106806,
+          "yanggwang": 0.9994230270385742
+        },
+        "predicted_grade": "L",
+        "quality_confidence": 0.8692009449005127,
+        "quality_probabilities": {
+          "L": 0.8692009449005127,
+          "M": 0.09385555237531662,
+          "S": 0.03694352135062218
+        },
+        "inference_time_ms": 146.00373400026,
+        "model_name": "mobilenet_v3_small_multiview",
+        "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+        "preprocessing_version": "rgb-resize-imagenet-v1",
+        "used_frame_count": 12,
+        "inspection_status": "COMPLETED",
+        "review_required": false,
+        "exclude_from_normal_stats": false,
+        "decision_reason": "NORMAL",
+        "virtual_brix": 13.6,
+        "brix_is_measured": false,
+        "sweetness_band": "less_sweet",
+        "target_bin_code": "DEMO_BIN_07",
+        "control_status": "SUCCEEDED",
+        "persistence_status": "SUCCEEDED"
+      },
+      "error_type": null
+    },
+    "db": {
+      "inspection_id": "d22774e0-c090-498b-908d-82f35b2d7fac",
+      "source_reference": "demo-601141012000-003",
+      "created_at": "2026-10-13 08:03:45.010000",
+      "completed_at": "2026-10-13 08:03:45.639000",
+      "inspection_status": "COMPLETED",
+      "control_status": "SUCCEEDED",
+      "persistence_status": "SUCCEEDED",
+      "error_code": null,
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+      "used_frame_count": 12,
+      "inference_time_ms": "146.004",
+      "target_bin_code": "DEMO_BIN_07"
+    },
+    "controls": [
+      {
+        "id": 1017,
+        "command_id": "7b2267b2-1767-4c9f-b35a-e9a6be30c231",
+        "inspection_id": "d22774e0-c090-498b-908d-82f35b2d7fac",
+        "attempt_no": 1,
+        "requested_bin_code": "DEMO_BIN_07",
+        "command_type": "ROUTE_TO_BIN",
+        "control_status": "SUCCEEDED",
+        "requested_at": "2026-10-13 08:03:45.639000",
+        "responded_at": "2026-10-13 08:03:45.639000",
+        "response_time_ms": "0.040",
+        "failure_reason": null
+      }
+    ],
+    "errors": [],
+    "in_observation_window": false,
+    "boundary_during_clear": false
+  }
+]

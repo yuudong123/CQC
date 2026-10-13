@@ -1,0 +1,20 @@
+{
+  "official_qa_changed": false,
+  "condition_3000": "MET: completed_at gap median 2.976s within 2.9..3.1; 20 completions/60s",
+  "condition_1000": "UNRESOLVED: gap median 1.372s; stored service-processing median 0.668s does not include full HTTP/final commit/preparation; no exact tolerance defined in QA",
+  "backlog": "No unbounded accumulation observed: jobs <=1, pending rows-controls<=1; drained after stop. Sampling does not measure an independent hidden queue.",
+  "live_apply": "MET: interval changes while running, before/after running=true; separate from 60-second measurement windows",
+  "restart": "MET locally: process-only restart from interval1000 to boot default2000/revision0; no manual restoration before restart. Docker compose restart UNVERIFIED",
+  "http_request_start": "UNVERIFIED: service created_at is not HTTP request start",
+  "credentials": "Not persisted; original Supervisor kept; replacement uses original environment copied only into process memory",
+  "local_overall": "Partial: 3000ms, bounded observed work, live updates and default reset confirmed; 1000ms exact gap/processing relationship unresolved; Docker/E2 substitution unconfirmed",
+  "low_confidence_counts": {
+    "3000": 1,
+    "1000": 6
+  },
+  "system_error_counts": {
+    "3000": 0,
+    "1000": 0
+  },
+  "restart_input": "1 completed inspection outside the two measurement windows"
+}

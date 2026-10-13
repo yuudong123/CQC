@@ -1,0 +1,268 @@
+[
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\result.json",
+    "source_sha256": "bb621872e3af264b05111fa8e3e7f59d090d1e6388debf3ab2d1b57dfd8ed8e3",
+    "output": "original-run\\result.json",
+    "output_sha256": "bb621872e3af264b05111fa8e3e7f59d090d1e6388debf3ab2d1b57dfd8ed8e3",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\review.json",
+    "source_sha256": "583dadddafb2e4e8c088498ca15114589fbc2bd3e0ec29a88335ff94e3135a20",
+    "output": "original-run\\review.json",
+    "output_sha256": "583dadddafb2e4e8c088498ca15114589fbc2bd3e0ec29a88335ff94e3135a20",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\3000-statistics.json",
+    "source_sha256": "03855a067fa0bc564795a0adca2a35a8bff5ef338453a08a433eb37e67410f10",
+    "output": "original-run\\3000-statistics.json",
+    "output_sha256": "03855a067fa0bc564795a0adca2a35a8bff5ef338453a08a433eb37e67410f10",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\1000-statistics.json",
+    "source_sha256": "e69afbe86f4ce0d83208aa02c119da05571b03792a558c5767432bde6a4a4645",
+    "output": "original-run\\1000-statistics.json",
+    "output_sha256": "e69afbe86f4ce0d83208aa02c119da05571b03792a558c5767432bde6a4a4645",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\3000-set.json",
+    "source_sha256": "abb793e194a10a7268a35af3115799f70f27303baf63493af74ff7d0153307ef",
+    "output": "original-run\\3000-set.json",
+    "output_sha256": "abb793e194a10a7268a35af3115799f70f27303baf63493af74ff7d0153307ef",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\3000-start.json",
+    "source_sha256": "09f0e1ac98998ae648f7fd798cebf1ebe477cafd5264826c40f9211a9a011ce1",
+    "output": "original-run\\3000-start.json",
+    "output_sha256": "09f0e1ac98998ae648f7fd798cebf1ebe477cafd5264826c40f9211a9a011ce1",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\3000-stop.json",
+    "source_sha256": "fdc55a3293de141a2717411a0e65a2ac5313ce9af1b14ce53a900ec4dbfb9239",
+    "output": "original-run\\3000-stop.json",
+    "output_sha256": "fdc55a3293de141a2717411a0e65a2ac5313ce9af1b14ce53a900ec4dbfb9239",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\1000-set.json",
+    "source_sha256": "d3b404b456871211facb745d9b7dc33d721c47f34c4004832a7c9d653ad28b09",
+    "output": "original-run\\1000-set.json",
+    "output_sha256": "d3b404b456871211facb745d9b7dc33d721c47f34c4004832a7c9d653ad28b09",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\1000-start.json",
+    "source_sha256": "87af748924974da4ea3f139247d9491964ef1c1296792e078e8bc6f751475340",
+    "output": "original-run\\1000-start.json",
+    "output_sha256": "87af748924974da4ea3f139247d9491964ef1c1296792e078e8bc6f751475340",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\1000-stop.json",
+    "source_sha256": "ad552689bef9fb20de646f6a7c65d9f327f042f199ed8e39b2defd65274b5c84",
+    "output": "original-run\\1000-stop.json",
+    "output_sha256": "ad552689bef9fb20de646f6a7c65d9f327f042f199ed8e39b2defd65274b5c84",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\live-apply-3000.json",
+    "source_sha256": "cdcf7e2317928297f42289591ba60ad031bcaebf15b9d6228d024f44e2fdd2d1",
+    "output": "original-run\\live-apply-3000.json",
+    "output_sha256": "cdcf7e2317928297f42289591ba60ad031bcaebf15b9d6228d024f44e2fdd2d1",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\live-apply-1000.json",
+    "source_sha256": "33a4de0acb19325f5cca2ffb6ce7c9e5c7b090deb854e4ef942f0e1f3db76f6a",
+    "output": "original-run\\live-apply-1000.json",
+    "output_sha256": "33a4de0acb19325f5cca2ffb6ce7c9e5c7b090deb854e4ef942f0e1f3db76f6a",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\restart-first-state.json",
+    "source_sha256": "d4f7997c9d691a984be98ed67a43d0f2996bff4b1ce8377ca529f6a0a250bcff",
+    "output": "original-run\\restart-first-state.json",
+    "output_sha256": "d4f7997c9d691a984be98ed67a43d0f2996bff4b1ce8377ca529f6a0a250bcff",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\restart-stop.json",
+    "source_sha256": "6de69ab3d2bf6714b1d01d63a85ab0f0591857b20229a6825d5b8ec1a74f8796",
+    "output": "original-run\\restart-stop.json",
+    "output_sha256": "6de69ab3d2bf6714b1d01d63a85ab0f0591857b20229a6825d5b8ec1a74f8796",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\final-safe.json",
+    "source_sha256": "1d2090271d7ea614931d4813621348cfe204c88d5451fc527079b5b0b9c4cb85",
+    "output": "original-run\\final-safe.json",
+    "output_sha256": "1d2090271d7ea614931d4813621348cfe204c88d5451fc527079b5b0b9c4cb85",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\health-before.json",
+    "source_sha256": "2b56f7b2761b960092212047f5dc65ba20c3ac47d423e48f656c998581bdb241",
+    "output": "original-run\\health-before.json",
+    "output_sha256": "2b56f7b2761b960092212047f5dc65ba20c3ac47d423e48f656c998581bdb241",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\manifest.sha256",
+    "source_sha256": "30dbd4303e092e2ea16f33fd51f5f5f547d825f31358daa77daf0661c06e0dfc",
+    "output": "original-run\\source-manifest\\manifest.sha256",
+    "output_sha256": "30dbd4303e092e2ea16f33fd51f5f5f547d825f31358daa77daf0661c06e0dfc",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\3000-timeseries.json",
+    "source_sha256": "de36493cd885802de080ce4a5ba06e1a10e841d497791eb9d3f562e7036fdf66",
+    "output": "original-run/3000-compact-timeseries.json",
+    "output_sha256": "f55aa5865600d729012ac3ab779930a48d749eedcebc550ff535b099d1cef548",
+    "transform": "preserve time/counts/position/settings/jobs; omit repeated history/graph/statistics"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\3000-after.json",
+    "source_sha256": "afc4d29da03eedbb0813099f961bfccd915291c4cc741adc36a601a6df8c4d97",
+    "output": "original-run/3000-new-db-records.json",
+    "output_sha256": "78bbe08f5b29e19e484b9e45dd7abc9638bef1cefeedceca7e35e8926f9614a3",
+    "transform": "select this phase only; exclude prior inspections"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\1000-timeseries.json",
+    "source_sha256": "530ba8976adcea39044b330c6f917cead8b0caf1cd97b1f0c33404c58d1bfbe4",
+    "output": "original-run/1000-compact-timeseries.json",
+    "output_sha256": "cc97303e505d88a6caef2e5e1bdb5d65b709af8d50be9cfe8804c40e344de50c",
+    "transform": "preserve time/counts/position/settings/jobs; omit repeated history/graph/statistics"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\1000-after.json",
+    "source_sha256": "58430949597fa197efe14d19226b52f122d6e80334e5ea8fc8b14c61b48f0d42",
+    "output": "original-run/1000-new-db-records.json",
+    "output_sha256": "c1410e554b565714309d197053e0817ae53793a51e2e2bb49311f8250dfc41d2",
+    "transform": "select this phase only; exclude prior inspections"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\restart-before.json",
+    "source_sha256": "96cc3c7a5a20283bdc133752512647bd31564efcdcfcf9d8733b38cd3e950303",
+    "output": "original-run/restart-before.json",
+    "output_sha256": "ebd1e6f4575fbefa9e419914c8e635afcb4c9724d93c0e4762f5510d278eab5d",
+    "transform": "retain counts/state/position; omit cumulative DB/history duplicates"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\restart-after.json",
+    "source_sha256": "1d05dca226ac270eb4574dd3e42c7770fd7b7279a49c84b80ab9aa8e82e6a35b",
+    "output": "original-run/restart-after.json",
+    "output_sha256": "90da02126de7764694274ffd35a6d28c3f26b925c38a65c92366521764e82efc",
+    "transform": "retain counts/state/position; omit cumulative DB/history duplicates"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-20261013\\final-stable.json",
+    "source_sha256": "0707bd703805e3675cdc875513102a558e578d7a5e298ec0f59d908bbd27e7eb",
+    "output": "original-run/final-stable.json",
+    "output_sha256": "0e7baf9771e65de53724519be8640f19e5e8352e12ffe52198a9035ae38a5f68",
+    "transform": "retain counts/state/position; omit cumulative DB/history duplicates"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-1000-http-20261013-run1\\result.json",
+    "source_sha256": "e78a14eca56f3ee8840333ccfa4354521cf236cd639daae91a906a169e0b8e5f",
+    "output": "http-supplement\\result.json",
+    "output_sha256": "e78a14eca56f3ee8840333ccfa4354521cf236cd639daae91a906a169e0b8e5f",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-1000-http-20261013-run1\\events.jsonl",
+    "source_sha256": "6a145943712069cc40c9273399322db6245104289a32a858ecfc265ec6df60b5",
+    "output": "http-supplement\\events.jsonl",
+    "output_sha256": "6a145943712069cc40c9273399322db6245104289a32a858ecfc265ec6df60b5",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-1000-http-20261013-run1\\http-db-joined.json",
+    "source_sha256": "f1ca72b2f95dd41285bfe1148ffabaab9d36c13e47101582c9f60ea76550b7eb",
+    "output": "http-supplement\\http-db-joined.json",
+    "output_sha256": "f1ca72b2f95dd41285bfe1148ffabaab9d36c13e47101582c9f60ea76550b7eb",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-1000-http-20261013-run1\\set-1000.json",
+    "source_sha256": "e938c68f8f77ad7070b0b9678bea9ceca86be602f5a48fef95c3d6577fb66897",
+    "output": "http-supplement\\set-1000.json",
+    "output_sha256": "e938c68f8f77ad7070b0b9678bea9ceca86be602f5a48fef95c3d6577fb66897",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-1000-http-20261013-run1\\start.json",
+    "source_sha256": "b9a0a53db697ff789979fbf010f7d3bfc5bd06c602e6835032dd9f22f3b6d82e",
+    "output": "http-supplement\\start.json",
+    "output_sha256": "b9a0a53db697ff789979fbf010f7d3bfc5bd06c602e6835032dd9f22f3b6d82e",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-1000-http-20261013-run1\\stop.json",
+    "source_sha256": "72b7b14dd9c1f8682ca86c6051446040c18ba061770e5bfd031161d9be301272",
+    "output": "http-supplement\\stop.json",
+    "output_sha256": "72b7b14dd9c1f8682ca86c6051446040c18ba061770e5bfd031161d9be301272",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-1000-http-20261013-run1\\final-safe.json",
+    "source_sha256": "ed1929aaf1df860dde78f246d51492bc34e606b8ded22c6887ea5c23f723dced",
+    "output": "http-supplement\\final-safe.json",
+    "output_sha256": "ed1929aaf1df860dde78f246d51492bc34e606b8ded22c6887ea5c23f723dced",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-1000-http-20261013-run1\\active-simulator.json",
+    "source_sha256": "c3c925f4451cb87f39a6dcfe9b55b8a44481a37f0e207c5f30af883d0ac7be53",
+    "output": "http-supplement\\active-simulator.json",
+    "output_sha256": "c3c925f4451cb87f39a6dcfe9b55b8a44481a37f0e207c5f30af883d0ac7be53",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-1000-http-20261013-run1\\manifest.sha256",
+    "source_sha256": "eb25b265a8ac74f5c5436c2a90da00583d9fd62a19650dc60fed6a3e13fc17e4",
+    "output": "http-supplement\\source-manifest\\manifest.sha256",
+    "output_sha256": "eb25b265a8ac74f5c5436c2a90da00583d9fd62a19650dc60fed6a3e13fc17e4",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-1000-http-20261013-run1\\timeseries.json",
+    "source_sha256": "8c3d56f9f9224e008a0fdec576d552f57a7d294f43ab703bba1f6385645784e2",
+    "output": "http-supplement/compact-timeseries.json",
+    "output_sha256": "a3af4e21a2438e144a26a5d6237e0aa1e776a0f9f2aa94243c3a92b9f26366e8",
+    "transform": "preserve timing/state/jobs; omit repeated cumulative history/graphs"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-1000-http-20261013-run1\\final-stable.json",
+    "source_sha256": "7e2637dcb1dfd5a5bd540767cced23a09693c7216168f43bbdecd364fed57733",
+    "output": "http-supplement/final-state.json",
+    "output_sha256": "352b2ee30079ce6af5adedf4b947cedfdae1dccd084f5a260daef85fcc9c7bcc",
+    "transform": "retain final state/health/counts; omit cumulative DB rows"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-1000-http-20261013\\result.json",
+    "source_sha256": "f899037ca74532f10bd8454aa7afaf1f8520e26b74c8ff92aa5a0198bb859e69",
+    "output": "setup-interruption\\result.json",
+    "output_sha256": "f899037ca74532f10bd8454aa7afaf1f8520e26b74c8ff92aa5a0198bb859e69",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-1000-http-20261013\\active-simulator.json",
+    "source_sha256": "76d12c180f5a716c912577cc4dec7f6c7bf44571a35a1d1d8844337f380736d1",
+    "output": "setup-interruption\\active-simulator.json",
+    "output_sha256": "76d12c180f5a716c912577cc4dec7f6c7bf44571a35a1d1d8844337f380736d1",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim12-http-wrapper.py",
+    "source_sha256": "3a22cd93e6fc5f187bff930b1d8551f3fe26f73284f9cfc438c7edeef0e9faec",
+    "output": "instrumentation\\sim12-http-wrapper.py",
+    "output_sha256": "3a22cd93e6fc5f187bff930b1d8551f3fe26f73284f9cfc438c7edeef0e9faec",
+    "transform": "none; byte-preserving copy"
+  }
+]

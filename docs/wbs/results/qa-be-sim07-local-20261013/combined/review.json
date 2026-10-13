@@ -1,0 +1,162 @@
+{
+  "functional_status": "COMBINED_ALL_FUNCTIONAL_CONDITIONS_VERIFIED",
+  "original_collector_status": "TEST_INTERRUPTED",
+  "collector_failure": "Single-fault comparison !=[fault] remained in window_unapplied; both fault headers and DB records actually match combined condition. Original files kept unchanged; no repeat trial.",
+  "runtime_source": "f8a2002",
+  "git_head": "5493e8c4288d945efeec8c764e13697cc548ddfb",
+  "exact_window_seconds": 10,
+  "observed_until_clear_request_seconds": 10.29957350299992,
+  "exact_window_ids": [
+    "a74081fc-4c51-4d43-9e48-f90fecd37b87",
+    "179a00f4-da7a-466a-b013-4ae18c93a62d",
+    "9307189a-6a07-41aa-819c-ed08c0704cb9",
+    "b146e1ff-1223-4b8d-9482-3ead3a7fc4bd",
+    "75b5190e-41a3-465f-bab4-3217a9cd155c"
+  ],
+  "all_fault_ids": [
+    "a74081fc-4c51-4d43-9e48-f90fecd37b87",
+    "179a00f4-da7a-466a-b013-4ae18c93a62d",
+    "9307189a-6a07-41aa-819c-ed08c0704cb9",
+    "b146e1ff-1223-4b8d-9482-3ead3a7fc4bd",
+    "75b5190e-41a3-465f-bab4-3217a9cd155c",
+    "afd196e5-0bd1-4051-a239-547e64314423"
+  ],
+  "boundary_ids": [
+    "afd196e5-0bd1-4051-a239-547e64314423"
+  ],
+  "missing": [],
+  "unapplied": [],
+  "fault_inspections": 6,
+  "control_attempts": 6,
+  "error_db_rows": 12,
+  "saved": 6,
+  "normal_completed_after_clear": [
+    "2b952cbd-5ebc-4af1-884d-b9a5d4c2c333",
+    "f62e34a2-af45-4979-b379-70f2f5646f68"
+  ],
+  "post_clear_low_confidence_ids": [
+    "4af1e8ec-2560-4f7f-99f7-d1f3ccd07a78"
+  ],
+  "revisions": [
+    {
+      "stage": "apply",
+      "http": 200,
+      "request": {
+        "expectedRevision": 1,
+        "faults": [
+          "CONTROL_REJECTED",
+          "INFERENCE_TIMEOUT"
+        ],
+        "scope": "ALL"
+      },
+      "from_revision": 1,
+      "to_revision": 2,
+      "started": "2026-10-13T08:15:40.871918+00:00",
+      "ended": "2026-10-13T08:15:41.011526+00:00"
+    },
+    {
+      "stage": "start",
+      "http": 200,
+      "request": {
+        "expectedRevision": 2,
+        "running": true
+      },
+      "from_revision": 2,
+      "to_revision": 3,
+      "started": "2026-10-13T08:15:41.256019+00:00",
+      "ended": "2026-10-13T08:15:42.987251+00:00"
+    },
+    {
+      "stage": "clear",
+      "http": 200,
+      "request": {
+        "expectedRevision": 3,
+        "faults": []
+      },
+      "from_revision": 3,
+      "to_revision": 4,
+      "started": "2026-10-13T08:15:53.312299+00:00",
+      "ended": "2026-10-13T08:15:53.492545+00:00"
+    },
+    {
+      "stage": "stop",
+      "http": 200,
+      "request": {
+        "expectedRevision": 4,
+        "running": false
+      },
+      "from_revision": 4,
+      "to_revision": 5,
+      "started": "2026-10-13T08:15:59.020109+00:00",
+      "ended": "2026-10-13T08:16:00.201979+00:00"
+    }
+  ],
+  "raw_manifest": {
+    "mismatch": [],
+    "sha256": "18c787143026d069970aae64e1b3e588e9000594eb4c68fab534ff60c2ddd641"
+  },
+  "independent_manifest": {
+    "mismatch": [],
+    "sha256": "1f72897f1ef2681b956fb2e3e74b2b7705e8a674c8790c7a67e1f8f9c2c8061d"
+  },
+  "official_qa_changed": false,
+  "frontend": "not tested; no connected dedicated Frontend",
+  "environment": "local WSL processes, not E2 Docker",
+  "final_state": {
+    "revision": 1,
+    "running": false,
+    "concurrency": 1,
+    "intervalMs": 2000,
+    "faults": [],
+    "scope": "ALL",
+    "status": "stopped",
+    "lastSeenAt": 1791879540910.0
+  },
+  "final_counts": {
+    "inspections": 1025,
+    "control_attempts": 1029,
+    "inspection_errors": 23
+  },
+  "final_position": {
+    "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+    "next_position": 1025
+  },
+  "jobs": 0,
+  "health": {
+    "backend": {
+      "http_status": 200,
+      "body": {
+        "status": "ok",
+        "service": "CQC Backend",
+        "environment": "local"
+      }
+    },
+    "inference": {
+      "http_status": 200,
+      "body": {
+        "status": "ready",
+        "model_loaded": true,
+        "model_name": "mobilenet_v3_small_multiview",
+        "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+        "device": "cpu",
+        "views": 12,
+        "approval_status": "unverified_candidate",
+        "threshold_status": "calibrated_dev_oof",
+        "checkpoint_sha256": "b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a",
+        "quality_temperature": 0.3907968455265368,
+        "cultivar_temperature": 0.3840364997514078,
+        "decode_workers": 8
+      }
+    },
+    "simulator": {
+      "http_status": 503,
+      "body": {
+        "status": "unhealthy",
+        "reason": "SIMULATOR_NOT_PLAYING"
+      }
+    }
+  },
+  "normal_launcher_restored": true,
+  "restoration_auto_input": 1,
+  "previous_evidence_unchanged": true
+}

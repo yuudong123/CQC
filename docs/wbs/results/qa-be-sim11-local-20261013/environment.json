@@ -1,0 +1,87 @@
+{
+  "source": {
+    "head": "f8a200221d7aa4cb3f44877e4114d464208366d7",
+    "namespace": "net:[4026532212]",
+    "mount_namespace": "mnt:[4026532211]",
+    "routes": [],
+    "routes6": [],
+    "dataset_read_only": true,
+    "model_read_only": true,
+    "model_sha256": "b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a",
+    "default_bundles": 869,
+    "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+    "mysql": {
+      "version": "8.4.11",
+      "datadir": "/opt/cqc-sim-qa/mysql-data/"
+    },
+    "backend": "http://127.0.0.1:28000",
+    "inference": "http://127.0.0.1:28001/v1/predict",
+    "simulator": "http://127.0.0.1:28002",
+    "database": "cqc_sim_qa",
+    "mysql_port": 13325,
+    "credentials": "memory only; not written to evidence",
+    "environment": "local dedicated process environment; not E2",
+    "inference_health": {
+      "status": "ready",
+      "model_loaded": true,
+      "model_name": "mobilenet_v3_small_multiview",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+      "device": "cpu",
+      "views": 12,
+      "approval_status": "unverified_candidate",
+      "threshold_status": "calibrated_dev_oof",
+      "checkpoint_sha256": "b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a",
+      "quality_temperature": 0.3907968455265368,
+      "cultivar_temperature": 0.3840364997514078,
+      "decode_workers": 8
+    },
+    "backend_health": {
+      "status": "ok",
+      "service": "CQC Backend",
+      "environment": "local"
+    }
+  },
+  "model_sha256": "b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a",
+  "dataset_bundles": 869,
+  "present_images": 10428,
+  "namespace": "net:[4026532212]",
+  "processes": {
+    "mysql": {
+      "pid": 63,
+      "state": "S",
+      "start_ticks": 12911,
+      "cpu_ticks": 7308,
+      "rss_kib": 488796
+    },
+    "inference": {
+      "pid": 176,
+      "state": "S",
+      "start_ticks": 16542,
+      "cpu_ticks": 7209,
+      "rss_kib": 614772
+    },
+    "backend": {
+      "pid": 187,
+      "state": "S",
+      "start_ticks": 18206,
+      "cpu_ticks": 4672,
+      "rss_kib": 120384
+    },
+    "simulator": {
+      "pid": 272,
+      "state": "S",
+      "start_ticks": 605011,
+      "cpu_ticks": 256,
+      "rss_kib": 72260
+    },
+    "supervisor": {
+      "pid": 12,
+      "state": "S",
+      "start_ticks": 7460,
+      "cpu_ticks": 1048,
+      "rss_kib": 80824
+    }
+  },
+  "thresholds": "safety abort only: C/D free>=2GiB, root free>=1GiB, MemAvailable>=256MiB, 60s without position progress, total runtime<=2400s; not QA acceptance criteria",
+  "position_rule": "absolute next_position; playback index=absolute%869"
+}

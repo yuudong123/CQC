@@ -1,0 +1,12 @@
+{
+  "progress_samples": 334,
+  "configured_concurrency4_all_samples": true,
+  "cpu_tick_hz": 100,
+  "cpu_percent_one_core_100_mean": 60.211208503229926,
+  "cpu_percent_one_core_100_max": 64.83697342206725,
+  "available_memory_gib_min": 5.2054595947265625,
+  "disk_c_gib_min": 11.204036712646484,
+  "disk_d_gib_min": 447.9251136779785,
+  "service_start_ticks_unchanged": true,
+  "health_samples": 58
+}

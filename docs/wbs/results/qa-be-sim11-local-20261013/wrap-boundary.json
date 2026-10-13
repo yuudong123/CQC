@@ -1,0 +1,39 @@
+[
+  {
+    "last": {
+      "sequence": 796,
+      "absolute_position": 868,
+      "dataset_index": 868,
+      "inspection_id": "1c0bb931-5323-4845-bfe3-c48f30f84cff",
+      "source_reference": "demo-601141016000-000",
+      "expected_source_reference": "demo-601141016000-000",
+      "matches": true,
+      "created_at": "2026-10-13 06:55:21.023000",
+      "completed_at": "2026-10-13 06:55:21.628000",
+      "inspection_status": "COMPLETED",
+      "control_status": "SUCCEEDED",
+      "persistence_status": "SUCCEEDED",
+      "error_code": null,
+      "used_frame_count": 12,
+      "target_bin_code": "DEMO_BIN_07"
+    },
+    "first": {
+      "sequence": 797,
+      "absolute_position": 869,
+      "dataset_index": 0,
+      "inspection_id": "6f95d606-0d60-4617-bb01-66d79702fc86",
+      "source_reference": "demo-601143002000-006",
+      "expected_source_reference": "demo-601143002000-006",
+      "matches": true,
+      "created_at": "2026-10-13 06:55:22.847000",
+      "completed_at": "2026-10-13 06:55:23.580000",
+      "inspection_status": "COMPLETED",
+      "control_status": "SUCCEEDED",
+      "persistence_status": "SUCCEEDED",
+      "error_code": null,
+      "used_frame_count": 12,
+      "target_bin_code": "DEMO_BIN_12"
+    },
+    "new_id": true
+  }
+]

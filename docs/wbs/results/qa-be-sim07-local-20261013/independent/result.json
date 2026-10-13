@@ -1,0 +1,232 @@
+{
+  "official_pass_changed": false,
+  "environment": "local WSL process environment, not E2",
+  "runtime_source": "f8a2002",
+  "git_head": "5493e8c4288d945efeec8c764e13697cc548ddfb",
+  "original_combined_condition": "NOT TESTED: user requested independent fault runs",
+  "frontend_warning": "NOT TESTED: no connected dedicated Frontend",
+  "rounds": [
+    {
+      "fault": "CONTROL_REJECTED",
+      "scope": "ALL",
+      "window_seconds": 10.223076689000663,
+      "window_targets": [
+        "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+        "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+        "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+        "a9309f7c-2883-4612-996b-13986995e0e9",
+        "58a962ce-01da-4d2c-853e-5e9180a6bf6f"
+      ],
+      "all_fault_targets": [
+        "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+        "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+        "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+        "a9309f7c-2883-4612-996b-13986995e0e9",
+        "58a962ce-01da-4d2c-853e-5e9180a6bf6f"
+      ],
+      "window_unapplied": [],
+      "target_count": 5,
+      "new_rows": 6,
+      "http_errors": [],
+      "saved": 5,
+      "target_states": [
+        {
+          "inspection_id": "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+          "source_reference": "demo-601141011000-001",
+          "inspection_status": "COMPLETED",
+          "control_status": "SUCCEEDED",
+          "error_code": "CONTROL_REJECTED",
+          "control_attempts": 2,
+          "error_rows": 1
+        },
+        {
+          "inspection_id": "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+          "source_reference": "demo-601033017000-004",
+          "inspection_status": "COMPLETED",
+          "control_status": "SUCCEEDED",
+          "error_code": "CONTROL_REJECTED",
+          "control_attempts": 2,
+          "error_rows": 1
+        },
+        {
+          "inspection_id": "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+          "source_reference": "demo-601033020000-001",
+          "inspection_status": "COMPLETED",
+          "control_status": "SUCCEEDED",
+          "error_code": "CONTROL_REJECTED",
+          "control_attempts": 2,
+          "error_rows": 1
+        },
+        {
+          "inspection_id": "a9309f7c-2883-4612-996b-13986995e0e9",
+          "source_reference": "demo-601033005000-004",
+          "inspection_status": "COMPLETED",
+          "control_status": "SUCCEEDED",
+          "error_code": "CONTROL_REJECTED",
+          "control_attempts": 2,
+          "error_rows": 1
+        },
+        {
+          "inspection_id": "58a962ce-01da-4d2c-853e-5e9180a6bf6f",
+          "source_reference": "demo-601141019000-002",
+          "inspection_status": "REINSPECTION_REQUIRED",
+          "control_status": "REJECTED",
+          "error_code": "LOW_QUALITY_CONFIDENCE",
+          "control_attempts": 1,
+          "error_rows": 1
+        }
+      ],
+      "post_clear_completed_ids": [
+        "26a92337-bce4-4cac-8144-f5d5f48bfdab"
+      ],
+      "final_state": {
+        "revision": 5,
+        "running": false,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [],
+        "scope": "ALL",
+        "status": "stopped",
+        "lastSeenAt": 1791878607360.0
+      }
+    },
+    {
+      "fault": "INFERENCE_TIMEOUT",
+      "scope": "ALL",
+      "window_seconds": 10.277624505999484,
+      "window_targets": [
+        "965416ef-e124-485b-9535-bf5d6b3163c3",
+        "11e020dc-9d1d-44f0-a1de-31a87eafe843",
+        "e67898fa-f9de-4f60-8a57-5432820d7764",
+        "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+        "c9fb3db6-ad73-4da8-af4e-365e3423f4cc"
+      ],
+      "all_fault_targets": [
+        "965416ef-e124-485b-9535-bf5d6b3163c3",
+        "11e020dc-9d1d-44f0-a1de-31a87eafe843",
+        "e67898fa-f9de-4f60-8a57-5432820d7764",
+        "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+        "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+        "38e572dd-8df9-444d-afd5-a64865e42936"
+      ],
+      "window_unapplied": [],
+      "target_count": 6,
+      "new_rows": 8,
+      "http_errors": [],
+      "saved": 6,
+      "target_states": [
+        {
+          "inspection_id": "965416ef-e124-485b-9535-bf5d6b3163c3",
+          "source_reference": "demo-601141007000-000",
+          "inspection_status": "REINSPECTION_REQUIRED",
+          "control_status": "SUCCEEDED",
+          "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+          "control_attempts": 1,
+          "error_rows": 1
+        },
+        {
+          "inspection_id": "11e020dc-9d1d-44f0-a1de-31a87eafe843",
+          "source_reference": "demo-601033013000-004",
+          "inspection_status": "REINSPECTION_REQUIRED",
+          "control_status": "SUCCEEDED",
+          "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+          "control_attempts": 1,
+          "error_rows": 1
+        },
+        {
+          "inspection_id": "e67898fa-f9de-4f60-8a57-5432820d7764",
+          "source_reference": "demo-601032005000-003",
+          "inspection_status": "REINSPECTION_REQUIRED",
+          "control_status": "SUCCEEDED",
+          "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+          "control_attempts": 1,
+          "error_rows": 1
+        },
+        {
+          "inspection_id": "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+          "source_reference": "demo-601141012000-006",
+          "inspection_status": "REINSPECTION_REQUIRED",
+          "control_status": "SUCCEEDED",
+          "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+          "control_attempts": 1,
+          "error_rows": 1
+        },
+        {
+          "inspection_id": "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+          "source_reference": "demo-601033006000-001",
+          "inspection_status": "REINSPECTION_REQUIRED",
+          "control_status": "SUCCEEDED",
+          "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+          "control_attempts": 1,
+          "error_rows": 1
+        },
+        {
+          "inspection_id": "38e572dd-8df9-444d-afd5-a64865e42936",
+          "source_reference": "demo-601033028000-007",
+          "inspection_status": "REINSPECTION_REQUIRED",
+          "control_status": "SUCCEEDED",
+          "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+          "control_attempts": 1,
+          "error_rows": 1
+        }
+      ],
+      "post_clear_completed_ids": [
+        "0f11eb33-5bcb-4091-a729-67ee126b2936"
+      ],
+      "final_state": {
+        "revision": 9,
+        "running": false,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [],
+        "scope": "ALL",
+        "status": "stopped",
+        "lastSeenAt": 1791878625691.0
+      }
+    }
+  ],
+  "status": "TWO_INDEPENDENT_ALL_RUNS_COMPLETE",
+  "final_counts": {
+    "inspections": 1014,
+    "control_attempts": 1018,
+    "inspection_errors": 11
+  },
+  "final_position": {
+    "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+    "next_position": 1014
+  },
+  "final_state": {
+    "revision": 1,
+    "running": false,
+    "concurrency": 1,
+    "intervalMs": 2000,
+    "faults": [],
+    "scope": "ALL",
+    "status": "stopped",
+    "lastSeenAt": 1791878629252.0
+  },
+  "health": {
+    "backend": {
+      "status": "ok",
+      "service": "CQC Backend",
+      "environment": "local"
+    },
+    "inference": {
+      "status": "ready",
+      "model_loaded": true,
+      "model_name": "mobilenet_v3_small_multiview",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+      "device": "cpu",
+      "views": 12,
+      "approval_status": "unverified_candidate",
+      "threshold_status": "calibrated_dev_oof",
+      "checkpoint_sha256": "b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a",
+      "quality_temperature": 0.3907968455265368,
+      "cultivar_temperature": 0.3840364997514078,
+      "decode_workers": 8
+    }
+  },
+  "normal_launcher_restored": true,
+  "final_stop_confirmed": true,
+  "previous_evidence_and_auto_unchanged": true
+}
