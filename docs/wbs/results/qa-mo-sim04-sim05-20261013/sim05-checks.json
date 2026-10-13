@@ -1,0 +1,147 @@
+{
+  "observed_result": "PASS",
+  "passed": 10,
+  "total": 10,
+  "rows": [
+    {
+      "case": "a",
+      "status": 422,
+      "checks": {
+        "422_invalid_settings": true,
+        "simulator_settings_and_revision_unchanged": true,
+        "backend_settings_and_revision_unchanged": true,
+        "backend_actual_state_agree": true,
+        "inspection_count_unchanged": true,
+        "no_inflight_jobs": true,
+        "cache_no_store": true
+      },
+      "observed_result": "PASS"
+    },
+    {
+      "case": "b",
+      "status": 422,
+      "checks": {
+        "422_invalid_settings": true,
+        "simulator_settings_and_revision_unchanged": true,
+        "backend_settings_and_revision_unchanged": true,
+        "backend_actual_state_agree": true,
+        "inspection_count_unchanged": true,
+        "no_inflight_jobs": true,
+        "cache_no_store": true
+      },
+      "observed_result": "PASS"
+    },
+    {
+      "case": "c",
+      "status": 422,
+      "checks": {
+        "422_invalid_settings": true,
+        "simulator_settings_and_revision_unchanged": true,
+        "backend_settings_and_revision_unchanged": true,
+        "backend_actual_state_agree": true,
+        "inspection_count_unchanged": true,
+        "no_inflight_jobs": true,
+        "cache_no_store": true
+      },
+      "observed_result": "PASS"
+    },
+    {
+      "case": "d",
+      "status": 422,
+      "checks": {
+        "422_invalid_settings": true,
+        "simulator_settings_and_revision_unchanged": true,
+        "backend_settings_and_revision_unchanged": true,
+        "backend_actual_state_agree": true,
+        "inspection_count_unchanged": true,
+        "no_inflight_jobs": true,
+        "cache_no_store": true
+      },
+      "observed_result": "PASS"
+    },
+    {
+      "case": "e",
+      "status": 422,
+      "checks": {
+        "422_invalid_settings": true,
+        "simulator_settings_and_revision_unchanged": true,
+        "backend_settings_and_revision_unchanged": true,
+        "backend_actual_state_agree": true,
+        "inspection_count_unchanged": true,
+        "no_inflight_jobs": true,
+        "cache_no_store": true
+      },
+      "observed_result": "PASS"
+    },
+    {
+      "case": "f",
+      "status": 422,
+      "checks": {
+        "422_invalid_settings": true,
+        "simulator_settings_and_revision_unchanged": true,
+        "backend_settings_and_revision_unchanged": true,
+        "backend_actual_state_agree": true,
+        "inspection_count_unchanged": true,
+        "no_inflight_jobs": true,
+        "cache_no_store": true
+      },
+      "observed_result": "PASS"
+    },
+    {
+      "case": "g",
+      "status": 422,
+      "checks": {
+        "422_invalid_settings": true,
+        "simulator_settings_and_revision_unchanged": true,
+        "backend_settings_and_revision_unchanged": true,
+        "backend_actual_state_agree": true,
+        "inspection_count_unchanged": true,
+        "no_inflight_jobs": true,
+        "cache_no_store": true
+      },
+      "observed_result": "PASS"
+    },
+    {
+      "case": "h",
+      "status": 422,
+      "checks": {
+        "422_invalid_settings": true,
+        "simulator_settings_and_revision_unchanged": true,
+        "backend_settings_and_revision_unchanged": true,
+        "backend_actual_state_agree": true,
+        "inspection_count_unchanged": true,
+        "no_inflight_jobs": true,
+        "cache_no_store": true
+      },
+      "observed_result": "PASS"
+    },
+    {
+      "case": "i",
+      "status": 422,
+      "checks": {
+        "422_invalid_settings": true,
+        "simulator_settings_and_revision_unchanged": true,
+        "backend_settings_and_revision_unchanged": true,
+        "backend_actual_state_agree": true,
+        "inspection_count_unchanged": true,
+        "no_inflight_jobs": true,
+        "cache_no_store": true
+      },
+      "observed_result": "PASS"
+    },
+    {
+      "case": "j",
+      "status": 422,
+      "checks": {
+        "422_invalid_settings": true,
+        "simulator_settings_and_revision_unchanged": true,
+        "backend_settings_and_revision_unchanged": true,
+        "backend_actual_state_agree": true,
+        "inspection_count_unchanged": true,
+        "no_inflight_jobs": true,
+        "cache_no_store": true
+      },
+      "observed_result": "PASS"
+    }
+  ]
+}

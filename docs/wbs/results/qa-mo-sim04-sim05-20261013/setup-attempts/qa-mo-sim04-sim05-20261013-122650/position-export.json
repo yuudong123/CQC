@@ -1,0 +1,5 @@
+{
+  "exit_code": 1,
+  "stdout": "",
+  "stderr": "Error response from daemon: No such container: cqc-mo103-sim0405-20261013-122650-simulator-1\n"
+}

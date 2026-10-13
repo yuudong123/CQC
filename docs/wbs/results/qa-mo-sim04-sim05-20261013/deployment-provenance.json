@@ -1,0 +1,19 @@
+{
+  "build": 147,
+  "result": "SUCCESS",
+  "source_sha": "91e0cd0b191935d0a3359b08285421b9dfe847c1",
+  "images": {
+    "mysql": "sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a",
+    "inference": "sha256:06c57dce24ac8e96a369e40a07dbd77c3a31655e4b1b845505b11bebc197ed13",
+    "backend": "sha256:66cb3b275c1fd1cc7c3f072359fa27879c122cfad0d592b43bb3db65e0538afb",
+    "simulator": "sha256:aa841dd2512e848b10185ca293604579937eddcc6c7749402bf9a0f92e5fee27"
+  },
+  "build_image_matches": {
+    "backend": true,
+    "inference": true,
+    "simulator": true
+  },
+  "runtime_same_host": true,
+  "jenkins_live_queue_verified": false,
+  "schedule_authorization": "User confirmed no build running and explicitly requested SIM-04/05 execution"
+}

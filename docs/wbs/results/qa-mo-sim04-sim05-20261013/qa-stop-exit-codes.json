@@ -1,0 +1,34 @@
+[
+  {
+    "service": "mysql",
+    "status": "exited",
+    "exit_code": 0,
+    "oom_killed": false,
+    "error": "",
+    "finished_at": "2026-10-13T03:41:13.468965867Z"
+  },
+  {
+    "service": "inference",
+    "status": "exited",
+    "exit_code": 0,
+    "oom_killed": false,
+    "error": "",
+    "finished_at": "2026-10-13T03:41:12.973514226Z"
+  },
+  {
+    "service": "backend",
+    "status": "exited",
+    "exit_code": 137,
+    "oom_killed": false,
+    "error": "",
+    "finished_at": "2026-10-13T03:41:08.939686844Z"
+  },
+  {
+    "service": "simulator",
+    "status": "exited",
+    "exit_code": 0,
+    "oom_killed": false,
+    "error": "",
+    "finished_at": "2026-10-13T03:40:41.090271619Z"
+  }
+]

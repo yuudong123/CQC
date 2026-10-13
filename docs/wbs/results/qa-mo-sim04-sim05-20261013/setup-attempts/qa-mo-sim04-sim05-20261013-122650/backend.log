@@ -1,0 +1,10 @@
+2026-10-13T03:29:32.535752977Z INFO  [alembic.runtime.migration] Context impl MySQLImpl.
+2026-10-13T03:29:32.535798079Z INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+2026-10-13T03:29:33.328321872Z INFO  [alembic.runtime.migration] Running upgrade  -> 20260922_01, Backend 초기 물리 스키마를 생성한다.
+2026-10-13T03:29:45.179583791Z INFO  [alembic.runtime.migration] Running upgrade 20260922_01 -> 20260929_02, BE-05 12-bin 검사 이력과 bin 매핑 계약을 반영한다.
+2026-10-13T03:30:13.317827994Z 2026-10-13 03:30:13,317 INFO uvicorn.error Started server process [38]
+2026-10-13T03:30:13.317876097Z 2026-10-13 03:30:13,317 INFO uvicorn.error Waiting for application startup.
+2026-10-13T03:30:13.318204415Z 2026-10-13 03:30:13,317 INFO uvicorn.error Application startup complete.
+2026-10-13T03:30:13.326790393Z 2026-10-13 03:30:13,326 INFO uvicorn.error Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-10-13T03:30:18.822982297Z 2026-10-13 03:30:18,822 INFO uvicorn.access 127.0.0.1:37952 - "GET /health HTTP/1.1" 200
+2026-10-13T03:30:29.195761577Z 2026-10-13 03:30:29,195 INFO uvicorn.access 127.0.0.1:37996 - "GET /health HTTP/1.1" 200

@@ -100,14 +100,14 @@ python -m src.training.evaluate --checkpoint outputs\dm09-final\model.pt --outpu
 
 | 항목 | 값 |
 |---|---|
-| 실행 일시·동결 커밋 | |
+| 실행 일시·동결 커밋 | 2026-10-13 17:22:27–17:22:57 KST · dev `dac3a66` · 노트북 CPU(torch 2.14.0+cpu) · 복사본 SHA-256 `b254206e…2ba8753a` 일치 |
 | 표본 | 27그룹 |
-| 품종 Macro F1 | |
-| 품질(외관) Macro F1 | |
-| 품질 혼동행렬 L/M/S | |
-| 승인 기준(각 0.90 이상) | |
-| 10-06 회귀 비교(1.0000)와 차이 | |
-| 결과 파일 | `outputs/dm09-final/final-test-v2.json` → `docs/wbs/results/`에 복사 |
+| 품종 Macro F1 | **1.0000** · Accuracy 1.0000 · 부사 10 / 양광 17 모두 정답 |
+| 품질(외관) Macro F1 | **1.0000** · Accuracy 1.0000 · 등급별 Precision·Recall·F1 모두 1.00(특 7 · 상 12 · 보통 8) |
+| 품질 혼동행렬 L/M/S | `[[7,0,0],[0,12,0],[0,0,8]]` |
+| 승인 기준(각 0.90 이상) | 수치는 충족. 단 Test 재사용이라 **동결 버전 재확인**이며 독립 승인으로 쓰지 않음(`unverified_candidate` 유지) |
+| 10-06 회귀 비교(1.0000)와 차이 | 차이 없음(같은 체크포인트·같은 Test 27그룹) |
+| 결과 파일 | `outputs/dm09-final/final-test-v2.json` → [`docs/wbs/results/final-test-v2-20261013.json`](../../results/final-test-v2-20261013.json). 잠금 파일 `model.pt.final-test.lock` 생성(재실행 차단) |
 
 ### 확정할 문구
 

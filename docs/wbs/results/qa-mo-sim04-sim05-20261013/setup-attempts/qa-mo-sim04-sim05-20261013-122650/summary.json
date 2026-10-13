@@ -1,0 +1,20 @@
+{
+  "run": "20261013-122650",
+  "project": "cqc-mo103-sim0405-20261013-122650",
+  "actor": "홍유나 (Codex)",
+  "started_kst": "2026-10-13T12:26:50.387648+09:00",
+  "cases": {},
+  "official_qa_decision": "Pending Backend evidence review",
+  "scope": "SIM-04/05 only; fresh isolated runtime using currently deployed images",
+  "source_sha": "91e0cd0b191935d0a3359b08285421b9dfe847c1",
+  "jenkins_build": 147,
+  "build_image_matches": {
+    "backend": true,
+    "inference": true,
+    "simulator": true
+  },
+  "execution_error": "<urlopen error [WinError 10061] 대상 컴퓨터에서 연결을 거부했으므로 연결하지 못했습니다>",
+  "qa_resources_preserved": true,
+  "public_containers_unchanged_and_healthy": true,
+  "finished_kst": "2026-10-13T12:31:10.227191+09:00"
+}

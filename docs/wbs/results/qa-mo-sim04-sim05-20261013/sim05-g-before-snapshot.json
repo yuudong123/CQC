@@ -1,0 +1,581 @@
+{
+  "started_kst": "2026-10-13T12:39:03.256563+09:00",
+  "finished_kst": "2026-10-13T12:39:03.352775+09:00",
+  "elapsed_ms": 96.20458700010204,
+  "request": {
+    "url": "http://127.0.0.1:8000/v1/quality/snapshot",
+    "method": "GET",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "date": "Tue, 13 Oct 2026 03:39:02 GMT",
+      "server": "uvicorn",
+      "content-length": "9172",
+      "content-type": "application/json",
+      "cache-control": "no-store",
+      "connection": "close"
+    },
+    "body": {
+      "contractVersion": "1",
+      "source": "backend",
+      "capturedAt": 1791862743270.0,
+      "revision": 3,
+      "capabilities": {
+        "control": true,
+        "faults": true,
+        "review": true,
+        "deleteImages": true,
+        "concurrency": [
+          1,
+          2,
+          4
+        ],
+        "intervals": [
+          1000,
+          2000,
+          3000
+        ]
+      },
+      "components": {
+        "Simulator": {
+          "status": "stopped",
+          "lastSeenAt": 1791862552237.0,
+          "detail": "정지"
+        },
+        "Inference": {
+          "status": "healthy",
+          "lastSeenAt": 1791862743270.0,
+          "detail": "추론 서비스 준비 완료"
+        },
+        "Backend": {
+          "status": "healthy",
+          "lastSeenAt": 1791862743270.0,
+          "detail": "관제 API 응답 중"
+        },
+        "MySQL": {
+          "status": "healthy",
+          "lastSeenAt": 1791862743270.0,
+          "detail": "검사 이력 조회 성공"
+        }
+      },
+      "retention": {
+        "images": 0
+      },
+      "periodTotals": {
+        "1": 0,
+        "5": 4,
+        "10": 11,
+        "30": 11
+      },
+      "state": {
+        "throughput": 0.0,
+        "running": false,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [],
+        "scope": "ALL",
+        "jobs": [],
+        "recentCompletedJobs": [],
+        "history": [
+          {
+            "id": "ab65e7a3-56be-493f-b01a-2e07d11a7cc2",
+            "date": "2026-10-13",
+            "time": "12:35:52.115",
+            "timestamp": 1791862552115.0,
+            "variety": "부사",
+            "grade": "상",
+            "confidence": 67.0062,
+            "cultivarConfidence": 100.0,
+            "status": "PASS",
+            "processingStatus": "COMPLETED",
+            "errorCode": "NONE",
+            "misclassification": "NONE",
+            "bin": "DEMO_BIN_04",
+            "virtualBrix": 16.4,
+            "brixMeasured": false,
+            "imageIndex": null,
+            "inferenceMs": 230.95,
+            "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+            "reviewRequired": false,
+            "excluded": false,
+            "control": "SUCCEEDED",
+            "persistence": "SAVED",
+            "faults": []
+          },
+          {
+            "id": "049b7b24-de67-44f1-bb2c-e2f7d476d0d6",
+            "date": "2026-10-13",
+            "time": "12:35:50.051",
+            "timestamp": 1791862550051.0,
+            "variety": "양광",
+            "grade": "상",
+            "confidence": 81.4662,
+            "cultivarConfidence": 99.982,
+            "status": "PASS",
+            "processingStatus": "COMPLETED",
+            "errorCode": "NONE",
+            "misclassification": "NONE",
+            "bin": "DEMO_BIN_10",
+            "virtualBrix": 15.0,
+            "brixMeasured": false,
+            "imageIndex": null,
+            "inferenceMs": 226.8,
+            "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+            "reviewRequired": false,
+            "excluded": false,
+            "control": "SUCCEEDED",
+            "persistence": "SAVED",
+            "faults": []
+          },
+          {
+            "id": "2c89bb40-4b6e-4276-820a-94225538dd00",
+            "date": "2026-10-13",
+            "time": "12:35:48.535",
+            "timestamp": 1791862548535.0,
+            "variety": "양광",
+            "grade": "보통",
+            "confidence": 99.91839999999999,
+            "cultivarConfidence": 66.91629999999999,
+            "status": "PASS",
+            "processingStatus": "COMPLETED",
+            "errorCode": "NONE",
+            "misclassification": "NONE",
+            "bin": "DEMO_BIN_12",
+            "virtualBrix": 14.7,
+            "brixMeasured": false,
+            "imageIndex": null,
+            "inferenceMs": 305.252,
+            "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+            "reviewRequired": false,
+            "excluded": false,
+            "control": "SUCCEEDED",
+            "persistence": "SAVED",
+            "faults": []
+          },
+          {
+            "id": "f388bf85-9f27-4cbb-a64d-7cae3331834a",
+            "date": "2026-10-13",
+            "time": "12:35:46.721",
+            "timestamp": 1791862546721.0,
+            "variety": "양광",
+            "grade": "보통",
+            "confidence": 84.50229999999999,
+            "cultivarConfidence": 99.0772,
+            "status": "PASS",
+            "processingStatus": "COMPLETED",
+            "errorCode": "NONE",
+            "misclassification": "NONE",
+            "bin": "DEMO_BIN_11",
+            "virtualBrix": 12.3,
+            "brixMeasured": false,
+            "imageIndex": null,
+            "inferenceMs": 370.441,
+            "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+            "reviewRequired": false,
+            "excluded": false,
+            "control": "SUCCEEDED",
+            "persistence": "SAVED",
+            "faults": []
+          },
+          {
+            "id": "a1948845-2049-4b70-8e30-ce228c9f3392",
+            "date": "2026-10-13",
+            "time": "12:33:27.196",
+            "timestamp": 1791862407196.0,
+            "variety": "부사",
+            "grade": "특",
+            "confidence": 86.98360000000001,
+            "cultivarConfidence": 99.99980000000001,
+            "status": "PASS",
+            "processingStatus": "COMPLETED",
+            "errorCode": "NONE",
+            "misclassification": "NONE",
+            "bin": "DEMO_BIN_02",
+            "virtualBrix": 16.8,
+            "brixMeasured": false,
+            "imageIndex": null,
+            "inferenceMs": 217.265,
+            "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+            "reviewRequired": false,
+            "excluded": false,
+            "control": "SUCCEEDED",
+            "persistence": "SAVED",
+            "faults": []
+          },
+          {
+            "id": "3c3d79b4-de96-4d81-a905-e1b7cf8df6fa",
+            "date": "2026-10-13",
+            "time": "12:33:21.321",
+            "timestamp": 1791862401321.0,
+            "variety": "양광",
+            "grade": "상",
+            "confidence": 93.81819999999999,
+            "cultivarConfidence": 99.9735,
+            "status": "PASS",
+            "processingStatus": "COMPLETED",
+            "errorCode": "NONE",
+            "misclassification": "NONE",
+            "bin": "DEMO_BIN_10",
+            "virtualBrix": 14.8,
+            "brixMeasured": false,
+            "imageIndex": null,
+            "inferenceMs": 210.47,
+            "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+            "reviewRequired": false,
+            "excluded": false,
+            "control": "SUCCEEDED",
+            "persistence": "SAVED",
+            "faults": []
+          },
+          {
+            "id": "d553f9dd-125b-45ee-b2da-bc7e85493c06",
+            "date": "2026-10-13",
+            "time": "12:33:15.929",
+            "timestamp": 1791862395929.0,
+            "variety": "부사",
+            "grade": "특",
+            "confidence": 86.9923,
+            "cultivarConfidence": 100.0,
+            "status": "PASS",
+            "processingStatus": "COMPLETED",
+            "errorCode": "NONE",
+            "misclassification": "NONE",
+            "bin": "DEMO_BIN_02",
+            "virtualBrix": 16.8,
+            "brixMeasured": false,
+            "imageIndex": null,
+            "inferenceMs": 232.432,
+            "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+            "reviewRequired": false,
+            "excluded": false,
+            "control": "SUCCEEDED",
+            "persistence": "SAVED",
+            "faults": []
+          },
+          {
+            "id": "c38ba202-862a-422f-990a-89df90652e7b",
+            "date": "2026-10-13",
+            "time": "12:33:13.818",
+            "timestamp": 1791862393818.0,
+            "variety": "부사",
+            "grade": "보통",
+            "confidence": 98.19590000000001,
+            "cultivarConfidence": 100.0,
+            "status": "PASS",
+            "processingStatus": "COMPLETED",
+            "errorCode": "NONE",
+            "misclassification": "NONE",
+            "bin": "DEMO_BIN_06",
+            "virtualBrix": 15.9,
+            "brixMeasured": false,
+            "imageIndex": null,
+            "inferenceMs": 281.539,
+            "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+            "reviewRequired": false,
+            "excluded": false,
+            "control": "SUCCEEDED",
+            "persistence": "SAVED",
+            "faults": []
+          },
+          {
+            "id": "001d06e4-c015-41a0-aae6-304d7abb1a3c",
+            "date": "2026-10-13",
+            "time": "12:33:11.643",
+            "timestamp": 1791862391643.0,
+            "variety": "양광",
+            "grade": "보통",
+            "confidence": 99.66460000000001,
+            "cultivarConfidence": 99.98740000000001,
+            "status": "PASS",
+            "processingStatus": "COMPLETED",
+            "errorCode": "NONE",
+            "misclassification": "NONE",
+            "bin": "DEMO_BIN_12",
+            "virtualBrix": 14.5,
+            "brixMeasured": false,
+            "imageIndex": null,
+            "inferenceMs": 262.919,
+            "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+            "reviewRequired": false,
+            "excluded": false,
+            "control": "SUCCEEDED",
+            "persistence": "SAVED",
+            "faults": []
+          },
+          {
+            "id": "50172c94-093a-4c0c-bc1b-b7bee71cc8b8",
+            "date": "2026-10-13",
+            "time": "12:33:09.742",
+            "timestamp": 1791862389742.0,
+            "variety": "부사",
+            "grade": "보통",
+            "confidence": 99.9139,
+            "cultivarConfidence": 100.0,
+            "status": "PASS",
+            "processingStatus": "COMPLETED",
+            "errorCode": "NONE",
+            "misclassification": "NONE",
+            "bin": "DEMO_BIN_05",
+            "virtualBrix": 12.9,
+            "brixMeasured": false,
+            "imageIndex": null,
+            "inferenceMs": 345.436,
+            "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+            "reviewRequired": false,
+            "excluded": false,
+            "control": "SUCCEEDED",
+            "persistence": "SAVED",
+            "faults": []
+          },
+          {
+            "id": "d559a54c-d303-4ba1-9280-3e7bf085eaa9",
+            "date": "2026-10-13",
+            "time": "12:33:07.369",
+            "timestamp": 1791862387369.0,
+            "variety": "양광",
+            "grade": "보통",
+            "confidence": 99.99040000000001,
+            "cultivarConfidence": 99.9996,
+            "status": "PASS",
+            "processingStatus": "COMPLETED",
+            "errorCode": "NONE",
+            "misclassification": "NONE",
+            "bin": "DEMO_BIN_12",
+            "virtualBrix": 15.6,
+            "brixMeasured": false,
+            "imageIndex": null,
+            "inferenceMs": 554.333,
+            "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+            "reviewRequired": false,
+            "excluded": false,
+            "control": "SUCCEEDED",
+            "persistence": "SAVED",
+            "faults": []
+          }
+        ],
+        "images": [],
+        "points": [
+          {
+            "at": 1791862714000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862715000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862716000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862717000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862718000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862719000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862720000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862721000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862722000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862723000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862724000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862725000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862726000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862727000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862728000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862729000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862730000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862731000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862732000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862733000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862734000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862735000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862736000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862737000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862738000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862739000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862740000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862741000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862742000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          },
+          {
+            "at": 1791862743000.0,
+            "count": 0,
+            "review": 0,
+            "excluded": 0
+          }
+        ],
+        "errors": [],
+        "today": {
+          "total": 11,
+          "normal": 11,
+          "excluded": 0,
+          "reinspection": 0,
+          "inferenceTotalMs": 3237.837,
+          "inferenceCount": 11,
+          "varieties": {
+            "부사": 5.0,
+            "양광": 6.0
+          },
+          "grades": {
+            "특": 2.0,
+            "상": 3.0,
+            "보통": 6.0
+          },
+          "bins": {
+            "DEMO_BIN_02": 2.0,
+            "DEMO_BIN_04": 1.0,
+            "DEMO_BIN_05": 1.0,
+            "DEMO_BIN_06": 1.0,
+            "DEMO_BIN_10": 2.0,
+            "DEMO_BIN_11": 1.0,
+            "DEMO_BIN_12": 3.0
+          },
+          "suspicions": {
+            "CULTIVAR_SUSPECT": 0,
+            "QUALITY_SUSPECT": 0,
+            "OTHER": 0
+          },
+          "date": "2026-10-13",
+          "review": 0
+        },
+        "lastSaved": 1791862552115.0,
+        "dbDown": false
+      }
+    }
+  },
+  "transport": "Real HTTP from dedicated Backend container; no mock or in-process test client"
+}

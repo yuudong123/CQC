@@ -1,7 +1,7 @@
 /* 관제 화면은 뷰포트를 유지하고 패널 내부에서만 필요한 스크롤을 사용합니다. */
-.qc-line { color: #98545f; background: #f8ecee; border: 1px solid #e7ccd1; border-radius: 20px; padding: 5px 12px; font-size: 12px; white-space: nowrap; }
-.qc-market-link { font-size: 13px; color: #98545f; padding: 7px; }
-.qc-admin-link { font-size: 13px; color: white; background: var(--rose); border-radius: 6px; padding: 7px 12px; }
+.qc-line { color: #98545f; background: #f8ecee; border: 1px solid #e7ccd1; border-radius: 20px; padding: 5px 12px; font-size: 13px; white-space: nowrap; }
+.qc-market-link { font-size: 14px; color: #98545f; padding: 7px; }
+.qc-admin-link { font-size: 14px; color: white; background: var(--rose); border-radius: 6px; padding: 7px 12px; }
 /* 관리자 페이지: 관제 화면과 달리 페이지 전체가 스크롤된다. 탭으로 이력·통계·검수 이미지·시연 설정을 오간다. */
 .qc-admin { display: grid; gap: 12px; padding: 16px 24px 32px; max-width: 1480px; margin: 0 auto; min-width: 0; }
 .qc-admin .qc-notices:empty { display: none; }
@@ -18,24 +18,24 @@
 .qc-frame-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
 .qc-frame-grid > div { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 5px; background: #f8f5f5; }
 .qc-frame-grid img { width: 100%; height: 100%; object-fit: contain; }
-.qc-frame-grid .qc-muted { margin: 0; padding: 4px; font-size: 11px; line-height: 1.3; }
-.qc-frame-grid span { position: absolute; bottom: 1px; right: 3px; color: #7d4750; background: #ffffffdf; border-radius: 3px; font-size: 10px; padding: 0 3px; }
+.qc-frame-grid .qc-muted { margin: 0; padding: 4px; font-size: 12px; line-height: 1.3; }
+.qc-frame-grid span { position: absolute; bottom: 1px; right: 3px; color: #7d4750; background: #ffffffdf; border-radius: 3px; font-size: 11px; padding: 0 3px; }
 .auto-auction-demo { background: linear-gradient(110deg, #f8ecee, #fff); border: 1px solid #e7ccd1; border-radius: 12px; padding: 18px 22px; margin-bottom: 18px; }
 .auto-demo-heading { display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
 .auto-demo-heading strong { color: #944651; font-size: 19px; }
 .auto-auction-demo p { margin: 8px 0; }
-.auto-auction-demo small, .auto-auction-demo ol { color: var(--muted); font-size: 12px; }
+.auto-auction-demo small, .auto-auction-demo ol { color: var(--muted); font-size: 13px; }
 .auto-auction-demo ol { display: flex; flex-wrap: wrap; gap: 8px 24px; padding-left: 18px; }
 /* 낙찰자 결제 팝업: 화면 가운데에 잠깐 떴다가 저절로 닫힌다. 아래 화면 조작은 막지 않는다. */
 .payment-popup { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; background: #25151d40; pointer-events: none; animation: payment-in .2s ease-out; }
 .payment-card { width: min(380px, calc(100vw - 32px)); background: white; border-radius: 14px; padding: 22px 24px; box-shadow: 0 18px 48px #25151d40; display: grid; gap: 10px; }
-.payment-card small { color: var(--muted); font-size: 12px; }
+.payment-card small { color: var(--muted); font-size: 13px; }
 .payment-card strong { color: #944651; font-size: 24px; }
-.payment-card dl { display: grid; gap: 6px; margin: 4px 0; font-size: 14px; }
+.payment-card dl { display: grid; gap: 6px; margin: 4px 0; font-size: 16px; }
 .payment-card dl div { display: flex; justify-content: space-between; gap: 12px; }
 .payment-card dt { color: var(--muted); }
 .payment-card dd { margin: 0; font-weight: 600; }
-.payment-card p { margin: 0; padding: 10px 12px; border-radius: 8px; background: #f8ecee; color: #7d4750; font-size: 13px; }
+.payment-card p { margin: 0; padding: 10px 12px; border-radius: 8px; background: #f8ecee; color: #7d4750; font-size: 14px; }
 .payment-card p.paid { background: #e8f3ea; color: #2e6b3a; }
 .payment-card p.failed { background: #fdecea; color: #a1352a; }
 .payment-card p a { color: inherit; font-weight: 700; }
@@ -78,7 +78,7 @@
   color: var(--ink);
   padding: 7px 10px;
   font: inherit;
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
 }
 .qc-console button:focus-visible,
@@ -121,7 +121,7 @@
   border: 1px solid #e8c789;
   padding: 8px 12px;
   border-radius: 6px;
-  font-size: 13px;
+  font-size: 14px;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -190,7 +190,7 @@
   display: none;
 }
 .qc-jobs-compact .qc-job-info {
-  font-size: 12px;
+  font-size: 13px;
 }
 .qc-col > .qc-trend-panel {
   min-height: 260px;
@@ -224,7 +224,7 @@
   align-items: baseline;
   gap: 4px 10px;
   flex-wrap: wrap;
-  font-size: 13px;
+  font-size: 14px;
 }
 .qc-job-info strong {
   max-width: 100%;
@@ -244,7 +244,7 @@
   flex-shrink: 0;
 }
 .qc-job strong {
-  font-size: 14px;
+  font-size: 16px;
 }
 .qc-job small {
   color: var(--muted);
@@ -265,7 +265,7 @@
   border-left-width: 4px;
   padding: 5px 8px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 13px;
   min-width: 0;
 }
 .qc-component i {
@@ -275,12 +275,12 @@
   background: #1b9b4b;
 }
 .qc-component strong {
-  font-size: 12px;
+  font-size: 13px;
 }
 .qc-component span {
   grid-column: 1 / -1;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -298,19 +298,19 @@
 }
 .qc-error-head h3 {
   margin: 4px 0;
-  font-size: 13px;
+  font-size: 14px;
 }
 .qc-error-head small,
 .qc-error-more summary {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 .qc-error-more summary {
   cursor: pointer;
   padding: 4px 0;
 }
 .qc-console h3 {
-  font-size: 14px;
+  font-size: 16px;
   margin: 12px 0 8px;
 }
 .qc-error {
@@ -320,7 +320,7 @@
   align-items: baseline;
   padding: 5px 0;
   border-bottom: 1px solid var(--line);
-  font-size: 12px;
+  font-size: 13px;
 }
 .qc-error time {
   color: var(--muted);
@@ -336,17 +336,17 @@
 }
 .qc-muted {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.6;
 }
 .qc-empty {
   padding: 24px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 16px;
   text-align: center;
 }
 .quality-canvas .qc-console table {
-  font-size: 13px;
+  font-size: 14px;
   white-space: nowrap;
 }
 .qc-console th {
@@ -365,7 +365,7 @@
   font-size: 24px;
 }
 .qc-period span {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted);
 }
 .qc-trend {
@@ -397,39 +397,39 @@
 }
 /* 오늘 선별함 지도: 품종 2줄 × (등급 3 × 당도 2) + 오른쪽 재검사함. 칸 높이가 고정이라 패널이 스크롤되지 않는다. */
 .qc-bin-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
-.qc-bin-head strong { font-size: 13px; }
-.qc-bin-head small { font-size: 11px; color: var(--muted); }
+.qc-bin-head strong { font-size: 14px; }
+.qc-bin-head small { font-size: 12px; color: var(--muted); }
 .qc-binmap { display: grid; grid-template-columns: 34px repeat(6, minmax(0, 1fr)) minmax(56px, 1.3fr); grid-template-rows: auto auto 44px 44px; gap: 3px; align-items: stretch; }
-.qc-bin-grade { grid-column: span 2; text-align: center; font-size: 12px; font-weight: 700; color: var(--ink); border-bottom: 2px solid #e7ccd1; }
-.qc-bin-band { text-align: center; font-size: 10px; color: var(--muted); }
+.qc-bin-grade { grid-column: span 2; text-align: center; font-size: 13px; font-weight: 700; color: var(--ink); border-bottom: 2px solid #e7ccd1; }
+.qc-bin-band { text-align: center; font-size: 11px; color: var(--muted); }
 .qc-bin-corner { display: block; }
-.qc-bin-variety { display: flex; flex-direction: column; justify-content: center; font-size: 12px; font-weight: 700; }
-.qc-bin-variety small { font-size: 10px; font-weight: 400; color: var(--muted); }
+.qc-bin-variety { display: flex; flex-direction: column; justify-content: center; font-size: 13px; font-weight: 700; }
+.qc-bin-variety small { font-size: 11px; font-weight: 400; color: var(--muted); }
 .qc-bin { position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #ecdfe1; border-radius: 6px; background: linear-gradient(to top, #f0d3d7 var(--fill, 0%), #fff var(--fill, 0%)); min-width: 0; }
-.qc-bin span { font-size: 10px; color: #7d4750; line-height: 1; }
-.qc-bin strong { font-size: 13px; line-height: 1.2; color: var(--ink); }
+.qc-bin span { font-size: 11px; color: #7d4750; line-height: 1; }
+.qc-bin strong { font-size: 14px; line-height: 1.2; color: var(--ink); }
 .qc-bin.ugly { border-color: #e0a800; }
 .qc-bin.recent { animation: qc-bin-hit 1.6s ease-out; }
 @keyframes qc-bin-hit { 0% { box-shadow: 0 0 0 3px #944651; } 100% { box-shadow: 0 0 0 0 transparent; } }
 .qc-bin-review { grid-column: 8; grid-row: 1 / 5; background: #fbf3e8; border-color: #f0d6b0; gap: 2px; }
 .qc-bin-review strong { font-size: 19px; }
-.qc-bin-review small { font-size: 10px; color: var(--muted); text-align: center; line-height: 1.3; }
+.qc-bin-review small { font-size: 11px; color: var(--muted); text-align: center; line-height: 1.3; }
 .qc-bin-review.alert { background: #fde8e8; border-color: #e7a1a1; }
 .qc-bin-review.alert strong { color: #b42318; }
 .qc-trend-panel .qc-trend-side p.qc-muted {
   margin: 6px 0 0;
-  font-size: 12px;
+  font-size: 13px;
 }
 .qc-chart-label {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
   margin-top: 7px;
 }
 .qc-trend-panel p,
 .qc-exception-panel p {
-  font-size: 13px;
+  font-size: 14px;
   margin: 8px 0;
 }
 .qc-dialog {
@@ -538,7 +538,7 @@
 }
 .qc-dialog table,
 .qc-admin table {
-  font-size: 13px;
+  font-size: 14px;
 }
 .qc-dialog .panel,
 .qc-admin .panel {
@@ -567,7 +567,7 @@
     display: none;
   }
   .qc-top button {
-    font-size: 12px;
+    font-size: 13px;
     padding: 6px;
   }
   .quality-canvas .qc-console .stats {
@@ -582,7 +582,7 @@
     font-size: 16px;
   }
   .quality-canvas .qc-console .stat p {
-    font-size: 11px;
+    font-size: 12px;
   }
   .qc-body,
   .qc-col {
@@ -596,10 +596,10 @@
     gap: 4px;
   }
   .quality-canvas .qc-console .panel-heading h2 {
-    font-size: 14px;
+    font-size: 16px;
   }
   .qc-components > div {
-    font-size: 12px;
+    font-size: 13px;
     padding: 6px;
   }
   .qc-dialog-body {
@@ -617,7 +617,7 @@
   gap: 4px;
 }
 .qc-segment button {
-  font-size: 12px;
+  font-size: 13px;
   padding: 4px 9px;
   border-radius: 14px;
 }
@@ -628,14 +628,14 @@
 }
 .qc-exception-panel p.qc-exception-note {
   margin: 0 0 8px;
-  font-size: 12px;
+  font-size: 13px;
 }
 .qc-low {
   color: #c01c31;
   font-weight: 700;
 }
 .quality-canvas .qc-console .stat strong small {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   color: var(--muted);
 }
@@ -680,7 +680,7 @@
   justify-content: space-between;
   align-items: baseline;
   gap: 8px;
-  font-size: 13px;
+  font-size: 14px;
 }
 .qc-kpi-mini dt {
   color: var(--muted);
@@ -708,7 +708,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
+  font-size: 14px;
 }
 .qc-light i {
   width: 12px;
@@ -763,6 +763,22 @@
 }
 @media (max-width: 650px) {
   .qc-light b {
-    font-size: 11px;
+    font-size: 12px;
   }
 }
+
+/* readability-admin:start */
+/* 품질 관리: 위쪽 조작부·표는 크게, 아래 안내·보조 값은 작게 */
+.qc-admin .qc-top h1 { font-size: 24px; }
+.qc-admin .qc-admin-tabs button { font-size: 16px; padding: 10px 18px; }
+.qc-admin button, .qc-admin select, .qc-admin input { font-size: 15px; }
+.qc-admin label { font-size: 14px; }
+.qc-admin td { font-size: 14px; }
+.qc-admin th { font-size: 13px; }
+.qc-admin .qc-muted, .qc-admin small, .qc-admin .qc-preview + p, .qc-admin .footnote { font-size: 12px; }
+/* 이력 필터: 칸 높이를 글자에 맞추고(잘림 방지), 칸 너비는 내용만큼만 써서 빈 여백을 줄인다. */
+.qc-admin .quality-history .history-filters { display: flex !important; flex-wrap: wrap; gap: 10px 14px; align-items: end; }
+.qc-admin .history-filters label { flex: 0 0 auto; font-size: 13px; gap: 4px; }
+.qc-admin .history-filters input, .qc-admin .history-filters select { width: auto; min-width: 104px; height: auto; min-height: 36px; padding: 6px 10px; font-size: 15px; line-height: 1.3; }
+.qc-admin .history-filters input[type="date"] { min-width: 150px; }
+/* readability-admin:end */

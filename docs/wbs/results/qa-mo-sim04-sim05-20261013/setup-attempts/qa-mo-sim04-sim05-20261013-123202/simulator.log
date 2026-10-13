@@ -1,0 +1,9 @@
+2026-10-13T03:32:59.517077731Z 2026-10-13 03:32:59,515 INFO uvicorn.error Started server process [1]
+2026-10-13T03:32:59.517148735Z 2026-10-13 03:32:59,516 INFO uvicorn.error Waiting for application startup.
+2026-10-13T03:33:05.464864733Z 2026-10-13 03:33:05,464 INFO uvicorn.error Application startup complete.
+2026-10-13T03:33:05.473119030Z 2026-10-13 03:33:05,472 INFO uvicorn.error Uvicorn running on http://0.0.0.0:8002 (Press CTRL+C to quit)
+2026-10-13T03:33:07.747584080Z 2026-10-13 03:33:07,747 INFO httpx HTTP Request: POST http://backend:8000/v1/inspections "HTTP/1.1 200 OK"
+2026-10-13T03:33:09.373819381Z 2026-10-13 03:33:09,373 INFO uvicorn.access 127.0.0.1:38930 - "GET /health HTTP/1.1" 200
+2026-10-13T03:33:09.837931075Z 2026-10-13 03:33:09,836 INFO httpx HTTP Request: POST http://backend:8000/v1/inspections "HTTP/1.1 200 OK"
+2026-10-13T03:33:11.943267630Z 2026-10-13 03:33:11,942 INFO httpx HTTP Request: POST http://backend:8000/v1/inspections "HTTP/1.1 200 OK"
+2026-10-13T03:33:13.939153319Z 2026-10-13 03:33:13,938 INFO httpx HTTP Request: POST http://backend:8000/v1/inspections "HTTP/1.1 200 OK"

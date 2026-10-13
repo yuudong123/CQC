@@ -1,0 +1,28 @@
+{
+  "started_kst": "2026-10-13T12:37:18.106814+09:00",
+  "finished_kst": "2026-10-13T12:37:18.151786+09:00",
+  "elapsed_ms": 44.96721999930742,
+  "request": {
+    "url": "http://127.0.0.1:8000/v1/quality/simulator",
+    "method": "PUT",
+    "body": {
+      "expectedRevision": 3,
+      "concurrency": 3
+    }
+  },
+  "response": {
+    "status": 422,
+    "headers": {
+      "date": "Tue, 13 Oct 2026 03:37:18 GMT",
+      "server": "uvicorn",
+      "cache-control": "no-store",
+      "content-length": "27",
+      "content-type": "application/json",
+      "connection": "close"
+    },
+    "body": {
+      "code": "INVALID_SETTINGS"
+    }
+  },
+  "transport": "Real HTTP from dedicated Backend container; no mock or in-process test client"
+}
