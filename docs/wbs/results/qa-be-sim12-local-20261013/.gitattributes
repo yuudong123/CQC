@@ -1,0 +1,5 @@
+*.json -text
+*.jsonl -text
+*.csv -text
+*.sha256 -text
+*.py -text

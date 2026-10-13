@@ -1,0 +1,1215 @@
+{
+  "window_started_utc": "2026-10-13T08:03:16.137755+00:00",
+  "window_start_monotonic": 12447.855531877,
+  "clear_request_started_utc": "2026-10-13T08:03:26.360828+00:00",
+  "clear_start_monotonic": 12458.078608566,
+  "clear_end_monotonic": 12458.229133935,
+  "observed_seconds": 10.223076689000663,
+  "samples": [
+    {
+      "at": "2026-10-13T08:03:16.371135+00:00",
+      "monotonic": 12448.088937441,
+      "simulator": {
+        "revision": 3,
+        "running": true,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [
+          "CONTROL_REJECTED"
+        ],
+        "scope": "ALL",
+        "status": "healthy",
+        "lastSeenAt": null
+      },
+      "counts": {
+        "inspections": 999,
+        "control_attempts": 999,
+        "inspection_errors": 0
+      },
+      "position": {
+        "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+        "next_position": 999
+      },
+      "snapshot": {
+        "contractVersion": "1",
+        "source": "backend",
+        "capturedAt": 1791878596203.0,
+        "revision": 3,
+        "components": {
+          "Simulator": {
+            "status": "healthy",
+            "lastSeenAt": null,
+            "detail": "검사 전송 중"
+          },
+          "Inference": {
+            "status": "healthy",
+            "lastSeenAt": 1791878596203.0,
+            "detail": "추론 서비스 준비 완료"
+          },
+          "Backend": {
+            "status": "healthy",
+            "lastSeenAt": 1791878596203.0,
+            "detail": "관제 API 응답 중"
+          },
+          "MySQL": {
+            "status": "healthy",
+            "lastSeenAt": 1791878596203.0,
+            "detail": "검사 이력 조회 성공"
+          }
+        },
+        "state": {
+          "running": true,
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "faults": [
+            "CONTROL_REJECTED"
+          ],
+          "scope": "ALL",
+          "jobs": [],
+          "errors": []
+        }
+      }
+    },
+    {
+      "at": "2026-10-13T08:03:17.609347+00:00",
+      "monotonic": 12449.327148221,
+      "simulator": {
+        "revision": 3,
+        "running": true,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [
+          "CONTROL_REJECTED"
+        ],
+        "scope": "ALL",
+        "status": "healthy",
+        "lastSeenAt": 1791878597120.0
+      },
+      "counts": {
+        "inspections": 1000,
+        "control_attempts": 1001,
+        "inspection_errors": 1
+      },
+      "position": {
+        "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+        "next_position": 1000
+      },
+      "snapshot": {
+        "contractVersion": "1",
+        "source": "backend",
+        "capturedAt": 1791878597477.0,
+        "revision": 3,
+        "components": {
+          "Simulator": {
+            "status": "healthy",
+            "lastSeenAt": 1791878597120.0,
+            "detail": "검사 전송 중"
+          },
+          "Inference": {
+            "status": "healthy",
+            "lastSeenAt": 1791878597477.0,
+            "detail": "추론 서비스 준비 완료"
+          },
+          "Backend": {
+            "status": "healthy",
+            "lastSeenAt": 1791878597477.0,
+            "detail": "관제 API 응답 중"
+          },
+          "MySQL": {
+            "status": "healthy",
+            "lastSeenAt": 1791878597477.0,
+            "detail": "검사 이력 조회 성공"
+          }
+        },
+        "state": {
+          "running": true,
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "faults": [
+            "CONTROL_REJECTED"
+          ],
+          "scope": "ALL",
+          "jobs": [],
+          "errors": [
+            {
+              "id": "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+              "date": "2026-10-13",
+              "time": "17:03:16.956",
+              "timestamp": 1791878596956.0,
+              "variety": "양광",
+              "grade": "특",
+              "confidence": 81.13510000000001,
+              "cultivarConfidence": 99.93220000000001,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.9,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 155.361,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "at": "2026-10-13T08:03:18.941900+00:00",
+      "monotonic": 12450.659700882,
+      "simulator": {
+        "revision": 3,
+        "running": true,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [
+          "CONTROL_REJECTED"
+        ],
+        "scope": "ALL",
+        "status": "healthy",
+        "lastSeenAt": 1791878597120.0
+      },
+      "counts": {
+        "inspections": 1000,
+        "control_attempts": 1001,
+        "inspection_errors": 1
+      },
+      "position": {
+        "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+        "next_position": 1000
+      },
+      "snapshot": {
+        "contractVersion": "1",
+        "source": "backend",
+        "capturedAt": 1791878598705.0,
+        "revision": 3,
+        "components": {
+          "Simulator": {
+            "status": "healthy",
+            "lastSeenAt": 1791878597120.0,
+            "detail": "검사 전송 중"
+          },
+          "Inference": {
+            "status": "healthy",
+            "lastSeenAt": 1791878598705.0,
+            "detail": "추론 서비스 준비 완료"
+          },
+          "Backend": {
+            "status": "healthy",
+            "lastSeenAt": 1791878598705.0,
+            "detail": "관제 API 응답 중"
+          },
+          "MySQL": {
+            "status": "healthy",
+            "lastSeenAt": 1791878598705.0,
+            "detail": "검사 이력 조회 성공"
+          }
+        },
+        "state": {
+          "running": true,
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "faults": [
+            "CONTROL_REJECTED"
+          ],
+          "scope": "ALL",
+          "jobs": [],
+          "errors": [
+            {
+              "id": "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+              "date": "2026-10-13",
+              "time": "17:03:16.956",
+              "timestamp": 1791878596956.0,
+              "variety": "양광",
+              "grade": "특",
+              "confidence": 81.13510000000001,
+              "cultivarConfidence": 99.93220000000001,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.9,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 155.361,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "at": "2026-10-13T08:03:20.184659+00:00",
+      "monotonic": 12451.902460538,
+      "simulator": {
+        "revision": 3,
+        "running": true,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [
+          "CONTROL_REJECTED"
+        ],
+        "scope": "ALL",
+        "status": "healthy",
+        "lastSeenAt": 1791878599566.0
+      },
+      "counts": {
+        "inspections": 1001,
+        "control_attempts": 1003,
+        "inspection_errors": 2
+      },
+      "position": {
+        "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+        "next_position": 1001
+      },
+      "snapshot": {
+        "contractVersion": "1",
+        "source": "backend",
+        "capturedAt": 1791878600054.0,
+        "revision": 3,
+        "components": {
+          "Simulator": {
+            "status": "healthy",
+            "lastSeenAt": 1791878599566.0,
+            "detail": "검사 전송 중"
+          },
+          "Inference": {
+            "status": "healthy",
+            "lastSeenAt": 1791878600054.0,
+            "detail": "추론 서비스 준비 완료"
+          },
+          "Backend": {
+            "status": "healthy",
+            "lastSeenAt": 1791878600054.0,
+            "detail": "관제 API 응답 중"
+          },
+          "MySQL": {
+            "status": "healthy",
+            "lastSeenAt": 1791878600054.0,
+            "detail": "검사 이력 조회 성공"
+          }
+        },
+        "state": {
+          "running": true,
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "faults": [
+            "CONTROL_REJECTED"
+          ],
+          "scope": "ALL",
+          "jobs": [],
+          "errors": [
+            {
+              "id": "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+              "date": "2026-10-13",
+              "time": "17:03:19.477",
+              "timestamp": 1791878599477.0,
+              "variety": "부사",
+              "grade": "보통",
+              "confidence": 95.6202,
+              "cultivarConfidence": 99.9964,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 15.0,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 148.088,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+              "date": "2026-10-13",
+              "time": "17:03:16.956",
+              "timestamp": 1791878596956.0,
+              "variety": "양광",
+              "grade": "특",
+              "confidence": 81.13510000000001,
+              "cultivarConfidence": 99.93220000000001,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.9,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 155.361,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "at": "2026-10-13T08:03:21.398201+00:00",
+      "monotonic": 12453.116055393,
+      "simulator": {
+        "revision": 3,
+        "running": true,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [
+          "CONTROL_REJECTED"
+        ],
+        "scope": "ALL",
+        "status": "healthy",
+        "lastSeenAt": 1791878599566.0
+      },
+      "counts": {
+        "inspections": 1002,
+        "control_attempts": 1003,
+        "inspection_errors": 2
+      },
+      "position": {
+        "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+        "next_position": 1002
+      },
+      "snapshot": {
+        "contractVersion": "1",
+        "source": "backend",
+        "capturedAt": 1791878601261.0,
+        "revision": 3,
+        "components": {
+          "Simulator": {
+            "status": "healthy",
+            "lastSeenAt": 1791878601267.0,
+            "detail": "검사 전송 중"
+          },
+          "Inference": {
+            "status": "healthy",
+            "lastSeenAt": 1791878601261.0,
+            "detail": "추론 서비스 준비 완료"
+          },
+          "Backend": {
+            "status": "healthy",
+            "lastSeenAt": 1791878601261.0,
+            "detail": "관제 API 응답 중"
+          },
+          "MySQL": {
+            "status": "healthy",
+            "lastSeenAt": 1791878601261.0,
+            "detail": "검사 이력 조회 성공"
+          }
+        },
+        "state": {
+          "running": true,
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "faults": [
+            "CONTROL_REJECTED"
+          ],
+          "scope": "ALL",
+          "jobs": [],
+          "errors": [
+            {
+              "id": "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+              "date": "2026-10-13",
+              "time": "17:03:21.235",
+              "timestamp": 1791878601235.0,
+              "variety": "부사",
+              "grade": "보통",
+              "confidence": 67.5709,
+              "cultivarConfidence": 99.9996,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.9,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 164.99,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+              "date": "2026-10-13",
+              "time": "17:03:19.477",
+              "timestamp": 1791878599477.0,
+              "variety": "부사",
+              "grade": "보통",
+              "confidence": 95.6202,
+              "cultivarConfidence": 99.9964,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 15.0,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 148.088,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+              "date": "2026-10-13",
+              "time": "17:03:16.956",
+              "timestamp": 1791878596956.0,
+              "variety": "양광",
+              "grade": "특",
+              "confidence": 81.13510000000001,
+              "cultivarConfidence": 99.93220000000001,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.9,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 155.361,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "at": "2026-10-13T08:03:22.647192+00:00",
+      "monotonic": 12454.36499145,
+      "simulator": {
+        "revision": 3,
+        "running": true,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [
+          "CONTROL_REJECTED"
+        ],
+        "scope": "ALL",
+        "status": "healthy",
+        "lastSeenAt": 1791878601267.0
+      },
+      "counts": {
+        "inspections": 1002,
+        "control_attempts": 1005,
+        "inspection_errors": 3
+      },
+      "position": {
+        "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+        "next_position": 1002
+      },
+      "snapshot": {
+        "contractVersion": "1",
+        "source": "backend",
+        "capturedAt": 1791878602495.0,
+        "revision": 3,
+        "components": {
+          "Simulator": {
+            "status": "healthy",
+            "lastSeenAt": 1791878601267.0,
+            "detail": "검사 전송 중"
+          },
+          "Inference": {
+            "status": "healthy",
+            "lastSeenAt": 1791878602495.0,
+            "detail": "추론 서비스 준비 완료"
+          },
+          "Backend": {
+            "status": "healthy",
+            "lastSeenAt": 1791878602495.0,
+            "detail": "관제 API 응답 중"
+          },
+          "MySQL": {
+            "status": "healthy",
+            "lastSeenAt": 1791878602495.0,
+            "detail": "검사 이력 조회 성공"
+          }
+        },
+        "state": {
+          "running": true,
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "faults": [
+            "CONTROL_REJECTED"
+          ],
+          "scope": "ALL",
+          "jobs": [],
+          "errors": [
+            {
+              "id": "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+              "date": "2026-10-13",
+              "time": "17:03:21.235",
+              "timestamp": 1791878601235.0,
+              "variety": "부사",
+              "grade": "보통",
+              "confidence": 67.5709,
+              "cultivarConfidence": 99.9996,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.9,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 164.99,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+              "date": "2026-10-13",
+              "time": "17:03:19.477",
+              "timestamp": 1791878599477.0,
+              "variety": "부사",
+              "grade": "보통",
+              "confidence": 95.6202,
+              "cultivarConfidence": 99.9964,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 15.0,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 148.088,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+              "date": "2026-10-13",
+              "time": "17:03:16.956",
+              "timestamp": 1791878596956.0,
+              "variety": "양광",
+              "grade": "특",
+              "confidence": 81.13510000000001,
+              "cultivarConfidence": 99.93220000000001,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.9,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 155.361,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "at": "2026-10-13T08:03:23.836790+00:00",
+      "monotonic": 12455.554589404,
+      "simulator": {
+        "revision": 3,
+        "running": true,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [
+          "CONTROL_REJECTED"
+        ],
+        "scope": "ALL",
+        "status": "healthy",
+        "lastSeenAt": 1791878603316.0
+      },
+      "counts": {
+        "inspections": 1003,
+        "control_attempts": 1007,
+        "inspection_errors": 4
+      },
+      "position": {
+        "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+        "next_position": 1003
+      },
+      "snapshot": {
+        "contractVersion": "1",
+        "source": "backend",
+        "capturedAt": 1791878603707.0,
+        "revision": 3,
+        "components": {
+          "Simulator": {
+            "status": "healthy",
+            "lastSeenAt": 1791878603316.0,
+            "detail": "검사 전송 중"
+          },
+          "Inference": {
+            "status": "healthy",
+            "lastSeenAt": 1791878603707.0,
+            "detail": "추론 서비스 준비 완료"
+          },
+          "Backend": {
+            "status": "healthy",
+            "lastSeenAt": 1791878603707.0,
+            "detail": "관제 API 응답 중"
+          },
+          "MySQL": {
+            "status": "healthy",
+            "lastSeenAt": 1791878603707.0,
+            "detail": "검사 이력 조회 성공"
+          }
+        },
+        "state": {
+          "running": true,
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "faults": [
+            "CONTROL_REJECTED"
+          ],
+          "scope": "ALL",
+          "jobs": [],
+          "errors": [
+            {
+              "id": "a9309f7c-2883-4612-996b-13986995e0e9",
+              "date": "2026-10-13",
+              "time": "17:03:23.286",
+              "timestamp": 1791878603286.0,
+              "variety": "부사",
+              "grade": "보통",
+              "confidence": 98.0896,
+              "cultivarConfidence": 100.0,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 159.066,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+              "date": "2026-10-13",
+              "time": "17:03:21.235",
+              "timestamp": 1791878601235.0,
+              "variety": "부사",
+              "grade": "보통",
+              "confidence": 67.5709,
+              "cultivarConfidence": 99.9996,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.9,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 164.99,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+              "date": "2026-10-13",
+              "time": "17:03:19.477",
+              "timestamp": 1791878599477.0,
+              "variety": "부사",
+              "grade": "보통",
+              "confidence": 95.6202,
+              "cultivarConfidence": 99.9964,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 15.0,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 148.088,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+              "date": "2026-10-13",
+              "time": "17:03:16.956",
+              "timestamp": 1791878596956.0,
+              "variety": "양광",
+              "grade": "특",
+              "confidence": 81.13510000000001,
+              "cultivarConfidence": 99.93220000000001,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.9,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 155.361,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "at": "2026-10-13T08:03:25.109957+00:00",
+      "monotonic": 12456.827756494,
+      "simulator": {
+        "revision": 3,
+        "running": true,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [
+          "CONTROL_REJECTED"
+        ],
+        "scope": "ALL",
+        "status": "healthy",
+        "lastSeenAt": 1791878603316.0
+      },
+      "counts": {
+        "inspections": 1004,
+        "control_attempts": 1007,
+        "inspection_errors": 4
+      },
+      "position": {
+        "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+        "next_position": 1003
+      },
+      "snapshot": {
+        "contractVersion": "1",
+        "source": "backend",
+        "capturedAt": 1791878604916.0,
+        "revision": 3,
+        "components": {
+          "Simulator": {
+            "status": "healthy",
+            "lastSeenAt": 1791878603316.0,
+            "detail": "검사 전송 중"
+          },
+          "Inference": {
+            "status": "healthy",
+            "lastSeenAt": 1791878604916.0,
+            "detail": "추론 서비스 준비 완료"
+          },
+          "Backend": {
+            "status": "healthy",
+            "lastSeenAt": 1791878604916.0,
+            "detail": "관제 API 응답 중"
+          },
+          "MySQL": {
+            "status": "healthy",
+            "lastSeenAt": 1791878604916.0,
+            "detail": "검사 이력 조회 성공"
+          }
+        },
+        "state": {
+          "running": true,
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "faults": [
+            "CONTROL_REJECTED"
+          ],
+          "scope": "ALL",
+          "jobs": [],
+          "errors": [
+            {
+              "id": "a9309f7c-2883-4612-996b-13986995e0e9",
+              "date": "2026-10-13",
+              "time": "17:03:23.286",
+              "timestamp": 1791878603286.0,
+              "variety": "부사",
+              "grade": "보통",
+              "confidence": 98.0896,
+              "cultivarConfidence": 100.0,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 159.066,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+              "date": "2026-10-13",
+              "time": "17:03:21.235",
+              "timestamp": 1791878601235.0,
+              "variety": "부사",
+              "grade": "보통",
+              "confidence": 67.5709,
+              "cultivarConfidence": 99.9996,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.9,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 164.99,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+              "date": "2026-10-13",
+              "time": "17:03:19.477",
+              "timestamp": 1791878599477.0,
+              "variety": "부사",
+              "grade": "보통",
+              "confidence": 95.6202,
+              "cultivarConfidence": 99.9964,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 15.0,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 148.088,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+              "date": "2026-10-13",
+              "time": "17:03:16.956",
+              "timestamp": 1791878596956.0,
+              "variety": "양광",
+              "grade": "특",
+              "confidence": 81.13510000000001,
+              "cultivarConfidence": 99.93220000000001,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.9,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 155.361,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "at": "2026-10-13T08:03:26.360799+00:00",
+      "monotonic": 12458.078598966,
+      "simulator": {
+        "revision": 3,
+        "running": true,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [
+          "CONTROL_REJECTED"
+        ],
+        "scope": "ALL",
+        "status": "healthy",
+        "lastSeenAt": 1791878605658.0
+      },
+      "counts": {
+        "inspections": 1004,
+        "control_attempts": 1008,
+        "inspection_errors": 5
+      },
+      "position": {
+        "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+        "next_position": 1004
+      },
+      "snapshot": {
+        "contractVersion": "1",
+        "source": "backend",
+        "capturedAt": 1791878606207.0,
+        "revision": 3,
+        "components": {
+          "Simulator": {
+            "status": "healthy",
+            "lastSeenAt": 1791878605658.0,
+            "detail": "검사 전송 중"
+          },
+          "Inference": {
+            "status": "healthy",
+            "lastSeenAt": 1791878606207.0,
+            "detail": "추론 서비스 준비 완료"
+          },
+          "Backend": {
+            "status": "healthy",
+            "lastSeenAt": 1791878606207.0,
+            "detail": "관제 API 응답 중"
+          },
+          "MySQL": {
+            "status": "healthy",
+            "lastSeenAt": 1791878606207.0,
+            "detail": "검사 이력 조회 성공"
+          }
+        },
+        "state": {
+          "running": true,
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "faults": [
+            "CONTROL_REJECTED"
+          ],
+          "scope": "ALL",
+          "jobs": [],
+          "errors": [
+            {
+              "id": "58a962ce-01da-4d2c-853e-5e9180a6bf6f",
+              "date": "2026-10-13",
+              "time": "17:03:25.545",
+              "timestamp": 1791878605545.0,
+              "variety": "양광",
+              "grade": "상",
+              "confidence": 50.9006,
+              "cultivarConfidence": 99.3538,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.4,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 149.68,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "a9309f7c-2883-4612-996b-13986995e0e9",
+              "date": "2026-10-13",
+              "time": "17:03:23.286",
+              "timestamp": 1791878603286.0,
+              "variety": "부사",
+              "grade": "보통",
+              "confidence": 98.0896,
+              "cultivarConfidence": 100.0,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 159.066,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+              "date": "2026-10-13",
+              "time": "17:03:21.235",
+              "timestamp": 1791878601235.0,
+              "variety": "부사",
+              "grade": "보통",
+              "confidence": 67.5709,
+              "cultivarConfidence": 99.9996,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.9,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 164.99,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+              "date": "2026-10-13",
+              "time": "17:03:19.477",
+              "timestamp": 1791878599477.0,
+              "variety": "부사",
+              "grade": "보통",
+              "confidence": 95.6202,
+              "cultivarConfidence": 99.9964,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 15.0,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 148.088,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+              "date": "2026-10-13",
+              "time": "17:03:16.956",
+              "timestamp": 1791878596956.0,
+              "variety": "양광",
+              "grade": "특",
+              "confidence": 81.13510000000001,
+              "cultivarConfidence": 99.93220000000001,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.9,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 155.361,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

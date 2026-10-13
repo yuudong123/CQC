@@ -1,0 +1,6 @@
+{
+  "pid": 350,
+  "namespace_pid": 12,
+  "instrumentation": true,
+  "credentials": "memory only"
+}

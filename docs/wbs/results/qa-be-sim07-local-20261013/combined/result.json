@@ -1,0 +1,115 @@
+{
+  "official_pass_changed": false,
+  "environment": "local WSL process environment, not E2",
+  "runtime_source": "f8a2002",
+  "git_head": "5493e8c4288d945efeec8c764e13697cc548ddfb",
+  "original_combined_condition": "Combined ALL only; independent rounds not repeated",
+  "frontend_warning": "NOT TESTED: no connected dedicated Frontend",
+  "rounds": [
+    {
+      "fault": "COMBINED",
+      "scope": "ALL",
+      "window_seconds": 10.29957350299992,
+      "window_targets": [
+        "a74081fc-4c51-4d43-9e48-f90fecd37b87",
+        "179a00f4-da7a-466a-b013-4ae18c93a62d",
+        "9307189a-6a07-41aa-819c-ed08c0704cb9",
+        "b146e1ff-1223-4b8d-9482-3ead3a7fc4bd",
+        "75b5190e-41a3-465f-bab4-3217a9cd155c"
+      ],
+      "all_fault_targets": [
+        "a74081fc-4c51-4d43-9e48-f90fecd37b87",
+        "179a00f4-da7a-466a-b013-4ae18c93a62d",
+        "9307189a-6a07-41aa-819c-ed08c0704cb9",
+        "b146e1ff-1223-4b8d-9482-3ead3a7fc4bd",
+        "75b5190e-41a3-465f-bab4-3217a9cd155c",
+        "afd196e5-0bd1-4051-a239-547e64314423"
+      ],
+      "window_unapplied": [
+        "a74081fc-4c51-4d43-9e48-f90fecd37b87",
+        "179a00f4-da7a-466a-b013-4ae18c93a62d",
+        "9307189a-6a07-41aa-819c-ed08c0704cb9",
+        "b146e1ff-1223-4b8d-9482-3ead3a7fc4bd",
+        "75b5190e-41a3-465f-bab4-3217a9cd155c"
+      ],
+      "target_count": 6,
+      "new_rows": 9,
+      "http_errors": [],
+      "saved": 6,
+      "target_states": [
+        {
+          "inspection_id": "a74081fc-4c51-4d43-9e48-f90fecd37b87",
+          "source_reference": "demo-601032011000-005",
+          "inspection_status": "REINSPECTION_REQUIRED",
+          "control_status": "REJECTED",
+          "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+          "control_attempts": 1,
+          "error_rows": 2
+        },
+        {
+          "inspection_id": "179a00f4-da7a-466a-b013-4ae18c93a62d",
+          "source_reference": "demo-601142010000-006",
+          "inspection_status": "REINSPECTION_REQUIRED",
+          "control_status": "REJECTED",
+          "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+          "control_attempts": 1,
+          "error_rows": 2
+        },
+        {
+          "inspection_id": "9307189a-6a07-41aa-819c-ed08c0704cb9",
+          "source_reference": "demo-601142001000-001",
+          "inspection_status": "REINSPECTION_REQUIRED",
+          "control_status": "REJECTED",
+          "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+          "control_attempts": 1,
+          "error_rows": 2
+        },
+        {
+          "inspection_id": "b146e1ff-1223-4b8d-9482-3ead3a7fc4bd",
+          "source_reference": "demo-601142011000-003",
+          "inspection_status": "REINSPECTION_REQUIRED",
+          "control_status": "REJECTED",
+          "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+          "control_attempts": 1,
+          "error_rows": 2
+        },
+        {
+          "inspection_id": "75b5190e-41a3-465f-bab4-3217a9cd155c",
+          "source_reference": "demo-601142013000-004",
+          "inspection_status": "REINSPECTION_REQUIRED",
+          "control_status": "REJECTED",
+          "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+          "control_attempts": 1,
+          "error_rows": 2
+        },
+        {
+          "inspection_id": "afd196e5-0bd1-4051-a239-547e64314423",
+          "source_reference": "demo-601143014000-001",
+          "inspection_status": "REINSPECTION_REQUIRED",
+          "control_status": "REJECTED",
+          "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+          "control_attempts": 1,
+          "error_rows": 2
+        }
+      ],
+      "post_clear_completed_ids": [
+        "2b952cbd-5ebc-4af1-884d-b9a5d4c2c333"
+      ],
+      "final_state": {
+        "revision": 5,
+        "running": false,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [],
+        "scope": "ALL",
+        "status": "stopped",
+        "lastSeenAt": 1791879360150.0
+      }
+    }
+  ],
+  "status": "TEST_INTERRUPTED",
+  "error_type": "AssertionError",
+  "error": "",
+  "final_stop_confirmed": true,
+  "previous_evidence_and_auto_unchanged": true
+}

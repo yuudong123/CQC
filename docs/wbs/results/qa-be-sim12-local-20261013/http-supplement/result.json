@@ -1,0 +1,80 @@
+{
+  "official_qa_changed": false,
+  "old_http_evidence": "Request completion logs only; no request start or inspection-ID paired RTT",
+  "old_run": "sim12-20261013",
+  "supplementary_single_run": true,
+  "runtime_head": "f8a2002",
+  "git_head": "5493e8c",
+  "measurement_seconds": 60,
+  "completed_in_window": 52,
+  "throughput": 0.8666666666666667,
+  "phase_rows": 53,
+  "completion_gaps": {
+    "count": 51,
+    "minimum": 0.9660000801086426,
+    "median": 1.1109998226165771,
+    "maximum": 1.7149999141693115
+  },
+  "http_round_trip_seconds": {
+    "count": 52,
+    "minimum": 0.6694342069986305,
+    "median": 0.7665221895003924,
+    "maximum": 0.9760971499999869
+  },
+  "expected_max_1_http_seconds": {
+    "count": 52,
+    "minimum": 1,
+    "median": 1.0,
+    "maximum": 1
+  },
+  "input_start_gaps": {
+    "count": 52,
+    "minimum": 0.942712236999796,
+    "median": 1.1096954939994248,
+    "maximum": 1.5982720159991004
+  },
+  "gap_minus_expected_seconds": {
+    "count": 52,
+    "minimum": -0.057287763000203995,
+    "median": 0.1096954939994248,
+    "maximum": 0.5982720159991004
+  },
+  "dataset_load_seconds": {
+    "count": 52,
+    "minimum": 0.15676490599980752,
+    "median": 0.27818066099916905,
+    "maximum": 0.6368059319993336
+  },
+  "jobs_max": 1,
+  "http_status_counts": {
+    "200": 53
+  },
+  "http_trace_db_complete": true,
+  "saved": 53,
+  "controls": 53,
+  "system_errors": [],
+  "status": "ONE_SUPPLEMENT_MEASUREMENT_COMPLETE",
+  "quantitative_judgment": "Observed gap exceeds max(1s,measured HTTP RTT); nominal quantitative expectation not met. No tolerance added; official judgment unchanged.",
+  "final_state": {
+    "revision": 1,
+    "running": false,
+    "concurrency": 1,
+    "intervalMs": 2000,
+    "faults": [],
+    "scope": "ALL",
+    "status": "stopped",
+    "lastSeenAt": 1791876812205.0
+  },
+  "final_counts": {
+    "inspections": 998,
+    "control_attempts": 998,
+    "inspection_errors": 0
+  },
+  "final_position": {
+    "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+    "next_position": 998
+  },
+  "normal_launcher_restored": true,
+  "final_stop_confirmed": true,
+  "original_evidence_and_auto_unchanged": true
+}

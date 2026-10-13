@@ -1,0 +1,64 @@
+{
+  "official_qa_changed": false,
+  "environment": "dedicated WSL process environment, not E2 Docker",
+  "runtime_head": "f8a2002",
+  "git_head": "5493e8c",
+  "status": "LOCAL_CYCLE_CONDITIONS_MET",
+  "initial_position": 73,
+  "baseline_counts": {
+    "inspections": 73,
+    "control_attempts": 73,
+    "inspection_errors": 0
+  },
+  "elapsed_until_full_cycle_seconds": 1738.3043707800007,
+  "cycle_acquired_at": "2026-10-13T06:57:48.684740+00:00",
+  "final_stop_restore_confirmed": true,
+  "final_state": {
+    "revision": 5,
+    "running": false,
+    "concurrency": 1,
+    "intervalMs": 2000,
+    "faults": [],
+    "scope": "ALL",
+    "status": "stopped",
+    "lastSeenAt": 1791874669505.0
+  },
+  "final_position": {
+    "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+    "next_position": 943
+  },
+  "final_counts": {
+    "inspections": 943,
+    "control_attempts": 943,
+    "inspection_errors": 0
+  },
+  "stable_after_stop": true,
+  "new_inspections": 870,
+  "cycle_rows": 869,
+  "cycle_unique_bundles": 869,
+  "missing_bundles": [],
+  "duplicate_bundles": {},
+  "duplicate_inspection_ids": 0,
+  "sequence_matches": true,
+  "boundary_count": 1,
+  "extra_rows_after_first_869": 1,
+  "inspection_status_counts": {
+    "COMPLETED": 780,
+    "REINSPECTION_REQUIRED": 90
+  },
+  "saved": 870,
+  "control_attempts": 870,
+  "control_success": 870,
+  "control_attempt_count_distribution": {
+    "1": 870
+  },
+  "low_confidence": 90,
+  "system_errors": [],
+  "expected_absolute_after_cycle": 942,
+  "final_modulo_index": 74,
+  "new_vs_position_delta_matches": true,
+  "same_bundle_new_ids_confirmed": true,
+  "prior_evidence_and_auto_unchanged": true,
+  "started_at": "2026-10-13T06:28:50.380355+00:00",
+  "finished_at": "2026-10-13T06:57:53.035992+00:00"
+}

@@ -1,0 +1,6 @@
+2026-10-13 17:15:43,743 ERROR src.api.services.inspections Inspection image storage: inspection_id=a74081fc-4c51-4d43-9e48-f90fecd37b87 decision_reason=INFERENCE_DEADLINE_EXCEEDED image_storage=saved images_saved=12
+2026-10-13 17:15:46,201 ERROR src.api.services.inspections Inspection image storage: inspection_id=179a00f4-da7a-466a-b013-4ae18c93a62d decision_reason=INFERENCE_DEADLINE_EXCEEDED image_storage=saved images_saved=12
+2026-10-13 17:15:47,786 ERROR src.api.services.inspections Inspection image storage: inspection_id=9307189a-6a07-41aa-819c-ed08c0704cb9 decision_reason=INFERENCE_DEADLINE_EXCEEDED image_storage=saved images_saved=12
+2026-10-13 17:15:50,084 ERROR src.api.services.inspections Inspection image storage: inspection_id=b146e1ff-1223-4b8d-9482-3ead3a7fc4bd decision_reason=INFERENCE_DEADLINE_EXCEEDED image_storage=saved images_saved=12
+2026-10-13 17:15:51,789 ERROR src.api.services.inspections Inspection image storage: inspection_id=75b5190e-41a3-465f-bab4-3217a9cd155c decision_reason=INFERENCE_DEADLINE_EXCEEDED image_storage=saved images_saved=12
+2026-10-13 17:15:53,982 ERROR src.api.services.inspections Inspection image storage: inspection_id=afd196e5-0bd1-4051-a239-547e64314423 decision_reason=INFERENCE_DEADLINE_EXCEEDED image_storage=saved images_saved=12

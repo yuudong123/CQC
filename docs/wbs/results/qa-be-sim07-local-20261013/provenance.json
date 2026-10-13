@@ -1,0 +1,261 @@
+[
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/README.md",
+        "source_sha256":  "82aec5c01edafc3e24f5118b81c9aae9efc3cb207ed13258f5c246b3b79bdf6a",
+        "output":  "independent/README.md",
+        "output_sha256":  "82aec5c01edafc3e24f5118b81c9aae9efc3cb207ed13258f5c246b3b79bdf6a",
+        "transform":  "원본 바이트 복사"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/result.json",
+        "source_sha256":  "5b0dd4e712badc02e5399af8c21fa13e1af62f38664d82893ffeb95b040a806e",
+        "output":  "independent/result.json",
+        "output_sha256":  "5b0dd4e712badc02e5399af8c21fa13e1af62f38664d82893ffeb95b040a806e",
+        "transform":  "원본 바이트 복사"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/review.json",
+        "source_sha256":  "6334d33b1f697592a205cfaa192906a6cc11d737056e6465443931663fdd6462",
+        "output":  "independent/review.json",
+        "output_sha256":  "6334d33b1f697592a205cfaa192906a6cc11d737056e6465443931663fdd6462",
+        "transform":  "원본 바이트 복사"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/target-inspections.csv",
+        "source_sha256":  "1fd90f368e712eba8def18539339f4ec5d8002268d49cc5447642b63019631ef",
+        "output":  "independent/target-inspections.csv",
+        "output_sha256":  "1fd90f368e712eba8def18539339f4ec5d8002268d49cc5447642b63019631ef",
+        "transform":  "원본 바이트 복사"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/manifest.sha256",
+        "source_sha256":  "9e25e22e14df29f1b19f1b05bbeb8a6e59563637c0e5de1ba9a2ef3f333bed4c",
+        "output":  "independent/source-manifest/manifest.sha256",
+        "output_sha256":  "9e25e22e14df29f1b19f1b05bbeb8a6e59563637c0e5de1ba9a2ef3f333bed4c",
+        "transform":  "원본 바이트 복사"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/review-manifest.sha256",
+        "source_sha256":  "1f72897f1ef2681b956fb2e3e74b2b7705e8a674c8790c7a67e1f8f9c2c8061d",
+        "output":  "independent/source-manifest/review-manifest.sha256",
+        "output_sha256":  "1f72897f1ef2681b956fb2e3e74b2b7705e8a674c8790c7a67e1f8f9c2c8061d",
+        "transform":  "원본 바이트 복사"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/environment.json",
+        "source_sha256":  "f2747efbee9f64d47dbaf923c64029959a1532a723d34e68f32ac601467c79f5",
+        "output":  "independent/environment.json",
+        "output_sha256":  "3f66121adc7268cdfda1692ad96089d9d50d108b295ff864601aca2cb0ed0488",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/CONTROL_REJECTED-joined.json",
+        "source_sha256":  "b740260363e5b39e34554cd8d5ec53b477c36b8a0d594f4bcb873dfd1e05d649",
+        "output":  "independent/CONTROL_REJECTED-joined.json",
+        "output_sha256":  "b740260363e5b39e34554cd8d5ec53b477c36b8a0d594f4bcb873dfd1e05d649",
+        "transform":  "원본 바이트 복사"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/CONTROL_REJECTED-apply.json",
+        "source_sha256":  "dd3fa5169eacb901a61c20f771015b57d133f46bf82fd61722356d391b4326ef",
+        "output":  "independent/CONTROL_REJECTED-apply.json",
+        "output_sha256":  "db8f77e8bc468563102061750e5a078b3270582a92d0b95c2927b4048adf25f2",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/CONTROL_REJECTED-start.json",
+        "source_sha256":  "a994cdeaf9224d1925937fffc83bb740b9532cb6cd93cdae7bf674b62b1ef00d",
+        "output":  "independent/CONTROL_REJECTED-start.json",
+        "output_sha256":  "deadc311d3d5f3243bc7b3fb555b704d375a0351817ff8516b8bb9486e25261a",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/CONTROL_REJECTED-clear.json",
+        "source_sha256":  "d3cfdca21841e0a1ea6effb16f03040021c9cf7c2bb736181981e7716cb65700",
+        "output":  "independent/CONTROL_REJECTED-clear.json",
+        "output_sha256":  "776a2be65476391515218359cd395cdf434e7cdd8ba7c819917f097384ef1a75",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/CONTROL_REJECTED-stop.json",
+        "source_sha256":  "ff9413221edd4a3a0a1117b352cfc88c357c41cd7f411eff9f9f9b9b1a62f144",
+        "output":  "independent/CONTROL_REJECTED-stop.json",
+        "output_sha256":  "434a6cfd9859056619bd64125200aca7b0f84f9550c5af3d27897f5011efd620",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/CONTROL_REJECTED-timeseries.json",
+        "source_sha256":  "569889f79a26bb94387cf1cb6c3a2535ec635fc1c8e685a62cda61d690e707ad",
+        "output":  "independent/CONTROL_REJECTED-timeseries.json",
+        "output_sha256":  "d50f78a85d6076fd10ceee073c4ba48c25cd78b728cccc776e3caae9400d8fbe",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/INFERENCE_TIMEOUT-joined.json",
+        "source_sha256":  "9fc30248bd19d6046d86ee8bce33212a9cf74a351349b1622f730158bbccbf61",
+        "output":  "independent/INFERENCE_TIMEOUT-joined.json",
+        "output_sha256":  "9fc30248bd19d6046d86ee8bce33212a9cf74a351349b1622f730158bbccbf61",
+        "transform":  "원본 바이트 복사"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/INFERENCE_TIMEOUT-apply.json",
+        "source_sha256":  "6ecb1ef60b155a2e7755e24f69f23526a6be08d04683165df1b1d16a90b1975f",
+        "output":  "independent/INFERENCE_TIMEOUT-apply.json",
+        "output_sha256":  "b60e0ca2fd85e2948d1d99878d14a5aa5eb7afdcc348c9682023106a0857af25",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/INFERENCE_TIMEOUT-start.json",
+        "source_sha256":  "579b3671c7a1a6e330d16c28d114311ce0b7a7d07be5fee2c3d59ed81d28c27f",
+        "output":  "independent/INFERENCE_TIMEOUT-start.json",
+        "output_sha256":  "b12a9a93a9b14e4397216ecac44c1049121d42b27dcf2e147c04f1172572d498",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/INFERENCE_TIMEOUT-clear.json",
+        "source_sha256":  "20a3f407d9c8d276e823375763a6e86943b9f751ae0ffa574ae22831a5fd7394",
+        "output":  "independent/INFERENCE_TIMEOUT-clear.json",
+        "output_sha256":  "38152e102873a0d99166cd8f2b928ef7eea638c5c830767226dd9b165ccf1520",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/INFERENCE_TIMEOUT-stop.json",
+        "source_sha256":  "41ad99516cf5c14cd6a404eb0ca8ba4b9991e2a4cd1603a90ef45e5160239ae9",
+        "output":  "independent/INFERENCE_TIMEOUT-stop.json",
+        "output_sha256":  "10f42cb16fa76d46fd945c11c7a48c4e7e42358b9ce8ea2f046fab9fba84cc5f",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/INFERENCE_TIMEOUT-timeseries.json",
+        "source_sha256":  "ac68da077dac2e2f49764fac00992c36d0a6bcd3025e295735d88743639a4713",
+        "output":  "independent/INFERENCE_TIMEOUT-timeseries.json",
+        "output_sha256":  "8e70943c2ba6e8f6b1d02430cd4067d95f40f3a254d0d9b5fc3d98255d175266",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/final-stable.json",
+        "source_sha256":  "7c6708d18ab1092cc37dd91fe3fa29a4ce21afb8d765a9e7f7e702d1f2d14bec",
+        "output":  "independent/final-state.json",
+        "output_sha256":  "50a1891b6ee4fa762d971177af71062190aa414302602727c78c01da9d11968e",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/run1/log-backend-error.log",
+        "source_sha256":  "e823befbd076d0b15f304ba9613b1376081d5379c60c6c6b563bf49c47af92e0",
+        "output":  "independent/backend-error.log",
+        "output_sha256":  "e823befbd076d0b15f304ba9613b1376081d5379c60c6c6b563bf49c47af92e0",
+        "transform":  "원본 바이트 복사"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/combined/README.md",
+        "source_sha256":  "4dca1c9ca143b01c3db810d99731dfe62f079bf5d5b7992c6395b79c5f9576cc",
+        "output":  "combined/README.md",
+        "output_sha256":  "4dca1c9ca143b01c3db810d99731dfe62f079bf5d5b7992c6395b79c5f9576cc",
+        "transform":  "원본 바이트 복사"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/combined/result.json",
+        "source_sha256":  "99bb085621ac9e170cbb0da20eea02559815213b45d0da47674abdae809e05f5",
+        "output":  "combined/result.json",
+        "output_sha256":  "99bb085621ac9e170cbb0da20eea02559815213b45d0da47674abdae809e05f5",
+        "transform":  "원본 바이트 복사"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/combined/review.json",
+        "source_sha256":  "21dfc93d52d29f538049169736484bb75626b71433796b19b44b83366a13a4ce",
+        "output":  "combined/review.json",
+        "output_sha256":  "21dfc93d52d29f538049169736484bb75626b71433796b19b44b83366a13a4ce",
+        "transform":  "원본 바이트 복사"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/combined/review-targets.csv",
+        "source_sha256":  "9505d9d3eab513553287a5c3e0d7e0c8a17fdee3e919cd4cac8407cbb7c56e4c",
+        "output":  "combined/review-targets.csv",
+        "output_sha256":  "9505d9d3eab513553287a5c3e0d7e0c8a17fdee3e919cd4cac8407cbb7c56e4c",
+        "transform":  "원본 바이트 복사"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/combined/review-public-history.json",
+        "source_sha256":  "af553ff9700f4e05ef634d725c90a2f2b87a36c48cfa3073b5e992aaff77f363",
+        "output":  "combined/review-public-history.json",
+        "output_sha256":  "af553ff9700f4e05ef634d725c90a2f2b87a36c48cfa3073b5e992aaff77f363",
+        "transform":  "원본 바이트 복사"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/combined/manifest.sha256",
+        "source_sha256":  "18c787143026d069970aae64e1b3e588e9000594eb4c68fab534ff60c2ddd641",
+        "output":  "combined/source-manifest/manifest.sha256",
+        "output_sha256":  "18c787143026d069970aae64e1b3e588e9000594eb4c68fab534ff60c2ddd641",
+        "transform":  "원본 바이트 복사"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/combined/review-manifest.sha256",
+        "source_sha256":  "1aee135db5ca6445fb05a1d94b358191cbf484b6313edc10ca29305618243ada",
+        "output":  "combined/source-manifest/review-manifest.sha256",
+        "output_sha256":  "1aee135db5ca6445fb05a1d94b358191cbf484b6313edc10ca29305618243ada",
+        "transform":  "원본 바이트 복사"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/combined/environment.json",
+        "source_sha256":  "9cdd1e0eb9eff711b3b2687a21fb85270535adcfcf73c22248641a91ab79ae73",
+        "output":  "combined/environment.json",
+        "output_sha256":  "3f66121adc7268cdfda1692ad96089d9d50d108b295ff864601aca2cb0ed0488",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/combined/COMBINED-joined.json",
+        "source_sha256":  "16da208f43e214025549a61b3e958b4a61a87791a6db28c4a1033d319d72ea06",
+        "output":  "combined/COMBINED-joined.json",
+        "output_sha256":  "16da208f43e214025549a61b3e958b4a61a87791a6db28c4a1033d319d72ea06",
+        "transform":  "원본 바이트 복사"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/combined/COMBINED-apply.json",
+        "source_sha256":  "b828a4999efebd71c0cd7511f08ca90b37515626e09aa6a6180d3bcb6cdca801",
+        "output":  "combined/COMBINED-apply.json",
+        "output_sha256":  "e55ec3f588100a50f03712c5471f4a825fc48787ad1b43cb65d6347964f610da",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/combined/COMBINED-start.json",
+        "source_sha256":  "a6d9baf37379a66d8b454ed99a00ce76d5785602b05964d9c4953c360fa3d715",
+        "output":  "combined/COMBINED-start.json",
+        "output_sha256":  "ec963f24388c4dc2fdb8c0b1fe7a958578a87a86b4e77db1e15eefe0f5c9346b",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/combined/COMBINED-clear.json",
+        "source_sha256":  "f718452335aa90d3d3249602b3099951f8fd983bb3cf90c820d9c0fb87e576e4",
+        "output":  "combined/COMBINED-clear.json",
+        "output_sha256":  "0ff831f72ca1e6a2c6d368db962dfecbcf88b11d3aed84f1512d0b008d90df61",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/combined/COMBINED-stop.json",
+        "source_sha256":  "27068bbdbb5a27e3babbee2bc302e6d51b253ed70a4577faf2bffe014292c8ed",
+        "output":  "combined/COMBINED-stop.json",
+        "output_sha256":  "246cbf99745cc6e350278fa72120aab6e22b217cf60fe8907db75da315fa355f",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/combined/COMBINED-timeseries.json",
+        "source_sha256":  "80850aafccc482fb6737a7343c9a26b2d9837c54f16044d2ee27b65fb84b11cb",
+        "output":  "combined/COMBINED-timeseries.json",
+        "output_sha256":  "2cf069d7f5a0048d4fbb62fe14f65fee35bc683aa92d65d410f79417c776d411",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/combined/review-final-stable.json",
+        "source_sha256":  "1315b9a270c36658efc41552ceba04aa59052ddad2ae7eab31179f53f3e4d63b",
+        "output":  "combined/final-state.json",
+        "output_sha256":  "533e019e5ba3c4f0f8c985cac5ee48248c8205586789fa5eea0202d4519f280b",
+        "transform":  "재검수에 필요한 필드 선별; D 원본 보존"
+    },
+    {
+        "source":  "D:/CQC-SIM-QA/evidence/sim07-20261013/combined/review-log-backend-error.log",
+        "source_sha256":  "71eb4e7aa0c87a9486366015b2df238584ce03ec894cc9530d157612000d1f59",
+        "output":  "combined/backend-error.log",
+        "output_sha256":  "71eb4e7aa0c87a9486366015b2df238584ce03ec894cc9530d157612000d1f59",
+        "transform":  "원본 바이트 복사"
+    }
+]

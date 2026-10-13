@@ -1,0 +1,56 @@
+{
+  "started": "2026-10-13T08:03:14.047302+00:00",
+  "ended": "2026-10-13T08:03:14.155140+00:00",
+  "request": {
+    "expectedRevision": 1,
+    "faults": [
+      "CONTROL_REJECTED"
+    ],
+    "scope": "ALL"
+  },
+  "http_status": 200,
+  "response_headers": {
+    "date": "Tue, 13 Oct 2026 08:03:13 GMT",
+    "content-type": "application/json",
+    "cache-control": "no-store"
+  },
+  "response": {
+    "contractVersion": "1",
+    "source": "backend",
+    "capturedAt": 1791878594055.0,
+    "revision": 2,
+    "components": {
+      "Simulator": {
+        "status": "stopped",
+        "lastSeenAt": 1791878593367.0,
+        "detail": "정지"
+      },
+      "Inference": {
+        "status": "unknown",
+        "lastSeenAt": null,
+        "detail": "상태 확인 연동 전"
+      },
+      "Backend": {
+        "status": "healthy",
+        "lastSeenAt": 1791878594055.0,
+        "detail": "관제 API 응답 중"
+      },
+      "MySQL": {
+        "status": "healthy",
+        "lastSeenAt": 1791878594055.0,
+        "detail": "검사 이력 조회 성공"
+      }
+    },
+    "state": {
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [
+        "CONTROL_REJECTED"
+      ],
+      "scope": "ALL",
+      "jobs": [],
+      "errors": []
+    }
+  }
+}

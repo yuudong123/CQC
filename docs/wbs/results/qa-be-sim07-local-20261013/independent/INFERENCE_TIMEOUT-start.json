@@ -1,0 +1,189 @@
+{
+  "started": "2026-10-13T08:03:28.901326+00:00",
+  "ended": "2026-10-13T08:03:30.625175+00:00",
+  "request": {
+    "expectedRevision": 6,
+    "running": true
+  },
+  "http_status": 200,
+  "response_headers": {
+    "date": "Tue, 13 Oct 2026 08:03:28 GMT",
+    "content-type": "application/json",
+    "cache-control": "no-store"
+  },
+  "response": {
+    "contractVersion": "1",
+    "source": "backend",
+    "capturedAt": 1791878608908.0,
+    "revision": 7,
+    "components": {
+      "Simulator": {
+        "status": "healthy",
+        "lastSeenAt": null,
+        "detail": "검사 전송 중"
+      },
+      "Inference": {
+        "status": "unknown",
+        "lastSeenAt": null,
+        "detail": "상태 확인 연동 전"
+      },
+      "Backend": {
+        "status": "healthy",
+        "lastSeenAt": 1791878608908.0,
+        "detail": "관제 API 응답 중"
+      },
+      "MySQL": {
+        "status": "healthy",
+        "lastSeenAt": 1791878608908.0,
+        "detail": "검사 이력 조회 성공"
+      }
+    },
+    "state": {
+      "running": true,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [
+        "INFERENCE_TIMEOUT"
+      ],
+      "scope": "ALL",
+      "jobs": [],
+      "errors": [
+        {
+          "id": "58a962ce-01da-4d2c-853e-5e9180a6bf6f",
+          "date": "2026-10-13",
+          "time": "17:03:25.545",
+          "timestamp": 1791878605545.0,
+          "variety": "양광",
+          "grade": "상",
+          "confidence": 50.9006,
+          "cultivarConfidence": 99.3538,
+          "status": "REVIEW",
+          "processingStatus": "COMPLETED",
+          "errorCode": "CONTROL_REJECTED",
+          "misclassification": "NONE",
+          "bin": "TEST_REINSPECTION_BIN",
+          "virtualBrix": 13.4,
+          "brixMeasured": false,
+          "imageIndex": null,
+          "inferenceMs": 149.68,
+          "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+          "reviewRequired": true,
+          "excluded": false,
+          "control": "REJECTED",
+          "persistence": "SAVED",
+          "faults": [
+            "CONTROL_REJECTED"
+          ]
+        },
+        {
+          "id": "a9309f7c-2883-4612-996b-13986995e0e9",
+          "date": "2026-10-13",
+          "time": "17:03:23.286",
+          "timestamp": 1791878603286.0,
+          "variety": "부사",
+          "grade": "보통",
+          "confidence": 98.0896,
+          "cultivarConfidence": 100.0,
+          "status": "REVIEW",
+          "processingStatus": "COMPLETED",
+          "errorCode": "CONTROL_REJECTED",
+          "misclassification": "NONE",
+          "bin": "TEST_REINSPECTION_BIN",
+          "virtualBrix": 13.5,
+          "brixMeasured": false,
+          "imageIndex": null,
+          "inferenceMs": 159.066,
+          "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+          "reviewRequired": true,
+          "excluded": false,
+          "control": "FALLBACK",
+          "persistence": "SAVED",
+          "faults": [
+            "CONTROL_REJECTED"
+          ]
+        },
+        {
+          "id": "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+          "date": "2026-10-13",
+          "time": "17:03:21.235",
+          "timestamp": 1791878601235.0,
+          "variety": "부사",
+          "grade": "보통",
+          "confidence": 67.5709,
+          "cultivarConfidence": 99.9996,
+          "status": "REVIEW",
+          "processingStatus": "COMPLETED",
+          "errorCode": "CONTROL_REJECTED",
+          "misclassification": "NONE",
+          "bin": "TEST_REINSPECTION_BIN",
+          "virtualBrix": 12.9,
+          "brixMeasured": false,
+          "imageIndex": null,
+          "inferenceMs": 164.99,
+          "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+          "reviewRequired": true,
+          "excluded": false,
+          "control": "FALLBACK",
+          "persistence": "SAVED",
+          "faults": [
+            "CONTROL_REJECTED"
+          ]
+        },
+        {
+          "id": "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+          "date": "2026-10-13",
+          "time": "17:03:19.477",
+          "timestamp": 1791878599477.0,
+          "variety": "부사",
+          "grade": "보통",
+          "confidence": 95.6202,
+          "cultivarConfidence": 99.9964,
+          "status": "REVIEW",
+          "processingStatus": "COMPLETED",
+          "errorCode": "CONTROL_REJECTED",
+          "misclassification": "NONE",
+          "bin": "TEST_REINSPECTION_BIN",
+          "virtualBrix": 15.0,
+          "brixMeasured": false,
+          "imageIndex": null,
+          "inferenceMs": 148.088,
+          "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+          "reviewRequired": true,
+          "excluded": false,
+          "control": "FALLBACK",
+          "persistence": "SAVED",
+          "faults": [
+            "CONTROL_REJECTED"
+          ]
+        },
+        {
+          "id": "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+          "date": "2026-10-13",
+          "time": "17:03:16.956",
+          "timestamp": 1791878596956.0,
+          "variety": "양광",
+          "grade": "특",
+          "confidence": 81.13510000000001,
+          "cultivarConfidence": 99.93220000000001,
+          "status": "REVIEW",
+          "processingStatus": "COMPLETED",
+          "errorCode": "CONTROL_REJECTED",
+          "misclassification": "NONE",
+          "bin": "TEST_REINSPECTION_BIN",
+          "virtualBrix": 14.9,
+          "brixMeasured": false,
+          "imageIndex": null,
+          "inferenceMs": 155.361,
+          "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+          "reviewRequired": true,
+          "excluded": false,
+          "control": "FALLBACK",
+          "persistence": "SAVED",
+          "faults": [
+            "CONTROL_REJECTED"
+          ]
+        }
+      ]
+    }
+  }
+}
