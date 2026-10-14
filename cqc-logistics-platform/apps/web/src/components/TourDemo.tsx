@@ -83,20 +83,34 @@ export default function TourDemo() {
     if (iframe && iframe.contentWindow?.location.pathname !== step.route) iframe.src = step.route;
   }, [step.route]);
 
-  // 강조할 실제 요소를 찾아 보이게 하고 위치를 잰다. 실제 화면이 계속 갱신되므로 주기적으로 다시 잰다.
+  // 단계 변경과 화면 로드 직후 다음 프레임에 위치를 재고, 실제 화면의 변화도 빠르게 따라간다.
   useEffect(() => {
+    const iframe = frame.current;
     let scrolled = false;
+    let pendingFrame = 0;
     const measure = () => {
-      const doc = frame.current?.contentDocument;
+      const doc = iframe?.contentDocument;
+      if (iframe?.contentWindow?.location.pathname !== step.route) return setSpot(null);
       const element = doc && step.target ? findTarget(doc, step.target) : null;
       if (!doc || !element) return setSpot(null);
       if (!scrolled) { element.scrollIntoView({ block: "center", inline: "nearest" }); scrolled = true; }
       const rect = element.getBoundingClientRect();
-      setSpot({ x: rect.left, y: rect.top, w: rect.width, h: rect.height, vw: doc.documentElement.clientWidth, vh: doc.documentElement.clientHeight });
+      const next = { x: rect.left, y: rect.top, w: rect.width, h: rect.height, vw: doc.documentElement.clientWidth, vh: doc.documentElement.clientHeight };
+      setSpot((previous) => previous && previous.x === next.x && previous.y === next.y && previous.w === next.w && previous.h === next.h && previous.vw === next.vw && previous.vh === next.vh ? previous : next);
       if (step.until && doc.querySelector(step.until)) advance();
     };
-    const timer = window.setInterval(measure, 400);
-    return () => clearInterval(timer);
+    const scheduleMeasure = () => {
+      window.cancelAnimationFrame(pendingFrame);
+      pendingFrame = window.requestAnimationFrame(measure);
+    };
+    scheduleMeasure();
+    iframe?.addEventListener("load", scheduleMeasure);
+    const timer = window.setInterval(scheduleMeasure, 100);
+    return () => {
+      clearInterval(timer);
+      window.cancelAnimationFrame(pendingFrame);
+      iframe?.removeEventListener("load", scheduleMeasure);
+    };
   }, [step, advance]);
 
   // 키보드와, 실제 화면 안에서 강조된 버튼을 누른 것을 듣는다.
