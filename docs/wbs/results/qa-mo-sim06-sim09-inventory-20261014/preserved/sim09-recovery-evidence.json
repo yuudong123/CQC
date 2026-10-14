@@ -1,0 +1,80 @@
+{
+  "project": "cqc-mo09-e2-recovery2-20261006",
+  "started_kst": "2026-10-06 14:55:24 KST",
+  "source_sha": "1f521804e458f2e806aca2eb45fe48303f032f18",
+  "backend_image_id": "sha256:ddeaa7a01eebdbbc94c0c2dd00dd3df04f821590084e762ac81e216f612359c7",
+  "backend_container_id": "70860b907ba73ddc9b489abf11e6fb9832dca57faebf3f2313da31172f704530",
+  "simulator_container_id": "6437fa06846618c0417ff1e656665525d7acba8d622215cb31b5e7e61197d0af",
+  "baseline": {
+    "inspection_id": "qa-mo09-baseline-f417caba9daa4dba",
+    "bundle_id": "demo-601143002000-006",
+    "http_status": 200,
+    "elapsed_seconds": 1.213,
+    "inspection_status": "COMPLETED",
+    "decision_reason": "NORMAL",
+    "target_bin_code": "DEMO_BIN_12",
+    "control_status": "SUCCEEDED",
+    "persistence_status": "SUCCEEDED",
+    "exclude_from_normal_stats": false
+  },
+  "inference_down": {
+    "inspection_id": "qa-mo09-inference-down-82accfd252774817",
+    "bundle_id": "demo-601143002000-006",
+    "http_status": 200,
+    "elapsed_seconds": 1.411,
+    "inspection_status": "REINSPECTION_REQUIRED",
+    "decision_reason": "INFERENCE_CONNECTION_ERROR",
+    "target_bin_code": "TEST_REINSPECTION_BIN",
+    "control_status": "SUCCEEDED",
+    "persistence_status": "SUCCEEDED",
+    "exclude_from_normal_stats": true
+  },
+  "inference_recovered": {
+    "inspection_id": "qa-mo09-inference-recovered-8089d25315174285",
+    "bundle_id": "demo-601143002000-006",
+    "http_status": 200,
+    "elapsed_seconds": 1.783,
+    "inspection_status": "COMPLETED",
+    "decision_reason": "NORMAL",
+    "target_bin_code": "DEMO_BIN_12",
+    "control_status": "SUCCEEDED",
+    "persistence_status": "SUCCEEDED",
+    "exclude_from_normal_stats": false
+  },
+  "mysql_down": {
+    "inspection_id": "qa-mo09-mysql-down-e87f0b64e1624fbc",
+    "bundle_id": "demo-601143002000-006",
+    "http_status": 200,
+    "elapsed_seconds": 4.938,
+    "inspection_status": "COMPLETED",
+    "decision_reason": "NORMAL",
+    "target_bin_code": "DEMO_BIN_12",
+    "control_status": "SUCCEEDED",
+    "persistence_status": "FAILED",
+    "exclude_from_normal_stats": false
+  },
+  "simulator_before_mysql": {
+    "status": "ok",
+    "running": true,
+    "lastSeenAt": 1791266156248.0
+  },
+  "simulator_during_mysql": {
+    "status": "ok",
+    "running": true,
+    "lastSeenAt": 1791266194501.0
+  },
+  "mysql_recovered": {
+    "inspection_id": "qa-mo09-mysql-recovered-d6ecd322e9494b34",
+    "bundle_id": "demo-601143002000-006",
+    "http_status": 200,
+    "elapsed_seconds": 1.594,
+    "inspection_status": "COMPLETED",
+    "decision_reason": "NORMAL",
+    "target_bin_code": "DEMO_BIN_12",
+    "control_status": "SUCCEEDED",
+    "persistence_status": "SUCCEEDED",
+    "exclude_from_normal_stats": false
+  },
+  "backend_container_unchanged": true,
+  "simulator_container_unchanged": true
+}

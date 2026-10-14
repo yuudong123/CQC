@@ -1,0 +1,58 @@
+[
+  {
+    "name": "/cqc-cicd-backend-1",
+    "id": "9cf25f72fb45b1808e4490f9c412eef10efde26e80066ad78ed888fc9dbbc3eb",
+    "image": "sha256:18f40ef5807a0a573d98b0ec978cec2e6870a36b900727a87f0aa60c1edfe643",
+    "StartedAt": "2026-10-14T02:16:26.317003944Z",
+    "RestartCount": 0,
+    "health": "healthy"
+  },
+  {
+    "name": "/cqc-cicd-inference-1",
+    "id": "2273dc22384a3260a070ebcbdf8b5c2eabb34788240ecf5e91cb56b98ffdf68a",
+    "image": "sha256:22849bd7a22863e959ce9870b907813ade59c9f275c014ed30565ce78e7768b7",
+    "StartedAt": "2026-10-14T02:16:13.049362536Z",
+    "RestartCount": 0,
+    "health": "healthy"
+  },
+  {
+    "name": "/cqc-cicd-logistics-api-1",
+    "id": "14a30e6711c55a106fc8a392287a6ce69ef3724fadd159a35b6433f584b52be9",
+    "image": "sha256:79fae4e84f670dac3e336df0a37db8ba24c90f7441634bdd8511ead6757e2a79",
+    "StartedAt": "2026-10-14T02:16:14.124393704Z",
+    "RestartCount": 0,
+    "health": "healthy"
+  },
+  {
+    "name": "/cqc-cicd-logistics-mongodb-1",
+    "id": "6d2c1f3035526dd039ba755c14475e2717586213fe14f503c932df9fa8e78894",
+    "image": "sha256:5d7043a4ffe02b9ed1b6e0bab057546981af5ca0a79107e9c461e49bc44c0a7b",
+    "StartedAt": "2026-10-13T23:54:54.784111192Z",
+    "RestartCount": 0,
+    "health": "healthy"
+  },
+  {
+    "name": "/cqc-cicd-logistics-web-1",
+    "id": "c9f13875008a18c8622c5be02bc2ce2ea339ce5815e8257b4fdce41976143105",
+    "image": "sha256:c50b0d747a9b3233ffe67d1d936d0c4793733188d03e1d733c563f4a7880e095",
+    "StartedAt": "2026-10-14T02:16:34.31155769Z",
+    "RestartCount": 0,
+    "health": "healthy"
+  },
+  {
+    "name": "/cqc-cicd-mysql-1",
+    "id": "d5147f435ac1d38ad4637e090061dddae8a4e75927ca3c7b33fe6e2a00ceaef9",
+    "image": "sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a",
+    "StartedAt": "2026-10-13T23:54:55.262382704Z",
+    "RestartCount": 0,
+    "health": "healthy"
+  },
+  {
+    "name": "/cqc-cicd-simulator-1",
+    "id": "f55051f1e866e3a11d058c982f4cdb14acbd9b8108f979c98a2091431ab1afb1",
+    "image": "sha256:7bd3303b1cbd3d85438a2f80dc95be6d8e2b59a76ef8213816ad3e47f4bca887",
+    "StartedAt": "2026-10-14T02:16:34.414464657Z",
+    "RestartCount": 0,
+    "health": "healthy"
+  }
+]

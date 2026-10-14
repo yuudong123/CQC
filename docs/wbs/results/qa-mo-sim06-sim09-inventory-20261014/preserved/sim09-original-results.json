@@ -1,0 +1,41 @@
+[
+  {
+    "case": "QA-INS-11",
+    "status": "통과",
+    "actor": "홍유나 (MO-09 자동화)",
+    "time_kst": "2026-10-06 14:55:57 KST",
+    "commit_model": "E2 image SHA unverified; script HEAD 1f521804e458",
+    "note": "Inference 정지 중 재검사·저장, 재기동 후 Backend 재시작 없이 정상 저장 확인",
+    "environment": "E2",
+    "coverage": "전체",
+    "qa_case": "QA-INS-11",
+    "owner": "BE",
+    "record_status": "통과"
+  },
+  {
+    "case": "QA-INS-13",
+    "status": "통과",
+    "actor": "홍유나 (MO-09 자동화)",
+    "time_kst": "2026-10-06 14:57:08 KST",
+    "commit_model": "E2 image SHA unverified; script HEAD 1f521804e458",
+    "note": "MySQL 정지 중 HTTP 200·LKG 정상 bin·저장 실패, 복구 후 정상 저장 확인",
+    "environment": "E2",
+    "coverage": "전체",
+    "qa_case": "QA-INS-13",
+    "owner": "BE",
+    "record_status": "통과"
+  },
+  {
+    "case": "QA-SIM-09",
+    "status": "통과",
+    "actor": "홍유나 (MO-09 자동화)",
+    "time_kst": "2026-10-06 14:57:08 KST",
+    "commit_model": "E2 image SHA unverified; script HEAD 1f521804e458",
+    "note": "MySQL 20초 정지 중 Simulator 재생 지속, 복구 후 Backend·Simulator 재시작 없이 저장 확인",
+    "environment": "E2",
+    "coverage": "전체",
+    "qa_case": "QA-SIM-09",
+    "owner": "BE",
+    "record_status": "통과"
+  }
+]

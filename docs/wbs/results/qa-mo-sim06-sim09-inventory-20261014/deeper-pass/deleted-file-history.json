@@ -1,0 +1,25 @@
+{
+  "entries": [
+    "075d84739e64558294726f0c0275ba334b18a1a7",
+    "docs/README.md",
+    "docs/wbs/reference/BE/backend-status.md",
+    "docs/wbs/협업공지/Backend-복귀-작업-인계.md",
+    "docs/wbs/협업공지/Frontend-잔여-WBS-선행작업.md",
+    "docs/wbs/협업공지/Frontend-화면-연동-작업-인계.md",
+    "128943cba0049ea83390f691332b0644580f99f1",
+    "docs/model-improvement-v2.md",
+    "docs/template-status.md",
+    "731c8ca6c8fdd591974710f6837ff21fbcca8e69",
+    "docs/data-sampling.md",
+    "5ec265e16e97d2ddb45eccbb2992413f654ab68d",
+    "docs/data-work-review.md",
+    "docs/multiview-review.md",
+    "docs/split-review.md",
+    "6acc8bd505aad8e5d69a3cc2720a47de113dabe1",
+    "docs/(서식)WBS.md",
+    "docs/(서식)아키텍처.md",
+    "docs/(서식)테이블(데이터) 명세서.md",
+    "docs/(서식)프로젝트 요구사항.md"
+  ],
+  "raw_qa_result_file_deletions": []
+}

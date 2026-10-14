@@ -1,0 +1,58 @@
+[
+  {
+    "name": "/cqc-cicd-mysql-1",
+    "id": "d5147f435ac1d38ad4637e090061dddae8a4e75927ca3c7b33fe6e2a00ceaef9",
+    "image": "sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a",
+    "started_at": "2026-10-13T23:54:55.262382704Z",
+    "status": "running",
+    "health": "healthy"
+  },
+  {
+    "name": "/cqc-cicd-inference-1",
+    "id": "292177d9d6f10a343c15ff5eb3a2ac1f084785f3722ae501d52eac258fd2d7c2",
+    "image": "sha256:90043a53a8bf5ba9d85f3ebb4481c0201196823179261b52cb5ea78381776d2f",
+    "started_at": "2026-10-14T00:08:09.409948925Z",
+    "status": "running",
+    "health": "healthy"
+  },
+  {
+    "name": "/cqc-cicd-backend-1",
+    "id": "37b7006923ce346b4649b68c4de74e71e580a09d5bdb6de93dc31e5e9195ab71",
+    "image": "sha256:169228d055a076de75f1d4dee42a9a7c3e2dc877e36e86226b77cf41d764d99b",
+    "started_at": "2026-10-14T00:08:17.366257865Z",
+    "status": "running",
+    "health": "healthy"
+  },
+  {
+    "name": "/cqc-cicd-simulator-1",
+    "id": "91ec3977f5f77b41fa943b35f5f33db02bf90ac0f4728067cf1cbc39ade65ccd",
+    "image": "sha256:e1bd01ab69e904497c99ca05578d9ddb218838072839beda8b88d07d82180125",
+    "started_at": "2026-10-14T00:08:25.194522651Z",
+    "status": "running",
+    "health": "healthy"
+  },
+  {
+    "name": "/cqc-cicd-logistics-api-1",
+    "id": "920d43f450021119b3b597ba8ff08c49a3efb99efc44b2871bb4c43443311701",
+    "image": "sha256:61bb192c6e4286ba35df663c8f38317717b2636cd6c1e328c28bb61a4522ca82",
+    "started_at": "2026-10-14T00:08:10.469786686Z",
+    "status": "running",
+    "health": "healthy"
+  },
+  {
+    "name": "/cqc-cicd-logistics-web-1",
+    "id": "9c2f7fab0f584c55b7c9efbf0786e0088a07126dc05315b2bb9104c86e3649cc",
+    "image": "sha256:f4f5196b599f2c3590cd5d846ce390f6481bb1ebc5f40147d3bea06d5d4f76e1",
+    "started_at": "2026-10-14T00:08:25.108602845Z",
+    "status": "running",
+    "health": "healthy"
+  },
+  {
+    "name": "/cqc-cicd-logistics-mongodb-1",
+    "id": "6d2c1f3035526dd039ba755c14475e2717586213fe14f503c932df9fa8e78894",
+    "image": "sha256:5d7043a4ffe02b9ed1b6e0bab057546981af5ca0a79107e9c461e49bc44c0a7b",
+    "started_at": "2026-10-13T23:54:54.784111192Z",
+    "status": "running",
+    "health": "healthy"
+  }
+]

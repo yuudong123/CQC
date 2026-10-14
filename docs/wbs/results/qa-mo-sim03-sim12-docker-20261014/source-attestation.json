@@ -1,0 +1,623 @@
+{
+  "build": 155,
+  "build_commit": "9723907f2a9cd3c4cb747ca80bc9b72892e2d4d0",
+  "previous_be_commit": "f8a200221d7aa4cb3f44877e4114d464208366d7",
+  "all_runtime_source_matches_build": true,
+  "changed_api_simulator_paths_from_be_source": [],
+  "all_runtime_source_matches_be_source": true,
+  "files": [
+    {
+      "path": "src/simulator/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "service": "simulator",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/simulator/config.py",
+      "bytes": 884,
+      "sha256": "a1a3cf078a2b8c9188bcae28cf711f4a20bc5a14b3a32a4e72403d123008c0a9",
+      "git_blob": "05eb4650590772aa6fb07c340921e91d022af5a1",
+      "service": "simulator",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/simulator/dataset.py",
+      "bytes": 6301,
+      "sha256": "45e1ca641f21ca3a8afac834732d7a62a4e4aafb92855389ff8263ded7ade6a5",
+      "git_blob": "bc60fd5d02d554a9adb7dc92b2f756d68af357cf",
+      "service": "simulator",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/simulator/main.py",
+      "bytes": 5646,
+      "sha256": "4cc882a144eca4c1d9bdb2d7166bba01ba4fc643bdde3172ae9d5e786276a90b",
+      "git_blob": "067d58e1f6fc01c8923bb8cb64aa46122ffb249b",
+      "service": "simulator",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/simulator/position.py",
+      "bytes": 2342,
+      "sha256": "325af2d6c5d0946ebfa9bda18253134221f637fa9dca4be1ff6bb74d9b263a37",
+      "git_blob": "c6f5e7105e652d3be2cfa0d49fa61e3ba1ed2a8e",
+      "service": "simulator",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/simulator/runner.py",
+      "bytes": 8715,
+      "sha256": "24e15ac508269787234fd82c33b2d36bf209f3cc9073af73610b20613b3115db",
+      "git_blob": "35b9944d63d087e872682ad7d07afc1cb2172c1d",
+      "service": "simulator",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/simulator/schemas.py",
+      "bytes": 2869,
+      "sha256": "c3d036b34fae04ade7d322cb0268fa2e8b9ba564a89e309e875b0e6c8d0672f1",
+      "git_blob": "43518927f9d184798726035dba8fa2a9cbe567b5",
+      "service": "simulator",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/simulator/state.py",
+      "bytes": 3441,
+      "sha256": "232c543d3706e7f416367b99f302dc02986ec73984b635eb135a717018b2e8d0",
+      "git_blob": "2f42d45e3e48b2290fa0c43076829d184eeeadcc",
+      "service": "simulator",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/__init__.py",
+      "bytes": 35,
+      "sha256": "347f9655db830594a02a9cb13c0c3324a0887f7d4fd1053f65628fed29b5a9d6",
+      "git_blob": "f666472127281b6bbcd85e5b52d98a5bc6221300",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/clients/__init__.py",
+      "bytes": 127,
+      "sha256": "8f61ded305150581141f7a0c3a626b54617b2850f01967e1b22133a60c6dfa61",
+      "git_blob": "c86b48a9bb54309c6ec5a5392546182a7e3333c9",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/clients/inference.py",
+      "bytes": 4225,
+      "sha256": "5ea18762cb8bc4f690fe8b5ac34ea2da09ada6bea859929345016fb8e40f533a",
+      "git_blob": "861681130c0a77e283ff145a201dacb93dfc958c",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/clients/simulator.py",
+      "bytes": 2364,
+      "sha256": "01c6861fc854df6173d0a0a41e34b38377ed8133028a5b58ea7c96f2f36acdfb",
+      "git_blob": "dc66cad6aa7e8a14cdbf97d5a1c1b784c16e4787",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/control/__init__.py",
+      "bytes": 45,
+      "sha256": "25c143d41270a20d170fbe07d3745ccb82c1ee52b5555dd8ae961d3b99722fb4",
+      "git_blob": "c25aee024916c65f7fed9598fb956b73f7a4e549",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/control/virtual_control.py",
+      "bytes": 2692,
+      "sha256": "2653476cb65341119572f0b2a8748f1fc26b2003ed68ddcf7ad049673a1ba23b",
+      "git_blob": "92df26a32f0bdd3785f922008703b5b1e7fd990f",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/core/__init__.py",
+      "bytes": 58,
+      "sha256": "dfb72351b9773a54424651e00cf3ff0ba4f32fcf14b2a882d205282f4664eacb",
+      "git_blob": "7127aa2270d38c8dde51b2a2a0410b14a9663790",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/core/config.py",
+      "bytes": 3382,
+      "sha256": "156dd180fb3b8722518af5d02300072deca7257b7f741758ef920ae384f78447",
+      "git_blob": "166ae48edca937b6ffebc68aeb6c09875f331f6d",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/core/datetime.py",
+      "bytes": 820,
+      "sha256": "a7a1c33e9a29b3fcc4022bd4ea8b3a6d48ce43936b0746a1c171440c144ae485",
+      "git_blob": "381bf94d56eb0ce3eb8f015a98cd4d432f3e45bb",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/db/__init__.py",
+      "bytes": 94,
+      "sha256": "223dd88566693bb38b2e212b4716702222f666c268c2723a6b6acfa156be6a72",
+      "git_blob": "3c07e89c2f18392fd81d31c4ab28c24a2927fff5",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/db/base.py",
+      "bytes": 616,
+      "sha256": "573aeda9d7f22c6eea59fd4d78a98126bcaee3169d2f6449f2e809f729fe6b2b",
+      "git_blob": "90ccfa8c87830ce5bc06d5091d387562a04388e7",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/db/migrations/env.py",
+      "bytes": 2180,
+      "sha256": "769cc34a8732851da406226f03c0de57a7f413ba803a033d70f152ae805127c6",
+      "git_blob": "c4cf00fa533297bf75cf2cdd6943c813ccece50b",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/db/migrations/versions/20260922_01_initial_backend_schema.py",
+      "bytes": 9652,
+      "sha256": "f49dc132182d5841c73da71b2f907cc97ce0cddbc2bed5297807bd7bdf086ab1",
+      "git_blob": "ac92d8441211a3072870cca35604eeafa9d32fe1",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/db/migrations/versions/20260929_02_be05_12_bin_contract.py",
+      "bytes": 8220,
+      "sha256": "bbbaacbf994f3f6129d07ac14b73a9457faa0664df3abe57ab381927a44f1cf2",
+      "git_blob": "b510090d8a569504310cf0a78f13bb30895c49c1",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/db/models/__init__.py",
+      "bytes": 327,
+      "sha256": "e2a980f61c794a86619ee60b979d6e4464052962248671a969ccd843e8d7419c",
+      "git_blob": "0c56ddf7973da4e223d1bf8fa3b221983fe5a04b",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/db/models/bin_mapping.py",
+      "bytes": 1729,
+      "sha256": "23b12f8559caf8d532a769a4ef68a9818b6518bce93cf2072fbc0323ed48abf6",
+      "git_blob": "45dc0e8e343e0b6c36e6be0c2de3c4e494af6a77",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/db/models/control_attempt.py",
+      "bytes": 1975,
+      "sha256": "07ffccdd20b7a349513cad291a8bab74b398bcbede5fd96c5fdb77a2c838b698",
+      "git_blob": "6971057dcb08d86687f24c02ce2502b6765774cf",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/db/models/inspection.py",
+      "bytes": 5529,
+      "sha256": "a7f1630d7d9f9701a56f1bcf54ac65c9288fdf0013f360a09beb3030bc0ef201",
+      "git_blob": "aaf3882898aa5236387cc053c5519b838dbcc404",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/db/models/inspection_error.py",
+      "bytes": 1639,
+      "sha256": "0e13212ea3315bd23dfd1f87964e89015cb68484b46442d96d76e9050041e458",
+      "git_blob": "ec42dac3cf7ec464338a10f172ecd2817d1a9fdc",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/db/session.py",
+      "bytes": 1794,
+      "sha256": "207facb5ad7c17f97dbaf4fdce19ee494ec94a094d8a97e6be334543479fb8c8",
+      "git_blob": "9dff11ff36f1daa46b2a23722e7fe0491c67f9dd",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/main.py",
+      "bytes": 8343,
+      "sha256": "8e38ef8db2ac39ac1c25aaef548e5f22b4a34dae2dd662e9b1f8da90ed5b2146",
+      "git_blob": "994bfaa881e95af5df9dad38b9e1fc1f0e88c6db",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/repositories/__init__.py",
+      "bytes": 437,
+      "sha256": "8b9fa9e892899581ec1dffb6b0eeea5ac17ff6cf7cf0d32e8cbf0fa17333cb88",
+      "git_blob": "e82e3f0d2f143445b31b65391a3dd9059731d6bc",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/repositories/bin_mappings.py",
+      "bytes": 4404,
+      "sha256": "b39304f512b3e52a62de6b02f677e64d40d28b5bacff488ec82f8ddbb755c394",
+      "git_blob": "5fcbfbf9f903ded59026f1099acf85a3882934a4",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/repositories/control_attempts.py",
+      "bytes": 1539,
+      "sha256": "1963217df2602828882533eab9cc16eaa8089e68e43e5178107fe81a05595d7b",
+      "git_blob": "be881567e07339612fe6acd802aa9ad05b4f7b39",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/repositories/inspection_errors.py",
+      "bytes": 1107,
+      "sha256": "a0b4ee085bb567a443270fa9b778896e9ff18bff597dbf42b4d019d320953add",
+      "git_blob": "96df085af56a88d1e5b20531252167b1a2a4fae3",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/repositories/inspections.py",
+      "bytes": 3356,
+      "sha256": "e6b6826f45ebff9e272ba200a1e4578b482d5f3e04c4884152aa7bf8811e61ce",
+      "git_blob": "6bf4247f84345c90aafbc192f01e8ebae51e91ac",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/repositories/persistence.py",
+      "bytes": 5856,
+      "sha256": "ee035b40e9c990d27a0c5b2ad0eb98d84bbe36da4aef3745435b25a79d7a6c89",
+      "git_blob": "85c9d9b5c54535133f40b27d2f4bdcd4fcc94537",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/repositories/quality_history.py",
+      "bytes": 8624,
+      "sha256": "e86eb81cc7d422fe7799b7882f8c6c838ed029dfe5afeebb7e76bcc657b2256f",
+      "git_blob": "9a08dd4ddb5bbf708afed9739f9e1eb2721129cb",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/repositories/quality_statistics.py",
+      "bytes": 7675,
+      "sha256": "0cd311c451f78547bb626f846853ebc24ec25f2bd5330751d941c04f3d9d03b6",
+      "git_blob": "a5be3de83a086fd04715305c9079a93178d82542",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/repositories/records.py",
+      "bytes": 794,
+      "sha256": "3ad6683e3d4290ac4ee5f9edbaec1cc66ebc3e7d458ecc31677a1383fde5e571",
+      "git_blob": "a01656256e4f858db756ef3acf094d209f550c9b",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/routers/__init__.py",
+      "bytes": 46,
+      "sha256": "a0fc0000bf47919bcdcec7997494e7870708cdd74ab1d78eddb52eba564c5e8d",
+      "git_blob": "864da0000d8894f19e95cdac1f1f37d5e5ceef81",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/routers/inspections.py",
+      "bytes": 10856,
+      "sha256": "167d77da94e2a0c9fb686ae58f7f8415781f236a14b574a125ca425a782c292f",
+      "git_blob": "125c9173a54d9de4423513d59fd1371a61b96f21",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/routers/quality_fault_images.py",
+      "bytes": 5444,
+      "sha256": "8b09870e0e9d8378cf8d3845e7b11601aed0ae63bbf3dd75b7118a0bbe5ae89d",
+      "git_blob": "af1f7c3df89de8e493d72eccd82a52a446385650",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/routers/quality_history.py",
+      "bytes": 5425,
+      "sha256": "fa519d420065510f0ff755c0aac599719223136cb7fe874b2035a7b7021fc363",
+      "git_blob": "790ea0368226dbc5b9b140789205948cfbee5f79",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/routers/quality_live_images.py",
+      "bytes": 1156,
+      "sha256": "f7be6d598d03ad277ef997b310b4aedefd591113276121f089f065b4c4f4941a",
+      "git_blob": "3fe0bb8c1a49bded4ec592c1b0bb4ddb9f64acf8",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/routers/quality_operations.py",
+      "bytes": 7885,
+      "sha256": "e64b37ac919b993079100f62a4b9dacc88d83fc333d577d640c24863d41c0ef1",
+      "git_blob": "8cc331c0a2fae5fd86353d3d34b672eb1a53570f",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/routers/quality_review.py",
+      "bytes": 2972,
+      "sha256": "81fcd22af3544cf58c70b6d18792cf69e2d4f5e951730e3565fd60c9a95ca1f2",
+      "git_blob": "201ac79392a2ac3c3b53d5d1889edbf079f09f00",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/routers/quality_simulator.py",
+      "bytes": 2387,
+      "sha256": "f0007d8973ed94da55b286d0b6319f6dae2e01b7d0fd972e92d0f3a3e8c0445c",
+      "git_blob": "f30e2abee04eb6492c8dc2802563f7625abccfc6",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/schemas/__init__.py",
+      "bytes": 74,
+      "sha256": "1eec2e4d7c0b152419b2b0633238a0a34fa126a1396c97f0112c687520c52d0f",
+      "git_blob": "09a8c536dd38960698b621673d11ae6b9d514c0a",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/schemas/control.py",
+      "bytes": 1672,
+      "sha256": "f7392004c2da3f5f19a020514d96e97f1abd3cb92d6a3a461995fa0b015fbaad",
+      "git_blob": "e6a959a07a80cc3c9eac00dc4600310148707d5d",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/schemas/inference.py",
+      "bytes": 4151,
+      "sha256": "a97a165f53b9b0a57bcb772afaa449d00a13e2278cece060c074a3dac3c56467",
+      "git_blob": "b19d96f2aa56c7c2a0d1e35de5625b9f9238ea3a",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/schemas/inspection_id.py",
+      "bytes": 174,
+      "sha256": "25b69495197e0b877ffda75bebe4a507cb48756bdaee25dd6bf5e57e0a84a23b",
+      "git_blob": "9d68025d386774a8ffc2a59046da18773f5b605b",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/schemas/inspection_results.py",
+      "bytes": 3447,
+      "sha256": "60fb14c65a7ffdb4790d4abb3b4c84aa4c3d8458c5dafb524e4bdadfe4342d7c",
+      "git_blob": "57af38b9cd0aeda4a237950e3690b2d55df20459",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/schemas/inspections.py",
+      "bytes": 722,
+      "sha256": "97e14999603111f54284236b53b5044c508049627fc098241bfc148af04cdf7a",
+      "git_blob": "b55be403ab9450708ee879f87e89623d0324e1f1",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/schemas/late_results.py",
+      "bytes": 504,
+      "sha256": "f3822178882bd79644c0d615dfc61fd1cb66b35c15d3e2c365c87b15419617b2",
+      "git_blob": "9a9b197dd2cbc6dfafb81be9384fd7be97bd2e8f",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/schemas/quality_fault_images.py",
+      "bytes": 1843,
+      "sha256": "6ddb2e3df37acefc12f5e899f4f8ba70956473371f12f944b06a51740a58978e",
+      "git_blob": "a0e4945885f736096f22a2ae74422152198c030c",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/schemas/quality_history.py",
+      "bytes": 2286,
+      "sha256": "2811a4066f3cfbab3ecb0e51a0b1bd681117c1c77a1c041a960c0bc3f66eac6f",
+      "git_blob": "28ea742e6d5a0ed76baddc5ffcdfdbfe4fc20577",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/schemas/quality_operations.py",
+      "bytes": 4814,
+      "sha256": "cf333a642aaf0551624eefd4ea18cb11ca7aa97644128694c53340a20d0772ad",
+      "git_blob": "f48f38287bb66740a810819337686e5b78a059a5",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/services/__init__.py",
+      "bytes": 195,
+      "sha256": "f1cbcea70c6f101b947d3feb49fbf0d19fb8b91048272db35d20a19a56681522",
+      "git_blob": "f95e479765817a3588b99505a740a783ade48e11",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/services/bin_mapping_lkg.py",
+      "bytes": 1588,
+      "sha256": "ad266b1dbbbe59c43472419f427bf0f6c5fdd229a102ffea14c9bb429be3968b",
+      "git_blob": "279aeb722ecd889de3354a1bb0e57c926a0575fe",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/services/bin_policy.py",
+      "bytes": 712,
+      "sha256": "1b2e74e92c7098833760fd67c6b751cd7f01cee700fcff8733cf5a5c0028fca3",
+      "git_blob": "0b981170c2ccdce26a5dd35b6ea28a65a974d6b9",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/services/control_policy.py",
+      "bytes": 2258,
+      "sha256": "b0021de085a5e1ed1c99be7de6737599000eeb0375ad66db178ac64c9a0813f0",
+      "git_blob": "dc39a464c1e9b1d965a3245452d6ae23f0fc2a8c",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/services/fault_image_storage.py",
+      "bytes": 12684,
+      "sha256": "924fc37bae335a01b89bbb6f707cdbcf1fbaf6667394c648755440206bf75606",
+      "git_blob": "954064a28ae474667dff69c530462ec1de466325",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/services/inspection_policy.py",
+      "bytes": 2980,
+      "sha256": "587f170ef40e0f27003cd041d19e6bd99dab5e634adaf004d796f14f2a760303",
+      "git_blob": "9be7c7a60d26f1a9b891b599b407d27c73830afa",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/services/inspections.py",
+      "bytes": 37433,
+      "sha256": "8f68a96e3966748bf690473e8c742d77417576261f2c2ae2db4034e9088daba7",
+      "git_blob": "5c700a74b38354f1d2672569127c4627d97fb2ca",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/services/late_results.py",
+      "bytes": 5317,
+      "sha256": "e4d2c334ec917293c02bc323edd9b95c9914d3a404b62b17d77138c3421b42c0",
+      "git_blob": "a635b50d3c09c6a3aed405069cb8960bd4f0ccf9",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/services/live_inspections.py",
+      "bytes": 6575,
+      "sha256": "5a59128c8195803041dd908bee6bd398cf4c38489a4513848d71cdfde544c8d2",
+      "git_blob": "2859cdddc43360dbc7c349f28a548811055419a6",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/services/live_preview_images.py",
+      "bytes": 1317,
+      "sha256": "e987505dbc1a49b62eab751fd4acb006a4e8193df2ac51fdf6f9089e0c75991c",
+      "git_blob": "cfe0826de4403d6b8a4a742384c96958fd08a092",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/services/quality_history.py",
+      "bytes": 4960,
+      "sha256": "d992e89f86e49dfcd8e381662db5f7a6aaf6399ec19bec4c27af1a2165fb1944",
+      "git_blob": "0ef0dba3acc34325a461e1746bcac210e8eb05b0",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    },
+    {
+      "path": "src/api/services/quality_operations.py",
+      "bytes": 13616,
+      "sha256": "04bbe5f4f20b1c3ac029ec6857caef513679ef930cb17189c99e43db53d76427",
+      "git_blob": "d8fd95993b370fc236f7cd65b6684cb36e137572",
+      "service": "backend",
+      "matches_build_commit": true,
+      "matches_previous_be_commit": true
+    }
+  ],
+  "limit": "Compares tracked src/api and src/simulator Python source only; not all libraries or model/environment equality"
+}

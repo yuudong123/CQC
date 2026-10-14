@@ -1,0 +1,61 @@
+{
+  "ref": "9723907f2a9cd3c4cb747ca80bc9b72892e2d4d0",
+  "checks": [
+    {
+      "folder": "qa-be-sim03-local-20261013",
+      "manifest_entries_checked": 23,
+      "mismatch": []
+    },
+    {
+      "folder": "qa-be-sim07-local-20261013",
+      "manifest_entries_checked": 39,
+      "mismatch": []
+    },
+    {
+      "folder": "qa-be-sim11-local-20261013",
+      "manifest_entries_checked": 20,
+      "mismatch": [
+        ".gitattributes"
+      ]
+    },
+    {
+      "folder": "qa-be-sim12-local-20261013",
+      "manifest_entries_checked": 39,
+      "mismatch": [
+        ".gitattributes"
+      ]
+    }
+  ],
+  "source_manifests_distinct_from_git_core": true,
+  "SIM07_full_original_files": 94,
+  "SIM07_published_core_files": 42,
+  "omitted_per_BE_readme": [
+    "Repeated cumulative history",
+    "Complete DB copies",
+    "Resource logs",
+    "Instrumentation scripts",
+    "Large images"
+  ],
+  "verification_does_not_assert_omitted_sources_unavailable_on_BE_PC": true,
+  "manifest_entries_total": 121,
+  "matching_entries": 119,
+  "evidence_data_mismatch": [],
+  "metadata_line_ending_mismatch": [
+    {
+      "folder": "qa-be-sim11-local-20261013",
+      "path": ".gitattributes",
+      "expected_sha256": "588c9653e8794ecfe040e68ada23faede8d91d0011a96aa722edce1426aa8720",
+      "git_blob_sha256": "68f6e515003946e4231d91fb4330e0d1589379f908d4b4edf29158c4a5746bfd",
+      "git_bytes_LF_to_CRLF_matches_expected": true,
+      "source_not_modified": true
+    },
+    {
+      "folder": "qa-be-sim12-local-20261013",
+      "path": ".gitattributes",
+      "expected_sha256": "588c9653e8794ecfe040e68ada23faede8d91d0011a96aa722edce1426aa8720",
+      "git_blob_sha256": "68f6e515003946e4231d91fb4330e0d1589379f908d4b4edf29158c4a5746bfd",
+      "git_bytes_LF_to_CRLF_matches_expected": true,
+      "source_not_modified": true
+    }
+  ]
+}

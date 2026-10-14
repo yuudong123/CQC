@@ -1,0 +1,67 @@
+{
+  "root": "/data/fault-images",
+  "checks": [
+    {
+      "id": "de8e23ac365a4f6ca97b23507f4c45ab_11",
+      "group_present": false,
+      "matching_files": []
+    },
+    {
+      "id": "de8e23ac365a4f6ca97b23507f4c45ab_10",
+      "group_present": false,
+      "matching_files": []
+    },
+    {
+      "id": "de8e23ac365a4f6ca97b23507f4c45ab_09",
+      "group_present": false,
+      "matching_files": []
+    },
+    {
+      "id": "de8e23ac365a4f6ca97b23507f4c45ab_08",
+      "group_present": false,
+      "matching_files": []
+    },
+    {
+      "id": "de8e23ac365a4f6ca97b23507f4c45ab_07",
+      "group_present": false,
+      "matching_files": []
+    },
+    {
+      "id": "de8e23ac365a4f6ca97b23507f4c45ab_06",
+      "group_present": false,
+      "matching_files": []
+    },
+    {
+      "id": "de8e23ac365a4f6ca97b23507f4c45ab_05",
+      "group_present": false,
+      "matching_files": []
+    },
+    {
+      "id": "de8e23ac365a4f6ca97b23507f4c45ab_04",
+      "group_present": false,
+      "matching_files": []
+    },
+    {
+      "id": "de8e23ac365a4f6ca97b23507f4c45ab_03",
+      "group_present": false,
+      "matching_files": []
+    },
+    {
+      "id": "de8e23ac365a4f6ca97b23507f4c45ab_02",
+      "group_present": false,
+      "matching_files": []
+    },
+    {
+      "id": "de8e23ac365a4f6ca97b23507f4c45ab_01",
+      "group_present": false,
+      "matching_files": []
+    },
+    {
+      "id": "de8e23ac365a4f6ca97b23507f4c45ab_00",
+      "group_present": false,
+      "matching_files": []
+    }
+  ],
+  "read_only_file_access": true,
+  "api_or_prune_method_called": false
+}

@@ -1,0 +1,78 @@
+{
+  "run": "20261014-093721",
+  "project": "cqc-mo103-sim0312-20261014-093721",
+  "actor": "홍유나 (Codex)",
+  "started_kst": "2026-10-14T09:37:21.957829+09:00",
+  "cases": {
+    "SIM-03-Docker-supplement": {
+      "observed_result": "PASS",
+      "checks": {
+        "stop_http_200": true,
+        "stopped_actual_state": true,
+        "stopped_backend_snapshot": true,
+        "stop_revision_increment": true,
+        "http_503_is_separate_observation": true,
+        "real_docker_unhealthy": true,
+        "stopped_count_stable_at_least_10_seconds": true,
+        "stopped_jobs_zero": true,
+        "resume_200_revision_increment": true,
+        "resumed_docker_healthy": true,
+        "resumed_inspection_count_increases": true,
+        "backend_actual_settings_agree": true
+      },
+      "scope_limit": "Missing Docker unhealthy evidence plus stop/resume sanity; no controlled in-flight request or source_reference next-bundle check"
+    },
+    "SIM-12-Docker-restart-supplement": {
+      "observed_result": "PASS",
+      "checks": {
+        "live_change_200": true,
+        "live_change_1000_running": true,
+        "live_change_revision_increment": true,
+        "compose_restart_exit_zero": true,
+        "same_container_restarted": true,
+        "environment_default_2000": true,
+        "actual_default_restored": true,
+        "backend_default_restored": true,
+        "revision_reset_zero_running": true,
+        "default_settings_restored": true,
+        "docker_healthy_after_restart": true,
+        "backend_actual_settings_agree": true
+      },
+      "scope_limit": "Docker restart default restoration only; no one-minute 3000/1000ms quantitative retest or official SIM-12 PASS"
+    }
+  },
+  "official_qa_decision": "Pending Backend evidence review",
+  "scope": "SIM-03/12 Docker supplements only; fresh isolated runtime using currently deployed images",
+  "source_sha": "9723907f2a9cd3c4cb747ca80bc9b72892e2d4d0",
+  "jenkins_build": 155,
+  "build_image_matches": {
+    "backend": true,
+    "inference": true,
+    "simulator": true
+  },
+  "test_started_kst": "2026-10-14T09:41:24.715897+09:00",
+  "final_observations": {
+    "simulator": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "backend": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "jobs": [],
+    "inspection_count": 14
+  },
+  "test_finished_kst": "2026-10-14T09:43:05.254233+09:00",
+  "qa_resources_preserved": true,
+  "public_containers_unchanged_and_healthy": true,
+  "finished_kst": "2026-10-14T09:43:40.065195+09:00"
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "file": "sim06-compose-cleanup.txt",
+    "source_session": "C:\\Users\\admin\\.codex\\sessions\\2026\\10\\06\\rollout-2026-10-06T09-26-05-01a10e9a-73ec-74b0-810c-78ca566d56cf.jsonl",
+    "source_session_sha256": "82a257b7edd9a623d868cb3d6b718c1f7dc44049fd2f801a94770649f8baccba",
+    "source_line": 2935,
+    "source_line_sha256": "7599e6247f685b8c3c13b7a8d56715e53baa3d850d82cfc5e9225930819ca98e",
+    "tool_call_id": "call_Alw7Cpj17SM848zpRGfP3vZj",
+    "captured_at_utc": "2026-10-06T02:34:01.143Z",
+    "source_field": "payload.output[1].text (json.output)",
+    "stored_stdout_sha256": "e4f1c5fb4f8050b45d5a5b7ef4fba510d7d6deb83527909b2e3b8190f0672330",
+    "limit": "Extracted original tool stdout scalar; historical encoding/truncation is retained. Not a copy of the full session."
+  },
+  {
+    "file": "sim09-during-recovery-container-status.txt",
+    "source_session": "C:\\Users\\admin\\.codex\\sessions\\2026\\10\\06\\rollout-2026-10-06T09-26-05-01a10e9a-73ec-74b0-810c-78ca566d56cf.jsonl",
+    "source_session_sha256": "82a257b7edd9a623d868cb3d6b718c1f7dc44049fd2f801a94770649f8baccba",
+    "source_line": 4212,
+    "source_line_sha256": "291a7b650deac0e13632720e45391b6ec497d7e9254cf97b9de27138f4593243",
+    "tool_call_id": "call_93aaf64a4f994979b827bb1c6dc9d726",
+    "captured_at_utc": "2026-10-06T05:56:57.240Z",
+    "source_field": "payload.output[1].text (text)",
+    "stored_stdout_sha256": "8ddcca07fda2e3a049babe6382f9ac578c714425541f314e216cf27b20827508",
+    "limit": "Extracted original tool stdout scalar; historical encoding/truncation is retained. Not a copy of the full session."
+  },
+  {
+    "file": "sim09-run-completion-and-cleanup.txt",
+    "source_session": "C:\\Users\\admin\\.codex\\sessions\\2026\\10\\06\\rollout-2026-10-06T09-26-05-01a10e9a-73ec-74b0-810c-78ca566d56cf.jsonl",
+    "source_session_sha256": "82a257b7edd9a623d868cb3d6b718c1f7dc44049fd2f801a94770649f8baccba",
+    "source_line": 4225,
+    "source_line_sha256": "088dd262548ee2b18dc6b48c8178a7d46adc3039c9135bb917112e0cbfebe323",
+    "tool_call_id": "call_d6fa8d0c61514c86853bbaa24f6aeabb",
+    "captured_at_utc": "2026-10-06T05:57:25.824Z",
+    "source_field": "payload.output[1].text (json.output)",
+    "stored_stdout_sha256": "ecc3f40233b5801ce621f95e99767bea03f01e5338fcd35eeeded5dfff1d6eda",
+    "limit": "Extracted original tool stdout scalar; historical encoding/truncation is retained. Not a copy of the full session."
+  }
+]

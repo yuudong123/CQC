@@ -1,0 +1,7 @@
+{
+  "distro": "Ubuntu",
+  "scope": "Directory names only under /home /root /tmp, maxdepth 3",
+  "exit_code": 1,
+  "matched_directories": [],
+  "limit": "Not a full WSL filesystem content search; excludes /mnt and other computers"
+}

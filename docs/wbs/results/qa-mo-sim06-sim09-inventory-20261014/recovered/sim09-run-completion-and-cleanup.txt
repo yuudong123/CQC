@@ -1,0 +1,36 @@
+| ���̽� | ��� | ��� (���/����/����) | ������ | �Ͻ� | Ŀ�ԡ��� | ��������� ��ȣ |
+|---|---|---|---|---|---|---|
+| QA-INS-11 | BE | ��� | ȫ���� (MO-09 �ڵ�ȭ) | 2026-10-06 14:55:57 KST | E2 image SHA unverified; script HEAD 1f521804e458 | [E2] ����=���; ����=��ü; Inference ���� �� ��˻硤����, ��⵿ �� Backend ����� ���� ���� ���� Ȯ�� |
+| QA-INS-13 | BE | ��� | ȫ���� (MO-09 �ڵ�ȭ) | 2026-10-06 14:57:08 KST | E2 image SHA unverified; script HEAD 1f521804e458 | [E2] ����=���; ����=��ü; MySQL ���� �� HTTP 200��LKG ���� bin������ ����, ���� �� ���� ���� Ȯ�� |
+| QA-SIM-09 | BE | ��� | ȫ���� (MO-09 �ڵ�ȭ) | 2026-10-06 14:57:08 KST | E2 image SHA unverified; script HEAD 1f521804e458 | [E2] ����=���; ����=��ü; MySQL 20�� ���� �� Simulator ��� ����, ���� �� Backend��Simulator ����� ���� ���� Ȯ�� |
+Results: C:\CQC\outputs\mo09-e2-recovery2-20261006
+ Container cqc-mo09-e2-recovery2-20261006-simulator-1 Stopping 
+ Container cqc-mo09-e2-recovery2-20261006-simulator-1 Stopped 
+ Container cqc-mo09-e2-recovery2-20261006-simulator-1 Removing 
+ Container cqc-mo09-e2-recovery2-20261006-simulator-1 Removed 
+ Container cqc-mo09-e2-recovery2-20261006-backend-1 Stopping 
+ Container cqc-mo09-e2-recovery2-20261006-backend-1 Stopped 
+ Container cqc-mo09-e2-recovery2-20261006-backend-1 Removing 
+ Container cqc-mo09-e2-recovery2-20261006-backend-1 Removed 
+ Container cqc-mo09-e2-recovery2-20261006-inference-1 Stopping 
+ Container cqc-mo09-e2-recovery2-20261006-mysql-1 Stopping 
+ Container cqc-mo09-e2-recovery2-20261006-inference-1 Stopped 
+ Container cqc-mo09-e2-recovery2-20261006-inference-1 Removing 
+ Container cqc-mo09-e2-recovery2-20261006-inference-1 Removed 
+ Container cqc-mo09-e2-recovery2-20261006-mysql-1 Stopped 
+ Container cqc-mo09-e2-recovery2-20261006-mysql-1 Removing 
+ Container cqc-mo09-e2-recovery2-20261006-mysql-1 Removed 
+ Volume cqc-mo09-e2-recovery2-20261006_inference_logs Removing 
+ Volume cqc-mo09-e2-recovery2-20261006_mysql_data Removing 
+ Network cqc-mo09-e2-recovery2-20261006_default Removing 
+ Volume cqc-mo09-e2-recovery2-20261006_fault_images Removing 
+ Volume cqc-mo09-e2-recovery2-20261006_inference_logs Removed 
+ Volume cqc-mo09-e2-recovery2-20261006_backend_logs Removing 
+ Volume cqc-mo09-e2-recovery2-20261006_simulator_logs Removing 
+ Volume cqc-mo09-e2-recovery2-20261006_simulator_state Removing 
+ Volume cqc-mo09-e2-recovery2-20261006_mysql_data Removed 
+ Volume cqc-mo09-e2-recovery2-20261006_fault_images Removed 
+ Volume cqc-mo09-e2-recovery2-20261006_simulator_logs Removed 
+ Volume cqc-mo09-e2-recovery2-20261006_simulator_state Removed 
+ Volume cqc-mo09-e2-recovery2-20261006_backend_logs Removed 
+ Network cqc-mo09-e2-recovery2-20261006_default Removed 
