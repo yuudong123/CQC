@@ -1,0 +1,179 @@
+{
+  "SIM-06": [
+    {
+      "fault": "INFERENCE_TIMEOUT",
+      "at_kst": "2026-10-06 11:32:53 KST",
+      "inspection_id": "5e85ae9c-0549-47a4-8445-eca477465a2e",
+      "retained_fault_row": {
+        "id": "5e85ae9c-0549-47a4-8445-eca477465a2e",
+        "status": "FAIL",
+        "processingStatus": "TIMEOUT",
+        "errorCode": "INFERENCE_TIMEOUT",
+        "control": "SUCCEEDED",
+        "persistence": "SAVED",
+        "bin": "TEST_REINSPECTION_BIN",
+        "faults": [
+          "INFERENCE_TIMEOUT"
+        ]
+      },
+      "control_attempt_count": 1,
+      "fault_image_count": 12,
+      "next_normal_id": "d6d5d20c-02db-493d-8de4-baa3ca5434fd",
+      "individual_control_rows_available": false,
+      "image_id_list_available": false,
+      "successful_bin_statistics_available": false,
+      "db_error_target_and_log_available": null
+    },
+    {
+      "fault": "INFERENCE_ERROR",
+      "at_kst": "2026-10-06 11:33:00 KST",
+      "inspection_id": "dcec597f-4bc8-4b1f-bb2e-8f04a7476974",
+      "retained_fault_row": {
+        "id": "dcec597f-4bc8-4b1f-bb2e-8f04a7476974",
+        "status": "FAIL",
+        "processingStatus": "ERROR",
+        "errorCode": "INFERENCE_ERROR",
+        "control": "SUCCEEDED",
+        "persistence": "SAVED",
+        "bin": "TEST_REINSPECTION_BIN",
+        "faults": [
+          "INFERENCE_ERROR"
+        ]
+      },
+      "control_attempt_count": 1,
+      "fault_image_count": 12,
+      "next_normal_id": "bb57f84e-dca3-4281-9c67-92d5273d7948",
+      "individual_control_rows_available": false,
+      "image_id_list_available": false,
+      "successful_bin_statistics_available": false,
+      "db_error_target_and_log_available": null
+    },
+    {
+      "fault": "DB_ERROR",
+      "at_kst": "2026-10-06 11:33:08 KST",
+      "inspection_id": null,
+      "retained_fault_row": null,
+      "control_attempt_count": null,
+      "fault_image_count": null,
+      "next_normal_id": "74927e8d-01e6-41e6-b257-8b866cbdabf7",
+      "individual_control_rows_available": false,
+      "image_id_list_available": false,
+      "successful_bin_statistics_available": false,
+      "db_error_target_and_log_available": false
+    },
+    {
+      "fault": "CONTROL_REJECTED",
+      "at_kst": "2026-10-06 11:33:13 KST",
+      "inspection_id": "59927979-f841-45ea-ac1f-90c7537b3fae",
+      "retained_fault_row": {
+        "id": "59927979-f841-45ea-ac1f-90c7537b3fae",
+        "status": "REVIEW",
+        "processingStatus": "COMPLETED",
+        "errorCode": "CONTROL_REJECTED",
+        "control": "FALLBACK",
+        "persistence": "SAVED",
+        "bin": "TEST_REINSPECTION_BIN",
+        "faults": [
+          "CONTROL_REJECTED"
+        ]
+      },
+      "control_attempt_count": 2,
+      "fault_image_count": 0,
+      "next_normal_id": "61a0923e-bee6-4b5f-bba0-5b639c6c863b",
+      "individual_control_rows_available": false,
+      "image_id_list_available": false,
+      "successful_bin_statistics_available": false,
+      "db_error_target_and_log_available": null
+    },
+    {
+      "fault": "CONTROL_NO_RESPONSE",
+      "at_kst": "2026-10-06 11:33:18 KST",
+      "inspection_id": "0693b8aa-8328-4c5e-b7e8-907bdc6eb14b",
+      "retained_fault_row": {
+        "id": "0693b8aa-8328-4c5e-b7e8-907bdc6eb14b",
+        "status": "REVIEW",
+        "processingStatus": "COMPLETED",
+        "errorCode": "CONTROL_NO_RESPONSE",
+        "control": "NO_RESPONSE",
+        "persistence": "SAVED",
+        "bin": "DEMO_BIN_08",
+        "faults": [
+          "CONTROL_NO_RESPONSE"
+        ]
+      },
+      "control_attempt_count": 1,
+      "fault_image_count": 0,
+      "next_normal_id": "581d56a1-337a-42cf-80c6-bb0fe574320c",
+      "individual_control_rows_available": false,
+      "image_id_list_available": false,
+      "successful_bin_statistics_available": false,
+      "db_error_target_and_log_available": null
+    },
+    {
+      "fault": "CONTROL_FAILED",
+      "at_kst": "2026-10-06 11:33:23 KST",
+      "inspection_id": "29d70749-2320-4733-8be4-2a483e532851",
+      "retained_fault_row": {
+        "id": "29d70749-2320-4733-8be4-2a483e532851",
+        "status": "REVIEW",
+        "processingStatus": "COMPLETED",
+        "errorCode": "CONTROL_FAILED",
+        "control": "FAILED",
+        "persistence": "SAVED",
+        "bin": "DEMO_BIN_02",
+        "faults": [
+          "CONTROL_FAILED"
+        ]
+      },
+      "control_attempt_count": 1,
+      "fault_image_count": 0,
+      "next_normal_id": "a440c461-8225-4932-a641-b527e2232150",
+      "individual_control_rows_available": false,
+      "image_id_list_available": false,
+      "successful_bin_statistics_available": false,
+      "db_error_target_and_log_available": null
+    }
+  ],
+  "SIM-09": {
+    "project": "cqc-mo09-e2-recovery2-20261006",
+    "started_kst": "2026-10-06 14:55:24 KST",
+    "mysql_down_probe": {
+      "inspection_id": "qa-mo09-mysql-down-e87f0b64e1624fbc",
+      "bundle_id": "demo-601143002000-006",
+      "http_status": 200,
+      "elapsed_seconds": 4.938,
+      "inspection_status": "COMPLETED",
+      "decision_reason": "NORMAL",
+      "target_bin_code": "DEMO_BIN_12",
+      "control_status": "SUCCEEDED",
+      "persistence_status": "FAILED",
+      "exclude_from_normal_stats": false
+    },
+    "mysql_recovered_probe": {
+      "inspection_id": "qa-mo09-mysql-recovered-d6ecd322e9494b34",
+      "bundle_id": "demo-601143002000-006",
+      "http_status": 200,
+      "elapsed_seconds": 1.594,
+      "inspection_status": "COMPLETED",
+      "decision_reason": "NORMAL",
+      "target_bin_code": "DEMO_BIN_12",
+      "control_status": "SUCCEEDED",
+      "persistence_status": "SUCCEEDED",
+      "exclude_from_normal_stats": false
+    },
+    "lastSeenAt_before": 1791266156248.0,
+    "lastSeenAt_during": 1791266194501.0,
+    "lastSeenAt_increase_ms": 38253.0,
+    "container_id_unchanged_flags": {
+      "backend": true,
+      "simulator": true
+    },
+    "same_id_does_not_prove_no_restart": true,
+    "started_at_or_restart_count_before_after_available": false,
+    "exact_mysql_stop_start_times_available": false,
+    "automatic_saved_ids_or_counts_after_recovery_available": false,
+    "post_recovery_30s_observation_series_available": false,
+    "public_components_simulator_status_available": false
+  },
+  "official_qa_changed": false
+}

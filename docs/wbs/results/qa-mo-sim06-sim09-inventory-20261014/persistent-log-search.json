@@ -1,0 +1,32 @@
+[
+  {
+    "container": "cqc-cicd-backend-1",
+    "volume": "cqc-cicd_backend_logs",
+    "files": [
+      {
+        "path": "/var/log/cqc/error.log",
+        "bytes": 216088,
+        "sha256": "f0cd797f15130a3c145f8501ed14c45f48c7585cd97ca59da90548e44b0d2289",
+        "first_timestamp": "2026-10-02 08:06:35",
+        "last_timestamp": "2026-10-14 01:33:52",
+        "matching_id_counts": {},
+        "oct06_line_count": 46
+      }
+    ]
+  },
+  {
+    "container": "cqc-cicd-simulator-1",
+    "volume": "cqc-cicd_simulator_logs",
+    "files": [
+      {
+        "path": "/var/log/cqc/error.log",
+        "bytes": 998531,
+        "sha256": "5d9bc2fa2641d84936bd54743ab8924107a604f5f6074aacf7cf4b79c595ee86",
+        "first_timestamp": "2026-10-02 01:33:33",
+        "last_timestamp": "2026-10-14 01:07:19",
+        "matching_id_counts": {},
+        "oct06_line_count": 33
+      }
+    ]
+  }
+]

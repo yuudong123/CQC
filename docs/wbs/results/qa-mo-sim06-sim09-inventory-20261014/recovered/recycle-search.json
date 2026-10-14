@@ -1,0 +1,21 @@
+{
+  "recycled_report_bytes": 5821,
+  "sha256": "bbf49f0be17e4e2045093dfb7425f3502e2577d0d9518cda1a5d1912b471bcf3",
+  "matching_terms": {
+    "control_attempts": 0,
+    "DB_ERROR": 0,
+    "SIM-06": 0,
+    "SIM-09": 0,
+    "5e85ae9c": 0,
+    "qa-mo09-mysql": 0
+  },
+  "headings": [
+    "# Issue #117 MO 조사 메모 — 2026-10-08",
+    "## 현재 확인",
+    "## 분리 Docker DNS 최소 재현",
+    "### 반복·비교 측정",
+    "### 기존 MO 회차와 최신 BE 회차의 조건 차이",
+    "### 격리 E2 설정 사전 점검",
+    "## BE와 공동으로 필요한 정보"
+  ]
+}

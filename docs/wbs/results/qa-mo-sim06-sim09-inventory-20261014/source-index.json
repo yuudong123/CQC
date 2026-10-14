@@ -1,0 +1,85 @@
+{
+  "sources": [
+    {
+      "original_path": "outputs/mo09-e2-detailed-20261006/run.json",
+      "copy_path": "preserved/sim06-run.json",
+      "bytes": 426,
+      "sha256": "02401d850a4c523f49e492a1af150f97cb37745b54bb25a023e6c62286d9a082",
+      "copied_byte_exact": true
+    },
+    {
+      "original_path": "outputs/mo09-e2-detailed-20261006/fault-evidence.json",
+      "copy_path": "preserved/sim06-fault-evidence.json",
+      "bytes": 3721,
+      "sha256": "993cb4cfdccfcba7ba891e12cd144211bf5fc6ea4220d87eed0a57a30d2f626d",
+      "copied_byte_exact": true
+    },
+    {
+      "original_path": "outputs/mo09-e2-detailed-20261006/results.json",
+      "copy_path": "preserved/sim06-original-results.json",
+      "bytes": 5116,
+      "sha256": "f03fe1b003cb45382d57c1c08db8b8dd374771c43b8a750a613ff8e1c70f64f9",
+      "copied_byte_exact": true
+    },
+    {
+      "original_path": "outputs/mo09-e2-recovery2-20261006/recovery-evidence.json",
+      "copy_path": "preserved/sim09-recovery-evidence.json",
+      "bytes": 2894,
+      "sha256": "5263386a256cb07353a3a3c9ff1bb282455b657fd9df6e164a4687c066a485e6",
+      "copied_byte_exact": true
+    },
+    {
+      "original_path": "outputs/mo09-e2-recovery2-20261006/results.json",
+      "copy_path": "preserved/sim09-original-results.json",
+      "bytes": 1424,
+      "sha256": "522d72c83c6c35a76dcf588fae1b46f6433016ba84a8b6f1dc4067dec168f454",
+      "copied_byte_exact": true
+    },
+    {
+      "original_path": "docs/wbs/results/qa-mo-20261007-evidence/20261006-recovery-results.json",
+      "copy_path": "preserved/sim09-corrected-results.json",
+      "bytes": 1584,
+      "sha256": "0c00d1145d9e7ea163bc6e7ec5c7c02eff34b547f02c25b7669d17c3a4e55383",
+      "copied_byte_exact": true
+    },
+    {
+      "original_path": "docs/wbs/results/qa-mo-20261007-evidence/20261006-recovery-all04-rows.md",
+      "copy_path": "preserved/sim09-corrected-rows.md",
+      "bytes": 1130,
+      "sha256": "03268c37ea7776fc724109848e601da62a5461939b1ca45a75035a8ff2683f92",
+      "copied_byte_exact": true
+    },
+    {
+      "original_path": "scripts/qa/run_mo09_e2_faults.py",
+      "copy_path": "preserved/sim06-current-collector.py",
+      "bytes": 11892,
+      "sha256": "20d421e40d65b10ab67fd976f4de3de9cfa5e01e88113e59da1edf5ce4cb9410",
+      "copied_byte_exact": true
+    },
+    {
+      "original_path": "scripts/qa/run_mo09_e2_recovery.py",
+      "copy_path": "preserved/sim09-current-collector.py",
+      "bytes": 12256,
+      "sha256": "bece85ed49ab6e564f967ae02c13b19355d6c166a0299679bb21e43b3c1f625c",
+      "copied_byte_exact": true
+    }
+  ],
+  "existing_tracked_copy_checks": [
+    {
+      "original": "outputs/mo09-e2-detailed-20261006/fault-evidence.json",
+      "tracked_copy": "docs/wbs/results/qa-mo-be-followup-20261012/historical-detailed-fault-evidence.json",
+      "byte_identical": true
+    },
+    {
+      "original": "outputs/mo09-e2-recovery2-20261006/recovery-evidence.json",
+      "tracked_copy": "docs/wbs/results/qa-mo-20261007-evidence/20261006-recovery-recovery-evidence.json",
+      "byte_identical": true
+    },
+    {
+      "original": "outputs/mo09-e2-recovery2-20261006/recovery-evidence.json",
+      "tracked_copy": "docs/wbs/results/qa-mo-be-followup-20261012/historical-recovery-evidence.json",
+      "byte_identical": true
+    }
+  ],
+  "current_collector_limit": "Current committed collector files explain retained fields; historical run metadata has no executed-script SHA256 and does not prove exact script identity"
+}

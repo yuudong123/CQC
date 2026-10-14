@@ -1,0 +1,10 @@
+{
+  "source": "logs_2.sqlite, read-only",
+  "thread_id": "01a10e9a-73ec-74b0-810c-78ca566d56cf",
+  "utc_day": "2026-10-06",
+  "rows_checked": 1000,
+  "matches": [],
+  "oldest_ts": 1791264703,
+  "newest_ts": 1791278428,
+  "limit": "Remaining log rows only; does not claim that retention kept all original telemetry"
+}

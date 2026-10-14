@@ -1,0 +1,245 @@
+{
+  "issue_collection_records": 132,
+  "includes_pull_requests": true,
+  "pull_requests": 91,
+  "related_issue_comments_checked": 64,
+  "related_issue_numbers": [
+    45,
+    65,
+    103,
+    117
+  ],
+  "related_pr_discussions": [
+    52,
+    100,
+    104,
+    112
+  ],
+  "related_pr_discussion_entries": 0,
+  "attachment_links": [],
+  "github_actions_runs": [
+    {
+      "run_id": 38498623283,
+      "date": "2026-10-14T01:59:02Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/38498623283",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 38486936911,
+      "date": "2026-10-13T23:53:16Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/38486936911",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 38371421809,
+      "date": "2026-10-13T08:45:12Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/38371421809",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 38363167450,
+      "date": "2026-10-13T07:31:12Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/38363167450",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 38359576504,
+      "date": "2026-10-13T06:56:11Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/38359576504",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 38347430461,
+      "date": "2026-10-13T04:38:35Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/38347430461",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 38347379306,
+      "date": "2026-10-13T04:37:57Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/38347379306",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 38223797423,
+      "date": "2026-10-12T08:28:42Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/38223797423",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 38223134733,
+      "date": "2026-10-12T08:22:05Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/38223134733",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 38216592272,
+      "date": "2026-10-12T07:13:57Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/38216592272",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 38207627492,
+      "date": "2026-10-12T05:22:06Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/38207627492",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 38194595071,
+      "date": "2026-10-12T02:08:04Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/38194595071",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 38194535311,
+      "date": "2026-10-12T02:07:09Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/38194535311",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 38029853325,
+      "date": "2026-10-10T06:07:38Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/38029853325",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 37742394687,
+      "date": "2026-10-08T07:16:12Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/37742394687",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 37730404036,
+      "date": "2026-10-08T05:02:39Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/37730404036",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 37721665000,
+      "date": "2026-10-08T03:13:04Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/37721665000",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 37580546267,
+      "date": "2026-10-07T06:15:40Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/37580546267",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 37575883916,
+      "date": "2026-10-07T05:21:14Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/37575883916",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 37575691061,
+      "date": "2026-10-07T05:18:52Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/37575691061",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 37575077991,
+      "date": "2026-10-07T05:11:17Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/37575077991",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 37562032591,
+      "date": "2026-10-07T02:27:02Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/37562032591",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 37438006220,
+      "date": "2026-10-06T08:43:18Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/37438006220",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 37433067087,
+      "date": "2026-10-06T07:58:46Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/37433067087",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 37424502278,
+      "date": "2026-10-06T06:34:35Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/37424502278",
+      "artifact_count": 0
+    },
+    {
+      "run_id": 37421627596,
+      "date": "2026-10-06T06:02:56Z",
+      "name": "PR checks",
+      "url": "https://github.com/yuudong123/CQC/actions/runs/37421627596",
+      "artifact_count": 0
+    }
+  ],
+  "github_releases": 0,
+  "jenkins_archive_search": {
+    "container": "jenkins",
+    "scope": "All depths under /var/jenkins_home/jobs; archive directories and SQL/ZIP/fault/recovery/evidence names",
+    "matches": []
+  },
+  "ins13_external_sources": {
+    "issue": "https://github.com/yuudong123/CQC/issues/117",
+    "comment": "https://github.com/yuudong123/CQC/issues/117#issuecomment-6051555754",
+    "paths": [
+      "outputs/qa-be-e2-ins13-20261008/",
+      "outputs/qa-be-117-reproduction-20261008/",
+      "outputs/qa-be-117-dns-20261008/",
+      "outputs/qa-be-117-dns-implementation-20261008/",
+      "outputs/qa-e2-restore-20261008/"
+    ],
+    "BE_stash": "993cc4caafba67c0e9fe7d4f74e3e8c6e62bc07a",
+    "here_paths_exist": false,
+    "here_stash_object_exists": false,
+    "Simulator_present": false,
+    "reuse_limit": "Separate direct-request INS13 trials; not same-run Simulator automatic recovery evidence",
+    "source_comment_describes": "Ignored evidence and local stash not directly accessible on GitHub",
+    "latest_instrumented_failure_seconds": 4.559266
+  },
+  "linked_sql_source_files": [
+    "https://github.com/yuudong123/CQC/blob/0a4521ecd862a1626f7301ac2920e15bee467a07/docs/wbs/results/qa-mo-e1-delay-20261012/query.sql",
+    "https://github.com/yuudong123/CQC/blob/8a0f5179407f5207b90de336af3d0e3bfda2a8e3/docs/wbs/results/qa-mo-ins14-ins17-20261012/query.sql"
+  ],
+  "other_external_sources": {
+    "BE10_3_path": "outputs/be10-3/",
+    "local_path_exists": false,
+    "source": "https://github.com/yuudong123/CQC/blob/9723907f2a9cd3c4cb747ca80bc9b72892e2d4d0/docs/wbs/BE-10-results.md#111-환경증거와-판정-범위",
+    "expected_files": [
+      "acceptance-evidence.jsonl",
+      "core-evidence.jsonl",
+      "error.log",
+      "mysql.log",
+      "container-recovery.json"
+    ],
+    "reuse_limit": "Separate BE10-3 direct/fixture trials; full report is tracked but cited original outputs are not tracked or present here"
+  }
+}

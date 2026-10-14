@@ -1,0 +1,1874 @@
+{
+  "helper_name": "cqc-mo103-inventory-ro-20261014",
+  "existing_image": "sha256:169228d055a076de75f1d4dee42a9a7c3e2dc877e36e86226b77cf41d764d99b",
+  "read_only_root_and_mounts": true,
+  "network": "none",
+  "rows": [
+    {
+      "volume": "1b00b0b087ff422c93d7aa34e4af5a5fc4ac0a69acc500e694694788b7bcafc7",
+      "top_level": [
+        {
+          "path": "binlog.000001",
+          "bytes": 2996522
+        },
+        {
+          "path": "undo_001",
+          "bytes": 16777216
+        },
+        {
+          "path": "private_key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "mysql.sock",
+          "kind": "symlink"
+        },
+        {
+          "path": "ca-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "ca.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "cqc_test/",
+          "children": [
+            "inspections.ibd",
+            "control_attempts.ibd",
+            "inspection_errors.ibd",
+            "bin_mappings.ibd",
+            "alembic_version.ibd"
+          ]
+        },
+        {
+          "path": "ibdata1",
+          "bytes": 12582912
+        },
+        {
+          "path": "#innodb_redo/",
+          "children": [
+            "#ib_redo20_tmp",
+            "#ib_redo29_tmp",
+            "#ib_redo38_tmp",
+            "#ib_redo18_tmp",
+            "#ib_redo32_tmp",
+            "#ib_redo13_tmp",
+            "#ib_redo12_tmp",
+            "#ib_redo24_tmp",
+            "#ib_redo33_tmp",
+            "#ib_redo23_tmp",
+            "#ib_redo25_tmp",
+            "#ib_redo9",
+            "#ib_redo30_tmp",
+            "#ib_redo34_tmp",
+            "#ib_redo31_tmp",
+            "#ib_redo15_tmp",
+            "#ib_redo35_tmp",
+            "#ib_redo40_tmp",
+            "#ib_redo14_tmp",
+            "#ib_redo22_tmp",
+            "#ib_redo21_tmp",
+            "#ib_redo19_tmp",
+            "#ib_redo26_tmp",
+            "#ib_redo16_tmp",
+            "#ib_redo10",
+            "#ib_redo37_tmp",
+            "#ib_redo39_tmp",
+            "#ib_redo27_tmp",
+            "#ib_redo17_tmp",
+            "#ib_redo28_tmp",
+            "#ib_redo36_tmp",
+            "#ib_redo11_tmp"
+          ]
+        },
+        {
+          "path": "public_key.pem",
+          "bytes": 452
+        },
+        {
+          "path": "cqc_retention/",
+          "children": [
+            "inspections.ibd",
+            "control_attempts.ibd",
+            "inspection_errors.ibd",
+            "bin_mappings.ibd",
+            "alembic_version.ibd"
+          ]
+        },
+        {
+          "path": "performance_schema/",
+          "children": [
+            "events_waits_sum_91.sdi",
+            "events_stages_cu_113.sdi",
+            "events_waits_his_85.sdi",
+            "table_io_waits_s_109.sdi",
+            "objects_summary__97.sdi",
+            "events_statement_128.sdi",
+            "user_defined_fun_190.sdi",
+            "events_transacti_139.sdi",
+            "data_lock_waits_163.sdi",
+            "events_errors_su_145.sdi",
+            "events_transacti_138.sdi",
+            "events_statement_125.sdi",
+            "replication_grou_171.sdi",
+            "status_by_accoun_179.sdi",
+            "events_statement_132.sdi",
+            "socket_summary_b_151.sdi",
+            "events_stages_su_120.sdi",
+            "file_summary_by__94.sdi",
+            "events_transacti_134.sdi",
+            "events_stages_su_117.sdi",
+            "events_statement_124.sdi",
+            "events_waits_cur_83.sdi",
+            "session_connect__152.sdi",
+            "events_stages_su_116.sdi",
+            "replication_appl_169.sdi",
+            "events_stages_su_119.sdi",
+            "events_transacti_136.sdi",
+            "setup_threads_108.sdi",
+            "setup_metrics_106.sdi",
+            "replication_conn_166.sdi",
+            "threads_112.sdi",
+            "replication_conn_164.sdi",
+            "events_transacti_137.sdi",
+            "replication_asyn_175.sdi",
+            "table_handles_160.sdi",
+            "persisted_variab_189.sdi",
+            "socket_instances_149.sdi",
+            "events_statement_122.sdi",
+            "events_waits_sum_88.sdi",
+            "events_statement_129.sdi"
+          ]
+        },
+        {
+          "path": "sys/",
+          "children": [
+            "sys_config.ibd"
+          ]
+        },
+        {
+          "path": "server-cert.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "server-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "client-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "undo_002",
+          "bytes": 16777216
+        },
+        {
+          "path": "#innodb_temp/",
+          "children": [
+            "temp_2.ibt",
+            "temp_3.ibt",
+            "temp_5.ibt",
+            "temp_9.ibt",
+            "temp_10.ibt",
+            "temp_7.ibt",
+            "temp_4.ibt",
+            "temp_6.ibt",
+            "temp_8.ibt",
+            "temp_1.ibt"
+          ]
+        },
+        {
+          "path": "ibtmp1",
+          "bytes": 12582912
+        },
+        {
+          "path": "ib_buffer_pool",
+          "bytes": 5699
+        },
+        {
+          "path": "binlog.000002",
+          "bytes": 45539
+        },
+        {
+          "path": "client-cert.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "mysql/",
+          "children": [
+            "slow_log_216.sdi",
+            "slow_log.CSM",
+            "general_log.CSM",
+            "general_log_215.sdi",
+            "general_log.CSV",
+            "slow_log.CSV"
+          ]
+        },
+        {
+          "path": "mysql.ibd",
+          "bytes": 32505856
+        },
+        {
+          "path": "auto.cnf",
+          "bytes": 56
+        },
+        {
+          "path": "#ib_16384_1.dblwr",
+          "bytes": 12582912
+        },
+        {
+          "path": "#ib_16384_0.dblwr",
+          "bytes": 4194304
+        },
+        {
+          "path": "mysql_upgrade_history",
+          "bytes": 125
+        },
+        {
+          "path": "binlog.index",
+          "bytes": 32
+        }
+      ],
+      "literal_binary_scan": [
+        {
+          "path": "cqc_test/inspections.ibd",
+          "bytes": 245760,
+          "sha256": "060bf3b28c07c29e7f5f467382f7b8d0f60679acd2578afd0bf8f67db66e98df",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_test/control_attempts.ibd",
+          "bytes": 180224,
+          "sha256": "62836f0d6d0b541238f64db89fd4a737e6a13c2f2ab751d3ec9fc2f66b777fb2",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_test/inspection_errors.ibd",
+          "bytes": 180224,
+          "sha256": "053d02b47cb4f9937c63b6a1c81f60f95d02d8b0b4988b3cf8f44ee3037600ce",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_retention/inspections.ibd",
+          "bytes": 245760,
+          "sha256": "baa7eb320f214fd1de9928992f52e3ec0d27c5e69510795dee397befc8161374",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_retention/control_attempts.ibd",
+          "bytes": 180224,
+          "sha256": "1601cf63279053cb5aa7c0ccc3b3f0244630b3a2446f0c4c3bc3c9191cf110c6",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_retention/inspection_errors.ibd",
+          "bytes": 180224,
+          "sha256": "f90bdf6cd5fd6926716de9b188c78dd1ad2b17120858f4ec192d6f247f455ad0",
+          "literal_id_matches": []
+        }
+      ]
+    },
+    {
+      "volume": "6a4876fce9706cc803fcd3c46f0c3eb4c6c6107105d85efa91d43d6e2c181e3e",
+      "top_level": [
+        {
+          "path": "binlog.000001",
+          "bytes": 339
+        },
+        {
+          "path": "undo_001",
+          "bytes": 16777216
+        },
+        {
+          "path": "private_key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "mysql.sock",
+          "kind": "symlink"
+        },
+        {
+          "path": "ca-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "ca.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "ibdata1",
+          "bytes": 12582912
+        },
+        {
+          "path": "#innodb_redo/",
+          "children": [
+            "#ib_redo20_tmp",
+            "#ib_redo29_tmp",
+            "#ib_redo18_tmp",
+            "#ib_redo32_tmp",
+            "#ib_redo13_tmp",
+            "#ib_redo12_tmp",
+            "#ib_redo24_tmp",
+            "#ib_redo33_tmp",
+            "#ib_redo5",
+            "#ib_redo9_tmp",
+            "#ib_redo10_tmp",
+            "#ib_redo23_tmp",
+            "#ib_redo25_tmp",
+            "#ib_redo30_tmp",
+            "#ib_redo34_tmp",
+            "#ib_redo31_tmp",
+            "#ib_redo8_tmp",
+            "#ib_redo15_tmp",
+            "#ib_redo35_tmp",
+            "#ib_redo14_tmp",
+            "#ib_redo7_tmp",
+            "#ib_redo22_tmp",
+            "#ib_redo21_tmp",
+            "#ib_redo19_tmp",
+            "#ib_redo26_tmp",
+            "#ib_redo16_tmp",
+            "#ib_redo6_tmp",
+            "#ib_redo27_tmp",
+            "#ib_redo17_tmp",
+            "#ib_redo28_tmp",
+            "#ib_redo36_tmp",
+            "#ib_redo11_tmp"
+          ]
+        },
+        {
+          "path": "public_key.pem",
+          "bytes": 452
+        },
+        {
+          "path": "performance_schema/",
+          "children": [
+            "events_waits_sum_91.sdi",
+            "events_stages_cu_113.sdi",
+            "events_waits_his_85.sdi",
+            "table_io_waits_s_109.sdi",
+            "objects_summary__97.sdi",
+            "events_statement_128.sdi",
+            "user_defined_fun_190.sdi",
+            "events_transacti_139.sdi",
+            "data_lock_waits_163.sdi",
+            "events_errors_su_145.sdi",
+            "events_transacti_138.sdi",
+            "events_statement_125.sdi",
+            "replication_grou_171.sdi",
+            "status_by_accoun_179.sdi",
+            "events_statement_132.sdi",
+            "socket_summary_b_151.sdi",
+            "events_stages_su_120.sdi",
+            "file_summary_by__94.sdi",
+            "events_transacti_134.sdi",
+            "events_stages_su_117.sdi",
+            "events_statement_124.sdi",
+            "events_waits_cur_83.sdi",
+            "session_connect__152.sdi",
+            "events_stages_su_116.sdi",
+            "replication_appl_169.sdi",
+            "events_stages_su_119.sdi",
+            "events_transacti_136.sdi",
+            "setup_threads_108.sdi",
+            "setup_metrics_106.sdi",
+            "replication_conn_166.sdi",
+            "threads_112.sdi",
+            "replication_conn_164.sdi",
+            "events_transacti_137.sdi",
+            "replication_asyn_175.sdi",
+            "table_handles_160.sdi",
+            "persisted_variab_189.sdi",
+            "socket_instances_149.sdi",
+            "events_statement_122.sdi",
+            "events_waits_sum_88.sdi",
+            "events_statement_129.sdi"
+          ]
+        },
+        {
+          "path": "sys/",
+          "children": [
+            "sys_config.ibd"
+          ]
+        },
+        {
+          "path": "server-cert.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "server-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "client-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "undo_002",
+          "bytes": 16777216
+        },
+        {
+          "path": "#innodb_temp/",
+          "children": [
+            "temp_2.ibt",
+            "temp_3.ibt",
+            "temp_5.ibt",
+            "temp_9.ibt",
+            "temp_10.ibt",
+            "temp_7.ibt",
+            "temp_4.ibt",
+            "temp_6.ibt",
+            "temp_8.ibt",
+            "temp_1.ibt"
+          ]
+        },
+        {
+          "path": "ibtmp1",
+          "bytes": 12582912
+        },
+        {
+          "path": "ib_buffer_pool",
+          "bytes": 5751
+        },
+        {
+          "path": "client-cert.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "mysql/",
+          "children": [
+            "slow_log_216.sdi",
+            "slow_log.CSM",
+            "general_log.CSM",
+            "general_log_215.sdi",
+            "general_log.CSV",
+            "slow_log.CSV"
+          ]
+        },
+        {
+          "path": "mysql.ibd",
+          "bytes": 27262976
+        },
+        {
+          "path": "auto.cnf",
+          "bytes": 56
+        },
+        {
+          "path": "#ib_16384_1.dblwr",
+          "bytes": 12582912
+        },
+        {
+          "path": "#ib_16384_0.dblwr",
+          "bytes": 4194304
+        },
+        {
+          "path": "mysql_upgrade_history",
+          "bytes": 125
+        },
+        {
+          "path": "binlog.index",
+          "bytes": 16
+        }
+      ],
+      "literal_binary_scan": []
+    },
+    {
+      "volume": "9fb31711d2058c2300357c4be36ce3e11806d10fe4cdb6f542868145b15297e9",
+      "top_level": [
+        {
+          "path": "binlog.000001",
+          "bytes": 2996522
+        },
+        {
+          "path": "undo_001",
+          "bytes": 16777216
+        },
+        {
+          "path": "private_key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "mysql.sock",
+          "kind": "symlink"
+        },
+        {
+          "path": "ca-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "ca.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "cqc_test/",
+          "children": [
+            "inspections.ibd",
+            "control_attempts.ibd",
+            "inspection_errors.ibd",
+            "bin_mappings.ibd",
+            "alembic_version.ibd"
+          ]
+        },
+        {
+          "path": "ibdata1",
+          "bytes": 12582912
+        },
+        {
+          "path": "#innodb_redo/",
+          "children": [
+            "#ib_redo20_tmp",
+            "#ib_redo29_tmp",
+            "#ib_redo38_tmp",
+            "#ib_redo18_tmp",
+            "#ib_redo32_tmp",
+            "#ib_redo13_tmp",
+            "#ib_redo12_tmp",
+            "#ib_redo24_tmp",
+            "#ib_redo33_tmp",
+            "#ib_redo23_tmp",
+            "#ib_redo25_tmp",
+            "#ib_redo9",
+            "#ib_redo30_tmp",
+            "#ib_redo34_tmp",
+            "#ib_redo31_tmp",
+            "#ib_redo15_tmp",
+            "#ib_redo35_tmp",
+            "#ib_redo40_tmp",
+            "#ib_redo14_tmp",
+            "#ib_redo22_tmp",
+            "#ib_redo21_tmp",
+            "#ib_redo19_tmp",
+            "#ib_redo26_tmp",
+            "#ib_redo16_tmp",
+            "#ib_redo10",
+            "#ib_redo37_tmp",
+            "#ib_redo39_tmp",
+            "#ib_redo27_tmp",
+            "#ib_redo17_tmp",
+            "#ib_redo28_tmp",
+            "#ib_redo36_tmp",
+            "#ib_redo11_tmp"
+          ]
+        },
+        {
+          "path": "public_key.pem",
+          "bytes": 452
+        },
+        {
+          "path": "cqc_retention/",
+          "children": [
+            "inspections.ibd",
+            "control_attempts.ibd",
+            "inspection_errors.ibd",
+            "bin_mappings.ibd",
+            "alembic_version.ibd"
+          ]
+        },
+        {
+          "path": "performance_schema/",
+          "children": [
+            "events_waits_sum_91.sdi",
+            "events_stages_cu_113.sdi",
+            "events_waits_his_85.sdi",
+            "table_io_waits_s_109.sdi",
+            "objects_summary__97.sdi",
+            "events_statement_128.sdi",
+            "user_defined_fun_190.sdi",
+            "events_transacti_139.sdi",
+            "data_lock_waits_163.sdi",
+            "events_errors_su_145.sdi",
+            "events_transacti_138.sdi",
+            "events_statement_125.sdi",
+            "replication_grou_171.sdi",
+            "status_by_accoun_179.sdi",
+            "events_statement_132.sdi",
+            "socket_summary_b_151.sdi",
+            "events_stages_su_120.sdi",
+            "file_summary_by__94.sdi",
+            "events_transacti_134.sdi",
+            "events_stages_su_117.sdi",
+            "events_statement_124.sdi",
+            "events_waits_cur_83.sdi",
+            "session_connect__152.sdi",
+            "events_stages_su_116.sdi",
+            "replication_appl_169.sdi",
+            "events_stages_su_119.sdi",
+            "events_transacti_136.sdi",
+            "setup_threads_108.sdi",
+            "setup_metrics_106.sdi",
+            "replication_conn_166.sdi",
+            "threads_112.sdi",
+            "replication_conn_164.sdi",
+            "events_transacti_137.sdi",
+            "replication_asyn_175.sdi",
+            "table_handles_160.sdi",
+            "persisted_variab_189.sdi",
+            "socket_instances_149.sdi",
+            "events_statement_122.sdi",
+            "events_waits_sum_88.sdi",
+            "events_statement_129.sdi"
+          ]
+        },
+        {
+          "path": "sys/",
+          "children": [
+            "sys_config.ibd"
+          ]
+        },
+        {
+          "path": "server-cert.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "server-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "client-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "undo_002",
+          "bytes": 16777216
+        },
+        {
+          "path": "#innodb_temp/",
+          "children": [
+            "temp_2.ibt",
+            "temp_3.ibt",
+            "temp_5.ibt",
+            "temp_9.ibt",
+            "temp_10.ibt",
+            "temp_7.ibt",
+            "temp_4.ibt",
+            "temp_6.ibt",
+            "temp_8.ibt",
+            "temp_1.ibt"
+          ]
+        },
+        {
+          "path": "ibtmp1",
+          "bytes": 12582912
+        },
+        {
+          "path": "ib_buffer_pool",
+          "bytes": 5714
+        },
+        {
+          "path": "binlog.000002",
+          "bytes": 45539
+        },
+        {
+          "path": "client-cert.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "mysql/",
+          "children": [
+            "slow_log_216.sdi",
+            "slow_log.CSM",
+            "general_log.CSM",
+            "general_log_215.sdi",
+            "general_log.CSV",
+            "slow_log.CSV"
+          ]
+        },
+        {
+          "path": "mysql.ibd",
+          "bytes": 32505856
+        },
+        {
+          "path": "auto.cnf",
+          "bytes": 56
+        },
+        {
+          "path": "#ib_16384_1.dblwr",
+          "bytes": 12582912
+        },
+        {
+          "path": "#ib_16384_0.dblwr",
+          "bytes": 4194304
+        },
+        {
+          "path": "mysql_upgrade_history",
+          "bytes": 125
+        },
+        {
+          "path": "binlog.index",
+          "bytes": 32
+        }
+      ],
+      "literal_binary_scan": [
+        {
+          "path": "cqc_test/inspections.ibd",
+          "bytes": 245760,
+          "sha256": "6124f8f46cec05be09aa284398ee7b087d349dd21ee1fcd2284baae3fa21d28c",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_test/control_attempts.ibd",
+          "bytes": 180224,
+          "sha256": "b20242825d593b8528d521b451ad3b1d7e6b5a96207d43de0bbf1bb58339d9a9",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_test/inspection_errors.ibd",
+          "bytes": 180224,
+          "sha256": "41148495d0e9e114a116ef55d53adc0f3cdc8ae2c25023fe9830f1706060aa62",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_retention/inspections.ibd",
+          "bytes": 245760,
+          "sha256": "1a7b4c6215add12a2b0ba6cc8c0be89b1ac9cace0bdc8a9803552f7419681f12",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_retention/control_attempts.ibd",
+          "bytes": 180224,
+          "sha256": "75421f2cf325e13cd28a831e8022d6d57a80ad5905bd55977e4138d0e1b65de7",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_retention/inspection_errors.ibd",
+          "bytes": 180224,
+          "sha256": "e9a742a6d471a88ce2d5ad7a856d010f2153847433f144b3ebfa8061d1c33896",
+          "literal_id_matches": []
+        }
+      ]
+    },
+    {
+      "volume": "429e630df6981211e4e978eecbf3f1ccbaa33fc764540cd6c9c65736af31c0dd",
+      "top_level": [
+        {
+          "path": "undo_001",
+          "bytes": 16777216
+        },
+        {
+          "path": "private_key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "ca-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "ca.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "ibdata1",
+          "bytes": 12582912
+        },
+        {
+          "path": "#innodb_redo/",
+          "children": [
+            "#ib_redo20_tmp",
+            "#ib_redo29_tmp",
+            "#ib_redo18_tmp",
+            "#ib_redo32_tmp",
+            "#ib_redo13_tmp",
+            "#ib_redo12_tmp",
+            "#ib_redo24_tmp",
+            "#ib_redo5",
+            "#ib_redo9_tmp",
+            "#ib_redo10_tmp",
+            "#ib_redo23_tmp",
+            "#ib_redo25_tmp",
+            "#ib_redo30_tmp",
+            "#ib_redo31_tmp",
+            "#ib_redo8_tmp",
+            "#ib_redo15_tmp",
+            "#ib_redo14_tmp",
+            "#ib_redo7_tmp",
+            "#ib_redo22_tmp",
+            "#ib_redo21_tmp",
+            "#ib_redo19_tmp",
+            "#ib_redo26_tmp",
+            "#ib_redo16_tmp",
+            "#ib_redo6_tmp",
+            "#ib_redo27_tmp",
+            "#ib_redo17_tmp",
+            "#ib_redo28_tmp",
+            "#ib_redo11_tmp"
+          ]
+        },
+        {
+          "path": "public_key.pem",
+          "bytes": 452
+        },
+        {
+          "path": "performance_schema/",
+          "children": [
+            "events_waits_sum_91.sdi",
+            "events_stages_cu_113.sdi",
+            "events_waits_his_85.sdi",
+            "table_io_waits_s_109.sdi",
+            "objects_summary__97.sdi",
+            "events_statement_128.sdi",
+            "user_defined_fun_190.sdi",
+            "events_transacti_139.sdi",
+            "data_lock_waits_163.sdi",
+            "events_errors_su_145.sdi",
+            "events_transacti_138.sdi",
+            "events_statement_125.sdi",
+            "replication_grou_171.sdi",
+            "status_by_accoun_179.sdi",
+            "events_statement_132.sdi",
+            "socket_summary_b_151.sdi",
+            "events_stages_su_120.sdi",
+            "file_summary_by__94.sdi",
+            "events_transacti_134.sdi",
+            "events_stages_su_117.sdi",
+            "events_statement_124.sdi",
+            "events_waits_cur_83.sdi",
+            "session_connect__152.sdi",
+            "events_stages_su_116.sdi",
+            "replication_appl_169.sdi",
+            "events_stages_su_119.sdi",
+            "events_transacti_136.sdi",
+            "setup_threads_108.sdi",
+            "setup_metrics_106.sdi",
+            "replication_conn_166.sdi",
+            "threads_112.sdi",
+            "replication_conn_164.sdi",
+            "events_transacti_137.sdi",
+            "replication_asyn_175.sdi",
+            "table_handles_160.sdi",
+            "persisted_variab_189.sdi",
+            "socket_instances_149.sdi",
+            "events_statement_122.sdi",
+            "events_waits_sum_88.sdi",
+            "events_statement_129.sdi"
+          ]
+        },
+        {
+          "path": "sys/",
+          "children": [
+            "sys_config.ibd"
+          ]
+        },
+        {
+          "path": "server-cert.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "server-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "client-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "undo_002",
+          "bytes": 16777216
+        },
+        {
+          "path": "#innodb_temp/",
+          "children": [
+            "temp_2.ibt",
+            "temp_3.ibt",
+            "temp_5.ibt",
+            "temp_7.ibt",
+            "temp_4.ibt",
+            "temp_6.ibt",
+            "temp_1.ibt"
+          ]
+        },
+        {
+          "path": "ibtmp1",
+          "bytes": 12582912
+        },
+        {
+          "path": "ib_buffer_pool",
+          "bytes": 5741
+        },
+        {
+          "path": "client-cert.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "mysql/",
+          "children": [
+            "slow_log_216.sdi",
+            "slow_log.CSM",
+            "general_log.CSM",
+            "general_log_215.sdi",
+            "general_log.CSV",
+            "slow_log.CSV"
+          ]
+        },
+        {
+          "path": "mysql.ibd",
+          "bytes": 26214400
+        },
+        {
+          "path": "auto.cnf",
+          "bytes": 56
+        },
+        {
+          "path": "#ib_16384_1.dblwr",
+          "bytes": 12582912
+        },
+        {
+          "path": "#ib_16384_0.dblwr",
+          "bytes": 4194304
+        },
+        {
+          "path": "mysql_upgrade_history",
+          "bytes": 125
+        },
+        {
+          "path": "binlog.index",
+          "bytes": 0
+        }
+      ],
+      "literal_binary_scan": []
+    },
+    {
+      "volume": "599ac233d0546df56889b596ae634323066b4a159a86f5636de752765154f2f1",
+      "top_level": [
+        {
+          "path": "binlog.000001",
+          "bytes": 2996522
+        },
+        {
+          "path": "undo_001",
+          "bytes": 16777216
+        },
+        {
+          "path": "private_key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "mysql.sock",
+          "kind": "symlink"
+        },
+        {
+          "path": "ca-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "ca.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "cqc_test/",
+          "children": [
+            "inspections.ibd",
+            "control_attempts.ibd",
+            "inspection_errors.ibd",
+            "bin_mappings.ibd",
+            "alembic_version.ibd"
+          ]
+        },
+        {
+          "path": "ibdata1",
+          "bytes": 12582912
+        },
+        {
+          "path": "#innodb_redo/",
+          "children": [
+            "#ib_redo20_tmp",
+            "#ib_redo29_tmp",
+            "#ib_redo38_tmp",
+            "#ib_redo18_tmp",
+            "#ib_redo32_tmp",
+            "#ib_redo13_tmp",
+            "#ib_redo12_tmp",
+            "#ib_redo24_tmp",
+            "#ib_redo33_tmp",
+            "#ib_redo23_tmp",
+            "#ib_redo25_tmp",
+            "#ib_redo9",
+            "#ib_redo30_tmp",
+            "#ib_redo34_tmp",
+            "#ib_redo31_tmp",
+            "#ib_redo15_tmp",
+            "#ib_redo35_tmp",
+            "#ib_redo40_tmp",
+            "#ib_redo14_tmp",
+            "#ib_redo22_tmp",
+            "#ib_redo21_tmp",
+            "#ib_redo19_tmp",
+            "#ib_redo26_tmp",
+            "#ib_redo16_tmp",
+            "#ib_redo10",
+            "#ib_redo37_tmp",
+            "#ib_redo39_tmp",
+            "#ib_redo27_tmp",
+            "#ib_redo17_tmp",
+            "#ib_redo28_tmp",
+            "#ib_redo36_tmp",
+            "#ib_redo11_tmp"
+          ]
+        },
+        {
+          "path": "public_key.pem",
+          "bytes": 452
+        },
+        {
+          "path": "cqc_retention/",
+          "children": [
+            "inspections.ibd",
+            "control_attempts.ibd",
+            "inspection_errors.ibd",
+            "bin_mappings.ibd",
+            "alembic_version.ibd"
+          ]
+        },
+        {
+          "path": "performance_schema/",
+          "children": [
+            "events_waits_sum_91.sdi",
+            "events_stages_cu_113.sdi",
+            "events_waits_his_85.sdi",
+            "table_io_waits_s_109.sdi",
+            "objects_summary__97.sdi",
+            "events_statement_128.sdi",
+            "user_defined_fun_190.sdi",
+            "events_transacti_139.sdi",
+            "data_lock_waits_163.sdi",
+            "events_errors_su_145.sdi",
+            "events_transacti_138.sdi",
+            "events_statement_125.sdi",
+            "replication_grou_171.sdi",
+            "status_by_accoun_179.sdi",
+            "events_statement_132.sdi",
+            "socket_summary_b_151.sdi",
+            "events_stages_su_120.sdi",
+            "file_summary_by__94.sdi",
+            "events_transacti_134.sdi",
+            "events_stages_su_117.sdi",
+            "events_statement_124.sdi",
+            "events_waits_cur_83.sdi",
+            "session_connect__152.sdi",
+            "events_stages_su_116.sdi",
+            "replication_appl_169.sdi",
+            "events_stages_su_119.sdi",
+            "events_transacti_136.sdi",
+            "setup_threads_108.sdi",
+            "setup_metrics_106.sdi",
+            "replication_conn_166.sdi",
+            "threads_112.sdi",
+            "replication_conn_164.sdi",
+            "events_transacti_137.sdi",
+            "replication_asyn_175.sdi",
+            "table_handles_160.sdi",
+            "persisted_variab_189.sdi",
+            "socket_instances_149.sdi",
+            "events_statement_122.sdi",
+            "events_waits_sum_88.sdi",
+            "events_statement_129.sdi"
+          ]
+        },
+        {
+          "path": "sys/",
+          "children": [
+            "sys_config.ibd"
+          ]
+        },
+        {
+          "path": "server-cert.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "server-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "client-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "undo_002",
+          "bytes": 16777216
+        },
+        {
+          "path": "#innodb_temp/",
+          "children": [
+            "temp_2.ibt",
+            "temp_3.ibt",
+            "temp_5.ibt",
+            "temp_9.ibt",
+            "temp_10.ibt",
+            "temp_7.ibt",
+            "temp_4.ibt",
+            "temp_6.ibt",
+            "temp_8.ibt",
+            "temp_1.ibt"
+          ]
+        },
+        {
+          "path": "ibtmp1",
+          "bytes": 12582912
+        },
+        {
+          "path": "ib_buffer_pool",
+          "bytes": 5719
+        },
+        {
+          "path": "binlog.000002",
+          "bytes": 45539
+        },
+        {
+          "path": "client-cert.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "mysql/",
+          "children": [
+            "slow_log_216.sdi",
+            "slow_log.CSM",
+            "general_log.CSM",
+            "general_log_215.sdi",
+            "general_log.CSV",
+            "slow_log.CSV"
+          ]
+        },
+        {
+          "path": "mysql.ibd",
+          "bytes": 32505856
+        },
+        {
+          "path": "auto.cnf",
+          "bytes": 56
+        },
+        {
+          "path": "#ib_16384_1.dblwr",
+          "bytes": 12582912
+        },
+        {
+          "path": "#ib_16384_0.dblwr",
+          "bytes": 4194304
+        },
+        {
+          "path": "mysql_upgrade_history",
+          "bytes": 125
+        },
+        {
+          "path": "binlog.index",
+          "bytes": 32
+        }
+      ],
+      "literal_binary_scan": [
+        {
+          "path": "cqc_test/inspections.ibd",
+          "bytes": 245760,
+          "sha256": "96134e2d5c87d2aafa1d8df228e48a8ec1213e58a6059a8f0e938fd442cb6e19",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_test/control_attempts.ibd",
+          "bytes": 180224,
+          "sha256": "1229742081bd5e3454962ac1f8d0a118082a01ee17e662f9360a761d991ec156",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_test/inspection_errors.ibd",
+          "bytes": 180224,
+          "sha256": "5e2611fcbc2a0f1593169240d94f6a56d723b88b14d219e6e2ed0ff8c0552cc3",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_retention/inspections.ibd",
+          "bytes": 245760,
+          "sha256": "51c740247b4f17be52ab6d535eba86e812694240e17c4ba97bb16be57a82d852",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_retention/control_attempts.ibd",
+          "bytes": 180224,
+          "sha256": "4f2beb75fb161213536a96ccb6d0e63aba8b032b4628d9c69ac9d357c2df2aee",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_retention/inspection_errors.ibd",
+          "bytes": 180224,
+          "sha256": "df519aa93705dabfdd203f412311e05f49f336ea1d58857de155f71491c0fbab",
+          "literal_id_matches": []
+        }
+      ]
+    },
+    {
+      "volume": "accc08edbf5b63fc2f5f5439d9d06ad83dde097517fca12a7c180999c90c3286",
+      "top_level": [
+        {
+          "path": "binlog.000001",
+          "bytes": 2996522
+        },
+        {
+          "path": "undo_001",
+          "bytes": 16777216
+        },
+        {
+          "path": "private_key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "mysql.sock",
+          "kind": "symlink"
+        },
+        {
+          "path": "ca-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "ca.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "cqc_test/",
+          "children": []
+        },
+        {
+          "path": "ibdata1",
+          "bytes": 12582912
+        },
+        {
+          "path": "#innodb_redo/",
+          "children": [
+            "#ib_redo7",
+            "#ib_redo20_tmp",
+            "#ib_redo29_tmp",
+            "#ib_redo18_tmp",
+            "#ib_redo6",
+            "#ib_redo32_tmp",
+            "#ib_redo13_tmp",
+            "#ib_redo12_tmp",
+            "#ib_redo8",
+            "#ib_redo24_tmp",
+            "#ib_redo33_tmp",
+            "#ib_redo5",
+            "#ib_redo10_tmp",
+            "#ib_redo23_tmp",
+            "#ib_redo25_tmp",
+            "#ib_redo9",
+            "#ib_redo30_tmp",
+            "#ib_redo34_tmp",
+            "#ib_redo31_tmp",
+            "#ib_redo15_tmp",
+            "#ib_redo35_tmp",
+            "#ib_redo14_tmp",
+            "#ib_redo22_tmp",
+            "#ib_redo21_tmp",
+            "#ib_redo19_tmp",
+            "#ib_redo26_tmp",
+            "#ib_redo16_tmp",
+            "#ib_redo27_tmp",
+            "#ib_redo17_tmp",
+            "#ib_redo28_tmp",
+            "#ib_redo36_tmp",
+            "#ib_redo11_tmp"
+          ]
+        },
+        {
+          "path": "public_key.pem",
+          "bytes": 452
+        },
+        {
+          "path": "performance_schema/",
+          "children": [
+            "events_waits_sum_91.sdi",
+            "events_stages_cu_113.sdi",
+            "events_waits_his_85.sdi",
+            "table_io_waits_s_109.sdi",
+            "objects_summary__97.sdi",
+            "events_statement_128.sdi",
+            "user_defined_fun_190.sdi",
+            "events_transacti_139.sdi",
+            "data_lock_waits_163.sdi",
+            "events_errors_su_145.sdi",
+            "events_transacti_138.sdi",
+            "events_statement_125.sdi",
+            "replication_grou_171.sdi",
+            "status_by_accoun_179.sdi",
+            "events_statement_132.sdi",
+            "socket_summary_b_151.sdi",
+            "events_stages_su_120.sdi",
+            "file_summary_by__94.sdi",
+            "events_transacti_134.sdi",
+            "events_stages_su_117.sdi",
+            "events_statement_124.sdi",
+            "events_waits_cur_83.sdi",
+            "session_connect__152.sdi",
+            "events_stages_su_116.sdi",
+            "replication_appl_169.sdi",
+            "events_stages_su_119.sdi",
+            "events_transacti_136.sdi",
+            "setup_threads_108.sdi",
+            "setup_metrics_106.sdi",
+            "replication_conn_166.sdi",
+            "threads_112.sdi",
+            "replication_conn_164.sdi",
+            "events_transacti_137.sdi",
+            "replication_asyn_175.sdi",
+            "table_handles_160.sdi",
+            "persisted_variab_189.sdi",
+            "socket_instances_149.sdi",
+            "events_statement_122.sdi",
+            "events_waits_sum_88.sdi",
+            "events_statement_129.sdi"
+          ]
+        },
+        {
+          "path": "sys/",
+          "children": [
+            "sys_config.ibd"
+          ]
+        },
+        {
+          "path": "server-cert.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "server-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "client-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "undo_002",
+          "bytes": 16777216
+        },
+        {
+          "path": "#innodb_temp/",
+          "children": [
+            "temp_2.ibt",
+            "temp_3.ibt",
+            "temp_5.ibt",
+            "temp_9.ibt",
+            "temp_10.ibt",
+            "temp_7.ibt",
+            "temp_4.ibt",
+            "temp_6.ibt",
+            "temp_8.ibt",
+            "temp_1.ibt"
+          ]
+        },
+        {
+          "path": "ibtmp1",
+          "bytes": 12582912
+        },
+        {
+          "path": "ib_buffer_pool",
+          "bytes": 5737
+        },
+        {
+          "path": "client-cert.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "mysql/",
+          "children": [
+            "slow_log_216.sdi",
+            "slow_log.CSM",
+            "general_log.CSM",
+            "general_log_215.sdi",
+            "general_log.CSV",
+            "slow_log.CSV"
+          ]
+        },
+        {
+          "path": "mysql.ibd",
+          "bytes": 32505856
+        },
+        {
+          "path": "auto.cnf",
+          "bytes": 56
+        },
+        {
+          "path": "#ib_16384_1.dblwr",
+          "bytes": 12582912
+        },
+        {
+          "path": "#ib_16384_0.dblwr",
+          "bytes": 4194304
+        },
+        {
+          "path": "mysql_upgrade_history",
+          "bytes": 125
+        },
+        {
+          "path": "binlog.index",
+          "bytes": 16
+        }
+      ],
+      "literal_binary_scan": []
+    },
+    {
+      "volume": "f5d120eab403b40dd7c646c530f4e3e382c098569be62857dfd16d2fe1afc643",
+      "top_level": [
+        {
+          "path": "binlog.000001",
+          "bytes": 2996522
+        },
+        {
+          "path": "undo_001",
+          "bytes": 16777216
+        },
+        {
+          "path": "private_key.pem",
+          "bytes": 1709
+        },
+        {
+          "path": "mysql.sock",
+          "kind": "symlink"
+        },
+        {
+          "path": "ca-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "ca.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "cqc_test/",
+          "children": [
+            "inspections.ibd",
+            "control_attempts.ibd",
+            "inspection_errors.ibd",
+            "bin_mappings.ibd",
+            "alembic_version.ibd"
+          ]
+        },
+        {
+          "path": "ibdata1",
+          "bytes": 12582912
+        },
+        {
+          "path": "#innodb_redo/",
+          "children": [
+            "#ib_redo20_tmp",
+            "#ib_redo29_tmp",
+            "#ib_redo38_tmp",
+            "#ib_redo18_tmp",
+            "#ib_redo32_tmp",
+            "#ib_redo13_tmp",
+            "#ib_redo12_tmp",
+            "#ib_redo24_tmp",
+            "#ib_redo33_tmp",
+            "#ib_redo23_tmp",
+            "#ib_redo25_tmp",
+            "#ib_redo9",
+            "#ib_redo30_tmp",
+            "#ib_redo34_tmp",
+            "#ib_redo31_tmp",
+            "#ib_redo15_tmp",
+            "#ib_redo35_tmp",
+            "#ib_redo40_tmp",
+            "#ib_redo14_tmp",
+            "#ib_redo22_tmp",
+            "#ib_redo21_tmp",
+            "#ib_redo19_tmp",
+            "#ib_redo26_tmp",
+            "#ib_redo16_tmp",
+            "#ib_redo10",
+            "#ib_redo37_tmp",
+            "#ib_redo39_tmp",
+            "#ib_redo27_tmp",
+            "#ib_redo17_tmp",
+            "#ib_redo28_tmp",
+            "#ib_redo36_tmp",
+            "#ib_redo11_tmp"
+          ]
+        },
+        {
+          "path": "public_key.pem",
+          "bytes": 452
+        },
+        {
+          "path": "cqc_retention/",
+          "children": [
+            "inspections.ibd",
+            "control_attempts.ibd",
+            "inspection_errors.ibd",
+            "bin_mappings.ibd",
+            "alembic_version.ibd"
+          ]
+        },
+        {
+          "path": "performance_schema/",
+          "children": [
+            "events_waits_sum_91.sdi",
+            "events_stages_cu_113.sdi",
+            "events_waits_his_85.sdi",
+            "table_io_waits_s_109.sdi",
+            "objects_summary__97.sdi",
+            "events_statement_128.sdi",
+            "user_defined_fun_190.sdi",
+            "events_transacti_139.sdi",
+            "data_lock_waits_163.sdi",
+            "events_errors_su_145.sdi",
+            "events_transacti_138.sdi",
+            "events_statement_125.sdi",
+            "replication_grou_171.sdi",
+            "status_by_accoun_179.sdi",
+            "events_statement_132.sdi",
+            "socket_summary_b_151.sdi",
+            "events_stages_su_120.sdi",
+            "file_summary_by__94.sdi",
+            "events_transacti_134.sdi",
+            "events_stages_su_117.sdi",
+            "events_statement_124.sdi",
+            "events_waits_cur_83.sdi",
+            "session_connect__152.sdi",
+            "events_stages_su_116.sdi",
+            "replication_appl_169.sdi",
+            "events_stages_su_119.sdi",
+            "events_transacti_136.sdi",
+            "setup_threads_108.sdi",
+            "setup_metrics_106.sdi",
+            "replication_conn_166.sdi",
+            "threads_112.sdi",
+            "replication_conn_164.sdi",
+            "events_transacti_137.sdi",
+            "replication_asyn_175.sdi",
+            "table_handles_160.sdi",
+            "persisted_variab_189.sdi",
+            "socket_instances_149.sdi",
+            "events_statement_122.sdi",
+            "events_waits_sum_88.sdi",
+            "events_statement_129.sdi"
+          ]
+        },
+        {
+          "path": "sys/",
+          "children": [
+            "sys_config.ibd"
+          ]
+        },
+        {
+          "path": "server-cert.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "server-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "client-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "undo_002",
+          "bytes": 16777216
+        },
+        {
+          "path": "#innodb_temp/",
+          "children": [
+            "temp_2.ibt",
+            "temp_3.ibt",
+            "temp_5.ibt",
+            "temp_9.ibt",
+            "temp_10.ibt",
+            "temp_7.ibt",
+            "temp_4.ibt",
+            "temp_6.ibt",
+            "temp_8.ibt",
+            "temp_1.ibt"
+          ]
+        },
+        {
+          "path": "ibtmp1",
+          "bytes": 12582912
+        },
+        {
+          "path": "ib_buffer_pool",
+          "bytes": 5713
+        },
+        {
+          "path": "binlog.000002",
+          "bytes": 45539
+        },
+        {
+          "path": "client-cert.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "mysql/",
+          "children": [
+            "slow_log_216.sdi",
+            "slow_log.CSM",
+            "general_log.CSM",
+            "general_log_215.sdi",
+            "general_log.CSV",
+            "slow_log.CSV"
+          ]
+        },
+        {
+          "path": "mysql.ibd",
+          "bytes": 32505856
+        },
+        {
+          "path": "auto.cnf",
+          "bytes": 56
+        },
+        {
+          "path": "#ib_16384_1.dblwr",
+          "bytes": 12582912
+        },
+        {
+          "path": "#ib_16384_0.dblwr",
+          "bytes": 4194304
+        },
+        {
+          "path": "mysql_upgrade_history",
+          "bytes": 125
+        },
+        {
+          "path": "binlog.index",
+          "bytes": 32
+        }
+      ],
+      "literal_binary_scan": [
+        {
+          "path": "cqc_test/inspections.ibd",
+          "bytes": 245760,
+          "sha256": "2f9c660d1c3c5db807d7b5133ba3bb4cacff07fedeb7080f7d62cd5899685131",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_test/control_attempts.ibd",
+          "bytes": 180224,
+          "sha256": "9dde3b469555b3f27954a4a73ae7c7cec4ab7922a3d2819e837c954fc499f160",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_test/inspection_errors.ibd",
+          "bytes": 180224,
+          "sha256": "f8d4ca05300a469e408abc326c66a659f70ab568c1b441561a70dce4dcec53fd",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_retention/inspections.ibd",
+          "bytes": 245760,
+          "sha256": "314d128df0a67e935a368d913b0124c498e8fc9de7207527cbbd7dfd6c0ad38f",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_retention/control_attempts.ibd",
+          "bytes": 180224,
+          "sha256": "16d588536a027f947cbf2d820226918dd0916af9427907025324e2557571bd99",
+          "literal_id_matches": []
+        },
+        {
+          "path": "cqc_retention/inspection_errors.ibd",
+          "bytes": 180224,
+          "sha256": "45757756561560d1fa7788b35568e8691f1927265f66c92b2363551a75db28d8",
+          "literal_id_matches": []
+        }
+      ]
+    },
+    {
+      "volume": "cqc_mysql_data",
+      "top_level": [
+        {
+          "path": "binlog.000001",
+          "bytes": 914
+        },
+        {
+          "path": "undo_001",
+          "bytes": 16777216
+        },
+        {
+          "path": "private_key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "mysql.sock",
+          "kind": "symlink"
+        },
+        {
+          "path": "ca-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "ca.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "ibdata1",
+          "bytes": 12582912
+        },
+        {
+          "path": "#innodb_redo/",
+          "children": [
+            "#ib_redo7",
+            "#ib_redo20_tmp",
+            "#ib_redo29_tmp",
+            "#ib_redo18_tmp",
+            "#ib_redo6",
+            "#ib_redo32_tmp",
+            "#ib_redo13_tmp",
+            "#ib_redo12_tmp",
+            "#ib_redo24_tmp",
+            "#ib_redo33_tmp",
+            "#ib_redo5",
+            "#ib_redo9_tmp",
+            "#ib_redo10_tmp",
+            "#ib_redo23_tmp",
+            "#ib_redo25_tmp",
+            "#ib_redo30_tmp",
+            "#ib_redo34_tmp",
+            "#ib_redo31_tmp",
+            "#ib_redo8_tmp",
+            "#ib_redo15_tmp",
+            "#ib_redo35_tmp",
+            "#ib_redo14_tmp",
+            "#ib_redo22_tmp",
+            "#ib_redo21_tmp",
+            "#ib_redo19_tmp",
+            "#ib_redo26_tmp",
+            "#ib_redo16_tmp",
+            "#ib_redo27_tmp",
+            "#ib_redo17_tmp",
+            "#ib_redo28_tmp",
+            "#ib_redo36_tmp",
+            "#ib_redo11_tmp"
+          ]
+        },
+        {
+          "path": "public_key.pem",
+          "bytes": 452
+        },
+        {
+          "path": "performance_schema/",
+          "children": [
+            "events_waits_sum_91.sdi",
+            "events_stages_cu_113.sdi",
+            "events_waits_his_85.sdi",
+            "table_io_waits_s_109.sdi",
+            "objects_summary__97.sdi",
+            "events_statement_128.sdi",
+            "user_defined_fun_190.sdi",
+            "events_transacti_139.sdi",
+            "data_lock_waits_163.sdi",
+            "events_errors_su_145.sdi",
+            "events_transacti_138.sdi",
+            "events_statement_125.sdi",
+            "replication_grou_171.sdi",
+            "status_by_accoun_179.sdi",
+            "events_statement_132.sdi",
+            "socket_summary_b_151.sdi",
+            "events_stages_su_120.sdi",
+            "file_summary_by__94.sdi",
+            "events_transacti_134.sdi",
+            "events_stages_su_117.sdi",
+            "events_statement_124.sdi",
+            "events_waits_cur_83.sdi",
+            "session_connect__152.sdi",
+            "events_stages_su_116.sdi",
+            "replication_appl_169.sdi",
+            "events_stages_su_119.sdi",
+            "events_transacti_136.sdi",
+            "setup_threads_108.sdi",
+            "setup_metrics_106.sdi",
+            "replication_conn_166.sdi",
+            "threads_112.sdi",
+            "replication_conn_164.sdi",
+            "events_transacti_137.sdi",
+            "replication_asyn_175.sdi",
+            "table_handles_160.sdi",
+            "persisted_variab_189.sdi",
+            "socket_instances_149.sdi",
+            "events_statement_122.sdi",
+            "events_waits_sum_88.sdi",
+            "events_statement_129.sdi"
+          ]
+        },
+        {
+          "path": "sys/",
+          "children": [
+            "sys_config.ibd"
+          ]
+        },
+        {
+          "path": "server-cert.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "server-key.pem",
+          "bytes": 1709
+        },
+        {
+          "path": "client-key.pem",
+          "bytes": 1705
+        },
+        {
+          "path": "undo_002",
+          "bytes": 16777216
+        },
+        {
+          "path": "#innodb_temp/",
+          "children": [
+            "temp_2.ibt",
+            "temp_3.ibt",
+            "temp_5.ibt",
+            "temp_9.ibt",
+            "temp_10.ibt",
+            "temp_7.ibt",
+            "temp_4.ibt",
+            "temp_6.ibt",
+            "temp_8.ibt",
+            "temp_1.ibt"
+          ]
+        },
+        {
+          "path": "ibtmp1",
+          "bytes": 12582912
+        },
+        {
+          "path": "ib_buffer_pool",
+          "bytes": 5728
+        },
+        {
+          "path": "client-cert.pem",
+          "bytes": 1112
+        },
+        {
+          "path": "mysql/",
+          "children": [
+            "slow_log_216.sdi",
+            "slow_log.CSM",
+            "general_log.CSM",
+            "general_log_215.sdi",
+            "general_log.CSV",
+            "slow_log.CSV"
+          ]
+        },
+        {
+          "path": "mysql.ibd",
+          "bytes": 29360128
+        },
+        {
+          "path": "auto.cnf",
+          "bytes": 56
+        },
+        {
+          "path": "#ib_16384_1.dblwr",
+          "bytes": 12582912
+        },
+        {
+          "path": "#ib_16384_0.dblwr",
+          "bytes": 4194304
+        },
+        {
+          "path": "mysql_upgrade_history",
+          "bytes": 125
+        },
+        {
+          "path": "binlog.index",
+          "bytes": 16
+        }
+      ],
+      "literal_binary_scan": []
+    }
+  ],
+  "limit": "Literal ID byte search in selected .ibd files only; no MySQL startup, logical row recovery, or proof that compressed/deleted pages contain no data"
+}

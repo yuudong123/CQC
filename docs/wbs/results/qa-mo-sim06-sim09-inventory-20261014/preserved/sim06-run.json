@@ -1,0 +1,10 @@
+{
+  "source_sha": "3504195ee3c0e629bff4a5a04cb5e6984e20a8f7",
+  "working_tree_dirty": true,
+  "project": "cqc-mo09-e2-final-20261006",
+  "started_kst": "2026-10-06 11:32:53 KST",
+  "backend_image_id": "sha256:fa595f865f81a69bd5499dee57e4d36bf0f5b3fc9349672263d13c0bd333c693",
+  "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+  "deployed_sha": "unverified",
+  "coverage": "partial E2 fault injection"
+}
