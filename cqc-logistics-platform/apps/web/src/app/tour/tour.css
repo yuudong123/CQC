@@ -1,4 +1,4 @@
-/* 통합 흐름 시연 안내(/tour): 실제 화면(iframe) + 노란 테두리 + 아래 자막 띠. 자막 띠는 실제 화면과 겹치지 않는다. */
+/* 통합 흐름 시연 안내(/tour): 실제 화면(iframe) + 노란 테두리·옅은 음영 + 아래 자막 띠. 자막 띠는 실제 화면과 겹치지 않는다. */
 .tour-root {
   position: fixed;
   inset: 0;
@@ -10,7 +10,8 @@
 .tour-wrap { position: relative; min-height: 0; overflow: hidden; }
 .tour-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: var(--paper); }
 
-/* 강조: 실제 화면은 그대로 두고 노란 테두리만 그린다. 테두리는 클릭을 막지 않는다. */
+/* 첫 단계는 밝게, 이후에는 강조 영역 바깥만 검정 4%로 살짝 어둡게 한다. 자막과 클릭에는 영향을 주지 않는다. */
+.tour-shade { position: absolute; z-index: 19; pointer-events: none; border-radius: 10px; box-shadow: 0 0 0 9999px rgb(0 0 0 / 4%); transition: left 0.25s ease, top 0.25s ease, width 0.25s ease, height 0.25s ease; }
 .tour-spot { position: absolute; z-index: 20; pointer-events: none; border-radius: 10px; border: 4px solid #f2b705; box-shadow: 0 0 0 3px #fff, 0 0 18px #f2b70599; transition: left 0.25s ease, top 0.25s ease, width 0.25s ease, height 0.25s ease; }
 .tour-spot.click { animation: tour-pulse 1.2s ease-in-out infinite; }
 @keyframes tour-pulse { 50% { box-shadow: 0 0 0 3px #fff, 0 0 0 10px #f2b70555, 0 0 18px #f2b70599; } }
