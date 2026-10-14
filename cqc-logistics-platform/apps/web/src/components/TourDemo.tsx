@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
- * 통합 흐름 시연 안내(/tour). 실제 화면(관제·구매자·판매자·차량 관제)을 그대로 띄우고, 그 위에 노란 테두리와 자막만 얹는다.
+ * 통합 흐름 시연 안내(/tour). 실제 화면(관제·판매자·구매자·차량 관제)을 그대로 띄우고, 그 위에 노란 테두리와 자막만 얹는다.
  * 화면과 데이터는 실제 페이지 그대로라 없는 기능이 나오지 않는다. 출품·입찰·낙찰·결제는 구매자 화면 자동 시연이 실제로 진행한다.
  * 넘기기: 노란 테두리 안의 버튼을 직접 누르거나 → · Space · Enter, 이전 단계는 ←. 누르는 단계는 실제 버튼을 눌러야 진행한다.
  */
@@ -23,34 +23,35 @@ type Step = {
 
 const STEPS: Step[] = [
   { route: "/", role: "farm", target: { selector: ".qc-lights" }, hint: "설비 상태",
-    caption: "먼저 농가가 보는 품질 관제 화면입니다. 위쪽 점 네 개는 촬영 장치, 판정 서버, 관제 서버, 데이터베이스 상태이고, 모두 초록이면 정상입니다." },
+    caption: "농가가 보는 선별 라인 관제 화면입니다. 위쪽 점 네 개는 촬영 장치, 판정 서버, 관제 서버, 데이터베이스 상태이고, 모두 초록이면 정상입니다." },
   { route: "/", role: "farm", target: { selector: ".qc-jobs-panel" }, hint: "처리 중 사과",
-    caption: "라인에 들어온 사과 한 개의 열두 각도 사진입니다. 시연에서는 촬영 장치 대신 데이터셋 사진 열두 장을 2초마다 넣습니다." },
-  { route: "/", role: "farm", target: { selector: ".qc-binmap" }, hint: "오늘 선별함",
-    caption: "AI가 판정한 품종과 외관 등급에 가상 당도를 더해 선별함 열두 칸 중 하나로 보냅니다. 방금 들어간 칸은 테두리가 반짝이고, 별표 칸은 못난이 사과 후보입니다." },
+    caption: "라인에 들어온 사과의 다각도 사진입니다. 시연에서는 촬영 장치 대신 데이터셋 사진 12장을 2초마다 전송합니다." },
   { route: "/", role: "farm", target: { selector: ".qc-exception-panel" }, hint: "재검사·오류 사과",
-    caption: "신뢰도가 기준보다 낮은 사과는 판정하지 않고 재검사함으로 보냅니다. 여기서 사유와 신뢰도를 확인합니다." },
+    caption: "신뢰도가 기준보다 낮은 사과가 재검사함으로 보내지는데, 이 곳에서 그 신뢰도와 사유를 확인할 수 있습니다." },
+  { route: "/", role: "farm", target: { selector: ".qc-binmap" }, hint: "오늘 선별함",
+    caption: "AI가 판정한 결과에 가상의 당도 데이터를 더해 선별함 12칸과 재검사함 중 한 곳으로 보냅니다. 방금 들어간 칸은 테두리가 반짝이고, 별표 칸은 못난이 사과 후보입니다." },
   { route: "/", role: "farm", target: { selector: ".qc-kpis" }, hint: "오늘 숫자",
-    caption: "위쪽 큰 숫자 세 개가 오늘 검사 수, 재검사율, 오류율입니다. 농가는 이 숫자로 오늘 라인 상태를 한눈에 확인합니다." },
+    caption: "상단의 큰 숫자는 이렇게 검사된 오늘치 선별라인의 주요 수치입니다. 전체 검사 수, 재검사율, 오류율이 크게 표시되고 농가는 이 숫자로 라인 상태를 한눈에 확인합니다." },
+  { route: "/market", role: "farm", target: { selector: ".auction-result" }, hint: "경매 결과",
+    caption: "입찰 시장의 농가(관리자) 화면입니다. 농가는 입찰의 마감 정보와 최근 낙찰 결과를 확인할 수 있습니다." },
+  { route: "/market", role: "farm", target: { selector: ".market-admin-actions" }, hint: "사업자 등록",
+    caption: "실제 서비스에서 결제 대금을 받으려면 농장의 사업자 등록과 pg 가맹이 필요하여 등록화면을 목업으로 구현했습니다." },
   { route: "/market/buyer", role: "buyer", target: { selector: ".buyer-header" }, hint: "구매자 화면",
-    caption: "이제 구매자 화면입니다. 농가 메뉴 없이 출품 확인과 입찰만 하는 별도 화면입니다." },
+    caption: "입찰시장의 구매자 화면입니다. 농가 메뉴 없이 출품 확인과 입찰만 하는 별도 화면입니다." },
   { route: "/market/buyer", role: "buyer", target: { selector: ".auto-demo-heading button" }, hint: "여기를 누릅니다", click: true,
-    caption: "자동 시연을 시작하겠습니다. 같은 선별함에 통과한 사과 두 개가 모이면 출품되고, 가상 구매자들이 6초 동안 입찰합니다." },
+    caption: "자동 시연을 시작하겠습니다. 선별함에 모여있던 사과가 설정한 무게 혹은 수량을 충족하면 상품으로 출품되고, 가상 구매자들이 입찰합니다." },
   { route: "/market/buyer", role: "buyer", target: { selector: ".auto-auction-demo" }, hint: "출품·입찰 진행", until: ".payment-popup",
     caption: "출품과 입찰 기록이 실시간으로 올라옵니다. 경매가 끝나면 최고가 입찰자에게 낙찰됩니다." },
   { route: "/market/buyer", role: "buyer", target: { selector: ".payment-popup .payment-actions button" }, hint: "결제하기", click: true,
-    caption: "낙찰되면 낙찰자 화면에 결제 창이 뜹니다. 결제하기를 누르면 토스페이먼츠 테스트 결제창이 열립니다. 테스트 결제라 실제 돈은 나가지 않습니다." },
+    caption: "낙찰되면 낙찰자 화면에 결제 창이 표시됩니다. 결제하기를 누르면 pg화면이 열리고 시연이라 실제로 돈이 나가지는 않습니다." },
   { route: "/market/buyer", role: "buyer", target: { selector: ".payment-popup .paid" }, hint: "결제 완료",
-    caption: "결제가 승인되면 결제 완료가 뜨고, 자동 시연이 이 주문에 차량 배정을 요청합니다." },
-  { route: "/market", role: "farm", target: { selector: ".auction-result" }, hint: "경매 결과",
-    caption: "판매자인 농가 화면입니다. 농가는 직접 낙찰하지 않고, 마감 정보와 최근 낙찰 결과만 확인합니다." },
-  { route: "/market", role: "farm", target: { selector: ".market-admin-actions" }, hint: "사업자 등록",
-    caption: "실제 서비스에서 결제 대금을 받으려면 농장의 사업자 등록과 PG 가맹이 필요해서, 등록 화면을 준비해 두었습니다." },
+    caption: "결제가 완료되면 이 주문에 차량 배정을 요청합니다." },
   { route: "/control", role: "farm", target: { panel: "차량 현황" }, hint: "차량 현황",
-    caption: "결제가 끝난 주문에 배정된 차량을 차량 관제에서 확인합니다. 차량별 적재량과 상태가 보입니다." },
+    caption: "배정된 차량을 차량 관제에서 확인합니다. 차량별 적재량과 상태가 보입니다." },
   { route: "/control", role: "farm", target: { panel: "배송 경로" }, hint: "배송 경로",
-    caption: "배정된 차량의 픽업과 배송 경로입니다. 사과 한 개가 촬영부터 판정, 선별, 출품, 낙찰, 결제, 배차까지 하나의 흐름으로 이어졌습니다." },
+    caption: "배정된 차량의 픽업과 배송 경로가 표시됩니다." },
 ];
+const CLOSING_CAPTION = "이것으로 상품의 선별부터 배차까지의 시연을 마치겠습니다. 감사합니다.";
 const CAPTION_H = 96;
 
 function findTarget(doc: Document, target: Target): Element | null {
@@ -60,12 +61,19 @@ function findTarget(doc: Document, target: Target): Element | null {
 
 export default function TourDemo() {
   const [index, setIndex] = useState(0);
+  const [closing, setClosing] = useState(false);
   const [spot, setSpot] = useState<{ x: number; y: number; w: number; h: number; vw: number; vh: number } | null>(null);
   const frame = useRef<HTMLIFrameElement>(null);
   const step = STEPS[index];
 
-  const go = useCallback((next: number) => setIndex(Math.max(0, Math.min(STEPS.length - 1, next))), []);
-  const advance = useCallback(() => go(index + 1), [go, index]);
+  const go = useCallback((next: number) => {
+    setClosing(false);
+    setIndex(Math.max(0, Math.min(STEPS.length - 1, next)));
+  }, []);
+  const advance = useCallback(() => {
+    if (index === STEPS.length - 1) setClosing(true);
+    else go(index + 1);
+  }, [go, index]);
 
   // 단계의 화면 주소가 바뀌면 그 실제 페이지를 연다.
   useEffect(() => {
@@ -95,7 +103,10 @@ export default function TourDemo() {
       if (event.key === "ArrowRight" || event.key === " " || event.key === "Enter") {
         if (step.click) return; // 누르는 단계는 실제 버튼을 눌러야 진행한다
         event.preventDefault(); advance();
-      } else if (event.key === "ArrowLeft") go(index - 1);
+      } else if (event.key === "ArrowLeft") {
+        if (closing) setClosing(false);
+        else go(index - 1);
+      }
     };
     const onClick = (event: MouseEvent) => {
       const doc = frame.current?.contentDocument;
@@ -120,7 +131,7 @@ export default function TourDemo() {
     attach();
     iframe?.addEventListener("load", attach);
     return () => { window.removeEventListener("keydown", onKey); iframe?.removeEventListener("load", attach); detach(); };
-  }, [step, index, advance, go]);
+  }, [step, index, closing, advance, go]);
 
   const hintBelow = spot ? spot.y + spot.h + 60 < spot.vh : true;
   return (
@@ -140,7 +151,7 @@ export default function TourDemo() {
       </div>
       <div className="tour-caption" aria-live="polite">
         <span className={`tour-role ${step.role}`}>{step.role === "farm" ? "농가" : "구매자"}</span>
-        <p key={index}>{step.caption}</p>
+        <p key={`${index}-${closing}`}>{closing ? CLOSING_CAPTION : step.caption}</p>
         <span className="tour-count">{index + 1} / {STEPS.length}</span>
       </div>
     </div>
