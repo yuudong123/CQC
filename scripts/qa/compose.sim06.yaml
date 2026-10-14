@@ -1,0 +1,78 @@
+# Override the existing MO isolated-compose.json; never use alone.
+# Use --project-directory at the repository root and --env-file with dedicated QA values.
+name: ${CQC_QA_PROJECT:?Set a new cqc-mo09-e2-* project}
+services:
+  mysql:
+    image: ${CQC_QA_MYSQL_IMAGE:?Set the verified local MySQL image ID}
+  inference:
+    image: ${CQC_QA_INFERENCE_IMAGE:?Set a verified or newly built QA image ID}
+    ports: !override ["127.0.0.1:18001:8001"]
+  backend:
+    image: ${CQC_QA_BACKEND_IMAGE:?Set a verified or newly built QA image ID}
+    ports: !override ["127.0.0.1:18000:8000"]
+    environment:
+      CQC_QA_CONTROL_TRACE: ${CQC_QA_CONTROL_TRACE:-1}
+      CQC_QA_PROJECT: ${CQC_QA_PROJECT:?Set the QA project}
+      CQC_QA_SOURCE_SHA: ${CQC_QA_SOURCE_SHA:?Set the full product source SHA}
+      CQC_QA_IMAGE_ID: ${CQC_QA_BACKEND_IMAGE:?Set a full image ID}
+    command:
+      - sh
+      - -ec
+      - |
+        CQC_QA_CONTROL_TRACE=1 python /app/qa-trace.py --check-only --project "$$CQC_QA_PROJECT" --output /qa-evidence/control --source-sha "$$CQC_QA_SOURCE_SHA" --image-id "$$CQC_QA_IMAGE_ID"
+        alembic upgrade head
+        if [ "$$CQC_QA_CONTROL_TRACE" = 1 ]; then
+          exec python /app/qa-trace.py --project "$$CQC_QA_PROJECT" --output /qa-evidence/control --source-sha "$$CQC_QA_SOURCE_SHA" --image-id "$$CQC_QA_IMAGE_ID"
+        fi
+        exec python -m src.api.main
+    volumes:
+      - type: bind
+        source: ./scripts/qa/trace_mo09_control.py
+        target: /app/qa-trace.py
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${CQC_QA_RUN_ROOT:?Set a new empty run root}
+        target: /qa-evidence
+        bind: {create_host_path: false}
+  simulator:
+    image: ${CQC_QA_SIMULATOR_IMAGE:?Set a verified or newly built QA image ID}
+    ports: !override ["127.0.0.1:18002:8002"]
+    environment:
+      CQC_QA_HTTP_TRACE: ${CQC_QA_HTTP_TRACE:-1}
+      CQC_QA_PROJECT: ${CQC_QA_PROJECT:?Set the QA project}
+      CQC_QA_SOURCE_SHA: ${CQC_QA_SOURCE_SHA:?Set the full product source SHA}
+      CQC_QA_IMAGE_ID: ${CQC_QA_SIMULATOR_IMAGE:?Set a full image ID}
+    command:
+      - sh
+      - -ec
+      - |
+        CQC_QA_HTTP_TRACE=1 python /app/qa-trace.py --service simulator --check-only --project "$$CQC_QA_PROJECT" --output /qa-evidence/http --source-sha "$$CQC_QA_SOURCE_SHA" --image-id "$$CQC_QA_IMAGE_ID"
+        if [ "$$CQC_QA_HTTP_TRACE" = 1 ]; then
+          exec python /app/qa-trace.py --service simulator --project "$$CQC_QA_PROJECT" --output /qa-evidence/http --source-sha "$$CQC_QA_SOURCE_SHA" --image-id "$$CQC_QA_IMAGE_ID"
+        fi
+        exec python -m src.simulator.main
+    volumes: !override
+      - type: bind
+        source: ${SIMULATOR_DATASET_HOST_PATH:?Set the existing dataset path}
+        target: /data/dataset
+        read_only: true
+        bind: {create_host_path: false}
+      - qa_position:/data/state
+      - qa_simulator_logs:/var/log/cqc
+      - type: bind
+        source: ./scripts/qa/trace_mo09_control.py
+        target: /app/qa-trace.py
+        read_only: true
+        bind: {create_host_path: false}
+      - type: bind
+        source: ${CQC_QA_RUN_ROOT:?Set a new empty run root}
+        target: /qa-evidence
+        bind: {create_host_path: false}
+volumes: !override
+  qa_mysql: {}
+  qa_fault_images: {}
+  qa_position: {}
+  qa_backend_logs: {}
+  qa_inference_logs: {}
+  qa_simulator_logs: {}
