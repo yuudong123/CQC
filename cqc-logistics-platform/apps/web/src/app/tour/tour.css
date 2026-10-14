@@ -11,8 +11,8 @@
 .tour-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: var(--paper); }
 
 /* 첫 단계는 밝게, 이후에는 강조 영역 바깥만 검정 4%로 살짝 어둡게 한다. 자막과 클릭에는 영향을 주지 않는다. */
-.tour-shade { position: absolute; z-index: 19; pointer-events: none; border-radius: 10px; box-shadow: 0 0 0 9999px rgb(0 0 0 / 4%); transition: left 0.06s ease, top 0.06s ease, width 0.06s ease, height 0.06s ease; }
-.tour-spot { position: absolute; z-index: 20; pointer-events: none; border-radius: 10px; border: 4px solid #f2b705; box-shadow: 0 0 0 3px #fff, 0 0 18px #f2b70599; transition: left 0.06s ease, top 0.06s ease, width 0.06s ease, height 0.06s ease; }
+.tour-shade { position: absolute; z-index: 19; pointer-events: none; border-radius: 10px; box-shadow: 0 0 0 9999px rgb(0 0 0 / 4%); transition: left 0.25s ease, top 0.25s ease, width 0.25s ease, height 0.25s ease; }
+.tour-spot { position: absolute; z-index: 20; pointer-events: none; border-radius: 10px; border: 4px solid #f2b705; box-shadow: 0 0 0 3px #fff, 0 0 18px #f2b70599; transition: left 0.25s ease, top 0.25s ease, width 0.25s ease, height 0.25s ease; }
 .tour-spot.click { animation: tour-pulse 1.2s ease-in-out infinite; }
 @keyframes tour-pulse { 50% { box-shadow: 0 0 0 3px #fff, 0 0 0 10px #f2b70555, 0 0 18px #f2b70599; } }
 .tour-hint { position: absolute; z-index: 21; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 18px; background: #f2b705; color: #2a1d10; font-size: 16px; font-weight: 800; white-space: nowrap; box-shadow: 0 3px 10px #0002; pointer-events: none; }
