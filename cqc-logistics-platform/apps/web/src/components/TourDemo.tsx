@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
- * 통합 흐름 시연 안내(/tour). 실제 화면(관제·판매자·구매자·차량 관제)을 그대로 띄우고, 그 위에 노란 테두리와 자막만 얹는다.
+ * 통합 흐름 시연 안내(/tour). 실제 화면(관제·판매자·구매자·차량 관제)에 노란 테두리·옅은 음영·자막을 얹는다.
  * 화면과 데이터는 실제 페이지 그대로라 없는 기능이 나오지 않는다. 출품·입찰·낙찰·결제는 구매자 화면 자동 시연이 실제로 진행한다.
  * 넘기기: 노란 테두리 안의 버튼을 직접 누르거나 → · Space · Enter, 이전 단계는 ←. 누르는 단계는 실제 버튼을 눌러야 진행한다.
  */
@@ -65,6 +65,8 @@ export default function TourDemo() {
   const [spot, setSpot] = useState<{ x: number; y: number; w: number; h: number; vw: number; vh: number } | null>(null);
   const frame = useRef<HTMLIFrameElement>(null);
   const step = STEPS[index];
+  // 각 화면의 첫 안내는 밝게 보여주고, 같은 화면의 다음 단계부터 주변을 조금 어둡게 한다.
+  const dimOutside = index > 0 && STEPS[index - 1].route === step.route;
 
   const go = useCallback((next: number) => {
     setClosing(false);
@@ -140,6 +142,9 @@ export default function TourDemo() {
         <iframe ref={frame} className="tour-frame" src={STEPS[0].route} title="CQC 실제 화면" />
         {spot && (
           <>
+            {dimOutside && (
+              <div className="tour-shade" aria-hidden="true" style={{ left: spot.x - 6, top: spot.y - 6, width: spot.w + 12, height: spot.h + 12 }} />
+            )}
             <div className={`tour-spot${step.click ? " click" : ""}`} style={{ left: spot.x - 6, top: spot.y - 6, width: spot.w + 12, height: spot.h + 12 }} />
             {step.hint && (
               <div className={`tour-hint ${hintBelow ? "below" : "above"}`} style={{ left: Math.min(Math.max(spot.x + spot.w / 2, 110), spot.vw - 110), top: hintBelow ? spot.y + spot.h + 14 : spot.y - 14 }}>
