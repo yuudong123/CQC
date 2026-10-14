@@ -1,0 +1,6 @@
+{
+  "queried_kst": "2026-10-14T09:42:07.096482+09:00",
+  "sql": "SELECT COUNT(*) FROM inspections; SELECT inspection_id,inspection_status,control_status,persistence_status FROM inspections ORDER BY created_at; SELECT version_num FROM alembic_version; SELECT COUNT(*) FROM bin_mappings;",
+  "raw_tsv": "4\n6f523d16-6ba2-4c44-bc2c-7f7aa68e619c\tCOMPLETED\tSUCCEEDED\tSUCCEEDED\nc1f89606-a2ac-4ad0-b41a-04cf724f056e\tCOMPLETED\tSUCCEEDED\tSUCCEEDED\nf15a0697-82bc-45e3-a3cb-0d7b0a9c48ac\tCOMPLETED\tSUCCEEDED\tSUCCEEDED\n9f0a8822-c79f-48b7-8b87-30492b9f7566\tCOMPLETED\tSUCCEEDED\tSUCCEEDED\n20260929_02\n13",
+  "inspection_count": 4
+}

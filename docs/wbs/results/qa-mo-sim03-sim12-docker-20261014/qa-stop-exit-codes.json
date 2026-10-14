@@ -1,0 +1,30 @@
+[
+  {
+    "name": "/cqc-mo103-sim0312-20261014-093721-simulator-1",
+    "exit_code": 0,
+    "oom_killed": false,
+    "error": "",
+    "finished_at": "2026-10-14T00:43:06.75856242Z"
+  },
+  {
+    "name": "/cqc-mo103-sim0312-20261014-093721-backend-1",
+    "exit_code": 137,
+    "oom_killed": false,
+    "error": "",
+    "finished_at": "2026-10-14T00:43:34.334009996Z"
+  },
+  {
+    "name": "/cqc-mo103-sim0312-20261014-093721-mysql-1",
+    "exit_code": 0,
+    "oom_killed": false,
+    "error": "",
+    "finished_at": "2026-10-14T00:43:38.154704054Z"
+  },
+  {
+    "name": "/cqc-mo103-sim0312-20261014-093721-inference-1",
+    "exit_code": 0,
+    "oom_killed": false,
+    "error": "",
+    "finished_at": "2026-10-14T00:43:37.586917731Z"
+  }
+]

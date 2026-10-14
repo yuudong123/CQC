@@ -1,0 +1,5 @@
+{
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": " Container cqc-mo103-sim0312-20261014-093721-backend-1 Stopping \n Container cqc-mo103-sim0312-20261014-093721-backend-1 Stopped \n Container cqc-mo103-sim0312-20261014-093721-mysql-1 Stopping \n Container cqc-mo103-sim0312-20261014-093721-inference-1 Stopping \n Container cqc-mo103-sim0312-20261014-093721-inference-1 Stopped \n Container cqc-mo103-sim0312-20261014-093721-mysql-1 Stopped \n"
+}

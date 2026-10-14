@@ -1,0 +1,31 @@
+{
+  "started_kst": "2026-10-14T09:41:17.608121+09:00",
+  "finished_kst": "2026-10-14T09:41:17.622601+09:00",
+  "elapsed_ms": 14.468817000306444,
+  "request": {
+    "url": "http://simulator:8002/state",
+    "method": "GET",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "date": "Wed, 14 Oct 2026 00:41:17 GMT",
+      "server": "uvicorn",
+      "content-length": "138",
+      "content-type": "application/json",
+      "connection": "close"
+    },
+    "body": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL",
+      "status": "stopped",
+      "lastSeenAt": 1791938476951.0
+    }
+  },
+  "transport": "Real HTTP from dedicated Backend container; no mock or in-process test client"
+}

@@ -1,0 +1,9 @@
+2026-10-14T00:31:43.156038121Z 2026-10-14 00:31:43+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.4.11-1.el9 started.
+2026-10-14T00:31:44.150511751Z 2026-10-14 00:31:44+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
+2026-10-14T00:31:44.165966039Z 2026-10-14 00:31:44+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.4.11-1.el9 started.
+2026-10-14T00:31:44.441092843Z 2026-10-14 00:31:44+00:00 [Note] [Entrypoint]: Initializing database files
+2026-10-14T00:31:44.461665359Z 2026-10-14T00:31:44.457697Z 0 [System] [MY-015017] [Server] MySQL Server Initialization - start.
+2026-10-14T00:31:44.461689861Z 2026-10-14T00:31:44.459463Z 0 [System] [MY-013169] [Server] /usr/sbin/mysqld (mysqld 8.4.11) initializing of server in progress as process 80
+2026-10-14T00:31:44.564673650Z 2026-10-14T00:31:44.564373Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2026-10-14T00:31:54.318993143Z 2026-10-14T00:31:54.318042Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2026-10-14T00:32:24.535244497Z 2026-10-14T00:32:24.535003Z 6 [Warning] [MY-010453] [Server] root@localhost is created with an empty password ! Please consider switching off the --initialize-insecure option.

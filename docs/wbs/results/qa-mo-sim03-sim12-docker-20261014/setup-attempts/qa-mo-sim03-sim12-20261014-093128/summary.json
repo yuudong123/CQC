@@ -1,0 +1,20 @@
+{
+  "run": "20261014-093128",
+  "project": "cqc-mo103-sim0312-20261014-093128",
+  "actor": "홍유나 (Codex)",
+  "started_kst": "2026-10-14T09:31:28.437905+09:00",
+  "cases": {},
+  "official_qa_decision": "Pending Backend evidence review",
+  "scope": "SIM-03/12 Docker supplements only; fresh isolated runtime using currently deployed images",
+  "source_sha": "9723907f2a9cd3c4cb747ca80bc9b72892e2d4d0",
+  "jenkins_build": 155,
+  "build_image_matches": {
+    "backend": true,
+    "inference": true,
+    "simulator": true
+  },
+  "execution_error": "('docker', 'compose', '--env-file') exit 1: time=\"2026-10-14T09:31:31+09:00\" level=warning msg=\"The \\\"MYSQL_ROOT_PASSWORD\\\" variable is not set. Defaulting to a blank string.\"\n Volume cqc-mo103-sim0312-20261014-093128_qa_fault_images Creating \n Volume cqc-mo103-sim0312-20261014-093128_qa_mysql Creating \n Network cqc-mo103-sim0312-20261014-093128_qa Creating \n Volume cqc-mo103-sim0312-20261014-093128_qa_inference_logs Creating \n Volume cqc-mo103-sim0312-20261014-093128_qa_backend_logs Creating \n Volume cqc-mo103-sim0312-20261014-093128_qa_fault_images Creating \n Volume cqc-mo103-sim0312-20261014-093128_qa_inference_logs Creating \n Volume cqc-mo103-sim0312-20261014-093128_qa_mysql Creating \n Network cqc-mo103-sim0312-20261014-093128_qa Creating \n Volume cqc-mo103-sim0312-20261014-093128_qa_backend_logs Creating \n Volume cqc-mo103-sim0312-20261014-093128_qa_fault_images Created \n Volume cqc-mo103-sim0312-20261014-093128_qa_fault_images Created \n Volume cqc-mo103-sim0312-20261014-093128_qa_backend_logs Created \n Volume cqc-mo103-sim0312-20261014-093128_qa_backend_logs Created \n Volume cqc-mo103-sim0312-20261014-093128_qa_inference_logs Created \n Volume cqc-mo103-sim0312-20261014-093128_qa_inference_logs Created \n Volume cqc-mo103-sim0312-20261014-093128_qa_mysql Created \n Volume cqc-mo103-sim0312-20261014-093128_qa_mysql Created \n Network cqc-mo103-sim0312-20261014-093128_qa Created \n Network cqc-mo103-sim0312-20261014-093128_qa Created \n Container cqc-mo103-sim0312-20261014-093128-mysql-1 Creating \n Container cqc-mo103-sim0312-20261014-093128-inference-1 Creating \n Container cqc-mo103-sim0312-20261014-093128-inference-1 Created \n Container cqc-mo103-sim0312-20261014-093128-mysql-1 Created \n Container cqc-mo103-sim0312-20261014-093128-backend-1 Creating \n Container cqc-mo103-sim0312-20261014-093128-backend-1 Created \n Container cqc-mo103-sim0312-20261014-093128-inference-1 Starting \n Container cqc-mo103-sim0312-20261014-093128-mysql-1 Starting \n Container cqc-mo103-sim0312-20261014-093128-inference-1 Started \n Container cqc-mo103-sim0312-20261014-093128-mysql-1 Started \n Container cqc-mo103-sim0312-20261014-093128-mysql-1 Waiting \n Container cqc-mo103-sim0312-20261014-093128-inference-1 Waiting \n Container cqc-mo103-sim0312-20261014-093128-inference-1 Healthy \n Container cqc-mo103-sim0312-20261014-093128-mysql-1 Error dependency mysql failed to start\ndependency failed to start: container cqc-mo103-sim0312-20261014-093128-mysql-1 is unhealthy\n ",
+  "qa_resources_preserved": true,
+  "public_containers_unchanged_and_healthy": true,
+  "finished_kst": "2026-10-14T09:33:22.907505+09:00"
+}

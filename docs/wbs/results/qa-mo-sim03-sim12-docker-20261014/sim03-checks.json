@@ -1,0 +1,18 @@
+{
+  "observed_result": "PASS",
+  "checks": {
+    "stop_http_200": true,
+    "stopped_actual_state": true,
+    "stopped_backend_snapshot": true,
+    "stop_revision_increment": true,
+    "http_503_is_separate_observation": true,
+    "real_docker_unhealthy": true,
+    "stopped_count_stable_at_least_10_seconds": true,
+    "stopped_jobs_zero": true,
+    "resume_200_revision_increment": true,
+    "resumed_docker_healthy": true,
+    "resumed_inspection_count_increases": true,
+    "backend_actual_settings_agree": true
+  },
+  "scope_limit": "Missing Docker unhealthy evidence plus stop/resume sanity; no controlled in-flight request or source_reference next-bundle check"
+}

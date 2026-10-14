@@ -1,0 +1,71 @@
+[
+  {
+    "name": "/cqc-mo103-sim0312-20261014-093128-backend-1",
+    "id": "a7f80c8b283a1037dab774ae986034d712738cb4247060c79e754813067478f8",
+    "image": "sha256:169228d055a076de75f1d4dee42a9a7c3e2dc877e36e86226b77cf41d764d99b",
+    "service": "backend",
+    "status": "created",
+    "health": null,
+    "started_at": "0001-01-01T00:00:00Z",
+    "networks": [
+      "cqc-mo103-sim0312-20261014-093128_qa"
+    ],
+    "ports": {},
+    "mounts": [
+      {
+        "type": "volume",
+        "name": "cqc-mo103-sim0312-20261014-093128_qa_fault_images",
+        "destination": "/data/fault-images",
+        "rw": true
+      },
+      {
+        "type": "volume",
+        "name": "cqc-mo103-sim0312-20261014-093128_qa_backend_logs",
+        "destination": "/var/log/cqc",
+        "rw": true
+      }
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0312-20261014-093128-mysql-1",
+    "id": "07ec4735637907528d90ce148b72cfceb3374ff545a2a5bbe33f1c6eee5fadcb",
+    "image": "sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a",
+    "service": "mysql",
+    "status": "exited",
+    "health": "unhealthy",
+    "started_at": "2026-10-14T00:31:41.452050654Z",
+    "networks": [
+      "cqc-mo103-sim0312-20261014-093128_qa"
+    ],
+    "ports": {},
+    "mounts": [
+      {
+        "type": "volume",
+        "name": "cqc-mo103-sim0312-20261014-093128_qa_mysql",
+        "destination": "/var/lib/mysql",
+        "rw": true
+      }
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0312-20261014-093128-inference-1",
+    "id": "beb04614c8c76d211e3e51c6170a0273e9f6ace14ac421cd228f0338efc9d1ba",
+    "image": "sha256:90043a53a8bf5ba9d85f3ebb4481c0201196823179261b52cb5ea78381776d2f",
+    "service": "inference",
+    "status": "exited",
+    "health": "unhealthy",
+    "started_at": "2026-10-14T00:31:41.064968676Z",
+    "networks": [
+      "cqc-mo103-sim0312-20261014-093128_qa"
+    ],
+    "ports": {},
+    "mounts": [
+      {
+        "type": "volume",
+        "name": "cqc-mo103-sim0312-20261014-093128_qa_inference_logs",
+        "destination": "/var/log/cqc",
+        "rw": true
+      }
+    ]
+  }
+]

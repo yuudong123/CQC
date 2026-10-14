@@ -1,0 +1,128 @@
+[
+  {
+    "simulator": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "backend": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "jobs": [],
+    "inspection_count": 4,
+    "elapsed_seconds": 0.8777563999901759
+  },
+  {
+    "simulator": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "backend": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "jobs": [],
+    "inspection_count": 4,
+    "elapsed_seconds": 3.8255960999958916
+  },
+  {
+    "simulator": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "backend": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "jobs": [],
+    "inspection_count": 4,
+    "elapsed_seconds": 6.780234299993026
+  },
+  {
+    "simulator": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "backend": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "jobs": [],
+    "inspection_count": 4,
+    "elapsed_seconds": 9.82543650000298
+  },
+  {
+    "simulator": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "backend": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "jobs": [],
+    "inspection_count": 4,
+    "elapsed_seconds": 12.796902799993404
+  },
+  {
+    "simulator": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "backend": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "jobs": [],
+    "inspection_count": 4,
+    "elapsed_seconds": 15.85725580000144
+  }
+]
