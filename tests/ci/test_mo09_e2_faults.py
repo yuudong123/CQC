@@ -664,7 +664,8 @@ def test_compose_connection_static_config(tmp_path, enabled):
     for name in ("backend", "simulator"):
         mounts = {v["target"]: v for v in services[name]["volumes"]}
         assert mounts["/app/qa-trace.py"]["read_only"] is True
-        assert mounts["/qa-evidence"]["bind"]["create_host_path"] is False
+        # Some Compose versions omit the default false value from config output.
+        assert mounts["/qa-evidence"].get("bind", {}).get("create_host_path", False) is False
         assert "exec python /app/qa-trace.py" in services[name]["command"][2]
     assert services["backend"]["command"][2].index("--check-only") < services[
         "backend"
