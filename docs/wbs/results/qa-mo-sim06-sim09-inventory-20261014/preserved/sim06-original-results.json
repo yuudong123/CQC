@@ -1,0 +1,80 @@
+[
+  {
+    "case": "QA-SIM-06/INFERENCE_TIMEOUT",
+    "status": "통과",
+    "actor": "홍유나 (MO-09 자동화)",
+    "time_kst": "2026-10-06 11:32:53 KST",
+    "commit_model": "image SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930; script HEAD 3504195ee3c0 + uncommitted",
+    "note": "INFERENCE_TIMEOUT; fault row={'id': '5e85ae9c-0549-47a4-8445-eca477465a2e', 'status': 'FAIL', 'processingStatus': 'TIMEOUT', 'errorCode': 'INFERENCE_TIMEOUT', 'control': 'SUCCEEDED', 'persistence': 'SAVED', 'bin': 'TEST_REINSPECTION_BIN', 'faults': ['INFERENCE_TIMEOUT']}; next normal=d6d5d20c-02db-493d-8de4-baa3ca5434fd; rev=1->2",
+    "environment": "E2",
+    "coverage": "부분: 장애 상태·NEXT 해제·후속 저장·장애 이미지 장수·제어 시도 확인; 전체 통계 별도 확인",
+    "qa_case": "QA-SIM-06",
+    "owner": "BE",
+    "record_status": "차단"
+  },
+  {
+    "case": "QA-SIM-06/INFERENCE_ERROR",
+    "status": "통과",
+    "actor": "홍유나 (MO-09 자동화)",
+    "time_kst": "2026-10-06 11:33:00 KST",
+    "commit_model": "image SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930; script HEAD 3504195ee3c0 + uncommitted",
+    "note": "INFERENCE_ERROR; fault row={'id': 'dcec597f-4bc8-4b1f-bb2e-8f04a7476974', 'status': 'FAIL', 'processingStatus': 'ERROR', 'errorCode': 'INFERENCE_ERROR', 'control': 'SUCCEEDED', 'persistence': 'SAVED', 'bin': 'TEST_REINSPECTION_BIN', 'faults': ['INFERENCE_ERROR']}; next normal=bb57f84e-dca3-4281-9c67-92d5273d7948; rev=3->4",
+    "environment": "E2",
+    "coverage": "부분: 장애 상태·NEXT 해제·후속 저장·장애 이미지 장수·제어 시도 확인; 전체 통계 별도 확인",
+    "qa_case": "QA-SIM-06",
+    "owner": "BE",
+    "record_status": "차단"
+  },
+  {
+    "case": "QA-SIM-06/DB_ERROR",
+    "status": "통과",
+    "actor": "홍유나 (MO-09 자동화)",
+    "time_kst": "2026-10-06 11:33:08 KST",
+    "commit_model": "image SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930; script HEAD 3504195ee3c0 + uncommitted",
+    "note": "DB_ERROR; fault row=None; next normal=74927e8d-01e6-41e6-b257-8b866cbdabf7; rev=5->6",
+    "environment": "E2",
+    "coverage": "부분: 장애 상태·NEXT 해제·후속 저장·장애 이미지 장수·제어 시도 확인; 전체 통계 별도 확인",
+    "qa_case": "QA-SIM-06",
+    "owner": "BE",
+    "record_status": "차단"
+  },
+  {
+    "case": "QA-SIM-06/CONTROL_REJECTED",
+    "status": "통과",
+    "actor": "홍유나 (MO-09 자동화)",
+    "time_kst": "2026-10-06 11:33:13 KST",
+    "commit_model": "image SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930; script HEAD 3504195ee3c0 + uncommitted",
+    "note": "CONTROL_REJECTED; fault row={'id': '59927979-f841-45ea-ac1f-90c7537b3fae', 'status': 'REVIEW', 'processingStatus': 'COMPLETED', 'errorCode': 'CONTROL_REJECTED', 'control': 'FALLBACK', 'persistence': 'SAVED', 'bin': 'TEST_REINSPECTION_BIN', 'faults': ['CONTROL_REJECTED']}; next normal=61a0923e-bee6-4b5f-bba0-5b639c6c863b; rev=7->8",
+    "environment": "E2",
+    "coverage": "부분: 장애 상태·NEXT 해제·후속 저장·장애 이미지 장수·제어 시도 확인; 전체 통계 별도 확인",
+    "qa_case": "QA-SIM-06",
+    "owner": "BE",
+    "record_status": "차단"
+  },
+  {
+    "case": "QA-SIM-06/CONTROL_NO_RESPONSE",
+    "status": "통과",
+    "actor": "홍유나 (MO-09 자동화)",
+    "time_kst": "2026-10-06 11:33:18 KST",
+    "commit_model": "image SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930; script HEAD 3504195ee3c0 + uncommitted",
+    "note": "CONTROL_NO_RESPONSE; fault row={'id': '0693b8aa-8328-4c5e-b7e8-907bdc6eb14b', 'status': 'REVIEW', 'processingStatus': 'COMPLETED', 'errorCode': 'CONTROL_NO_RESPONSE', 'control': 'NO_RESPONSE', 'persistence': 'SAVED', 'bin': 'DEMO_BIN_08', 'faults': ['CONTROL_NO_RESPONSE']}; next normal=581d56a1-337a-42cf-80c6-bb0fe574320c; rev=9->10",
+    "environment": "E2",
+    "coverage": "부분: 장애 상태·NEXT 해제·후속 저장·장애 이미지 장수·제어 시도 확인; 전체 통계 별도 확인",
+    "qa_case": "QA-SIM-06",
+    "owner": "BE",
+    "record_status": "차단"
+  },
+  {
+    "case": "QA-SIM-06/CONTROL_FAILED",
+    "status": "통과",
+    "actor": "홍유나 (MO-09 자동화)",
+    "time_kst": "2026-10-06 11:33:23 KST",
+    "commit_model": "image SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930; script HEAD 3504195ee3c0 + uncommitted",
+    "note": "CONTROL_FAILED; fault row={'id': '29d70749-2320-4733-8be4-2a483e532851', 'status': 'REVIEW', 'processingStatus': 'COMPLETED', 'errorCode': 'CONTROL_FAILED', 'control': 'FAILED', 'persistence': 'SAVED', 'bin': 'DEMO_BIN_02', 'faults': ['CONTROL_FAILED']}; next normal=a440c461-8225-4932-a641-b527e2232150; rev=11->12",
+    "environment": "E2",
+    "coverage": "부분: 장애 상태·NEXT 해제·후속 저장·장애 이미지 장수·제어 시도 확인; 전체 통계 별도 확인",
+    "qa_case": "QA-SIM-06",
+    "owner": "BE",
+    "record_status": "차단"
+  }
+]

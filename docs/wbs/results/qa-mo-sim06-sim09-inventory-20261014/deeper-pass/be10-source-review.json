@@ -1,0 +1,89 @@
+{
+  "ref": "9723907f2a9cd3c4cb747ca80bc9b72892e2d4d0",
+  "source_path": "docs/wbs/BE-10-2-local-evidence.jsonl",
+  "source_git_blob": "861d4db1a43aaf29fb9c59d5192628b1bc9fe203",
+  "source_bytes": 1150235,
+  "source_sha256": "c90499d71972e5311746e9af6bb110db81f52dbe27cbf8222d4afc6569b96411",
+  "source_total_records": 491,
+  "introduced_commit": "02cdb90aeb94e36142f35a182f119a1c8a3b2754",
+  "url": "https://github.com/yuudong123/CQC/blob/9723907f2a9cd3c4cb747ca80bc9b72892e2d4d0/docs/wbs/BE-10-2-local-evidence.jsonl",
+  "selected_final_run": "be10-2-63f2ca4e",
+  "selected_records": [
+    {
+      "line": 476,
+      "inspection_id": "be10-2-63f2ca4e-control-NO_RESPONSE",
+      "outcome": "NO_RESPONSE",
+      "line_sha256": "55f864478ca0ea1b5b7185c36960299daadead0e1cb8c127e7e7946a71e6d9e2",
+      "api_control": "NO_RESPONSE",
+      "db_control": "NO_RESPONSE",
+      "db_error": "CONTROL_NO_RESPONSE",
+      "persistence": "SUCCEEDED",
+      "target_bin": "DEMO_BIN_02",
+      "model": "mock-separate",
+      "frames": 1
+    },
+    {
+      "line": 477,
+      "inspection_id": "be10-2-63f2ca4e-control-FAILED",
+      "outcome": "FAILED",
+      "line_sha256": "6163c464475034a0df6644acd2a72f6b1984d919c8f19effc8b6b535b676eed1",
+      "api_control": "FAILED",
+      "db_control": "FAILED",
+      "db_error": "CONTROL_FAILED",
+      "persistence": "SUCCEEDED",
+      "target_bin": "DEMO_BIN_02",
+      "model": "mock-separate",
+      "frames": 1
+    }
+  ],
+  "effects_audit": {
+    "line": 491,
+    "line_sha256": "ad0a2bdc9256c321acdebf5ec1ae3acdd05d252b1a1fc1db0c71f4b2efb96bd6",
+    "api_db_control_csv_match": true,
+    "statistics": {
+      "total": 489,
+      "normal": 265,
+      "excluded": 224,
+      "reinspection": 277,
+      "inferenceTotalMs": 26640.305,
+      "inferenceCount": 265,
+      "varieties": {
+        "부사": 229,
+        "양광": 36
+      },
+      "grades": {
+        "특": 217,
+        "상": 24,
+        "보통": 24
+      },
+      "bins": {
+        "DEMO_BIN_01": 34,
+        "DEMO_BIN_02": 118,
+        "DEMO_BIN_03": 6,
+        "DEMO_BIN_04": 6,
+        "DEMO_BIN_05": 6,
+        "DEMO_BIN_06": 6,
+        "DEMO_BIN_07": 6,
+        "DEMO_BIN_08": 6,
+        "DEMO_BIN_09": 6,
+        "DEMO_BIN_10": 6,
+        "DEMO_BIN_11": 6,
+        "DEMO_BIN_12": 6,
+        "TEST_REINSPECTION_BIN": 269
+      },
+      "suspicions": {}
+    }
+  },
+  "environment": "Local BE10 core integration with MockVirtualControl/Mock Inference response, ASGI direct requests and isolated MySQL; not Simulator E2 acceptance",
+  "remaining_limits": [
+    "No command/attempt_no rows in this JSONL",
+    "Audit boolean does not export SQL command rows",
+    "No NO_RESPONSE-specific before/after successful-bin snapshots",
+    "Final aggregate statistics are not a complete saved row census",
+    "Not DB_ERROR target/failed-save log",
+    "Not Simulator DB outage/recovery series"
+  ],
+  "first_runs_not_assumed_passing": true,
+  "new_test": false,
+  "official_qa_changed": false
+}

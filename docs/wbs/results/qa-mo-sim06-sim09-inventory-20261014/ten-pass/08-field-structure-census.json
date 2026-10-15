@@ -1,0 +1,23 @@
+{
+  "round": 8,
+  "at_kst": "2026-10-14T12:43:05.803100+09:00",
+  "title": "Entire local QA JSON/JSONL tree by failed-command structure, independent of case/fault names",
+  "parsed_files_checked": 819,
+  "failed_control_row_files": 0,
+  "files": [],
+  "before_after_statistics_candidates": [
+    {
+      "path": "docs\\wbs\\BE-10-2-local-evidence.jsonl",
+      "sha256": "55496941d39029067716011cfba5c81106d14c5ff7fc8b6297959633573dc388",
+      "records_with_stats_before_after": 34
+    }
+  ],
+  "scope": "No environment values exported; identified command/inspection fields only; existing REJECTED alternatives retained separately",
+  "new_NO_RESPONSE_FAILED_command_rows_found": false,
+  "statistics_candidate_test_ids": [
+    "INS-02/03/04/05",
+    "TIM-06"
+  ],
+  "NO_RESPONSE_or_FAILED_before_after_statistics_records": 0,
+  "excluded_scope": "Generated inventory/portfolio copies excluded to avoid duplicates; previously copied SIM07 command rows remain in git-review."
+}

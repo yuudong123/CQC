@@ -1,0 +1,204 @@
+[
+  {
+    "name": "/sharp_dirac",
+    "status": "running",
+    "project": null,
+    "volumes": []
+  },
+  {
+    "name": "/cqc-mo103-sim0312-20261014-093721-simulator-1",
+    "status": "exited",
+    "project": "cqc-mo103-sim0312-20261014-093721",
+    "volumes": [
+      "cqc_simulator_dataset",
+      "cqc-mo103-sim0312-20261014-093721_qa_position",
+      "cqc-mo103-sim0312-20261014-093721_qa_simulator_logs"
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0312-20261014-093721-backend-1",
+    "status": "exited",
+    "project": "cqc-mo103-sim0312-20261014-093721",
+    "volumes": [
+      "cqc-mo103-sim0312-20261014-093721_qa_fault_images",
+      "cqc-mo103-sim0312-20261014-093721_qa_backend_logs"
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0312-20261014-093721-mysql-1",
+    "status": "exited",
+    "project": "cqc-mo103-sim0312-20261014-093721",
+    "volumes": [
+      "cqc-mo103-sim0312-20261014-093721_qa_mysql"
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0312-20261014-093721-inference-1",
+    "status": "exited",
+    "project": "cqc-mo103-sim0312-20261014-093721",
+    "volumes": [
+      "cqc-mo103-sim0312-20261014-093721_qa_inference_logs"
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0312-20261014-093341-backend-1",
+    "status": "created",
+    "project": "cqc-mo103-sim0312-20261014-093341",
+    "volumes": [
+      "cqc-mo103-sim0312-20261014-093341_qa_fault_images",
+      "cqc-mo103-sim0312-20261014-093341_qa_backend_logs"
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0312-20261014-093341-mysql-1",
+    "status": "exited",
+    "project": "cqc-mo103-sim0312-20261014-093341",
+    "volumes": [
+      "cqc-mo103-sim0312-20261014-093341_qa_mysql"
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0312-20261014-093341-inference-1",
+    "status": "exited",
+    "project": "cqc-mo103-sim0312-20261014-093341",
+    "volumes": [
+      "cqc-mo103-sim0312-20261014-093341_qa_inference_logs"
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0312-20261014-093128-backend-1",
+    "status": "created",
+    "project": "cqc-mo103-sim0312-20261014-093128",
+    "volumes": [
+      "cqc-mo103-sim0312-20261014-093128_qa_backend_logs",
+      "cqc-mo103-sim0312-20261014-093128_qa_fault_images"
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0312-20261014-093128-mysql-1",
+    "status": "exited",
+    "project": "cqc-mo103-sim0312-20261014-093128",
+    "volumes": [
+      "cqc-mo103-sim0312-20261014-093128_qa_mysql"
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0312-20261014-093128-inference-1",
+    "status": "exited",
+    "project": "cqc-mo103-sim0312-20261014-093128",
+    "volumes": [
+      "cqc-mo103-sim0312-20261014-093128_qa_inference_logs"
+    ]
+  },
+  {
+    "name": "/cqc-cicd-simulator-1",
+    "status": "running",
+    "project": "cqc-cicd",
+    "volumes": [
+      "cqc_simulator_dataset",
+      "cqc-cicd_simulator_state",
+      "cqc-cicd_simulator_logs"
+    ]
+  },
+  {
+    "name": "/cqc-cicd-logistics-web-1",
+    "status": "running",
+    "project": "cqc-cicd",
+    "volumes": []
+  },
+  {
+    "name": "/cqc-cicd-backend-1",
+    "status": "running",
+    "project": "cqc-cicd",
+    "volumes": [
+      "cqc-cicd_backend_logs",
+      "cqc-cicd_fault_images"
+    ]
+  },
+  {
+    "name": "/cqc-cicd-inference-1",
+    "status": "running",
+    "project": "cqc-cicd",
+    "volumes": [
+      "cqc-cicd_inference_logs"
+    ]
+  },
+  {
+    "name": "/cqc-cicd-logistics-api-1",
+    "status": "running",
+    "project": "cqc-cicd",
+    "volumes": []
+  },
+  {
+    "name": "/cqc-mo103-sim0405-20261013-122650-simulator-1",
+    "status": "exited",
+    "project": "cqc-mo103-sim0405-20261013-122650",
+    "volumes": [
+      "cqc-mo103-sim0405-20261013-122650_qa_position",
+      "cqc-mo103-sim0405-20261013-122650_qa_simulator_logs",
+      "cqc_simulator_dataset"
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0405-20261013-122650-backend-1",
+    "status": "exited",
+    "project": "cqc-mo103-sim0405-20261013-122650",
+    "volumes": [
+      "cqc-mo103-sim0405-20261013-122650_qa_fault_images",
+      "cqc-mo103-sim0405-20261013-122650_qa_backend_logs"
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0405-20261013-122650-mysql-1",
+    "status": "exited",
+    "project": "cqc-mo103-sim0405-20261013-122650",
+    "volumes": [
+      "cqc-mo103-sim0405-20261013-122650_qa_mysql"
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0405-20261013-122650-inference-1",
+    "status": "exited",
+    "project": "cqc-mo103-sim0405-20261013-122650",
+    "volumes": [
+      "cqc-mo103-sim0405-20261013-122650_qa_inference_logs"
+    ]
+  },
+  {
+    "name": "/blissful_galileo",
+    "status": "exited",
+    "project": null,
+    "volumes": []
+  },
+  {
+    "name": "/cqc-cicd-mysql-1",
+    "status": "running",
+    "project": "cqc-cicd",
+    "volumes": [
+      "cqc-cicd_mysql_data"
+    ]
+  },
+  {
+    "name": "/cqc-cicd-logistics-mongodb-1",
+    "status": "running",
+    "project": "cqc-cicd",
+    "volumes": [
+      "cqc-cicd_logistics_mongodb_data",
+      "612dc52384a067d286f65d98317ac00783ee140312630a9ac1a5f843b9ef1bf5"
+    ]
+  },
+  {
+    "name": "/ai-model-api",
+    "status": "exited",
+    "project": null,
+    "volumes": []
+  },
+  {
+    "name": "/jenkins",
+    "status": "running",
+    "project": null,
+    "volumes": [
+      "jenkins_home"
+    ]
+  }
+]

@@ -1,0 +1,11 @@
+__qa_section
+FAILED_COUNT
+failed_control_rows
+0
+__qa_section
+FAILED_CONTROLS
+__qa_section
+INFERENCE_ALTERNATIVES
+id	inspection_id	command_id	attempt_no	requested_bin_code	control_status	requested_at	responded_at	source_reference	used_frame_count	model_version	error_code	persistence_status
+76629	qa-be-10081526-ins08	81511c45-72e1-454d-8bd8-512eaadfdf78	1	TEST_REINSPECTION_BIN	SUCCEEDED	2026-10-08 06:26:44.029	2026-10-08 06:26:44.029	NULL	NULL	NULL	INFERENCE_HTTP_ERROR	SUCCEEDED
+78246	qa-be-10081626s-ins01-FS-15.0	99e70659-c4bc-4f58-8404-54d28baf9db5	1	TEST_REINSPECTION_BIN	SUCCEEDED	2026-10-08 07:27:16.288	2026-10-08 07:27:16.288	NULL	NULL	NULL	INFERENCE_DEADLINE_EXCEEDED	SUCCEEDED

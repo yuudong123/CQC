@@ -1,0 +1,40 @@
+{
+  "FAILED_COUNT": [
+    {
+      "failed_control_rows": "0"
+    }
+  ],
+  "FAILED_CONTROLS": [],
+  "INFERENCE_ALTERNATIVES": [
+    {
+      "id": "76629",
+      "inspection_id": "qa-be-10081526-ins08",
+      "command_id": "81511c45-72e1-454d-8bd8-512eaadfdf78",
+      "attempt_no": "1",
+      "requested_bin_code": "TEST_REINSPECTION_BIN",
+      "control_status": "SUCCEEDED",
+      "requested_at": "2026-10-08 06:26:44.029",
+      "responded_at": "2026-10-08 06:26:44.029",
+      "source_reference": "NULL",
+      "used_frame_count": "NULL",
+      "model_version": "NULL",
+      "error_code": "INFERENCE_HTTP_ERROR",
+      "persistence_status": "SUCCEEDED"
+    },
+    {
+      "id": "78246",
+      "inspection_id": "qa-be-10081626s-ins01-FS-15.0",
+      "command_id": "99e70659-c4bc-4f58-8404-54d28baf9db5",
+      "attempt_no": "1",
+      "requested_bin_code": "TEST_REINSPECTION_BIN",
+      "control_status": "SUCCEEDED",
+      "requested_at": "2026-10-08 07:27:16.288",
+      "responded_at": "2026-10-08 07:27:16.288",
+      "source_reference": "NULL",
+      "used_frame_count": "NULL",
+      "model_version": "NULL",
+      "error_code": "INFERENCE_DEADLINE_EXCEEDED",
+      "persistence_status": "SUCCEEDED"
+    }
+  ]
+}

@@ -1,0 +1,216 @@
+{
+  "source": "SIM-07 independent ALL raw records",
+  "runtime_source": "f8a2002",
+  "environment": "local WSL process environment, not E2",
+  "analyses": [
+    {
+      "fault": "CONTROL_REJECTED",
+      "scope": "ALL",
+      "fault_inspections": 5,
+      "control_rows": 9,
+      "error_rows": 5,
+      "per_inspection": [
+        {
+          "inspection_id": "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+          "attempts": [
+            {
+              "attempt_no": 1,
+              "command_id": "5fd4b768-d055-407f-bc27-bec64e432862",
+              "requested_bin_code": "DEMO_BIN_08",
+              "status": "REJECTED",
+              "requested_at": "2026-10-13 08:03:16.956000",
+              "responded_at": "2026-10-13 08:03:16.956000"
+            },
+            {
+              "attempt_no": 2,
+              "command_id": "5d7069c1-c444-4777-b74f-39ba66312f43",
+              "requested_bin_code": "TEST_REINSPECTION_BIN",
+              "status": "SUCCEEDED",
+              "requested_at": "2026-10-13 08:03:16.956000",
+              "responded_at": "2026-10-13 08:03:16.956000"
+            }
+          ]
+        },
+        {
+          "inspection_id": "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+          "attempts": [
+            {
+              "attempt_no": 1,
+              "command_id": "b121afce-304a-44ea-ac97-439b9605091f",
+              "requested_bin_code": "DEMO_BIN_06",
+              "status": "REJECTED",
+              "requested_at": "2026-10-13 08:03:19.477000",
+              "responded_at": "2026-10-13 08:03:19.477000"
+            },
+            {
+              "attempt_no": 2,
+              "command_id": "069305bf-2f80-4980-a944-838c32b72760",
+              "requested_bin_code": "TEST_REINSPECTION_BIN",
+              "status": "SUCCEEDED",
+              "requested_at": "2026-10-13 08:03:19.477000",
+              "responded_at": "2026-10-13 08:03:19.477000"
+            }
+          ]
+        },
+        {
+          "inspection_id": "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+          "attempts": [
+            {
+              "attempt_no": 1,
+              "command_id": "890fbc5d-d974-4c55-834c-9d95e8a235ab",
+              "requested_bin_code": "DEMO_BIN_05",
+              "status": "REJECTED",
+              "requested_at": "2026-10-13 08:03:21.235000",
+              "responded_at": "2026-10-13 08:03:21.235000"
+            },
+            {
+              "attempt_no": 2,
+              "command_id": "1a3e0029-b5e0-4938-87e0-f7c95f5ebcd1",
+              "requested_bin_code": "TEST_REINSPECTION_BIN",
+              "status": "SUCCEEDED",
+              "requested_at": "2026-10-13 08:03:21.235000",
+              "responded_at": "2026-10-13 08:03:21.235000"
+            }
+          ]
+        },
+        {
+          "inspection_id": "a9309f7c-2883-4612-996b-13986995e0e9",
+          "attempts": [
+            {
+              "attempt_no": 1,
+              "command_id": "5e7ea97f-3468-404e-a879-ab3890ebf413",
+              "requested_bin_code": "DEMO_BIN_05",
+              "status": "REJECTED",
+              "requested_at": "2026-10-13 08:03:23.286000",
+              "responded_at": "2026-10-13 08:03:23.286000"
+            },
+            {
+              "attempt_no": 2,
+              "command_id": "18c893a7-058f-44e7-b888-1202fca634dd",
+              "requested_bin_code": "TEST_REINSPECTION_BIN",
+              "status": "SUCCEEDED",
+              "requested_at": "2026-10-13 08:03:23.286000",
+              "responded_at": "2026-10-13 08:03:23.286000"
+            }
+          ]
+        },
+        {
+          "inspection_id": "58a962ce-01da-4d2c-853e-5e9180a6bf6f",
+          "attempts": [
+            {
+              "attempt_no": 1,
+              "command_id": "a73767cc-cc1f-4a49-ab58-c37c9ffb3727",
+              "requested_bin_code": "TEST_REINSPECTION_BIN",
+              "status": "REJECTED",
+              "requested_at": "2026-10-13 08:03:25.544000",
+              "responded_at": "2026-10-13 08:03:25.544000"
+            }
+          ]
+        }
+      ],
+      "post_clear_completed_ids": [
+        "26a92337-bce4-4cac-8144-f5d5f48bfdab"
+      ]
+    },
+    {
+      "fault": "INFERENCE_TIMEOUT",
+      "scope": "ALL",
+      "fault_inspections": 6,
+      "control_rows": 6,
+      "error_rows": 6,
+      "per_inspection": [
+        {
+          "inspection_id": "965416ef-e124-485b-9535-bf5d6b3163c3",
+          "attempts": [
+            {
+              "attempt_no": 1,
+              "command_id": "226ac2c7-89bb-430f-948b-8017401c92ef",
+              "requested_bin_code": "TEST_REINSPECTION_BIN",
+              "status": "SUCCEEDED",
+              "requested_at": "2026-10-13 08:03:31.120000",
+              "responded_at": "2026-10-13 08:03:31.120000"
+            }
+          ]
+        },
+        {
+          "inspection_id": "11e020dc-9d1d-44f0-a1de-31a87eafe843",
+          "attempts": [
+            {
+              "attempt_no": 1,
+              "command_id": "1cd1221e-7ff8-4679-8856-086c0b2cc6a5",
+              "requested_bin_code": "TEST_REINSPECTION_BIN",
+              "status": "SUCCEEDED",
+              "requested_at": "2026-10-13 08:03:33.474000",
+              "responded_at": "2026-10-13 08:03:33.474000"
+            }
+          ]
+        },
+        {
+          "inspection_id": "e67898fa-f9de-4f60-8a57-5432820d7764",
+          "attempts": [
+            {
+              "attempt_no": 1,
+              "command_id": "0b1d4e3e-99f9-4b09-9d61-a1bfdee33248",
+              "requested_bin_code": "TEST_REINSPECTION_BIN",
+              "status": "SUCCEEDED",
+              "requested_at": "2026-10-13 08:03:35.360000",
+              "responded_at": "2026-10-13 08:03:35.360000"
+            }
+          ]
+        },
+        {
+          "inspection_id": "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+          "attempts": [
+            {
+              "attempt_no": 1,
+              "command_id": "de712dfc-6842-4a8d-9755-d2fd086dd17d",
+              "requested_bin_code": "TEST_REINSPECTION_BIN",
+              "status": "SUCCEEDED",
+              "requested_at": "2026-10-13 08:03:37.412000",
+              "responded_at": "2026-10-13 08:03:37.412000"
+            }
+          ]
+        },
+        {
+          "inspection_id": "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+          "attempts": [
+            {
+              "attempt_no": 1,
+              "command_id": "9cd465a7-130a-4cd3-ba9a-61f0666fb192",
+              "requested_bin_code": "TEST_REINSPECTION_BIN",
+              "status": "SUCCEEDED",
+              "requested_at": "2026-10-13 08:03:39.712000",
+              "responded_at": "2026-10-13 08:03:39.712000"
+            }
+          ]
+        },
+        {
+          "inspection_id": "38e572dd-8df9-444d-afd5-a64865e42936",
+          "attempts": [
+            {
+              "attempt_no": 1,
+              "command_id": "b8f4477d-8880-496f-9f87-77d7feee21b4",
+              "requested_bin_code": "TEST_REINSPECTION_BIN",
+              "status": "SUCCEEDED",
+              "requested_at": "2026-10-13 08:03:41.530000",
+              "responded_at": "2026-10-13 08:03:41.530000"
+            }
+          ]
+        }
+      ],
+      "post_clear_completed_ids": [
+        "0f11eb33-5bcb-4091-a729-67ee126b2936"
+      ]
+    }
+  ],
+  "official_qa_changed": false,
+  "reuse_status": "PARTIAL_ALTERNATIVE_REQUIRES_BE_DM_ACCEPTANCE",
+  "does_not_prove": [
+    "Original 2026-10-06 SIM-06 NEXT control rows",
+    "NEXT automatic fault clearing",
+    "CONTROL_NO_RESPONSE individual rows or successful-bin statistics exclusion",
+    "CONTROL_FAILED individual rows / retry absence",
+    "DB_ERROR target and failed-save log",
+    "E2 Docker environment equivalence"
+  ]
+}

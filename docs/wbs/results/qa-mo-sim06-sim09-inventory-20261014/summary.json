@@ -1,0 +1,10 @@
+{
+  "completed_kst": "2026-10-14T11:04:23.294798+09:00",
+  "inspection_ids_searched": 24,
+  "archives_checked": 2,
+  "cold_volumes_checked": 8,
+  "new_tests": false,
+  "http_or_sql_probe": false,
+  "e1_unchanged_and_healthy": true,
+  "note": "Negative findings apply only to the recorded search scope; no claim that original data were deleted"
+}

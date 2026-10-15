@@ -1,0 +1,70 @@
+{
+  "round": 7,
+  "at_kst": "2026-10-14T12:43:00.186761+09:00",
+  "title": "Reflog/stash/Codex refs and current unreachable blobs, including alternative BE IDs",
+  "unreachable_blobs_checked": 407,
+  "blob_bytes_checked": 2978060,
+  "unreachable_commits": 19,
+  "reflog_commit_ids": 146,
+  "matches": [
+    {
+      "sha": "0d23a36381afc982781ad35518ad662a27fb3f0d",
+      "bytes": 2815,
+      "matches": [
+        "qa-mo09-mysql-down-e87f0b64e1624fbc",
+        "qa-mo09-mysql-recovered-d6ecd322e9494b34"
+      ],
+      "attempt_no_occurrences": 0,
+      "is_json": true,
+      "same_existing_recovery_JSON_values": true
+    },
+    {
+      "sha": "662bdd4ad41ec7eff4a88b7c4c3e0dfed28254d7",
+      "bytes": 9238,
+      "matches": [
+        "0693b8aa-8328-4c5e-b7e8-907bdc6eb14b",
+        "29d70749-2320-4733-8be4-2a483e532851",
+        "581d56a1-337a-42cf-80c6-bb0fe574320c",
+        "59927979-f841-45ea-ac1f-90c7537b3fae",
+        "5e85ae9c-0549-47a4-8445-eca477465a2e",
+        "61a0923e-bee6-4b5f-bba0-5b639c6c863b",
+        "74927e8d-01e6-41e6-b257-8b866cbdabf7",
+        "a440c461-8225-4932-a641-b527e2232150",
+        "bb57f84e-dca3-4281-9c67-92d5273d7948",
+        "d6d5d20c-02db-493d-8de4-baa3ca5434fd",
+        "dcec597f-4bc8-4b1f-bb2e-8f04a7476974",
+        "qa-mo09-mysql-down-e87f0b64e1624fbc",
+        "qa-mo09-mysql-recovered-d6ecd322e9494b34"
+      ],
+      "attempt_no_occurrences": 1,
+      "is_json": false,
+      "document_first_heading": "# MO SIM-06·09 기존 원자료 보존 위치 조사 (2026-10-14)",
+      "classification": "Earlier inventory README, not raw control data"
+    },
+    {
+      "sha": "193fafbbde0bd4f70f93a7839d753f6aef13b891",
+      "bytes": 18808,
+      "matches": [
+        "0693b8aa-8328-4c5e-b7e8-907bdc6eb14b",
+        "29d70749-2320-4733-8be4-2a483e532851",
+        "581d56a1-337a-42cf-80c6-bb0fe574320c",
+        "59927979-f841-45ea-ac1f-90c7537b3fae",
+        "5e85ae9c-0549-47a4-8445-eca477465a2e",
+        "61a0923e-bee6-4b5f-bba0-5b639c6c863b",
+        "74927e8d-01e6-41e6-b257-8b866cbdabf7",
+        "a440c461-8225-4932-a641-b527e2232150",
+        "bb57f84e-dca3-4281-9c67-92d5273d7948",
+        "d6d5d20c-02db-493d-8de4-baa3ca5434fd",
+        "dcec597f-4bc8-4b1f-bb2e-8f04a7476974",
+        "qa-mo09-mysql-down-e87f0b64e1624fbc",
+        "qa-mo09-mysql-recovered-d6ecd322e9494b34"
+      ],
+      "attempt_no_occurrences": 3,
+      "is_json": false,
+      "document_first_heading": "# MO SIM-06·09 기존 원자료 보존 위치 조사 (2026-10-14)",
+      "classification": "Earlier inventory README, not raw control data"
+    }
+  ],
+  "new_raw_bundle_found": false,
+  "BE_stash_present": false
+}

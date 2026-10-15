@@ -1,0 +1,37 @@
+{
+  "round": 1,
+  "title": "Latest GitHub heads and unmerged PR evidence",
+  "latest_heads_unchanged": true,
+  "repository_prs_checked": 91,
+  "unmerged_prs": [
+    {
+      "number": 107,
+      "title": "[MO-03] dev 배포 경계와 PR 검사 추가",
+      "sha": "7ac19ca7660a60b52b3928ab4b9436ac2cd1eb8a",
+      "state": "closed",
+      "files": [
+        ".github/workflows/pr-checks.yml",
+        "Jenkinsfile",
+        "docs/wbs/reference/MO/mo-03-deployment-baseline.md"
+      ],
+      "truncated": false
+    },
+    {
+      "number": 36,
+      "title": "FE-10 브라우저 시연 투입 간격 1초로 조정",
+      "sha": "58562fdac0b332f1edb4465a349217d609fdc44a",
+      "state": "closed",
+      "files": [
+        "cqc-logistics-platform/apps/web/src/components/useQualityConnection.ts",
+        "cqc-logistics-platform/apps/web/src/lib/quality-runtime.ts",
+        "cqc-logistics-platform/apps/web/tests/auction-demo.test.cjs",
+        "docs/wbs/FE-10.md",
+        "docs/wbs/reference/LOGISTICS/07-demo-scenario.md",
+        "docs/중간발표/10월 1일/CQC-시연대본-1001.md"
+      ],
+      "truncated": false
+    }
+  ],
+  "new_qa_originals_found": false,
+  "scope": "Fresh origin fetch/head comparison and both unmerged closed PRs; neither is a SIM06/09 raw-evidence submission"
+}

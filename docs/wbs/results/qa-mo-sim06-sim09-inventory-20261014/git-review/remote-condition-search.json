@@ -1,0 +1,621 @@
+{
+  "scope": "Tracked docs/wbs/results in every current origin branch, unique blobs inspected as text; not Git LFS/binary artifacts or every historical commit",
+  "heads": {
+    "refs/remotes/origin/dev": "cbb7c13af75659e34048db0d940c993869c4938a",
+    "refs/remotes/origin/feat/backend": "9723907f2a9cd3c4cb747ca80bc9b72892e2d4d0",
+    "refs/remotes/origin/feat/data": "5d566a42d345509e923cd757022435bb82b67f55",
+    "refs/remotes/origin/feat/front": "4765ea2e28be3b3d57a3744b9710f54775152499",
+    "refs/remotes/origin/feat/mlops": "c66921ac5da3757b782cdc1cf20263702c33f76d",
+    "refs/remotes/origin/fix/jenkins-python-test-import": "5a6285ddb1e265a76c296cfa4f7f39a651a41645",
+    "refs/remotes/origin/fix/jenkins-test-workspace-copy": "9873d7dc3381aae532a81bc4b6803e300ff3bf09",
+    "refs/remotes/origin/main": "c752965d12ab6e6440ec50ef045b0f3f1d45db14"
+  },
+  "unique_blobs_checked": 623,
+  "condition_matches": [
+    {
+      "git_blob": "347c1a50d5bde8aae4dd8052a3d33abe35e8e5fd",
+      "bytes": 125708,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/mo09-qa-preliminary-20261006.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/mo09-qa-preliminary-20261006.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/mo09-qa-preliminary-20261006.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/mo09-qa-preliminary-20261006.json"
+        }
+      ],
+      "terms": [
+        "DB_ERROR",
+        "CONTROL_NO_RESPONSE",
+        "CONTROL_FAILED",
+        "SIM-06"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 0
+    },
+    {
+      "git_blob": "e8b17f48c248feb41519d07e3116ff651b0adc7f",
+      "bytes": 45315,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-be-20261010.md"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-be-20261010.md"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-be-20261010.md"
+        }
+      ],
+      "terms": [
+        "DB_ERROR",
+        "SIM-06"
+      ],
+      "attempt_no_occurrences": 2,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 1
+    },
+    {
+      "git_blob": "074ee89d1568a9f9eeb6bcee71eccd2988f6202e",
+      "bytes": 118078,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/auto01-windows-ci-scope.xml"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/auto01-windows-ci-scope.xml"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/auto01-windows-ci-scope.xml"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/auto01-windows-ci-scope.xml"
+        }
+      ],
+      "terms": [
+        "DB_ERROR",
+        "CONTROL_NO_RESPONSE",
+        "CONTROL_FAILED"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 0
+    },
+    {
+      "git_blob": "4af543d5bc6277ea56ed77d3fba217f7d37956c5",
+      "bytes": 115575,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/auto01-windows-full.xml"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/auto01-windows-full.xml"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/auto01-windows-full.xml"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/auto01-windows-full.xml"
+        }
+      ],
+      "terms": [
+        "DB_ERROR",
+        "CONTROL_NO_RESPONSE",
+        "CONTROL_FAILED"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 0
+    },
+    {
+      "git_blob": "61a175f73eb9013ce92627264e02b3ad01f4b29a",
+      "bytes": 2666180,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/ops10-inspections.csv"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/ops10-inspections.csv"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/ops10-inspections.csv"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/ops10-inspections.csv"
+        }
+      ],
+      "terms": [
+        "CONTROL_NO_RESPONSE"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 0
+    },
+    {
+      "git_blob": "bbe66d9a9ec7b0fabf602f101b99193c8b6eafd0",
+      "bytes": 1130,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-mo-20261007-evidence/20261006-recovery-all04-rows.md"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-mo-20261007-evidence/20261006-recovery-all04-rows.md"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-mo-20261007-evidence/20261006-recovery-all04-rows.md"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-mo-20261007-evidence/20261006-recovery-all04-rows.md"
+        }
+      ],
+      "terms": [
+        "SIM-09"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 0
+    },
+    {
+      "git_blob": "5db311a3e0ac6a633a96bb2a0659406e156e0743",
+      "bytes": 1584,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-mo-20261007-evidence/20261006-recovery-results.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-mo-20261007-evidence/20261006-recovery-results.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-mo-20261007-evidence/20261006-recovery-results.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-mo-20261007-evidence/20261006-recovery-results.json"
+        }
+      ],
+      "terms": [
+        "SIM-09"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 0
+    },
+    {
+      "git_blob": "8dfb082f976825f1ce8f22ddb0d3bf9f8beb97a5",
+      "bytes": 27963,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-mo-20261007.md"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-mo-20261007.md"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-mo-20261007.md"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-mo-20261007.md"
+        }
+      ],
+      "terms": [
+        "CONTROL_FAILED",
+        "SIM-09"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 0
+    },
+    {
+      "git_blob": "56ea1c6a3402e4589b9d5f0e67612c9568d95109",
+      "bytes": 10399,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/README.md"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/README.md"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/README.md"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/README.md"
+        }
+      ],
+      "terms": [
+        "DB_ERROR",
+        "CONTROL_NO_RESPONSE",
+        "CONTROL_FAILED",
+        "SIM-06"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 0
+    },
+    {
+      "git_blob": "43518927f9d184798726035dba8fa2a9cbe567b5",
+      "bytes": 2869,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/deployed-schemas.py.txt"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/deployed-schemas.py.txt"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/deployed-schemas.py.txt"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/deployed-schemas.py.txt"
+        }
+      ],
+      "terms": [
+        "DB_ERROR",
+        "CONTROL_NO_RESPONSE",
+        "CONTROL_FAILED"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 0
+    },
+    {
+      "git_blob": "c4baec505a958f8f84fb66a400fb492ffeb07c44",
+      "bytes": 6386,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/execution-plan.md"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/execution-plan.md"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/execution-plan.md"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/execution-plan.md"
+        }
+      ],
+      "terms": [
+        "DB_ERROR",
+        "SIM-06",
+        "SIM-09"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 1
+    },
+    {
+      "git_blob": "38b0b1b5a447048229ab0a83301b5f7990154678",
+      "bytes": 3721,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/historical-detailed-fault-evidence.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/historical-detailed-fault-evidence.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/historical-detailed-fault-evidence.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/historical-detailed-fault-evidence.json"
+        }
+      ],
+      "terms": [
+        "DB_ERROR",
+        "CONTROL_NO_RESPONSE",
+        "CONTROL_FAILED",
+        "SIM-06"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 0
+    },
+    {
+      "git_blob": "0f365e1993d8afff82ff6938957559937ff8a1c5",
+      "bytes": 3409,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/historical-earlier-fault-evidence.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/historical-earlier-fault-evidence.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/historical-earlier-fault-evidence.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/historical-earlier-fault-evidence.json"
+        }
+      ],
+      "terms": [
+        "DB_ERROR",
+        "CONTROL_NO_RESPONSE",
+        "CONTROL_FAILED",
+        "SIM-06"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 0
+    },
+    {
+      "git_blob": "074cede0455fe0a37b2924fd8e150aa77e5e0663",
+      "bytes": 3835,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/historical-primary-fault-extract.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/historical-primary-fault-extract.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/historical-primary-fault-extract.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/historical-primary-fault-extract.json"
+        }
+      ],
+      "terms": [
+        "DB_ERROR",
+        "CONTROL_NO_RESPONSE",
+        "CONTROL_FAILED",
+        "SIM-06"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 0
+    },
+    {
+      "git_blob": "53bcf3e7e0d2e0ccd5b81ed22e394a335ed4ccce",
+      "bytes": 5536,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/issue-comment-draft.md"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/issue-comment-draft.md"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/issue-comment-draft.md"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/issue-comment-draft.md"
+        }
+      ],
+      "terms": [
+        "DB_ERROR",
+        "SIM-06"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 0
+    },
+    {
+      "git_blob": "6af57123633122f96f0c10c5f84a165375d77639",
+      "bytes": 999,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/sim05-request-matrix.json"
+        },
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/sim05-request-matrix.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/sim05-request-matrix.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/sim05-request-matrix.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/sim05-request-matrix.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/sim05-request-matrix.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/sim05-request-matrix.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/sim05-request-matrix.json"
+        }
+      ],
+      "terms": [
+        "DB_ERROR"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 0
+    },
+    {
+      "git_blob": "e6c6f0a4380ffb0d9bed5295036781ea846510f4",
+      "bytes": 3486,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/sim06-evidence-review.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/sim06-evidence-review.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/sim06-evidence-review.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-mo-be-followup-20261012/sim06-evidence-review.json"
+        }
+      ],
+      "terms": [
+        "DB_ERROR",
+        "CONTROL_NO_RESPONSE",
+        "CONTROL_FAILED"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 0
+    },
+    {
+      "git_blob": "a9900ec01ef249362a5aae4346a2d6b64edd4954",
+      "bytes": 1699,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-mo-e1-delay-20261012/deployed-timestamp-source.txt"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-mo-e1-delay-20261012/deployed-timestamp-source.txt"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-mo-e1-delay-20261012/deployed-timestamp-source.txt"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-mo-e1-delay-20261012/deployed-timestamp-source.txt"
+        }
+      ],
+      "terms": [
+        "DB_ERROR"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 0
+    },
+    {
+      "git_blob": "63a5ff8368c50d0db256fbf34d127e31e6fba03f",
+      "bytes": 1526,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-mo-ins14-ins17-20261012/deployed-error-code-mapping.py.txt"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-mo-ins14-ins17-20261012/deployed-error-code-mapping.py.txt"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-mo-ins14-ins17-20261012/deployed-error-code-mapping.py.txt"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-mo-ins14-ins17-20261012/deployed-error-code-mapping.py.txt"
+        }
+      ],
+      "terms": [
+        "DB_ERROR",
+        "CONTROL_NO_RESPONSE",
+        "CONTROL_FAILED"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 0
+    },
+    {
+      "git_blob": "f8bacea3f770f1696fc8306c47f246c328f3cb00",
+      "bytes": 811,
+      "locations": [
+        {
+          "ref": "refs/remotes/origin/dev",
+          "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/sim05-c-request.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/backend",
+          "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/sim05-c-request.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/front",
+          "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/sim05-c-request.json"
+        },
+        {
+          "ref": "refs/remotes/origin/feat/mlops",
+          "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/sim05-c-request.json"
+        }
+      ],
+      "terms": [
+        "DB_ERROR"
+      ],
+      "attempt_no_occurrences": 0,
+      "restart_count_occurrences": 0,
+      "started_at_occurrences": 0
+    }
+  ],
+  "new_DB_ERROR_linked_target_log_found": false,
+  "new_CONTROL_NO_RESPONSE_or_CONTROL_FAILED_attempt_rows_found": false,
+  "new_SIM09_same_run_automatic_recovery_series_found": false
+}

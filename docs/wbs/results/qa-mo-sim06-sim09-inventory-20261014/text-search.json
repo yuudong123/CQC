@@ -1,0 +1,70 @@
+{
+  "at_kst": "2026-10-14T11:04:11.589168+09:00",
+  "patterns": [
+    "0096b353-151d-4160-8b6b-d0fa88e048b2",
+    "0693b8aa-8328-4c5e-b7e8-907bdc6eb14b",
+    "157d32e2-2975-45bd-a31e-4a876fa890e4",
+    "1d5e2f82-d6f3-4779-9a17-fc2bbaeec8b9",
+    "1f331621-4ee6-4bbd-a5ea-5b005b18aae6",
+    "1f396404-4325-4377-a2a7-81534e217a18",
+    "23913200-b757-4cc1-800f-2741299fa1fc",
+    "29d70749-2320-4733-8be4-2a483e532851",
+    "581d56a1-337a-42cf-80c6-bb0fe574320c",
+    "59927979-f841-45ea-ac1f-90c7537b3fae",
+    "5e85ae9c-0549-47a4-8445-eca477465a2e",
+    "61a0923e-bee6-4b5f-bba0-5b639c6c863b",
+    "74927e8d-01e6-41e6-b257-8b866cbdabf7",
+    "74e024ed-8f3e-4122-9a25-7f621aa7d8a0",
+    "827fb89f-059f-41cc-9166-b6eaefd339c8",
+    "97e579a1-8473-4b04-91f0-11f7feb286cf",
+    "a440c461-8225-4932-a641-b527e2232150",
+    "ab56fdb5-3d2d-4b38-8cbc-4a7467d38a97",
+    "bb57f84e-dca3-4281-9c67-92d5273d7948",
+    "ca4b28aa-6858-4b15-8ede-a8b0a0185be0",
+    "d6d5d20c-02db-493d-8de4-baa3ca5434fd",
+    "dcec597f-4bc8-4b1f-bb2e-8f04a7476974",
+    "qa-mo09-mysql-down-e87f0b64e1624fbc",
+    "qa-mo09-mysql-recovered-d6ecd322e9494b34"
+  ],
+  "source_runs": [
+    {
+      "path": "outputs/mo09-e2-detailed-20261006/fault-evidence.json",
+      "rows": 6,
+      "sha256": "993cb4cfdccfcba7ba891e12cd144211bf5fc6ea4220d87eed0a57a30d2f626d"
+    },
+    {
+      "path": "outputs/mo09-latest-e2-20261006/fault-evidence.json",
+      "rows": 6,
+      "sha256": "eead8795952d03409b532c64f89f485fd1889035e93f62adc7c516cf405b23aa"
+    }
+  ],
+  "roots": [
+    "docs",
+    "outputs"
+  ],
+  "includes_ignored_files": true,
+  "matched_paths": [
+    "outputs\\mo09-e2-detailed-20261006\\results.json",
+    "outputs\\mo09-e2-detailed-20261006\\fault-evidence.json",
+    "outputs\\mo09-e2-detailed-20261006\\all04-rows.md",
+    "outputs\\mo09-e2-recovery2-20261006\\recovery-evidence.json",
+    "outputs\\mo09-latest-e2-20261006\\fault-evidence.json",
+    "outputs\\mo09-latest-e2-20261006\\all04-rows.md",
+    "outputs\\mo09-latest-e2-20261006\\results.json",
+    "docs\\wbs\\results\\mo09-qa-preliminary-20261006.json",
+    "docs\\wbs\\results\\qa-mo-be-followup-20261012\\sim06-evidence-review.json",
+    "docs\\wbs\\results\\qa-mo-be-followup-20261012\\historical-search.json",
+    "docs\\wbs\\results\\qa-mo-be-followup-20261012\\historical-recovery-evidence.json",
+    "docs\\wbs\\results\\qa-mo-be-followup-20261012\\historical-earlier-fault-evidence.json",
+    "docs\\wbs\\results\\qa-mo-be-followup-20261012\\historical-detailed-fault-evidence.json",
+    "docs\\wbs\\results\\qa-mo-20261007-evidence\\20261006-recovery-recovery-evidence.json"
+  ],
+  "excludes": [
+    "outputs/cqc-portfolio",
+    "new inventory output",
+    "this collector",
+    "node_modules",
+    ".git"
+  ],
+  "limits": "Other machines and arbitrary user folders not searched"
+}

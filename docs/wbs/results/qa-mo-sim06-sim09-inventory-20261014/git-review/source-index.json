@@ -1,0 +1,75 @@
+{
+  "observed_kst": "2026-10-14T12:12:55.138521+09:00",
+  "ref": "9723907f2a9cd3c4cb747ca80bc9b72892e2d4d0",
+  "published_pr": 131,
+  "merged_kst": "2026-10-14T08:54:23+09:00",
+  "pr_changed_files": 133,
+  "source_commit": "7c49866e46aef85a0f477fcae52f3ee7cc345972",
+  "files": [
+    {
+      "path": "docs/wbs/results/qa-be-sim07-local-20261013/README.md",
+      "saved_as": "README.md",
+      "bytes": 3690,
+      "sha256": "a1d3ac457e356cede279fa2e7abde9c47e71df22258121f30e427595186ac888",
+      "git_blob": "947c1f24e19a38bb283670e53800ef6322bee763",
+      "url": "https://github.com/yuudong123/CQC/blob/9723907f2a9cd3c4cb747ca80bc9b72892e2d4d0/docs/wbs/results/qa-be-sim07-local-20261013/README.md"
+    },
+    {
+      "path": "docs/wbs/results/qa-be-sim07-local-20261013/independent/CONTROL_REJECTED-joined.json",
+      "saved_as": "independent--CONTROL_REJECTED-joined.json",
+      "bytes": 22666,
+      "sha256": "b740260363e5b39e34554cd8d5ec53b477c36b8a0d594f4bcb873dfd1e05d649",
+      "git_blob": "8ba59b6203129516ab9807f2cab791d035f49196",
+      "url": "https://github.com/yuudong123/CQC/blob/9723907f2a9cd3c4cb747ca80bc9b72892e2d4d0/docs/wbs/results/qa-be-sim07-local-20261013/independent/CONTROL_REJECTED-joined.json"
+    },
+    {
+      "path": "docs/wbs/results/qa-be-sim07-local-20261013/independent/INFERENCE_TIMEOUT-joined.json",
+      "saved_as": "independent--INFERENCE_TIMEOUT-joined.json",
+      "bytes": 25436,
+      "sha256": "9fc30248bd19d6046d86ee8bce33212a9cf74a351349b1622f730158bbccbf61",
+      "git_blob": "22c6033ebcd7e379e5aa6c18af25d5dc9496c4ae",
+      "url": "https://github.com/yuudong123/CQC/blob/9723907f2a9cd3c4cb747ca80bc9b72892e2d4d0/docs/wbs/results/qa-be-sim07-local-20261013/independent/INFERENCE_TIMEOUT-joined.json"
+    },
+    {
+      "path": "docs/wbs/results/qa-be-sim07-local-20261013/independent/result.json",
+      "saved_as": "independent--result.json",
+      "bytes": 7817,
+      "sha256": "5b0dd4e712badc02e5399af8c21fa13e1af62f38664d82893ffeb95b040a806e",
+      "git_blob": "0bf07444117d70437c973c6f7b2e8ccbf5870c55",
+      "url": "https://github.com/yuudong123/CQC/blob/9723907f2a9cd3c4cb747ca80bc9b72892e2d4d0/docs/wbs/results/qa-be-sim07-local-20261013/independent/result.json"
+    },
+    {
+      "path": "docs/wbs/results/qa-be-sim07-local-20261013/independent/review.json",
+      "saved_as": "independent--review.json",
+      "bytes": 4283,
+      "sha256": "6334d33b1f697592a205cfaa192906a6cc11d737056e6465443931663fdd6462",
+      "git_blob": "8a73c4049ac7424cc709bb546ab072f16f820179",
+      "url": "https://github.com/yuudong123/CQC/blob/9723907f2a9cd3c4cb747ca80bc9b72892e2d4d0/docs/wbs/results/qa-be-sim07-local-20261013/independent/review.json"
+    },
+    {
+      "path": "docs/wbs/results/qa-be-sim07-local-20261013/combined/COMBINED-joined.json",
+      "saved_as": "combined--COMBINED-joined.json",
+      "bytes": 30310,
+      "sha256": "16da208f43e214025549a61b3e958b4a61a87791a6db28c4a1033d319d72ea06",
+      "git_blob": "42440b56894107f7a3d4df98147755525ffe6604",
+      "url": "https://github.com/yuudong123/CQC/blob/9723907f2a9cd3c4cb747ca80bc9b72892e2d4d0/docs/wbs/results/qa-be-sim07-local-20261013/combined/COMBINED-joined.json"
+    },
+    {
+      "path": "docs/wbs/results/qa-be-sim07-local-20261013/combined/review.json",
+      "saved_as": "combined--review.json",
+      "bytes": 4673,
+      "sha256": "21dfc93d52d29f538049169736484bb75626b71433796b19b44b83366a13a4ce",
+      "git_blob": "76415ac6b45671b987b13f1addb01a48b3e7f523",
+      "url": "https://github.com/yuudong123/CQC/blob/9723907f2a9cd3c4cb747ca80bc9b72892e2d4d0/docs/wbs/results/qa-be-sim07-local-20261013/combined/review.json"
+    },
+    {
+      "path": "docs/wbs/results/qa-be-sim07-local-20261013/manifest.sha256",
+      "saved_as": "manifest.sha256",
+      "bytes": 3842,
+      "sha256": "59d15cbc35f727ea549a4535c8f6eddbbf7839a6da020dfa485bb64d866cdd99",
+      "git_blob": "bd6c030d8da496e9efdb1c993df38726a6c2c35b",
+      "url": "https://github.com/yuudong123/CQC/blob/9723907f2a9cd3c4cb747ca80bc9b72892e2d4d0/docs/wbs/results/qa-be-sim07-local-20261013/manifest.sha256"
+    }
+  ],
+  "raw_git_bytes_preserved": true
+}

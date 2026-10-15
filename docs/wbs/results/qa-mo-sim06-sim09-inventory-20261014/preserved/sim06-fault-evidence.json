@@ -1,0 +1,128 @@
+[
+  {
+    "case": "QA-SIM-06/INFERENCE_TIMEOUT",
+    "fault": "INFERENCE_TIMEOUT",
+    "time_kst": "2026-10-06 11:32:53 KST",
+    "set_revision": 1,
+    "clear_revision": 2,
+    "fault_row": {
+      "id": "5e85ae9c-0549-47a4-8445-eca477465a2e",
+      "status": "FAIL",
+      "processingStatus": "TIMEOUT",
+      "errorCode": "INFERENCE_TIMEOUT",
+      "control": "SUCCEEDED",
+      "persistence": "SAVED",
+      "bin": "TEST_REINSPECTION_BIN",
+      "faults": [
+        "INFERENCE_TIMEOUT"
+      ]
+    },
+    "control_attempt_count": 1,
+    "fault_image_count": 12,
+    "next_normal_id": "d6d5d20c-02db-493d-8de4-baa3ca5434fd",
+    "status": "통과"
+  },
+  {
+    "case": "QA-SIM-06/INFERENCE_ERROR",
+    "fault": "INFERENCE_ERROR",
+    "time_kst": "2026-10-06 11:33:00 KST",
+    "set_revision": 3,
+    "clear_revision": 4,
+    "fault_row": {
+      "id": "dcec597f-4bc8-4b1f-bb2e-8f04a7476974",
+      "status": "FAIL",
+      "processingStatus": "ERROR",
+      "errorCode": "INFERENCE_ERROR",
+      "control": "SUCCEEDED",
+      "persistence": "SAVED",
+      "bin": "TEST_REINSPECTION_BIN",
+      "faults": [
+        "INFERENCE_ERROR"
+      ]
+    },
+    "control_attempt_count": 1,
+    "fault_image_count": 12,
+    "next_normal_id": "bb57f84e-dca3-4281-9c67-92d5273d7948",
+    "status": "통과"
+  },
+  {
+    "case": "QA-SIM-06/DB_ERROR",
+    "fault": "DB_ERROR",
+    "time_kst": "2026-10-06 11:33:08 KST",
+    "set_revision": 5,
+    "clear_revision": 6,
+    "fault_row": null,
+    "next_normal_id": "74927e8d-01e6-41e6-b257-8b866cbdabf7",
+    "note": "NEXT claim cleared; no DB_ERROR history row; later normal row saved",
+    "status": "통과"
+  },
+  {
+    "case": "QA-SIM-06/CONTROL_REJECTED",
+    "fault": "CONTROL_REJECTED",
+    "time_kst": "2026-10-06 11:33:13 KST",
+    "set_revision": 7,
+    "clear_revision": 8,
+    "fault_row": {
+      "id": "59927979-f841-45ea-ac1f-90c7537b3fae",
+      "status": "REVIEW",
+      "processingStatus": "COMPLETED",
+      "errorCode": "CONTROL_REJECTED",
+      "control": "FALLBACK",
+      "persistence": "SAVED",
+      "bin": "TEST_REINSPECTION_BIN",
+      "faults": [
+        "CONTROL_REJECTED"
+      ]
+    },
+    "control_attempt_count": 2,
+    "fault_image_count": 0,
+    "next_normal_id": "61a0923e-bee6-4b5f-bba0-5b639c6c863b",
+    "status": "통과"
+  },
+  {
+    "case": "QA-SIM-06/CONTROL_NO_RESPONSE",
+    "fault": "CONTROL_NO_RESPONSE",
+    "time_kst": "2026-10-06 11:33:18 KST",
+    "set_revision": 9,
+    "clear_revision": 10,
+    "fault_row": {
+      "id": "0693b8aa-8328-4c5e-b7e8-907bdc6eb14b",
+      "status": "REVIEW",
+      "processingStatus": "COMPLETED",
+      "errorCode": "CONTROL_NO_RESPONSE",
+      "control": "NO_RESPONSE",
+      "persistence": "SAVED",
+      "bin": "DEMO_BIN_08",
+      "faults": [
+        "CONTROL_NO_RESPONSE"
+      ]
+    },
+    "control_attempt_count": 1,
+    "fault_image_count": 0,
+    "next_normal_id": "581d56a1-337a-42cf-80c6-bb0fe574320c",
+    "status": "통과"
+  },
+  {
+    "case": "QA-SIM-06/CONTROL_FAILED",
+    "fault": "CONTROL_FAILED",
+    "time_kst": "2026-10-06 11:33:23 KST",
+    "set_revision": 11,
+    "clear_revision": 12,
+    "fault_row": {
+      "id": "29d70749-2320-4733-8be4-2a483e532851",
+      "status": "REVIEW",
+      "processingStatus": "COMPLETED",
+      "errorCode": "CONTROL_FAILED",
+      "control": "FAILED",
+      "persistence": "SAVED",
+      "bin": "DEMO_BIN_02",
+      "faults": [
+        "CONTROL_FAILED"
+      ]
+    },
+    "control_attempt_count": 1,
+    "fault_image_count": 0,
+    "next_normal_id": "a440c461-8225-4932-a641-b527e2232150",
+    "status": "통과"
+  }
+]

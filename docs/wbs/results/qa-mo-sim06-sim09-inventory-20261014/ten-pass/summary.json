@@ -1,0 +1,88 @@
+{
+  "requested_additional_searches": 10,
+  "completed_additional_searches": 10,
+  "rounds": [
+    {
+      "round": 1,
+      "file": "01-latest-pr-heads.json",
+      "title": "Latest GitHub heads and unmerged PR evidence",
+      "new_raw_data": false
+    },
+    {
+      "round": 2,
+      "file": "02-binary-lfs-history.json",
+      "title": "Binary/archive/LFS evidence names across whole repository history",
+      "new_raw_data": false
+    },
+    {
+      "round": 3,
+      "file": "03-portfolio-copy.json",
+      "title": "Portfolio checkout ignored QA/evidence files compared to main workspace",
+      "new_raw_data": false
+    },
+    {
+      "round": 4,
+      "file": "04-exported-locations.json",
+      "title": "Other local task/export roots and explicitly named BE originals",
+      "new_raw_data": false
+    },
+    {
+      "round": 5,
+      "file": "05-nested-archive-search.json",
+      "title": "ZIP/TAR/GZIP/7z candidates including ignored copies",
+      "new_raw_data": false
+    },
+    {
+      "round": 6,
+      "file": "06-related-discussions.json",
+      "title": "Further BE integration/operations issues and PR discussions",
+      "new_raw_data": false
+    },
+    {
+      "round": 7,
+      "file": "07-reflog-dangling-objects.json",
+      "title": "Reflog/stash/Codex refs and current unreachable blobs, including alternative BE IDs",
+      "new_raw_data": false
+    },
+    {
+      "round": 8,
+      "file": "08-field-structure-census.json",
+      "title": "Entire local QA JSON/JSONL tree by failed-command structure, independent of case/fault names",
+      "new_raw_data": false
+    },
+    {
+      "round": 9,
+      "file": "09-alternative-id-tool-history.json",
+      "title": "CQC command/tool output histories using newly found alternative BE IDs and original filenames",
+      "new_raw_data": false
+    },
+    {
+      "round": 10,
+      "file": "10-e1-exact-id-db-search.json",
+      "title": "Read-only exact-ID E1 persisted control/error rows, using existing public CSV IDs",
+      "new_raw_data": true
+    }
+  ],
+  "new_E1_NO_RESPONSE_inspection_control_error_rows": {
+    "inspections": 11,
+    "commands": 11,
+    "errors": 11,
+    "per_id_attempt_no": 1,
+    "per_id_command_rows": 1,
+    "CSV_DB_timestamp_and_bin_matches": 11
+  },
+  "new_E1_inference_alternative_command_rows": 2,
+  "total_new_actual_E1_control_rows": 13,
+  "current_E1_FAILED_command_rows": 0,
+  "official_backend_pass_count": 37,
+  "official_backend_total": 44,
+  "official_changed": false,
+  "new_inspection_or_outage_test": false,
+  "source_environment_substitution_requires_acceptance": true,
+  "still_missing": [
+    "Original 10/06 E2 command rows / actual FAILED command alternative",
+    "Same-run NO_RESPONSE successful-bin before-after statistics",
+    "DB_ERROR target inspection and failed-save log linkage",
+    "SIM09 automatic recovery30s/save counts, original outage timing, no restart and public-state series"
+  ]
+}

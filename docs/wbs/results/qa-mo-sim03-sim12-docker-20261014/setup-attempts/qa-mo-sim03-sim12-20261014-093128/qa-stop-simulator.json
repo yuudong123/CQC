@@ -1,0 +1,5 @@
+{
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "time=\"2026-10-14T09:32:55+09:00\" level=warning msg=\"The \\\"MYSQL_ROOT_PASSWORD\\\" variable is not set. Defaulting to a blank string.\"\n"
+}

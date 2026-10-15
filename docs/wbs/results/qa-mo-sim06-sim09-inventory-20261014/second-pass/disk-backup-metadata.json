@@ -1,0 +1,25 @@
+{
+  "files": [
+    {
+      "path": "D:\\DockerDesktopData\\backup-before-wsl-fix-2026-10-01\\disk\\docker_data.vhdx",
+      "bytes": 25954353152,
+      "modified_utc": "2026-09-30T08:35:30.374199+00:00",
+      "is_pre_oct06_backup": true
+    },
+    {
+      "path": "D:\\DockerDesktopData\\backup-before-wsl-fix-2026-10-01\\main\\ext4.vhdx",
+      "bytes": 100663296,
+      "modified_utc": "2026-09-30T08:35:30.374199+00:00",
+      "is_pre_oct06_backup": true
+    },
+    {
+      "path": "D:\\DockerDesktopData\\LocalDocker\\wsl\\disk\\docker_data.vhdx",
+      "bytes": 64352157696,
+      "modified_utc": "2026-10-14T03:00:41.313226+00:00",
+      "is_pre_oct06_backup": false
+    }
+  ],
+  "read_contents": false,
+  "mount_or_restore": false,
+  "limit": "Only the identified Sep30 backup predates the Oct06 trials. Active disk images were not copied, mounted or scanned for deleted pages."
+}
