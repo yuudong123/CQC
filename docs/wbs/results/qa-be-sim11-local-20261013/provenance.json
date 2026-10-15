@@ -1,0 +1,128 @@
+[
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim11-20261013\\result.json",
+    "source_sha256": "aaed55aa55a32c69a086da2562e811b4ea2fcdc3d3dda37d58dd02e4afbd7ff5",
+    "output": "result.json",
+    "output_sha256": "aaed55aa55a32c69a086da2562e811b4ea2fcdc3d3dda37d58dd02e4afbd7ff5",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim11-20261013\\environment.json",
+    "source_sha256": "1bb60b6763ffe5691f31508d66a9d3b2cddfb2ae17ab731d5e0bb03379e18f72",
+    "output": "environment.json",
+    "output_sha256": "1bb60b6763ffe5691f31508d66a9d3b2cddfb2ae17ab731d5e0bb03379e18f72",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim11-20261013\\resource-review.json",
+    "source_sha256": "1283b387a801ddf9c4933cf26353469593a23aa77d4b30a9d064a0c63f068c80",
+    "output": "resource-review.json",
+    "output_sha256": "1283b387a801ddf9c4933cf26353469593a23aa77d4b30a9d064a0c63f068c80",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim11-20261013\\progress.jsonl",
+    "source_sha256": "18033967eb763d80648048fdb3d2ce28de02d00d284784981ed1a1a277996ed3",
+    "output": "progress.jsonl",
+    "output_sha256": "18033967eb763d80648048fdb3d2ce28de02d00d284784981ed1a1a277996ed3",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim11-20261013\\full-sequence.csv",
+    "source_sha256": "64074521ca4ac27614a3bd3874a999750f47339cd94f8c47d1334225dc377929",
+    "output": "full-sequence.csv",
+    "output_sha256": "64074521ca4ac27614a3bd3874a999750f47339cd94f8c47d1334225dc377929",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim11-20261013\\wrap-boundary.json",
+    "source_sha256": "e0ad74e92ca1c9d4abc3b7f644b636da9a850b02fdc7efc1f4b28d3f071d58cf",
+    "output": "wrap-boundary.json",
+    "output_sha256": "e0ad74e92ca1c9d4abc3b7f644b636da9a850b02fdc7efc1f4b28d3f071d58cf",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim11-20261013\\replayed-bundles-new-ids.json",
+    "source_sha256": "02a1a161441e6c535f6d8b6202ee8ee54c5cd473462ef02f4caf07af490fdb53",
+    "output": "replayed-bundles-new-ids.json",
+    "output_sha256": "02a1a161441e6c535f6d8b6202ee8ee54c5cd473462ef02f4caf07af490fdb53",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim11-20261013\\01-concurrency4.json",
+    "source_sha256": "6acc3ae50288b480558335b0735778f3a71a8ebd5d904bd879558b72f4d42e68",
+    "output": "01-concurrency4.json",
+    "output_sha256": "6acc3ae50288b480558335b0735778f3a71a8ebd5d904bd879558b72f4d42e68",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim11-20261013\\02-start.json",
+    "source_sha256": "76534c0f592f56192f5c0442f253cd4385f8747d4a4663d1217605c61165c5f2",
+    "output": "02-start.json",
+    "output_sha256": "76534c0f592f56192f5c0442f253cd4385f8747d4a4663d1217605c61165c5f2",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim11-20261013\\cleanup-stop.json",
+    "source_sha256": "6c5b0ea0be3d4fb35fbb77f82ab72e5cbb478228484f98735474ebe2f1a0e702",
+    "output": "cleanup-stop.json",
+    "output_sha256": "6c5b0ea0be3d4fb35fbb77f82ab72e5cbb478228484f98735474ebe2f1a0e702",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim11-20261013\\cleanup-concurrency1.json",
+    "source_sha256": "b5cc762ae2c1986ba03c2c4d296c91c1d5768d63cbf952906ab4fad4767dbf73",
+    "output": "cleanup-concurrency1.json",
+    "output_sha256": "b5cc762ae2c1986ba03c2c4d296c91c1d5768d63cbf952906ab4fad4767dbf73",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim11-20261013\\cleanup-safe.json",
+    "source_sha256": "be1a4de4925f9400ef7a85f9f9e114e917eb76b283bb6ff77fdc09987f0aef87",
+    "output": "cleanup-safe.json",
+    "output_sha256": "be1a4de4925f9400ef7a85f9f9e114e917eb76b283bb6ff77fdc09987f0aef87",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim11-20261013\\health-before.json",
+    "source_sha256": "042cb879fb90b525a917da750c121a93e251c552b5b5c58fd3f4bb5c17887828",
+    "output": "health-before.json",
+    "output_sha256": "042cb879fb90b525a917da750c121a93e251c552b5b5c58fd3f4bb5c17887828",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim11-20261013\\health-final.json",
+    "source_sha256": "932dc5948c112426951dd334e2098cf3c7675dbf1de8439bab983fa02a788445",
+    "output": "health-final.json",
+    "output_sha256": "932dc5948c112426951dd334e2098cf3c7675dbf1de8439bab983fa02a788445",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim11-20261013\\manifest.sha256",
+    "source_sha256": "b2c87f7b8bed39dbb80eadd06d501cbe30283d8f9573e58146ebbe73975d4a8a",
+    "output": "original-manifest\\manifest.sha256",
+    "output_sha256": "b2c87f7b8bed39dbb80eadd06d501cbe30283d8f9573e58146ebbe73975d4a8a",
+    "transform": "none; byte-preserving copy"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim11-20261013\\baseline.json",
+    "source_sha256": "5ee63239040225a99c026c0cad47e0faf87b94950c6b14575a3d503721fa1e77",
+    "output": "baseline.json",
+    "output_sha256": "0953279646188553d456871960cde728087977a57ba1e8837160f4b54c250f32",
+    "transform": "retain counts/state/position and exclusion ID set; omit duplicate prior DB rows"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim11-20261013\\final-stable.json",
+    "source_sha256": "34cf5665e4f8611e45487157a95794401a726a3fbfbf40df3eae7e478c82120f",
+    "output": "final-state.json",
+    "output_sha256": "d4455ccd86bf13af0a135f42f05ea1afffa27996518603e23177a7135a70519b",
+    "transform": "retain final state/health/counts; detailed DB rows stored separately"
+  },
+  {
+    "source": "D:\\CQC-SIM-QA\\evidence\\sim11-20261013\\final-stable.json",
+    "source_sha256": "34cf5665e4f8611e45487157a95794401a726a3fbfbf40df3eae7e478c82120f",
+    "output": "inspection-control-results.json",
+    "output_sha256": "d8714a070408aca6b253b0071bf9c27fde306ec0f3e8c2f0555789c8f0e7543d",
+    "transform": "select only the 870 new inspection/control/error records by ID, preserve row values"
+  }
+]

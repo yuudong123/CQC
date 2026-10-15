@@ -1,0 +1,21 @@
+{
+  "mysql_errors_after_current_ready": [],
+  "temporary_python_logs": [
+    {
+      "path": "/opt/cqc-auto02/tmp/pytest-of-cqc/pytest-0/test_simulator_process_positio0/simulator-1.log",
+      "error_line_count": 0,
+      "shutdown_complete": true
+    },
+    {
+      "path": "/opt/cqc-auto02/tmp/pytest-of-cqc/pytest-0/test_simulator_process_positio0/simulator-0.log",
+      "error_line_count": 0,
+      "shutdown_complete": true
+    },
+    {
+      "path": "/opt/cqc-auto02/tmp/pytest-of-cqc/pytest-0/test_simulator_process_positio0/logs/error.log",
+      "error_line_count": 0,
+      "shutdown_complete": false
+    }
+  ],
+  "source_mismatches": []
+}

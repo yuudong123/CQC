@@ -1,0 +1,198 @@
+{
+  "backend": {
+    "image": "sha256:f682fe6f081db7b511b18dc820b600674d26f97abd6a747921fe03ea946af157",
+    "entrypoint": null,
+    "command": [
+      "sh",
+      "-c",
+      "alembic upgrade head && python -m src.api.main"
+    ],
+    "working_dir": "/app",
+    "safe_env": {
+      "INFERENCE_CLIENT_MODE": "http",
+      "INFERENCE_URL": "http://inference:8001/v1/predict",
+      "INFERENCE_CONNECT_TIMEOUT_MS": "200",
+      "CULTIVAR_CONFIDENCE_THRESHOLD": "0.50",
+      "QUALITY_CONFIDENCE_THRESHOLD": "0.60",
+      "SIMULATOR_INTERNAL_URL": "http://simulator:8002",
+      "FAULT_IMAGE_STORAGE_ROOT": "/data/fault-images"
+    },
+    "healthcheck": {
+      "Test": [
+        "CMD",
+        "python",
+        "-c",
+        "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"
+      ],
+      "Interval": 10000000000,
+      "Timeout": 5000000000,
+      "StartPeriod": 15000000000,
+      "Retries": 5
+    },
+    "mounts": [
+      {
+        "type": "volume",
+        "name": "cqc-cicd_fault_images",
+        "source": "/var/lib/docker/volumes/cqc-cicd_fault_images/_data",
+        "destination": "/data/fault-images",
+        "rw": true
+      },
+      {
+        "type": "volume",
+        "name": "cqc-cicd_backend_logs",
+        "source": "/var/lib/docker/volumes/cqc-cicd_backend_logs/_data",
+        "destination": "/var/log/cqc",
+        "rw": true
+      }
+    ]
+  },
+  "inference": {
+    "image": "sha256:2981744a4c3862fde22ee7c265797134574f8a84105baa1bb1eec1822c63ce9d",
+    "entrypoint": null,
+    "command": [
+      "python",
+      "-m",
+      "src.inference.api",
+      "--model-dir",
+      "/app/models/approved",
+      "--device",
+      "cpu",
+      "--host",
+      "0.0.0.0",
+      "--port",
+      "8001"
+    ],
+    "working_dir": "/app",
+    "safe_env": {
+      "LOG_DIR": "/var/log/cqc"
+    },
+    "healthcheck": {
+      "Test": [
+        "CMD",
+        "python",
+        "-c",
+        "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=3)"
+      ],
+      "Interval": 10000000000,
+      "Timeout": 5000000000,
+      "StartPeriod": 60000000000,
+      "Retries": 5
+    },
+    "mounts": [
+      {
+        "type": "volume",
+        "name": "cqc-cicd_inference_logs",
+        "source": "/var/lib/docker/volumes/cqc-cicd_inference_logs/_data",
+        "destination": "/var/log/cqc",
+        "rw": true
+      }
+    ]
+  },
+  "simulator": {
+    "image": "sha256:cce3135089712dbdfccc4bc1c5d379a97a3c3d6afb4c732e34e497d90afc51eb",
+    "entrypoint": null,
+    "command": [
+      "python",
+      "-m",
+      "src.simulator.main"
+    ],
+    "working_dir": "/app",
+    "safe_env": {
+      "SIMULATOR_DATASET_ROOT": "/data/dataset",
+      "SIMULATOR_BRIX_CSV_PATH": "/data/dataset/demo-virtual-brix.csv",
+      "SIMULATOR_POSITION_PATH": "/data/state/position.json",
+      "SIMULATOR_BACKEND_URL": "http://backend:8000",
+      "SIMULATOR_INTERVAL_MS": "2000"
+    },
+    "healthcheck": {
+      "Test": [
+        "CMD",
+        "python",
+        "-c",
+        "import json, time, urllib.request; data = json.load(urllib.request.urlopen('http://127.0.0.1:8002/health', timeout=3)); assert data['status'] == 'ok' and data['running'] is True; assert data['lastSeenAt'] is not None and 0 <= time.time() * 1000 - data['lastSeenAt'] <= 30000"
+      ],
+      "Interval": 10000000000,
+      "Timeout": 5000000000,
+      "StartPeriod": 20000000000,
+      "Retries": 5
+    },
+    "mounts": [
+      {
+        "type": "volume",
+        "name": "cqc_simulator_dataset",
+        "source": "/var/lib/docker/volumes/cqc_simulator_dataset/_data",
+        "destination": "/data/dataset",
+        "rw": false
+      },
+      {
+        "type": "volume",
+        "name": "cqc-cicd_simulator_state",
+        "source": "/var/lib/docker/volumes/cqc-cicd_simulator_state/_data",
+        "destination": "/data/state",
+        "rw": true
+      },
+      {
+        "type": "volume",
+        "name": "cqc-cicd_simulator_logs",
+        "source": "/var/lib/docker/volumes/cqc-cicd_simulator_logs/_data",
+        "destination": "/var/log/cqc",
+        "rw": true
+      }
+    ]
+  },
+  "logistics-web": {
+    "image": "sha256:0666ae2b2fc3eab95da40ff921aca9fd582173450da42a80302b5185994cc9f9",
+    "entrypoint": [
+      "docker-entrypoint.sh"
+    ],
+    "command": [
+      "npm",
+      "start"
+    ],
+    "working_dir": "/app",
+    "safe_env": {},
+    "healthcheck": {
+      "Test": [
+        "CMD",
+        "node",
+        "-e",
+        "fetch('http://localhost:3000/api/quality/health').then(async r=>{const b=await r.json();if(!r.ok||b.status!=='ok')process.exit(1)}).catch(()=>process.exit(1))"
+      ],
+      "Interval": 10000000000,
+      "Timeout": 5000000000,
+      "StartPeriod": 15000000000,
+      "Retries": 10
+    },
+    "mounts": []
+  },
+  "mysql": {
+    "image": "sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a",
+    "entrypoint": [
+      "docker-entrypoint.sh"
+    ],
+    "command": [
+      "mysqld"
+    ],
+    "working_dir": "/",
+    "safe_env": {},
+    "healthcheck": {
+      "Test": [
+        "CMD-SHELL",
+        "mysqladmin ping -h localhost -u root -p$MYSQL_ROOT_PASSWORD --silent"
+      ],
+      "Interval": 10000000000,
+      "Timeout": 5000000000,
+      "StartPeriod": 30000000000,
+      "Retries": 5
+    },
+    "mounts": [
+      {
+        "type": "volume",
+        "name": "cqc-cicd_mysql_data",
+        "source": "/var/lib/docker/volumes/cqc-cicd_mysql_data/_data",
+        "destination": "/var/lib/mysql",
+        "rw": true
+      }
+    ]
+  }
+}

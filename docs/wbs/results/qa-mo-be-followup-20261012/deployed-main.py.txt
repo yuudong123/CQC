@@ -1,0 +1,177 @@
+"""Backend와 독립 실행되는 Simulator HTTP 애플리케이션."""
+
+from __future__ import annotations
+
+import asyncio
+import logging
+import time
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
+import httpx
+import uvicorn
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+
+from src.logging_config import configure_service_logging
+
+from .config import SimulatorSettings
+from .dataset import SimulatorDatasetError
+from .position import SimulatorPositionError
+from .runner import SimulatorRunner
+from .schemas import SimulatorSettingsUpdate, SimulatorStatus
+from .state import (
+    RevisionMismatchError,
+    SimulatorStateService,
+)
+
+logger = logging.getLogger(__name__)
+
+
+def create_app(
+    settings: SimulatorSettings, *, inspection_client: httpx.AsyncClient | None = None
+) -> FastAPI:
+    """상태·runner·내부 제어 API를 한 Simulator 프로세스에 묶는다."""
+
+    state = SimulatorStateService(settings.simulator_interval_ms)
+    runner = SimulatorRunner(
+        dataset_root=settings.simulator_dataset_root,
+        brix_csv_path=settings.simulator_brix_csv_path,
+        position_path=settings.simulator_position_path,
+        backend_url=settings.simulator_backend_url,
+        state=state,
+        max_bytes=settings.simulator_max_request_bytes,
+        fault_token=settings.simulator_fault_token,
+        client=inspection_client,
+    )
+    control_lock = asyncio.Lock()
+
+    @asynccontextmanager
+    async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+        try:
+            try:
+                prepared = await asyncio.to_thread(runner.prepare)
+            except (OSError, ValueError, SimulatorDatasetError, SimulatorPositionError):
+                logger.exception(
+                    "Simulator 자동 시작을 위한 dataset 또는 position 준비 실패"
+                )
+            else:
+                state.start_on_boot()
+                runner.start(prepared)
+            yield
+        finally:
+            await runner.shutdown()
+
+    app = FastAPI(title="CQC Simulator", lifespan=lifespan)
+    app.state.simulator_state_service = state
+    app.state.simulator_runner = runner
+
+    def status() -> SimulatorStatus:
+        current = state.get_state()
+        return SimulatorStatus(
+            revision=current.revision,
+            running=current.running,
+            concurrency=current.concurrency,
+            intervalMs=current.interval_ms,
+            faults=list(current.faults),
+            scope=current.scope,
+            status="error"
+            if runner.failed
+            else "healthy"
+            if runner.active
+            else "stopped",
+            lastSeenAt=runner.last_seen_ms,
+        )
+
+    @app.get("/health")
+    async def health() -> JSONResponse:
+        current = status()
+
+        # 마지막 검사 성공 시각 확인
+        now_ms = time.time() * 1000
+
+        playback_recent = (
+            current.lastSeenAt is not None and 0 <= now_ms - current.lastSeenAt <= 30000
+        )
+
+        # 실행 중이 아니거나 최근 검사 성공 기록이 없으면 실패
+        if (
+            current.running is not True
+            or current.status != "healthy"
+            or not playback_recent
+        ):
+            return JSONResponse(
+                status_code=503,
+                content={
+                    "status": "unhealthy",
+                    "reason": "SIMULATOR_NOT_PLAYING",
+                },
+            )
+
+        return JSONResponse(
+            status_code=200,
+            content={
+                "status": "ok",
+                "running": True,
+                "lastSeenAt": current.lastSeenAt,
+            },
+        )
+
+    @app.get("/state", response_model=SimulatorStatus)
+    async def get_state() -> SimulatorStatus:
+        return status()
+
+    @app.put("/state", response_model=SimulatorStatus)
+    async def update_state(
+        update: SimulatorSettingsUpdate,
+    ) -> SimulatorStatus | JSONResponse:
+        async with control_lock:
+            if update.expected_revision != state.get_state().revision:
+                return JSONResponse(
+                    status_code=409, content={"code": "REVISION_CONFLICT"}
+                )
+            prepared = None
+            if update.running is True and not runner.active:
+                try:
+                    prepared = await asyncio.to_thread(runner.prepare)
+                except (
+                    OSError,
+                    ValueError,
+                    SimulatorDatasetError,
+                    SimulatorPositionError,
+                ):
+                    return JSONResponse(
+                        status_code=503,
+                        content={"code": "SIMULATOR_DATASET_UNAVAILABLE"},
+                    )
+            try:
+                state.update_state(update)
+            except RevisionMismatchError:
+                return JSONResponse(
+                    status_code=409, content={"code": "REVISION_CONFLICT"}
+                )
+            runner.notify_settings_changed()
+            if prepared is not None:
+                runner.start(prepared)
+            if update.running is False and runner.active:
+                await runner.stop()
+            return status()
+
+    return app
+
+
+def main() -> None:
+    """`python -m src.simulator.main`으로 독립 서버를 실행한다."""
+
+    configure_service_logging()
+    settings = SimulatorSettings()
+    uvicorn.run(
+        create_app(settings),
+        host=settings.simulator_bind_host,
+        port=settings.simulator_bind_port,
+        log_config=None,
+    )
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,27 @@
+{
+  "checked_kst": "2026-10-12T16:22:06.929906+09:00",
+  "disk_bytes": {
+    "C:/": {
+      "total": 127162904576,
+      "free": 19126292480
+    },
+    "D:/": {
+      "total": 500104687616,
+      "free": 354288353280
+    }
+  },
+  "docker": {
+    "cpus": 8,
+    "memory_bytes": 16641286144
+  },
+  "container_stats": [
+    "{\"BlockIO\":\"0B / 11.5MB\",\"CPUPerc\":\"0.36%\",\"Container\":\"9faed5c93701b97a7753bc16299730923cee0caf9d99c81f1e2920a949833603\",\"ID\":\"9faed5c93701\",\"MemPerc\":\"1.18%\",\"MemUsage\":\"186.7MiB / 15.5GiB\",\"Name\":\"cqc-cicd-simulator-1\",\"NetIO\":\"17.1MB / 41GB\",\"PIDs\":\"6\"}",
+    "{\"BlockIO\":\"0B / 4.1kB\",\"CPUPerc\":\"0.00%\",\"Container\":\"eec326b8ae4527ea1a7add71f1fb96c182d2b45b85821e9da3d2c0ed788adb38\",\"ID\":\"eec326b8ae45\",\"MemPerc\":\"1.44%\",\"MemUsage\":\"228.3MiB / 15.5GiB\",\"Name\":\"cqc-cicd-logistics-web-1\",\"NetIO\":\"1.11GB / 1.1GB\",\"PIDs\":\"30\"}",
+    "{\"BlockIO\":\"0B / 4.27GB\",\"CPUPerc\":\"4.26%\",\"Container\":\"ecf9d7e1b80ef5d75439a09109bff42e502566af1e7ed891eae7fa6a0df3e032\",\"ID\":\"ecf9d7e1b80e\",\"MemPerc\":\"1.10%\",\"MemUsage\":\"175MiB / 15.5GiB\",\"Name\":\"cqc-cicd-backend-1\",\"NetIO\":\"41.9GB / 43GB\",\"PIDs\":\"14\"}",
+    "{\"BlockIO\":\"0B / 10.2MB\",\"CPUPerc\":\"0.16%\",\"Container\":\"c7da4a3c40ac71a2610ce045f8e9359a6fa9e60bfe02f2682b63eedef4d8c043\",\"ID\":\"c7da4a3c40ac\",\"MemPerc\":\"4.04%\",\"MemUsage\":\"641.1MiB / 15.5GiB\",\"Name\":\"cqc-cicd-inference-1\",\"NetIO\":\"41GB / 16.2MB\",\"PIDs\":\"14\"}",
+    "{\"BlockIO\":\"0B / 397kB\",\"CPUPerc\":\"0.21%\",\"Container\":\"34aea74112c2b4232779d6177b60b11f2e50bf1fa9065aa109108ba8ed3444b0\",\"ID\":\"34aea74112c2\",\"MemPerc\":\"0.29%\",\"MemUsage\":\"45.58MiB / 15.5GiB\",\"Name\":\"cqc-cicd-logistics-api-1\",\"NetIO\":\"492kB / 181kB\",\"PIDs\":\"8\"}",
+    "{\"BlockIO\":\"284MB / 5.86GB\",\"CPUPerc\":\"122.58%\",\"Container\":\"d5147f435ac1d38ad4637e090061dddae8a4e75927ca3c7b33fe6e2a00ceaef9\",\"ID\":\"d5147f435ac1\",\"MemPerc\":\"4.03%\",\"MemUsage\":\"639.1MiB / 15.5GiB\",\"Name\":\"cqc-cicd-mysql-1\",\"NetIO\":\"550MB / 2.08GB\",\"PIDs\":\"41\"}",
+    "{\"BlockIO\":\"331MB / 196MB\",\"CPUPerc\":\"0.82%\",\"Container\":\"6d2c1f3035526dd039ba755c14475e2717586213fe14f503c932df9fa8e78894\",\"ID\":\"6d2c1f303552\",\"MemPerc\":\"2.17%\",\"MemUsage\":\"344.8MiB / 15.5GiB\",\"Name\":\"cqc-cicd-logistics-mongodb-1\",\"NetIO\":\"777kB / 2.01MB\",\"PIDs\":\"62\"}",
+    "{\"BlockIO\":\"715MB / 164MB\",\"CPUPerc\":\"0.32%\",\"Container\":\"fe52aab78b4edf6e9d363d59de85dd0e83945c3cd7f56a91a9806bdc5a4cd899\",\"ID\":\"fe52aab78b4e\",\"MemPerc\":\"9.41%\",\"MemUsage\":\"1.459GiB / 15.5GiB\",\"Name\":\"jenkins\",\"NetIO\":\"17.7MB / 13.7MB\",\"PIDs\":\"93\"}"
+  ]
+}

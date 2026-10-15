@@ -1,0 +1,7 @@
+{
+  "container": "/cqc-cicd-backend-1",
+  "id": "4f5d6c345474c0323a8ce5debf1fc7bf6b56590b31712aa77ce323afe18f1421",
+  "image": "sha256:db405e6099f0db5baea186ac16a8ebb74ac5ad9810f3fd7a5c6032238849c18f",
+  "path": "/app/src/api/services/quality_history.py",
+  "queried_scope": "current deployed mapping; historical API/images raw evidence not re-read"
+}

@@ -1,0 +1,7 @@
+{
+  "local_runner_sha": "381edd07991d76c223ffd5cdc67f3a9e2ea9a37b",
+  "runner_file_sha256": "27434a69d523c9e6d18fc2f4e3b014db9086a2cd1e8f9209f147167d6d805c93",
+  "deployed_sha": "b5f1995a7e4a494ef116d62819b169fa9d5a788e",
+  "evidence": "deployment-provenance.json + preflight.json",
+  "note": "Original run.json and result row identity retained; separate deployment proof attached."
+}

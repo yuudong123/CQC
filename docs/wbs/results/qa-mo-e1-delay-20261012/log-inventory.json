@@ -1,0 +1,92 @@
+[
+  {
+    "window": "initial-snapshot",
+    "service": "backend",
+    "since_utc": "2026-10-12T00:43:55+00:00",
+    "until_utc": "2026-10-12T00:45:00+00:00",
+    "file": "logs/initial-snapshot-backend.log",
+    "bytes": 7800,
+    "lines": 60,
+    "matching_selected_id_lines": 0
+  },
+  {
+    "window": "initial-snapshot",
+    "service": "simulator",
+    "since_utc": "2026-10-12T00:43:55+00:00",
+    "until_utc": "2026-10-12T00:45:00+00:00",
+    "file": "logs/initial-snapshot-simulator.log",
+    "bytes": 3876,
+    "lines": 29,
+    "matching_selected_id_lines": 0
+  },
+  {
+    "window": "initial-snapshot",
+    "service": "inference",
+    "since_utc": "2026-10-12T00:43:55+00:00",
+    "until_utc": "2026-10-12T00:45:00+00:00",
+    "file": "logs/initial-snapshot-inference.log",
+    "bytes": 3734,
+    "lines": 30,
+    "matching_selected_id_lines": 0
+  },
+  {
+    "window": "gap-0946",
+    "service": "backend",
+    "since_utc": "2026-10-12T00:46:24+00:00",
+    "until_utc": "2026-10-12T00:46:40+00:00",
+    "file": "logs/gap-0946-backend.log",
+    "bytes": 10932,
+    "lines": 70,
+    "matching_selected_id_lines": 0
+  },
+  {
+    "window": "gap-0946",
+    "service": "simulator",
+    "since_utc": "2026-10-12T00:46:24+00:00",
+    "until_utc": "2026-10-12T00:46:40+00:00",
+    "file": "logs/gap-0946-simulator.log",
+    "bytes": 1548,
+    "lines": 12,
+    "matching_selected_id_lines": 0
+  },
+  {
+    "window": "gap-0946",
+    "service": "inference",
+    "since_utc": "2026-10-12T00:46:24+00:00",
+    "until_utc": "2026-10-12T00:46:40+00:00",
+    "file": "logs/gap-0946-inference.log",
+    "bytes": 1480,
+    "lines": 12,
+    "matching_selected_id_lines": 0
+  },
+  {
+    "window": "gap-0949",
+    "service": "backend",
+    "since_utc": "2026-10-12T00:49:22+00:00",
+    "until_utc": "2026-10-12T00:49:42+00:00",
+    "file": "logs/gap-0949-backend.log",
+    "bytes": 24498,
+    "lines": 157,
+    "matching_selected_id_lines": 0
+  },
+  {
+    "window": "gap-0949",
+    "service": "simulator",
+    "since_utc": "2026-10-12T00:49:22+00:00",
+    "until_utc": "2026-10-12T00:49:42+00:00",
+    "file": "logs/gap-0949-simulator.log",
+    "bytes": 2766,
+    "lines": 22,
+    "matching_selected_id_lines": 0
+  },
+  {
+    "window": "gap-0949",
+    "service": "inference",
+    "since_utc": "2026-10-12T00:49:22+00:00",
+    "until_utc": "2026-10-12T00:49:42+00:00",
+    "file": "logs/gap-0949-inference.log",
+    "bytes": 2695,
+    "lines": 22,
+    "matching_selected_id_lines": 0
+  }
+]

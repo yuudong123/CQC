@@ -1,0 +1,144 @@
+{
+  "checked_kst": "2026-10-12T16:22:06.162450+09:00",
+  "latest_build": {
+    "number": 143,
+    "result": "SUCCESS",
+    "started_kst": "2026-10-12T14:24:08.779000+09:00",
+    "finished_kst": "2026-10-12T14:37:57.400000+09:00"
+  },
+  "latest_success": {
+    "number": 143,
+    "result": "SUCCESS",
+    "started_kst": "2026-10-12T14:24:08.779000+09:00",
+    "finished_kst": "2026-10-12T14:37:57.400000+09:00"
+  },
+  "source_sha": "0094807a159e4bedadd2700fd689b3c848ee803f",
+  "ops13_fix_sha": "ee2987fb820e2fa1654184edbfdfddffaf9d29d4",
+  "fix_is_ancestor": true,
+  "ancestor_check_exit": 0,
+  "same_docker_daemon": null,
+  "daemon_check_limit": "Jenkins internal docker info timed out after 35 seconds; daemon identity not independently reverified.",
+  "services": [
+    {
+      "service": "backend",
+      "id": "ecf9d7e1b80ef5d75439a09109bff42e502566af1e7ed891eae7fa6a0df3e032",
+      "image": "sha256:f682fe6f081db7b511b18dc820b600674d26f97abd6a747921fe03ea946af157",
+      "created": "2026-10-12T05:35:35.397535269Z",
+      "started_at": "2026-10-12T05:37:01.670074308Z",
+      "health": "healthy",
+      "restart_count": 0,
+      "build_digest": "sha256:f682fe6f081db7b511b18dc820b600674d26f97abd6a747921fe03ea946af157",
+      "matches_build": true,
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "cqc-cicd_fault_images",
+          "source": "/var/lib/docker/volumes/cqc-cicd_fault_images/_data",
+          "destination": "/data/fault-images",
+          "rw": true
+        },
+        {
+          "type": "volume",
+          "name": "cqc-cicd_backend_logs",
+          "source": "/var/lib/docker/volumes/cqc-cicd_backend_logs/_data",
+          "destination": "/var/log/cqc",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "service": "inference",
+      "id": "c7da4a3c40ac71a2610ce045f8e9359a6fa9e60bfe02f2682b63eedef4d8c043",
+      "image": "sha256:2981744a4c3862fde22ee7c265797134574f8a84105baa1bb1eec1822c63ce9d",
+      "created": "2026-10-12T05:35:16.813137507Z",
+      "started_at": "2026-10-12T05:36:03.293734204Z",
+      "health": "healthy",
+      "restart_count": 0,
+      "build_digest": "sha256:2981744a4c3862fde22ee7c265797134574f8a84105baa1bb1eec1822c63ce9d",
+      "matches_build": true,
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "cqc-cicd_inference_logs",
+          "source": "/var/lib/docker/volumes/cqc-cicd_inference_logs/_data",
+          "destination": "/var/log/cqc",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "service": "simulator",
+      "id": "9faed5c93701b97a7753bc16299730923cee0caf9d99c81f1e2920a949833603",
+      "image": "sha256:cce3135089712dbdfccc4bc1c5d379a97a3c3d6afb4c732e34e497d90afc51eb",
+      "created": "2026-10-12T05:35:49.079791857Z",
+      "started_at": "2026-10-12T05:37:16.49391423Z",
+      "health": "healthy",
+      "restart_count": 0,
+      "build_digest": "sha256:cce3135089712dbdfccc4bc1c5d379a97a3c3d6afb4c732e34e497d90afc51eb",
+      "matches_build": true,
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "cqc_simulator_dataset",
+          "source": "/var/lib/docker/volumes/cqc_simulator_dataset/_data",
+          "destination": "/data/dataset",
+          "rw": false
+        },
+        {
+          "type": "volume",
+          "name": "cqc-cicd_simulator_state",
+          "source": "/var/lib/docker/volumes/cqc-cicd_simulator_state/_data",
+          "destination": "/data/state",
+          "rw": true
+        },
+        {
+          "type": "volume",
+          "name": "cqc-cicd_simulator_logs",
+          "source": "/var/lib/docker/volumes/cqc-cicd_simulator_logs/_data",
+          "destination": "/var/log/cqc",
+          "rw": true
+        }
+      ]
+    },
+    {
+      "service": "logistics-web",
+      "id": "eec326b8ae4527ea1a7add71f1fb96c182d2b45b85821e9da3d2c0ed788adb38",
+      "image": "sha256:0666ae2b2fc3eab95da40ff921aca9fd582173450da42a80302b5185994cc9f9",
+      "created": "2026-10-12T05:35:49.079067516Z",
+      "started_at": "2026-10-12T05:37:16.572069441Z",
+      "health": "healthy",
+      "restart_count": 0,
+      "build_digest": "sha256:0666ae2b2fc3eab95da40ff921aca9fd582173450da42a80302b5185994cc9f9",
+      "matches_build": true,
+      "mounts": []
+    },
+    {
+      "service": "mysql",
+      "id": "d5147f435ac1d38ad4637e090061dddae8a4e75927ca3c7b33fe6e2a00ceaef9",
+      "image": "sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a",
+      "created": "2026-10-02T08:13:42.696326483Z",
+      "started_at": "2026-10-12T00:02:35.850884935Z",
+      "health": "healthy",
+      "restart_count": 0,
+      "build_digest": null,
+      "matches_build": null,
+      "mounts": [
+        {
+          "type": "volume",
+          "name": "cqc-cicd_mysql_data",
+          "source": "/var/lib/docker/volumes/cqc-cicd_mysql_data/_data",
+          "destination": "/var/lib/mysql",
+          "rw": true
+        }
+      ]
+    }
+  ],
+  "four_app_images_match": true,
+  "backend_file": {
+    "path": "src/api/services/quality_operations.py",
+    "matches_checkout_bytes": true,
+    "deployed_sha256": "04bbe5f4f20b1c3ac029ec6857caef513679ef930cb17189c99e43db53d76427",
+    "git_checkout_sha256": "04bbe5f4f20b1c3ac029ec6857caef513679ef930cb17189c99e43db53d76427"
+  },
+  "scope": "latest SUCCESS selected; inspect source and image digest directly; no redeploy"
+}

@@ -1,0 +1,18 @@
+{
+  "observed_result": "PASS",
+  "checks": {
+    "live_change_200": true,
+    "live_change_1000_running": true,
+    "live_change_revision_increment": true,
+    "compose_restart_exit_zero": true,
+    "same_container_restarted": true,
+    "environment_default_2000": true,
+    "actual_default_restored": true,
+    "backend_default_restored": true,
+    "revision_reset_zero_running": true,
+    "default_settings_restored": true,
+    "docker_healthy_after_restart": true,
+    "backend_actual_settings_agree": true
+  },
+  "scope_limit": "Docker restart default restoration only; no one-minute 3000/1000ms quantitative retest or official SIM-12 PASS"
+}

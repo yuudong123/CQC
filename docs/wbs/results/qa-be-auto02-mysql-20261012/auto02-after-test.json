@@ -1,0 +1,322 @@
+{
+  "databases": {
+    "cqc_test": {
+      "host": "127.0.0.1",
+      "port": 13324,
+      "mysql_version": "8.4.11",
+      "data_directory": "/opt/cqc-auto02/mysql-data/",
+      "migration": "20260929_02",
+      "counts": {
+        "inspections": 0,
+        "control_attempts": 0,
+        "inspection_errors": 0,
+        "bin_mappings": 13
+      },
+      "inspections": [],
+      "mappings": [
+        [
+          "DEMO_BIN_01",
+          1
+        ],
+        [
+          "DEMO_BIN_02",
+          1
+        ],
+        [
+          "DEMO_BIN_03",
+          1
+        ],
+        [
+          "DEMO_BIN_04",
+          1
+        ],
+        [
+          "DEMO_BIN_05",
+          1
+        ],
+        [
+          "DEMO_BIN_06",
+          1
+        ],
+        [
+          "DEMO_BIN_07",
+          1
+        ],
+        [
+          "DEMO_BIN_08",
+          1
+        ],
+        [
+          "DEMO_BIN_09",
+          1
+        ],
+        [
+          "DEMO_BIN_10",
+          1
+        ],
+        [
+          "DEMO_BIN_11",
+          1
+        ],
+        [
+          "DEMO_BIN_12",
+          1
+        ],
+        [
+          "TEST_REINSPECTION_BIN",
+          1
+        ]
+      ]
+    },
+    "cqc_auto02_retention": {
+      "host": "127.0.0.1",
+      "port": 13324,
+      "mysql_version": "8.4.11",
+      "data_directory": "/opt/cqc-auto02/mysql-data/",
+      "migration": "20260929_02",
+      "counts": {
+        "inspections": 0,
+        "control_attempts": 0,
+        "inspection_errors": 0,
+        "bin_mappings": 13
+      },
+      "inspections": [],
+      "mappings": [
+        [
+          "DEMO_BIN_01",
+          1
+        ],
+        [
+          "DEMO_BIN_02",
+          1
+        ],
+        [
+          "DEMO_BIN_03",
+          1
+        ],
+        [
+          "DEMO_BIN_04",
+          1
+        ],
+        [
+          "DEMO_BIN_05",
+          1
+        ],
+        [
+          "DEMO_BIN_06",
+          1
+        ],
+        [
+          "DEMO_BIN_07",
+          1
+        ],
+        [
+          "DEMO_BIN_08",
+          1
+        ],
+        [
+          "DEMO_BIN_09",
+          1
+        ],
+        [
+          "DEMO_BIN_10",
+          1
+        ],
+        [
+          "DEMO_BIN_11",
+          1
+        ],
+        [
+          "DEMO_BIN_12",
+          1
+        ],
+        [
+          "TEST_REINSPECTION_BIN",
+          1
+        ]
+      ]
+    },
+    "be10_3": {
+      "host": "127.0.0.1",
+      "port": 13324,
+      "mysql_version": "8.4.11",
+      "data_directory": "/opt/cqc-auto02/mysql-data/",
+      "migration": "20260929_02",
+      "counts": {
+        "inspections": 5,
+        "control_attempts": 5,
+        "inspection_errors": 1,
+        "bin_mappings": 13
+      },
+      "inspections": [
+        {
+          "inspection_id": "03bcfbdb-d52a-4f2a-ba8c-29dccdad968d",
+          "inspection_status": "REINSPECTION_REQUIRED",
+          "control_status": "SUCCEEDED",
+          "persistence_status": "SUCCEEDED",
+          "error_code": "INFERENCE_HTTP_ERROR"
+        },
+        {
+          "inspection_id": "1ac44475-2191-4ed3-b549-bc2b7cc302ce",
+          "inspection_status": "COMPLETED",
+          "control_status": "SUCCEEDED",
+          "persistence_status": "SUCCEEDED",
+          "error_code": null
+        },
+        {
+          "inspection_id": "810e67dd-e45c-479d-a9b8-5f4351e04af4",
+          "inspection_status": "COMPLETED",
+          "control_status": "SUCCEEDED",
+          "persistence_status": "SUCCEEDED",
+          "error_code": null
+        },
+        {
+          "inspection_id": "9fa3dd80-b0e7-4dc9-ba54-ede36f034604",
+          "inspection_status": "COMPLETED",
+          "control_status": "SUCCEEDED",
+          "persistence_status": "SUCCEEDED",
+          "error_code": null
+        },
+        {
+          "inspection_id": "b1a4ff24-4ccd-4256-9d7a-87b2d70d8303",
+          "inspection_status": "COMPLETED",
+          "control_status": "SUCCEEDED",
+          "persistence_status": "SUCCEEDED",
+          "error_code": null
+        }
+      ],
+      "mappings": [
+        [
+          "DEMO_BIN_01",
+          1
+        ],
+        [
+          "DEMO_BIN_02",
+          1
+        ],
+        [
+          "DEMO_BIN_03",
+          1
+        ],
+        [
+          "DEMO_BIN_04",
+          1
+        ],
+        [
+          "DEMO_BIN_05",
+          1
+        ],
+        [
+          "DEMO_BIN_06",
+          1
+        ],
+        [
+          "DEMO_BIN_07",
+          1
+        ],
+        [
+          "DEMO_BIN_08",
+          1
+        ],
+        [
+          "DEMO_BIN_09",
+          1
+        ],
+        [
+          "DEMO_BIN_10",
+          1
+        ],
+        [
+          "DEMO_BIN_11",
+          1
+        ],
+        [
+          "DEMO_BIN_12",
+          1
+        ],
+        [
+          "TEST_REINSPECTION_BIN",
+          1
+        ]
+      ]
+    }
+  },
+  "namespace": "net:[4026532873]",
+  "log_contains_db_password": false,
+  "result": {
+    "collected_from_totals": 510,
+    "selected": 13,
+    "deselected": 497,
+    "passed": 13,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "warnings": 1,
+    "duration_seconds": 12.62,
+    "exit_code": 0
+  },
+  "selected_tests": [
+    {
+      "file": "test_quality_history_mysql_integration.py",
+      "test": "test_mysql_history_snapshot_filters_pagination_and_cleanup",
+      "cases": 1
+    },
+    {
+      "file": "test_duplicate_inspections_mysql_integration.py",
+      "test": "test_mysql_duplicate_requests_process_once_and_preserve_row",
+      "cases": 2
+    },
+    {
+      "file": "test_repository_mysql_integration.py",
+      "test": "test_mysql_repository_vertical_flow_and_all_seed_mappings",
+      "cases": 1
+    },
+    {
+      "file": "test_db_models.py",
+      "test": "test_sync_engine_and_session_factory_use_configured_mysql_url",
+      "cases": 1
+    },
+    {
+      "file": "test_db_models.py",
+      "test": "test_engine_passes_configured_connection_timeout_to_pymysql",
+      "cases": 1
+    },
+    {
+      "file": "test_db_models.py",
+      "test": "test_engine_requires_mysql_pymysql_database_url",
+      "cases": 1
+    },
+    {
+      "file": "test_late_result_mysql_integration.py",
+      "test": "test_mysql_late_result_updates_only_diagnostics",
+      "cases": 1
+    },
+    {
+      "file": "test_history_retention_mysql_integration.py",
+      "test": "test_retention_deletes_oldest_batches_and_read_apis_match",
+      "cases": 1
+    },
+    {
+      "file": "test_be10_operations_integration.py",
+      "test": "test_mysql_storage_duplicate_and_dotted_id",
+      "cases": 1
+    },
+    {
+      "file": "test_be10_operations_integration.py",
+      "test": "test_simulator_process_position_recovery_with_mysql",
+      "cases": 1
+    },
+    {
+      "file": "test_quality_review_mysql_integration.py",
+      "test": "test_mysql_review_updates_history_without_changing_prediction",
+      "cases": 1
+    },
+    {
+      "file": "test_quality_operations_mysql_integration.py",
+      "test": "test_mysql_snapshot_statistics_and_both_csv_formats",
+      "cases": 1
+    }
+  ],
+  "individual_status_basis": "All 13 selected cases passed; IDs are the matching static selection, not a verbose runtime log.",
+  "log_sha256": "b6cd139c8a0fd09c872733465a0ee5588adc66448a81f5170e663cd8f1489a9b"
+}

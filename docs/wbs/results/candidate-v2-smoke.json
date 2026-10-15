@@ -1,0 +1,38 @@
+{
+  "scope": "synthetic_image_inprocess_api_smoke_only",
+  "quality_evaluated": false,
+  "production_approved": false,
+  "target_cpu_verified": false,
+  "test_used": false,
+  "checkpoint_sha256": "b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a",
+  "health": {
+    "status": "ready",
+    "model_loaded": true,
+    "model_name": "mobilenet_v3_small_multiview",
+    "model_version": "cqc-apple-separate12-focal-v2-candidate",
+    "device": "cpu",
+    "views": 12
+  },
+  "prediction": {
+    "inspection_id": "candidate-smoke-12",
+    "crop_type": "apple",
+    "predicted_cultivar": "yanggwang",
+    "cultivar_confidence": 0.5105991363525391,
+    "cultivar_probabilities": {
+      "fuji": 0.48940080404281616,
+      "yanggwang": 0.5105991363525391
+    },
+    "predicted_grade": "L",
+    "quality_confidence": 0.39983147382736206,
+    "quality_probabilities": {
+      "L": 0.39983147382736206,
+      "M": 0.2034176141023636,
+      "S": 0.3967509865760803
+    },
+    "inference_time_ms": 53.2575000001998,
+    "model_name": "mobilenet_v3_small_multiview",
+    "model_version": "cqc-apple-separate12-focal-v2-candidate",
+    "preprocessing_version": "rgb-resize-imagenet-v1",
+    "used_frame_count": 12
+  }
+}

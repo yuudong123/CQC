@@ -1,0 +1,37 @@
+{
+  "queried_kst": "2026-10-07T11:40:17.187216+09:00",
+  "source_sha": "328baaaf702f42687204b9d904815676479ae3e0",
+  "jenkins_build": 115,
+  "same_docker_daemon": true,
+  "services": [
+    {
+      "service": "backend",
+      "image_id": "sha256:b0b170f5eab979c59817c07d65480333032dddf04fead95b7fc092f4d655feb4",
+      "container_created_utc": "2026-10-07T00:41:13.885865269Z",
+      "build_115_manifest_list": "sha256:b0b170f5eab979c59817c07d65480333032dddf04fead95b7fc092f4d655feb4",
+      "matches": true
+    },
+    {
+      "service": "inference",
+      "image_id": "sha256:ad3a8437d6f7b17a02756c135681c9fc3e0c05a24fac3e181823743c43e0676c",
+      "container_created_utc": "2026-10-07T00:41:03.80082421Z",
+      "build_115_manifest_list": "sha256:ad3a8437d6f7b17a02756c135681c9fc3e0c05a24fac3e181823743c43e0676c",
+      "matches": true
+    },
+    {
+      "service": "simulator",
+      "image_id": "sha256:69c4cb1f2823fd05583b200f316b215252041bf7e6f67c01b4b8432b1c59972b",
+      "container_created_utc": "2026-10-07T00:41:24.215411963Z",
+      "build_115_manifest_list": "sha256:69c4cb1f2823fd05583b200f316b215252041bf7e6f67c01b4b8432b1c59972b",
+      "matches": true
+    },
+    {
+      "service": "logistics-web",
+      "image_id": "sha256:a22098d54f6e3aecb1a0c6d1941ae4333713439f06a0c95c199535282facd167",
+      "container_created_utc": "2026-10-07T00:41:24.212457591Z",
+      "build_115_manifest_list": "sha256:a22098d54f6e3aecb1a0c6d1941ae4333713439f06a0c95c199535282facd167",
+      "matches": true
+    }
+  ],
+  "verified": true
+}

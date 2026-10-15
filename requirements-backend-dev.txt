@@ -1,0 +1,4 @@
+-r requirements-backend.txt
+httpx>=0.28,<0.29
+pytest>=9.1,<9.2
+ruff>=0.16,<0.17

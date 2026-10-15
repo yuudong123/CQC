@@ -1,0 +1,35 @@
+{
+  "started_kst": "2026-10-13T12:32:43.210528+09:00",
+  "finished_kst": "2026-10-13T12:32:43.222822+09:00",
+  "elapsed_ms": 12.291775001358474,
+  "request": {
+    "url": "http://inference:8001/health",
+    "method": "GET",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "date": "Tue, 13 Oct 2026 03:32:42 GMT",
+      "server": "uvicorn",
+      "content-length": "439",
+      "content-type": "application/json",
+      "connection": "close"
+    },
+    "body": {
+      "status": "ready",
+      "model_loaded": true,
+      "model_name": "mobilenet_v3_small_multiview",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+      "device": "cpu",
+      "views": 12,
+      "approval_status": "unverified_candidate",
+      "threshold_status": "calibrated_dev_oof",
+      "checkpoint_sha256": "b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a",
+      "quality_temperature": 0.3907968455265368,
+      "cultivar_temperature": 0.3840364997514078,
+      "decode_workers": 8
+    }
+  },
+  "transport": "Real HTTP from dedicated Backend container; no mock or in-process test client"
+}

@@ -1,0 +1,272 @@
+{
+  "at_kst": "2026-10-14T12:00:40.932287+09:00",
+  "read_only_sqlite": true,
+  "source": "thread_history_1.sqlite",
+  "other_cqc_threads": 16,
+  "tool_items_checked": 1294,
+  "patterns": [
+    "0096b353-151d-4160-8b6b-d0fa88e048b2",
+    "0693b8aa-8328-4c5e-b7e8-907bdc6eb14b",
+    "157d32e2-2975-45bd-a31e-4a876fa890e4",
+    "1d5e2f82-d6f3-4779-9a17-fc2bbaeec8b9",
+    "1f331621-4ee6-4bbd-a5ea-5b005b18aae6",
+    "1f396404-4325-4377-a2a7-81534e217a18",
+    "23913200-b757-4cc1-800f-2741299fa1fc",
+    "29d70749-2320-4733-8be4-2a483e532851",
+    "581d56a1-337a-42cf-80c6-bb0fe574320c",
+    "59927979-f841-45ea-ac1f-90c7537b3fae",
+    "5e85ae9c-0549-47a4-8445-eca477465a2e",
+    "61a0923e-bee6-4b5f-bba0-5b639c6c863b",
+    "74927e8d-01e6-41e6-b257-8b866cbdabf7",
+    "74e024ed-8f3e-4122-9a25-7f621aa7d8a0",
+    "827fb89f-059f-41cc-9166-b6eaefd339c8",
+    "97e579a1-8473-4b04-91f0-11f7feb286cf",
+    "a440c461-8225-4932-a641-b527e2232150",
+    "ab56fdb5-3d2d-4b38-8cbc-4a7467d38a97",
+    "bb57f84e-dca3-4281-9c67-92d5273d7948",
+    "ca4b28aa-6858-4b15-8ede-a8b0a0185be0",
+    "d6d5d20c-02db-493d-8de4-baa3ca5434fd",
+    "dcec597f-4bc8-4b1f-bb2e-8f04a7476974",
+    "qa-mo09-mysql-down-e87f0b64e1624fbc",
+    "qa-mo09-mysql-recovered-d6ecd322e9494b34"
+  ],
+  "matches": [
+    {
+      "thread_id": "01a10e9a-73ec-74b0-810c-78ca566d56cf",
+      "item_id": "exec-04185919-ceba-4864-9232-cd3c3a25d4eb",
+      "type": "commandExecution",
+      "json_chars": 4344,
+      "stdout_chars": 3501,
+      "matching_ids": [
+        "0096b353-151d-4160-8b6b-d0fa88e048b2",
+        "157d32e2-2975-45bd-a31e-4a876fa890e4",
+        "1d5e2f82-d6f3-4779-9a17-fc2bbaeec8b9",
+        "1f331621-4ee6-4bbd-a5ea-5b005b18aae6",
+        "1f396404-4325-4377-a2a7-81534e217a18",
+        "23913200-b757-4cc1-800f-2741299fa1fc",
+        "74e024ed-8f3e-4122-9a25-7f621aa7d8a0",
+        "827fb89f-059f-41cc-9166-b6eaefd339c8",
+        "97e579a1-8473-4b04-91f0-11f7feb286cf",
+        "ab56fdb5-3d2d-4b38-8cbc-4a7467d38a97",
+        "ca4b28aa-6858-4b15-8ede-a8b0a0185be0"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "thread_id": "01a10e9a-73ec-74b0-810c-78ca566d56cf",
+      "item_id": "exec-b98e23ec-acb2-46b5-863b-1a6fa91612d0",
+      "type": "commandExecution",
+      "json_chars": 4402,
+      "stdout_chars": 3557,
+      "matching_ids": [
+        "0693b8aa-8328-4c5e-b7e8-907bdc6eb14b",
+        "29d70749-2320-4733-8be4-2a483e532851",
+        "581d56a1-337a-42cf-80c6-bb0fe574320c",
+        "59927979-f841-45ea-ac1f-90c7537b3fae",
+        "5e85ae9c-0549-47a4-8445-eca477465a2e",
+        "61a0923e-bee6-4b5f-bba0-5b639c6c863b",
+        "74927e8d-01e6-41e6-b257-8b866cbdabf7",
+        "a440c461-8225-4932-a641-b527e2232150",
+        "bb57f84e-dca3-4281-9c67-92d5273d7948",
+        "d6d5d20c-02db-493d-8de4-baa3ca5434fd",
+        "dcec597f-4bc8-4b1f-bb2e-8f04a7476974"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "thread_id": "01a10e9a-73ec-74b0-810c-78ca566d56cf",
+      "item_id": "exec-aca54866-c057-4079-8dee-cff3a5afc1bd",
+      "type": "commandExecution",
+      "json_chars": 8197,
+      "stdout_chars": 6860,
+      "matching_ids": [
+        "5e85ae9c-0549-47a4-8445-eca477465a2e",
+        "d6d5d20c-02db-493d-8de4-baa3ca5434fd",
+        "dcec597f-4bc8-4b1f-bb2e-8f04a7476974"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "thread_id": "01a10e9a-73ec-74b0-810c-78ca566d56cf",
+      "item_id": "exec-ae4f35fa-f84e-4566-b44b-f58e83503a60",
+      "type": "commandExecution",
+      "json_chars": 143074,
+      "stdout_chars": 126258,
+      "matching_ids": [
+        "0096b353-151d-4160-8b6b-d0fa88e048b2",
+        "157d32e2-2975-45bd-a31e-4a876fa890e4",
+        "1d5e2f82-d6f3-4779-9a17-fc2bbaeec8b9",
+        "1f331621-4ee6-4bbd-a5ea-5b005b18aae6",
+        "1f396404-4325-4377-a2a7-81534e217a18",
+        "23913200-b757-4cc1-800f-2741299fa1fc",
+        "74e024ed-8f3e-4122-9a25-7f621aa7d8a0",
+        "827fb89f-059f-41cc-9166-b6eaefd339c8",
+        "97e579a1-8473-4b04-91f0-11f7feb286cf",
+        "ab56fdb5-3d2d-4b38-8cbc-4a7467d38a97",
+        "ca4b28aa-6858-4b15-8ede-a8b0a0185be0"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "thread_id": "01a10e9a-73ec-74b0-810c-78ca566d56cf",
+      "item_id": "exec-a1f9a1cb-1cb9-4b67-b316-cb236874d960",
+      "type": "commandExecution",
+      "json_chars": 10778,
+      "stdout_chars": 9554,
+      "matching_ids": [
+        "0693b8aa-8328-4c5e-b7e8-907bdc6eb14b",
+        "29d70749-2320-4733-8be4-2a483e532851",
+        "581d56a1-337a-42cf-80c6-bb0fe574320c",
+        "59927979-f841-45ea-ac1f-90c7537b3fae",
+        "5e85ae9c-0549-47a4-8445-eca477465a2e",
+        "61a0923e-bee6-4b5f-bba0-5b639c6c863b",
+        "74927e8d-01e6-41e6-b257-8b866cbdabf7",
+        "a440c461-8225-4932-a641-b527e2232150",
+        "bb57f84e-dca3-4281-9c67-92d5273d7948",
+        "d6d5d20c-02db-493d-8de4-baa3ca5434fd",
+        "dcec597f-4bc8-4b1f-bb2e-8f04a7476974"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "thread_id": "01a10e9a-73ec-74b0-810c-78ca566d56cf",
+      "item_id": "exec-8ca8c997-8d68-4b88-a3f7-23096d466182",
+      "type": "commandExecution",
+      "json_chars": 6130,
+      "stdout_chars": 4361,
+      "matching_ids": [
+        "qa-mo09-mysql-down-e87f0b64e1624fbc",
+        "qa-mo09-mysql-recovered-d6ecd322e9494b34"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "thread_id": "01a10e9a-73ec-74b0-810c-78ca566d56cf",
+      "item_id": "exec-3922159b-d77e-4c8e-99d3-bc9c504e9b4a",
+      "type": "commandExecution",
+      "json_chars": 14316,
+      "stdout_chars": 12354,
+      "matching_ids": [
+        "qa-mo09-mysql-down-e87f0b64e1624fbc",
+        "qa-mo09-mysql-recovered-d6ecd322e9494b34"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "thread_id": "01a113d4-9933-70c2-afc1-1fcfd9dfa324",
+      "item_id": "exec-5a941dc6-e44a-4eb2-bc1b-aff2ca2a1548",
+      "type": "commandExecution",
+      "json_chars": 1094671,
+      "stdout_chars": 1044991,
+      "matching_ids": [
+        "qa-mo09-mysql-down-e87f0b64e1624fbc",
+        "qa-mo09-mysql-recovered-d6ecd322e9494b34"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "thread_id": "01a1194b-7618-70a0-bc9e-9e0e1259cffc",
+      "item_id": "exec-073cc05f-bc6d-4090-9635-7da2920cb8e9",
+      "type": "commandExecution",
+      "json_chars": 5045,
+      "stdout_chars": 3525,
+      "matching_ids": [
+        "qa-mo09-mysql-down-e87f0b64e1624fbc",
+        "qa-mo09-mysql-recovered-d6ecd322e9494b34"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "thread_id": "01a12d7f-7ba8-7871-ae1d-c584e0caced4",
+      "item_id": "exec-35ac75bc-2b03-4e45-bef4-1d1dedbaa059",
+      "type": "commandExecution",
+      "json_chars": 17587,
+      "stdout_chars": 14231,
+      "matching_ids": [
+        "0096b353-151d-4160-8b6b-d0fa88e048b2",
+        "157d32e2-2975-45bd-a31e-4a876fa890e4",
+        "1d5e2f82-d6f3-4779-9a17-fc2bbaeec8b9",
+        "5e85ae9c-0549-47a4-8445-eca477465a2e",
+        "74e024ed-8f3e-4122-9a25-7f621aa7d8a0",
+        "bb57f84e-dca3-4281-9c67-92d5273d7948",
+        "d6d5d20c-02db-493d-8de4-baa3ca5434fd",
+        "dcec597f-4bc8-4b1f-bb2e-8f04a7476974"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "thread_id": "01a12d7f-7ba8-7871-ae1d-c584e0caced4",
+      "item_id": "exec-22c63d2e-49d2-4415-8175-0f138ff90c17",
+      "type": "commandExecution",
+      "json_chars": 3809,
+      "stdout_chars": 1642,
+      "matching_ids": [
+        "5e85ae9c-0549-47a4-8445-eca477465a2e",
+        "dcec597f-4bc8-4b1f-bb2e-8f04a7476974"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "thread_id": "01a12d7f-7ba8-7871-ae1d-c584e0caced4",
+      "item_id": "exec-71027cef-fe28-411f-a8f2-cea85b46b58d",
+      "type": "commandExecution",
+      "json_chars": 7472,
+      "stdout_chars": 4733,
+      "matching_ids": [
+        "0096b353-151d-4160-8b6b-d0fa88e048b2",
+        "157d32e2-2975-45bd-a31e-4a876fa890e4",
+        "1f331621-4ee6-4bbd-a5ea-5b005b18aae6",
+        "1f396404-4325-4377-a2a7-81534e217a18",
+        "581d56a1-337a-42cf-80c6-bb0fe574320c",
+        "61a0923e-bee6-4b5f-bba0-5b639c6c863b",
+        "74927e8d-01e6-41e6-b257-8b866cbdabf7",
+        "97e579a1-8473-4b04-91f0-11f7feb286cf",
+        "a440c461-8225-4932-a641-b527e2232150",
+        "bb57f84e-dca3-4281-9c67-92d5273d7948",
+        "ca4b28aa-6858-4b15-8ede-a8b0a0185be0",
+        "d6d5d20c-02db-493d-8de4-baa3ca5434fd"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "thread_id": "01a12d7f-7ba8-7871-ae1d-c584e0caced4",
+      "item_id": "exec-1b10f2ca-0114-4e0b-bddf-0d4d979177cc",
+      "type": "commandExecution",
+      "json_chars": 4072,
+      "stdout_chars": 1956,
+      "matching_ids": [
+        "qa-mo09-mysql-down-e87f0b64e1624fbc",
+        "qa-mo09-mysql-recovered-d6ecd322e9494b34"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    }
+  ],
+  "scope": "Only CommandExecution/McpToolCall of CQC threads; no user/agent messages or reasoning read/exported",
+  "new_control_rows_found": false
+}

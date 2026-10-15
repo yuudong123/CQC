@@ -1,0 +1,11 @@
+| 케이스 | 담당 | 결과 (통과/실패/차단) | 실행자 | 일시 | 커밋·모델 | 비고·결함 번호 |
+|---|---|---|---|---|---|---|
+| QA-DEP-02 | DM | 통과 | 홍유나 | 2026-10-12 09:46:00 KST | deployed SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930 | [E1] 관찰=통과; 범위=전체; ready; model=cqc-apple-separate12-focal-v2-cal-20260930; checkpoint=b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a |
+| QA-DEP-04 | MO | 통과 | 홍유나 | 2026-10-12 09:46:00 KST | deployed SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930 | [E1] 관찰=통과; 범위=전체; Backend /health and threshold/inference/storage settings OK |
+| QA-DEP-03 | DM | 통과 | 홍유나 | 2026-10-12 09:46:00 KST | deployed SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930 | [E1] 관찰=통과; 범위=전체; model.pt SHA-256=b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a |
+| QA-SIM-01 | MO | 차단 | 홍유나 | 2026-10-12 09:46:01 KST | deployed SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930 | [E1] 관찰=통과; 범위=부분: 현재 설정·health만; 기동 직후 관찰 미실행; running; intervalMs=2000; revision=0 |
+| QA-OPS-10 | BE | 차단 | 홍유나 | 2026-10-12 09:46:09 KST | deployed SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930 | [E1] 관찰=통과; 범위=부분: CSV 전송·형식·행 수; Excel 표시·오류 코드 결합 별도 확인; date=2026-10-12; snapshotAt=1791765961955; rows=679; BOM/CRLF/header OK |
+| QA-OPS-13 | BE | 차단 | 홍유나 | 2026-10-12 09:46:14 KST | deployed SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930 | [E1] 관찰=통과; 범위=부분: CSV 헤더·분당 행 수·오류 응답; 집계 값·전체 셀 형식 별도 확인; date=2026-10-12; period/current and 1/5/10/30 minute CSV formats OK |
+| QA-DEP-01 | MO | 통과 | 홍유나 | 2026-10-12 09:46:15 KST | deployed SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930 | [E1] 관찰=통과; 범위=전체; 7 expected services healthy: backend, inference, logistics-api, logistics-mongodb, logistics-web, mysql, simulator |
+| QA-SIM-02 | MO | 실패 | 홍유나 | 2026-10-12 09:49:50 KST | deployed SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930 | [E1] 관찰=실패; 범위=전체; median=1.995s p90=2.526s throughput=0.472/s errors=0 |
+| QA-SIM-13 | DM | 실패 | 홍유나 | 2026-10-12 09:49:50 KST | deployed SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930 | [E1] 관찰=실패; 범위=제안 기준: 10-08 합의 전 예비 측정; spacing median=1.995s max=5.755s |

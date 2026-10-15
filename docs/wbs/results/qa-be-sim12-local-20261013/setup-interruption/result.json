@@ -1,0 +1,14 @@
+{
+  "official_qa_changed": false,
+  "old_http_evidence": "Request completion logs only; no request start or inspection-ID paired RTT",
+  "old_run": "sim12-20261013",
+  "supplementary_single_run": true,
+  "runtime_head": "f8a2002",
+  "git_head": "5493e8c",
+  "status": "SUPPLEMENT_INTERRUPTED",
+  "failure_type": "RuntimeError",
+  "failure": "Simulator boot failed",
+  "final_stop_confirmed": false,
+  "cleanup_error": "ConnectError",
+  "original_evidence_and_auto_unchanged": true
+}

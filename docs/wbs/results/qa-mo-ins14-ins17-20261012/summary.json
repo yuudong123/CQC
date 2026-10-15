@@ -1,0 +1,21 @@
+{
+  "queried_kst": "2026-10-12T12:35:53.822501+09:00",
+  "database_info": [
+    {
+      "kind": "database_info",
+      "database": "cqc",
+      "queried_utc": "2026-10-12 03:35:52.411000",
+      "mysql_version": "8.4.11",
+      "session_time_zone": "+00:00"
+    }
+  ],
+  "ins17_inspection_count": 1,
+  "ins17_error_count": 1,
+  "ins14_inspection_count": 0,
+  "ins14_control_attempt_count": 0,
+  "ins14_archived_api_db_records": 12,
+  "e1_fallback_inspection_count": 12,
+  "e1_fallback_control_count": 12,
+  "csv_ins17_matches": 1,
+  "csv_e1_fallback_matches": 0
+}

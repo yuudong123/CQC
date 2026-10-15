@@ -1,0 +1,34 @@
+{
+  "namespace": "net:[4026532212]",
+  "mount_namespace": "mnt:[4026532211]",
+  "routes": [],
+  "routes6": [],
+  "readonly_mounts": [
+    "184 157 0:73 /CQC/CQC/data/processed/realtime-apple-arrival-demo /opt/cqc-sim-qa/dataset ro,noatime - 9p E:\\134 rw,aname=drvfs;path=E:\\;uid=0;gid=0;symlinkroot=/mnt/,cache=0x5,access=client,msize=65536,trans=fd,rfd=5,wfd=5",
+    "185 157 0:73 /CQC/CQC/models/model_v2-focal-cal-20260930 /opt/cqc-sim-qa/model ro,noatime - 9p E:\\134 rw,aname=drvfs;path=E:\\;uid=0;gid=0;symlinkroot=/mnt/,cache=0x5,access=client,msize=65536,trans=fd,rfd=5,wfd=5"
+  ],
+  "health": {
+    "backend": {
+      "status": "ok",
+      "service": "CQC Backend",
+      "environment": "local"
+    },
+    "inference": {
+      "status": "ready",
+      "model_loaded": true,
+      "model_name": "mobilenet_v3_small_multiview",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+      "device": "cpu",
+      "views": 12,
+      "approval_status": "unverified_candidate",
+      "threshold_status": "calibrated_dev_oof",
+      "checkpoint_sha256": "b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a",
+      "quality_temperature": 0.3907968455265368,
+      "cultivar_temperature": 0.3840364997514078,
+      "decode_workers": 8
+    }
+  },
+  "source": "f8a2002",
+  "model_sha256": "b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a",
+  "frontend": "no frontend listener in dedicated namespace"
+}

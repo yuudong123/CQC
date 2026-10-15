@@ -1,0 +1,523 @@
+{
+ "role": "demo_dry_run_not_independent_evaluation",
+ "mode": "local",
+ "decode_workers": 12,
+ "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+ "bundles": 36,
+ "selection": {
+  "role": "all",
+  "limit": null,
+  "seed": 42,
+  "index": "data\\processed\\demo-dry36\\index.json"
+ },
+ "thresholds": [
+  [
+   0.5,
+   0.5
+  ],
+  [
+   0.5,
+   0.6
+  ],
+  [
+   0.5,
+   0.7
+  ],
+  [
+   0.5,
+   0.75
+  ],
+  [
+   0.5,
+   0.8
+  ]
+ ],
+ "summary": {
+  "all": {
+   "bundles": 36,
+   "source_apples": 36,
+   "cultivar_accuracy": 1.0,
+   "quality_accuracy": 0.9722222222222222,
+   "quality_confidence": {
+    "mean": 0.8640849358505673,
+    "median": 0.9210696220397949,
+    "min": 0.46381324529647827,
+    "p10": 0.6391402184963226
+   },
+   "cultivar_confidence_min": 0.9947943091392517,
+   "reinspection_rate": {
+    "cultivar>=0.50,quality>=0.50": 0.027777777777777776,
+    "cultivar>=0.50,quality>=0.60": 0.08333333333333333,
+    "cultivar>=0.50,quality>=0.70": 0.1388888888888889,
+    "cultivar>=0.50,quality>=0.75": 0.16666666666666666,
+    "cultivar>=0.50,quality>=0.80": 0.2777777777777778
+   },
+   "latency_ms": {
+    "key": "total_ms",
+    "mean": 82.54136111111112,
+    "p50": 82.59700000000001,
+    "p95": 89.77499999999999,
+    "max": 94.453,
+    "over_500ms": 0
+   }
+  },
+  "dev_apples": {
+   "bundles": 15,
+   "source_apples": 15,
+   "cultivar_accuracy": 1.0,
+   "quality_accuracy": 1.0,
+   "quality_confidence": {
+    "mean": 0.841979157924652,
+    "median": 0.8987958431243896,
+    "min": 0.46381324529647827,
+    "p10": 0.6372370481491089
+   },
+   "cultivar_confidence_min": 0.9947943091392517,
+   "reinspection_rate": {
+    "cultivar>=0.50,quality>=0.50": 0.06666666666666667,
+    "cultivar>=0.50,quality>=0.60": 0.06666666666666667,
+    "cultivar>=0.50,quality>=0.70": 0.2,
+    "cultivar>=0.50,quality>=0.75": 0.26666666666666666,
+    "cultivar>=0.50,quality>=0.80": 0.3333333333333333
+   },
+   "latency_ms": {
+    "key": "total_ms",
+    "mean": 81.6296,
+    "p50": 81.167,
+    "p95": 86.66969999999999,
+    "max": 94.453,
+    "over_500ms": 0
+   }
+  },
+  "test_apples": {
+   "bundles": 21,
+   "source_apples": 21,
+   "cultivar_accuracy": 1.0,
+   "quality_accuracy": 0.9523809523809523,
+   "quality_confidence": {
+    "mean": 0.879874777226221,
+    "median": 0.9402251839637756,
+    "min": 0.5143090486526489,
+    "p10": 0.7719563245773315
+   },
+   "cultivar_confidence_min": 0.9968335032463074,
+   "reinspection_rate": {
+    "cultivar>=0.50,quality>=0.50": 0.0,
+    "cultivar>=0.50,quality>=0.60": 0.09523809523809523,
+    "cultivar>=0.50,quality>=0.70": 0.09523809523809523,
+    "cultivar>=0.50,quality>=0.75": 0.09523809523809523,
+    "cultivar>=0.50,quality>=0.80": 0.23809523809523808
+   },
+   "latency_ms": {
+    "key": "total_ms",
+    "mean": 83.19261904761905,
+    "p50": 82.921,
+    "p95": 89.201,
+    "max": 91.497,
+    "over_500ms": 0
+   }
+  }
+ },
+ "mean_upload_mib": 13.811458773083157,
+ "note": "시연 묶음은 같은 실제 사과의 다른 사진이다. dev_apples는 모델이 학습한 사과이므로 정확도를 성능으로 인용하지 않는다.",
+ "date": "2026-09-30",
+ "environment": "집 PC RTX 4070, local 모드(서버 내부 지연 아님 비교용), 보정 전 드라이런과 같은 36묶음",
+ "bundles_detail": [
+  {
+   "bundle_id": "demo-601031005000-000",
+   "role": "dev",
+   "expected_cultivar": "fuji",
+   "expected_grade": "L",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "L",
+   "cultivar_confidence": 0.999994158744812,
+   "quality_confidence": 0.765562891960144,
+   "total_ms": 83.302
+  },
+  {
+   "bundle_id": "demo-601031007000-000",
+   "role": "dev",
+   "expected_cultivar": "fuji",
+   "expected_grade": "L",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "L",
+   "cultivar_confidence": 0.9999974966049194,
+   "quality_confidence": 0.8987958431243896,
+   "total_ms": 76.116
+  },
+  {
+   "bundle_id": "demo-601031008000-000",
+   "role": "dev",
+   "expected_cultivar": "fuji",
+   "expected_grade": "L",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "L",
+   "cultivar_confidence": 0.9999809265136719,
+   "quality_confidence": 0.9896713495254517,
+   "total_ms": 81.056
+  },
+  {
+   "bundle_id": "demo-601031010000-000",
+   "role": "dev",
+   "expected_cultivar": "fuji",
+   "expected_grade": "L",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "L",
+   "cultivar_confidence": 0.9999995231628418,
+   "quality_confidence": 0.9523906111717224,
+   "total_ms": 83.083
+  },
+  {
+   "bundle_id": "demo-601031011000-000",
+   "role": "test",
+   "expected_cultivar": "fuji",
+   "expected_grade": "L",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "L",
+   "cultivar_confidence": 0.9999994039535522,
+   "quality_confidence": 0.8398599624633789,
+   "total_ms": 83.087
+  },
+  {
+   "bundle_id": "demo-601031014000-000",
+   "role": "dev",
+   "expected_cultivar": "fuji",
+   "expected_grade": "L",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "L",
+   "cultivar_confidence": 0.9999997615814209,
+   "quality_confidence": 0.6296243667602539,
+   "total_ms": 74.785
+  },
+  {
+   "bundle_id": "demo-601031015000-000",
+   "role": "test",
+   "expected_cultivar": "fuji",
+   "expected_grade": "L",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "L",
+   "cultivar_confidence": 0.9997987151145935,
+   "quality_confidence": 0.977912425994873,
+   "total_ms": 78.65
+  },
+  {
+   "bundle_id": "demo-601031016000-000",
+   "role": "test",
+   "expected_cultivar": "fuji",
+   "expected_grade": "L",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "L",
+   "cultivar_confidence": 0.9999998807907104,
+   "quality_confidence": 0.8669402003288269,
+   "total_ms": 80.612
+  },
+  {
+   "bundle_id": "demo-601031028000-000",
+   "role": "dev",
+   "expected_cultivar": "fuji",
+   "expected_grade": "L",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "L",
+   "cultivar_confidence": 0.9999998807907104,
+   "quality_confidence": 0.46381324529647827,
+   "total_ms": 79.826
+  },
+  {
+   "bundle_id": "demo-601032003000-000",
+   "role": "test",
+   "expected_cultivar": "fuji",
+   "expected_grade": "M",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "M",
+   "cultivar_confidence": 1.0,
+   "quality_confidence": 0.9903594255447388,
+   "total_ms": 85.033
+  },
+  {
+   "bundle_id": "demo-601032009000-000",
+   "role": "dev",
+   "expected_cultivar": "fuji",
+   "expected_grade": "M",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "M",
+   "cultivar_confidence": 1.0,
+   "quality_confidence": 0.9717566967010498,
+   "total_ms": 83.334
+  },
+  {
+   "bundle_id": "demo-601032015000-000",
+   "role": "test",
+   "expected_cultivar": "fuji",
+   "expected_grade": "M",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "M",
+   "cultivar_confidence": 1.0,
+   "quality_confidence": 0.960607647895813,
+   "total_ms": 83.599
+  },
+  {
+   "bundle_id": "demo-601032016000-000",
+   "role": "test",
+   "expected_cultivar": "fuji",
+   "expected_grade": "M",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "M",
+   "cultivar_confidence": 1.0,
+   "quality_confidence": 0.9944339394569397,
+   "total_ms": 78.797
+  },
+  {
+   "bundle_id": "demo-601032028000-000",
+   "role": "test",
+   "expected_cultivar": "fuji",
+   "expected_grade": "M",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "M",
+   "cultivar_confidence": 0.9999998807907104,
+   "quality_confidence": 0.9663768410682678,
+   "total_ms": 86.479
+  },
+  {
+   "bundle_id": "demo-601033003000-000",
+   "role": "test",
+   "expected_cultivar": "fuji",
+   "expected_grade": "S",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "S",
+   "cultivar_confidence": 0.9999964237213135,
+   "quality_confidence": 0.9779365658760071,
+   "total_ms": 81.831
+  },
+  {
+   "bundle_id": "demo-601033004000-000",
+   "role": "dev",
+   "expected_cultivar": "fuji",
+   "expected_grade": "S",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "S",
+   "cultivar_confidence": 0.9999998807907104,
+   "quality_confidence": 0.9982472658157349,
+   "total_ms": 82.68
+  },
+  {
+   "bundle_id": "demo-601033009000-000",
+   "role": "dev",
+   "expected_cultivar": "fuji",
+   "expected_grade": "S",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "S",
+   "cultivar_confidence": 1.0,
+   "quality_confidence": 0.8924582004547119,
+   "total_ms": 81.304
+  },
+  {
+   "bundle_id": "demo-601033013000-000",
+   "role": "test",
+   "expected_cultivar": "fuji",
+   "expected_grade": "S",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "S",
+   "cultivar_confidence": 0.9999990463256836,
+   "quality_confidence": 0.975597083568573,
+   "total_ms": 82.921
+  },
+  {
+   "bundle_id": "demo-601033014000-000",
+   "role": "dev",
+   "expected_cultivar": "fuji",
+   "expected_grade": "S",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "S",
+   "cultivar_confidence": 0.9980002045631409,
+   "quality_confidence": 0.6486560702323914,
+   "total_ms": 94.453
+  },
+  {
+   "bundle_id": "demo-601033026000-000",
+   "role": "test",
+   "expected_cultivar": "fuji",
+   "expected_grade": "S",
+   "predicted_cultivar": "fuji",
+   "predicted_grade": "S",
+   "cultivar_confidence": 0.9999606609344482,
+   "quality_confidence": 0.5829203724861145,
+   "total_ms": 78.697
+  },
+  {
+   "bundle_id": "demo-601141006000-000",
+   "role": "test",
+   "expected_cultivar": "yanggwang",
+   "expected_grade": "L",
+   "predicted_cultivar": "yanggwang",
+   "predicted_grade": "L",
+   "cultivar_confidence": 0.9999078512191772,
+   "quality_confidence": 0.8537231683731079,
+   "total_ms": 84.177
+  },
+  {
+   "bundle_id": "demo-601141007000-000",
+   "role": "dev",
+   "expected_cultivar": "yanggwang",
+   "expected_grade": "L",
+   "predicted_cultivar": "yanggwang",
+   "predicted_grade": "L",
+   "cultivar_confidence": 0.9984174966812134,
+   "quality_confidence": 0.823001503944397,
+   "total_ms": 81.167
+  },
+  {
+   "bundle_id": "demo-601141009000-000",
+   "role": "test",
+   "expected_cultivar": "yanggwang",
+   "expected_grade": "L",
+   "predicted_cultivar": "yanggwang",
+   "predicted_grade": "L",
+   "cultivar_confidence": 0.9998990297317505,
+   "quality_confidence": 0.7867142558097839,
+   "total_ms": 82.514
+  },
+  {
+   "bundle_id": "demo-601141012000-000",
+   "role": "dev",
+   "expected_cultivar": "yanggwang",
+   "expected_grade": "L",
+   "predicted_cultivar": "yanggwang",
+   "predicted_grade": "L",
+   "cultivar_confidence": 0.9996826648712158,
+   "quality_confidence": 0.9191924333572388,
+   "total_ms": 83.202
+  },
+  {
+   "bundle_id": "demo-601141013000-000",
+   "role": "test",
+   "expected_cultivar": "yanggwang",
+   "expected_grade": "L",
+   "predicted_cultivar": "yanggwang",
+   "predicted_grade": "L",
+   "cultivar_confidence": 0.9981435537338257,
+   "quality_confidence": 0.7806493639945984,
+   "total_ms": 85.196
+  },
+  {
+   "bundle_id": "demo-601141014000-000",
+   "role": "test",
+   "expected_cultivar": "yanggwang",
+   "expected_grade": "L",
+   "predicted_cultivar": "yanggwang",
+   "predicted_grade": "M",
+   "cultivar_confidence": 0.9977578520774841,
+   "quality_confidence": 0.5143090486526489,
+   "total_ms": 85.507
+  },
+  {
+   "bundle_id": "demo-601141020000-000",
+   "role": "dev",
+   "expected_cultivar": "yanggwang",
+   "expected_grade": "L",
+   "predicted_cultivar": "yanggwang",
+   "predicted_grade": "L",
+   "cultivar_confidence": 0.9994828701019287,
+   "quality_confidence": 0.7311049103736877,
+   "total_ms": 78.795
+  },
+  {
+   "bundle_id": "demo-601142004000-000",
+   "role": "test",
+   "expected_cultivar": "yanggwang",
+   "expected_grade": "M",
+   "predicted_cultivar": "yanggwang",
+   "predicted_grade": "M",
+   "cultivar_confidence": 0.9968335032463074,
+   "quality_confidence": 0.9229468107223511,
+   "total_ms": 91.497
+  },
+  {
+   "bundle_id": "demo-601142007000-000",
+   "role": "dev",
+   "expected_cultivar": "yanggwang",
+   "expected_grade": "M",
+   "predicted_cultivar": "yanggwang",
+   "predicted_grade": "M",
+   "cultivar_confidence": 0.9994016885757446,
+   "quality_confidence": 0.9455952644348145,
+   "total_ms": 81.106
+  },
+  {
+   "bundle_id": "demo-601142010000-000",
+   "role": "test",
+   "expected_cultivar": "yanggwang",
+   "expected_grade": "M",
+   "predicted_cultivar": "yanggwang",
+   "predicted_grade": "M",
+   "cultivar_confidence": 0.9997982382774353,
+   "quality_confidence": 0.7719563245773315,
+   "total_ms": 79.586
+  },
+  {
+   "bundle_id": "demo-601142014000-000",
+   "role": "test",
+   "expected_cultivar": "yanggwang",
+   "expected_grade": "M",
+   "predicted_cultivar": "yanggwang",
+   "predicted_grade": "M",
+   "cultivar_confidence": 0.9996753931045532,
+   "quality_confidence": 0.8244644403457642,
+   "total_ms": 81.6
+  },
+  {
+   "bundle_id": "demo-601143008000-000",
+   "role": "test",
+   "expected_cultivar": "yanggwang",
+   "expected_grade": "S",
+   "predicted_cultivar": "yanggwang",
+   "predicted_grade": "S",
+   "cultivar_confidence": 0.9999141693115234,
+   "quality_confidence": 0.9402251839637756,
+   "total_ms": 89.201
+  },
+  {
+   "bundle_id": "demo-601143013000-000",
+   "role": "test",
+   "expected_cultivar": "yanggwang",
+   "expected_grade": "S",
+   "predicted_cultivar": "yanggwang",
+   "predicted_grade": "S",
+   "cultivar_confidence": 0.9997411370277405,
+   "quality_confidence": 0.9995858073234558,
+   "total_ms": 85.111
+  },
+  {
+   "bundle_id": "demo-601143015000-000",
+   "role": "test",
+   "expected_cultivar": "yanggwang",
+   "expected_grade": "S",
+   "predicted_cultivar": "yanggwang",
+   "predicted_grade": "S",
+   "cultivar_confidence": 0.9993282556533813,
+   "quality_confidence": 0.9506264328956604,
+   "total_ms": 80.241
+  },
+  {
+   "bundle_id": "demo-601143020000-000",
+   "role": "dev",
+   "expected_cultivar": "yanggwang",
+   "expected_grade": "S",
+   "predicted_cultivar": "yanggwang",
+   "predicted_grade": "S",
+   "cultivar_confidence": 0.9947943091392517,
+   "quality_confidence": 0.9998167157173157,
+   "total_ms": 80.235
+  },
+  {
+   "bundle_id": "demo-601143028000-000",
+   "role": "test",
+   "expected_cultivar": "yanggwang",
+   "expected_grade": "S",
+   "predicted_cultivar": "yanggwang",
+   "predicted_grade": "S",
+   "cultivar_confidence": 0.9981811046600342,
+   "quality_confidence": 0.9992250204086304,
+   "total_ms": 82.709
+  }
+ ]
+}

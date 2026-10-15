@@ -1,0 +1,53 @@
+{
+  "ins17": "qa-e1-20261008-091125-45628a-ins08",
+  "ins14": [
+    {
+      "inspection_id": "be10-2-63f2ca4e-601031008000-000-13_9",
+      "expected_bin": "DEMO_BIN_01"
+    },
+    {
+      "inspection_id": "be10-2-63f2ca4e-601031008000-000-14_0",
+      "expected_bin": "DEMO_BIN_02"
+    },
+    {
+      "inspection_id": "be10-2-63f2ca4e-601032016000-000-13_9",
+      "expected_bin": "DEMO_BIN_03"
+    },
+    {
+      "inspection_id": "be10-2-63f2ca4e-601032016000-000-14_0",
+      "expected_bin": "DEMO_BIN_04"
+    },
+    {
+      "inspection_id": "be10-2-63f2ca4e-601033004000-000-13_9",
+      "expected_bin": "DEMO_BIN_05"
+    },
+    {
+      "inspection_id": "be10-2-63f2ca4e-601033004000-000-14_0",
+      "expected_bin": "DEMO_BIN_06"
+    },
+    {
+      "inspection_id": "be10-2-63f2ca4e-601141012000-000-13_9",
+      "expected_bin": "DEMO_BIN_07"
+    },
+    {
+      "inspection_id": "be10-2-63f2ca4e-601141012000-000-14_0",
+      "expected_bin": "DEMO_BIN_08"
+    },
+    {
+      "inspection_id": "be10-2-63f2ca4e-601142007000-000-13_9",
+      "expected_bin": "DEMO_BIN_09"
+    },
+    {
+      "inspection_id": "be10-2-63f2ca4e-601142007000-000-14_0",
+      "expected_bin": "DEMO_BIN_10"
+    },
+    {
+      "inspection_id": "be10-2-63f2ca4e-601143013000-000-13_9",
+      "expected_bin": "DEMO_BIN_11"
+    },
+    {
+      "inspection_id": "be10-2-63f2ca4e-601143013000-000-14_0",
+      "expected_bin": "DEMO_BIN_12"
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+[
+  {
+    "inspection_id": "be10-2-63f2ca4e-601031008000-000-13_9",
+    "expected_bin": "DEMO_BIN_01",
+    "inspection_rows": [],
+    "control_attempts": [],
+    "inspection_count": 0,
+    "control_count": 0,
+    "checks": null
+  },
+  {
+    "inspection_id": "be10-2-63f2ca4e-601031008000-000-14_0",
+    "expected_bin": "DEMO_BIN_02",
+    "inspection_rows": [],
+    "control_attempts": [],
+    "inspection_count": 0,
+    "control_count": 0,
+    "checks": null
+  },
+  {
+    "inspection_id": "be10-2-63f2ca4e-601032016000-000-13_9",
+    "expected_bin": "DEMO_BIN_03",
+    "inspection_rows": [],
+    "control_attempts": [],
+    "inspection_count": 0,
+    "control_count": 0,
+    "checks": null
+  },
+  {
+    "inspection_id": "be10-2-63f2ca4e-601032016000-000-14_0",
+    "expected_bin": "DEMO_BIN_04",
+    "inspection_rows": [],
+    "control_attempts": [],
+    "inspection_count": 0,
+    "control_count": 0,
+    "checks": null
+  },
+  {
+    "inspection_id": "be10-2-63f2ca4e-601033004000-000-13_9",
+    "expected_bin": "DEMO_BIN_05",
+    "inspection_rows": [],
+    "control_attempts": [],
+    "inspection_count": 0,
+    "control_count": 0,
+    "checks": null
+  },
+  {
+    "inspection_id": "be10-2-63f2ca4e-601033004000-000-14_0",
+    "expected_bin": "DEMO_BIN_06",
+    "inspection_rows": [],
+    "control_attempts": [],
+    "inspection_count": 0,
+    "control_count": 0,
+    "checks": null
+  },
+  {
+    "inspection_id": "be10-2-63f2ca4e-601141012000-000-13_9",
+    "expected_bin": "DEMO_BIN_07",
+    "inspection_rows": [],
+    "control_attempts": [],
+    "inspection_count": 0,
+    "control_count": 0,
+    "checks": null
+  },
+  {
+    "inspection_id": "be10-2-63f2ca4e-601141012000-000-14_0",
+    "expected_bin": "DEMO_BIN_08",
+    "inspection_rows": [],
+    "control_attempts": [],
+    "inspection_count": 0,
+    "control_count": 0,
+    "checks": null
+  },
+  {
+    "inspection_id": "be10-2-63f2ca4e-601142007000-000-13_9",
+    "expected_bin": "DEMO_BIN_09",
+    "inspection_rows": [],
+    "control_attempts": [],
+    "inspection_count": 0,
+    "control_count": 0,
+    "checks": null
+  },
+  {
+    "inspection_id": "be10-2-63f2ca4e-601142007000-000-14_0",
+    "expected_bin": "DEMO_BIN_10",
+    "inspection_rows": [],
+    "control_attempts": [],
+    "inspection_count": 0,
+    "control_count": 0,
+    "checks": null
+  },
+  {
+    "inspection_id": "be10-2-63f2ca4e-601143013000-000-13_9",
+    "expected_bin": "DEMO_BIN_11",
+    "inspection_rows": [],
+    "control_attempts": [],
+    "inspection_count": 0,
+    "control_count": 0,
+    "checks": null
+  },
+  {
+    "inspection_id": "be10-2-63f2ca4e-601143013000-000-14_0",
+    "expected_bin": "DEMO_BIN_12",
+    "inspection_rows": [],
+    "control_attempts": [],
+    "inspection_count": 0,
+    "control_count": 0,
+    "checks": null
+  }
+]

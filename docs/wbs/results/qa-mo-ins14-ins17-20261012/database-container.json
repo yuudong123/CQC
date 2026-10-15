@@ -1,0 +1,19 @@
+[
+  {
+    "name": "/cqc-cicd-mysql-1",
+    "id": "d5147f435ac1d38ad4637e090061dddae8a4e75927ca3c7b33fe6e2a00ceaef9",
+    "created": "2026-10-02T08:13:42.696326483Z",
+    "state": {
+      "status": "running",
+      "started_at": "2026-10-12T00:02:35.850884935Z",
+      "health": "healthy"
+    },
+    "mounts": [
+      {
+        "type": "volume",
+        "name": "cqc-cicd_mysql_data",
+        "destination": "/var/lib/mysql"
+      }
+    ]
+  }
+]

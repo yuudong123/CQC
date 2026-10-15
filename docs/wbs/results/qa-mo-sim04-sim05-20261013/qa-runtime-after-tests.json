@@ -1,0 +1,113 @@
+[
+  {
+    "name": "/cqc-mo103-sim0405-20261013-122650-simulator-1",
+    "id": "bc4cb97322fd8553cd75234a3a6c1fae86aa8ed9428c6a463ebe1f32cb2b7685",
+    "image": "sha256:aa841dd2512e848b10185ca293604579937eddcc6c7749402bf9a0f92e5fee27",
+    "service": "simulator",
+    "status": "running",
+    "health": "unhealthy",
+    "started_at": "2026-10-13T03:35:39.162958188Z",
+    "networks": [
+      "cqc-mo103-sim0405-20261013-122650_qa"
+    ],
+    "ports": {
+      "8002/tcp": []
+    },
+    "mounts": [
+      {
+        "type": "volume",
+        "name": "cqc-mo103-sim0405-20261013-122650_qa_position",
+        "destination": "/data/state",
+        "rw": true
+      },
+      {
+        "type": "volume",
+        "name": "cqc-mo103-sim0405-20261013-122650_qa_simulator_logs",
+        "destination": "/var/log/cqc",
+        "rw": true
+      },
+      {
+        "type": "volume",
+        "name": "cqc_simulator_dataset",
+        "destination": "/data/dataset",
+        "rw": false
+      }
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0405-20261013-122650-backend-1",
+    "id": "72e230b50d035f6508c6fd10b4c92d051d6c73a5d5809bd3c719707a8d24f6de",
+    "image": "sha256:66cb3b275c1fd1cc7c3f072359fa27879c122cfad0d592b43bb3db65e0538afb",
+    "service": "backend",
+    "status": "running",
+    "health": "healthy",
+    "started_at": "2026-10-13T03:35:09.655304584Z",
+    "networks": [
+      "cqc-mo103-sim0405-20261013-122650_qa"
+    ],
+    "ports": {
+      "8000/tcp": []
+    },
+    "mounts": [
+      {
+        "type": "volume",
+        "name": "cqc-mo103-sim0405-20261013-122650_qa_backend_logs",
+        "destination": "/var/log/cqc",
+        "rw": true
+      },
+      {
+        "type": "volume",
+        "name": "cqc-mo103-sim0405-20261013-122650_qa_fault_images",
+        "destination": "/data/fault-images",
+        "rw": true
+      }
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0405-20261013-122650-mysql-1",
+    "id": "8190c3f3686f184de8c46f87ca83eb2a76b03e7ddfcd9d0fc28f3b776ab68c8b",
+    "image": "sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a",
+    "service": "mysql",
+    "status": "running",
+    "health": "healthy",
+    "started_at": "2026-10-13T03:34:51.931854562Z",
+    "networks": [
+      "cqc-mo103-sim0405-20261013-122650_qa"
+    ],
+    "ports": {
+      "3306/tcp": null,
+      "33060/tcp": null
+    },
+    "mounts": [
+      {
+        "type": "volume",
+        "name": "cqc-mo103-sim0405-20261013-122650_qa_mysql",
+        "destination": "/var/lib/mysql",
+        "rw": true
+      }
+    ]
+  },
+  {
+    "name": "/cqc-mo103-sim0405-20261013-122650-inference-1",
+    "id": "cbe299d9455a566640f7dd495858fe3259f09ca3d88da7586b81752cbe4300b3",
+    "image": "sha256:06c57dce24ac8e96a369e40a07dbd77c3a31655e4b1b845505b11bebc197ed13",
+    "service": "inference",
+    "status": "running",
+    "health": "healthy",
+    "started_at": "2026-10-13T03:34:52.006955514Z",
+    "networks": [
+      "cqc-mo103-sim0405-20261013-122650_qa"
+    ],
+    "ports": {
+      "8001/tcp": []
+    },
+    "mounts": [
+      {
+        "type": "volume",
+        "name": "cqc-mo103-sim0405-20261013-122650_qa_inference_logs",
+        "destination": "/var/log/cqc",
+        "rw": true
+      }
+    ]
+  }
+]

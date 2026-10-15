@@ -1,0 +1,19 @@
+
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# Simulator는 Backend와 공통 Python 의존성을 사용
+COPY requirements-backend.txt ./
+RUN pip install --no-cache-dir -r requirements-backend.txt
+
+# 독립 Simulator 및 공통 API 스키마 복사
+COPY src ./src
+
+# 실제 시연 데이터는 이미지에 포함하지 않고 Volume으로 연결
+EXPOSE 8002
+
+CMD ["python", "-m", "src.simulator.main"]

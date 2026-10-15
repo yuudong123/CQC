@@ -1,0 +1,37 @@
+{
+  "roots": [
+    "docs",
+    "outputs",
+    "scripts"
+  ],
+  "patterns": [
+    "qa-e1-20261008-091125-45628a-ins08",
+    "be10-2-63f2ca4e",
+    "qa-be-10081636t-ins01-"
+  ],
+  "glob_types": [
+    "json",
+    "jsonl",
+    "sql",
+    "csv",
+    "md",
+    "txt",
+    "log"
+  ],
+  "exit_code": 0,
+  "matches": [
+    "outputs\\01a11997-52d7-7572-832c-0c40a367114c\\sources.json",
+    "outputs\\qa-mo-ins14-ins17-20261012-123551\\ins14-db-check.json",
+    "outputs\\qa-mo-ins14-ins17-20261012-123551\\ins14-existing-evidence-extract.json",
+    "outputs\\qa-mo-ins14-ins17-20261012-123551\\existing-csv-extract.json",
+    "outputs\\qa-mo-ins14-ins17-20261012-123551\\ins17-db-check.json",
+    "outputs\\qa-mo-ins14-ins17-20261012-123551\\e1-fallback-db-check.json",
+    "docs\\wbs\\BE-10-results.md",
+    "outputs\\qa-mo-excel-only-20261012\\ops10-inspections.csv",
+    "docs\\wbs\\BE-10-2-local-evidence.jsonl",
+    "outputs\\qa-mo-ins14-ins17-20261012-123551\\mysql-result.jsonl",
+    "outputs\\qa-mo-ins14-ins17-20261012-123551\\requested-targets.json",
+    "outputs\\qa-mo-ins14-ins17-20261012-123551\\query.sql"
+  ],
+  "limitations": "Binary archives, offline database volume contents, other computers and remote uncommitted exports not searched."
+}

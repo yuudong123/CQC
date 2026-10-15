@@ -1,0 +1,44 @@
+{
+  "historical_project": "cqc-mo09-e2-final-20261007",
+  "historical_source_sha": "328baaaf702f42687204b9d904815676479ae3e0",
+  "historical_sim08": {
+    "previous_source_reference": "demo-601142012000-005",
+    "position_before_restart": 20,
+    "previous_dataset_index": 20,
+    "first_three_dataset_indexes": [
+      21,
+      22,
+      23
+    ],
+    "simulator_started_at_utc": "2026-10-07T02:52:04.494602726Z",
+    "first_three_source_references": [
+      "demo-601033014000-002",
+      "demo-601141012000-005",
+      "demo-601033019000-002"
+    ],
+    "settings_after": {
+      "faults": [],
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "running": true,
+      "revision": 0
+    }
+  },
+  "supports": [
+    "Restart resets intervalMs=2000, concurrency=1, faults=[], running=true, revision=0.",
+    "First post-restart bundle indexes 21/22/23 follow prior index 20."
+  ],
+  "sim03_missing": [
+    "Stop response 200/stopped and revision increment.",
+    "10-second post-stop counts with at most one in-flight completion.",
+    "Docker unhealthy while stopped.",
+    "Next bundle after explicit resume, not only restart."
+  ],
+  "sim12_missing": [
+    "3000ms full 60-second completion timestamps/throughput.",
+    "1000ms full 60-second timestamps/process-time/queue series.",
+    "Restart after line-speed change specifically linked to default 2000ms restoration."
+  ],
+  "historical_reuse_only": true,
+  "no_new_tests_run": true
+}

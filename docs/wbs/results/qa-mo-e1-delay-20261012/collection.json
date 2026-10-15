@@ -1,0 +1,38 @@
+{
+  "collected_kst": "2026-10-12T11:02:28.634381+09:00",
+  "request_comment": "https://github.com/yuudong123/CQC/issues/65#issuecomment-6116341359",
+  "inspection_count": 9,
+  "control_attempt_count": 9,
+  "matching_sample_completion_count": 9,
+  "read_only_transaction": true,
+  "containers": [
+    {
+      "service": "backend",
+      "container_id": "1f1996c1ae3d76f88a4667bd12791d4e568f2e1ac533a7a255ac028937ca2a01",
+      "image_id": "sha256:33b067e04af9472f174b3474951c8b9c7c4bcae78298793bc2e3554f1b892563",
+      "created_utc": "2026-10-12T00:28:49.152092606Z",
+      "state": "running",
+      "log_driver": "json-file"
+    },
+    {
+      "service": "simulator",
+      "container_id": "2de754d6d6446c24b5927ac82c8e4bf29d5b96ead034c346d336faa25b10acfa",
+      "image_id": "sha256:3ea179a74c1aa518eb7bf3aa1337eb3f4b4f3c2538afb293e445d8a0eea0996e",
+      "created_utc": "2026-10-12T00:28:59.292712002Z",
+      "state": "running",
+      "log_driver": "json-file"
+    },
+    {
+      "service": "inference",
+      "container_id": "1a9e598664e204d56ab70e24fb8160234859744e3af4e73d4094f363de6ca92b",
+      "image_id": "sha256:af22836ce193164b4dae20823120bbdf8650df04b74bd32793efdcb00a621d18",
+      "created_utc": "2026-10-12T00:28:35.170923887Z",
+      "state": "running",
+      "log_driver": "json-file"
+    }
+  ],
+  "limits": [
+    "No historical CPU/memory/disk time series was recorded by this collector during the failed run; current measurements cannot reconstruct those values.",
+    "created_at is an application-assigned inspection timestamp, not an HTTP socket-entry timestamp; completed_at is assigned before final persistence finishes. These fields do not independently time individual SQL operations."
+  ]
+}

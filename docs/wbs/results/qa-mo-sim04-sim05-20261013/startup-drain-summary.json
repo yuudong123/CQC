@@ -1,0 +1,62 @@
+[
+  {
+    "simulator": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "backend": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "jobs": [],
+    "inspection_count": 11
+  },
+  {
+    "simulator": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "backend": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "jobs": [],
+    "inspection_count": 11
+  },
+  {
+    "simulator": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "backend": {
+      "revision": 1,
+      "running": false,
+      "concurrency": 1,
+      "intervalMs": 2000,
+      "faults": [],
+      "scope": "ALL"
+    },
+    "jobs": [],
+    "inspection_count": 11
+  }
+]

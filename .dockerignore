@@ -1,0 +1,15 @@
+.git
+.cqc-deploy-state
+.venv
+__pycache__
+data
+
+models/*
+!models/selected/
+!models/selected/**
+
+outputs
+notebooks
+tests
+docs
+cqc-logistics-platform

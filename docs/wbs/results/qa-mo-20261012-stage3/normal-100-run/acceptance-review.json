@@ -1,0 +1,60 @@
+{
+  "start": 1791765975465,
+  "end": 1791766186616.0,
+  "median_seconds": 1.995,
+  "p90_seconds": 2.5258,
+  "max_seconds": 5.755,
+  "throughput": 0.472362048810745,
+  "reviews": 9,
+  "errors": 0,
+  "count": 100,
+  "observation_started_kst": "2026-10-12T09:46:15.465+09:00",
+  "last_sample_kst": "2026-10-12T09:49:46.616+09:00",
+  "first_sample_kst": "2026-10-12T09:46:17.031+09:00",
+  "review_percent": 9.0,
+  "largest_gap_previous_kst": "2026-10-12T09:49:30.139+09:00",
+  "largest_gap_next_kst": "2026-10-12T09:49:35.894+09:00",
+  "largest_gap_previous_id": "c18c2ed9-1ff8-4dde-8c10-c1e5e5aff411",
+  "largest_gap_next_id": "6cb7a7d8-be6d-4d72-a494-adf58134ea3d",
+  "criteria": {
+    "median_2_seconds_plusminus_0_1": true,
+    "maximum_under_4_seconds": false,
+    "throughput_0_5_plusminus_0_05": true,
+    "reviews_at_most_20_percent": true,
+    "timeout_or_inference_errors_zero": true,
+    "sim02_p90_at_most_2_2_seconds": false
+  },
+  "deployed_sha": "b5f1995a7e4a494ef116d62819b169fa9d5a788e",
+  "jenkins_build": 139,
+  "decision": "FAIL: maximum interval >= 4 seconds; SIM-02 p90 > 2.2 seconds",
+  "source_note": "Raw script output uses historical proposed-criteria and unverified-SHA labels; effective 10-07 criteria and separate deployment provenance govern this review. Raw artifacts retained.",
+  "postflight_services": [
+    {
+      "service": "backend",
+      "same_container": true,
+      "same_image": true,
+      "health": "healthy"
+    },
+    {
+      "service": "inference",
+      "same_container": true,
+      "same_image": true,
+      "health": "healthy"
+    },
+    {
+      "service": "simulator",
+      "same_container": true,
+      "same_image": true,
+      "health": "healthy"
+    },
+    {
+      "service": "logistics-web",
+      "same_container": true,
+      "same_image": true,
+      "health": "healthy"
+    }
+  ],
+  "containers_unchanged": true,
+  "jenkins_monitor_samples": 12,
+  "jenkins_new_build_overlap": false
+}

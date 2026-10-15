@@ -1,0 +1,7 @@
+| 케이스 | 담당 | 결과 (통과/실패/차단) | 실행자 | 일시 | 커밋·모델 | 비고·결함 번호 |
+|---|---|---|---|---|---|---|
+| QA-SIM-01 | MO | 통과 | MO QA | 2026-10-07 11:50:30 KST | 328baaaf702f42687204b9d904815676479ae3e0 / cqc-apple-separate12-focal-v2-cal-20260930 | [E2] 관찰=통과; 범위=전체; E2 project=cqc-mo09-e2-final-20261007; evidence=restart-evidence.json; all expected checks passed |
+| QA-DEP-05 | MO | 통과 | MO QA | 2026-10-07 11:50:32 KST | 328baaaf702f42687204b9d904815676479ae3e0 / cqc-apple-separate12-focal-v2-cal-20260930 | [E2] 관찰=통과; 범위=전체; E2 project=cqc-mo09-e2-final-20261007; evidence=restart-evidence.json; all expected checks passed |
+| QA-DEP-06 | MO | 통과 | MO QA | 2026-10-07 11:50:55 KST | 328baaaf702f42687204b9d904815676479ae3e0 / cqc-apple-separate12-focal-v2-cal-20260930 | [E2] 관찰=통과; 범위=전체; E2 project=cqc-mo09-e2-final-20261007; evidence=restart-evidence.json; all expected checks passed |
+| QA-IMG-07 | MO | 통과 | MO QA | 2026-10-07 11:50:55 KST | 328baaaf702f42687204b9d904815676479ae3e0 / cqc-apple-separate12-focal-v2-cal-20260930 | [E2] 관찰=통과; 범위=전체; E2 project=cqc-mo09-e2-final-20261007; evidence=restart-evidence.json; all expected checks passed |
+| QA-SIM-08 | MO | 통과 | MO QA | 2026-10-07 11:51:55 KST | 328baaaf702f42687204b9d904815676479ae3e0 / cqc-apple-separate12-focal-v2-cal-20260930 | [E2] 관찰=통과; 범위=전체; E2 project=cqc-mo09-e2-final-20261007; evidence=restart-evidence.json; all expected checks passed |

@@ -1,0 +1,15 @@
+{
+  "actor": "Hong Yuna",
+  "json_files": 30,
+  "ops13_checks": 18,
+  "ops13_all_passed": true,
+  "compose_checks": 12,
+  "compose_all_passed": true,
+  "historical_sources_byte_identical": true,
+  "raw_http_byte_identical": true,
+  "script_syntax": "valid",
+  "sim05_planned_requests": 10,
+  "runtime_qa_executed": false,
+  "official_qa_records_changed": false,
+  "scope": "Read-only deployment/CSV verification, preserved evidence audit, unexecuted isolated configuration and plans."
+}

@@ -1,0 +1,62 @@
+{
+  "scope": "MO evidence for SIM-06/09 only, not every remaining BE QA case",
+  "official_backend_pass_count": 37,
+  "official_backend_case_count": 44,
+  "official_qa_changed": false,
+  "new_test": false,
+  "conditions": [
+    {
+      "case": "SIM-06",
+      "condition": "Individual control rows / ordered fallback / retry absence",
+      "available": "Original E2 summary/counts; additionally Git SIM07 WSL ALL CONTROL_REJECTED5 inspections/9 individual control rows, INFERENCE_TIMEOUT6 inspections/6 individual control rows with command/attempt/bin/response/time; separate BE10 final Mock NO_RESPONSE/FAILED API+Inspection DB+CSV1 each, not command rows; NEW actual E1 NO_RESPONSE11 command rows+11 inspection/error rows, command ID/attempt1/bin/response/time, and known E1 inference timeout/error2 command rows",
+      "missing": "Original E2 rows and actual FAILED command rows; no-response E1 reuse/WSL ALL to Docker NEXT acceptance and NEXT clearing proof; unrecorded-call tracing distinct from saved rows",
+      "state": "PARTIAL; actual E1 NO_RESPONSE individual rows now acquired, reuse pending; FAILED incomplete"
+    },
+    {
+      "case": "SIM-06",
+      "condition": "No-response excluded from successful-bin statistics",
+      "available": "Original NO_RESPONSE public status plus E1 OPS10 CSV11 public NO_RESPONSE rows; no before/after successful-bin counts; BE10 final aggregate EFFECTS-AUDIT present, no successful-bin before/after assertion/export",
+      "missing": "Same-run before/after successful-bin counts",
+      "state": "INCOMPLETE"
+    },
+    {
+      "case": "SIM-06",
+      "condition": "DB_ERROR inspection/log/recovery linkage",
+      "available": "NEXT revision5->6, fault_row=null, following normal ID",
+      "missing": "Target fault inspection ID and failed-save log linked to it",
+      "state": "INCOMPLETE"
+    },
+    {
+      "case": "SIM-06",
+      "condition": "Inference image proof",
+      "available": "E2 image counts12 each; E1 TIMEOUT full metadata/IDs12, imageIndex0..11 recovered",
+      "missing": "Same E2 per-image metadata/bytes hashes; complete ERROR12 list in examined E1 snapshot",
+      "state": "PARTIAL; E1 substitution pending"
+    },
+    {
+      "case": "SIM-09",
+      "condition": "Automatic processing/saving resumes",
+      "available": "lastSeenAt increased; manual recovery probe saved",
+      "missing": "Automatic inspection IDs and saved counts during recovery, 30s series",
+      "state": "INCOMPLETE"
+    },
+    {
+      "case": "SIM-09",
+      "condition": "Outage/recovery timing and public status",
+      "available": "20s sleep in collector code; sparse health samples",
+      "missing": "Actual stop/start completion times and components.Simulator.status series",
+      "state": "INCOMPLETE"
+    },
+    {
+      "case": "SIM-09",
+      "condition": "No Backend/Simulator restart",
+      "available": "Same container IDs, one uptime sample",
+      "missing": "StartedAt/RestartCount/events before and after complete trial",
+      "state": "INCOMPLETE"
+    }
+  ],
+  "external_access_limit": "User confirms no shared path; BE published core Git files inspected at 9723907. BE README says originals selectively preserved; unshared omitted originals not accessible here.",
+  "git_review": "../git-review/source-index.json",
+  "deeper_review": "../deeper-pass/be10-source-review.json",
+  "new_ten_pass_review": "../ten-pass/summary.json"
+}

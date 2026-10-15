@@ -1,0 +1,152 @@
+[
+  {
+    "window": "initial-snapshot",
+    "access_response_count": 36,
+    "route_counts": [
+      {
+        "peer_ip": "127.0.0.1",
+        "method": "GET",
+        "route": "/health",
+        "status": 200,
+        "count": 7
+      },
+      {
+        "peer_ip": "172.20.0.1",
+        "method": "GET",
+        "route": "/health",
+        "status": 200,
+        "count": 1
+      },
+      {
+        "peer_ip": "172.20.0.6",
+        "method": "POST",
+        "route": "/v1/inspections",
+        "status": 200,
+        "count": 22
+      },
+      {
+        "peer_ip": "172.20.0.8",
+        "method": "GET",
+        "route": "/health",
+        "status": 200,
+        "count": 6
+      }
+    ],
+    "csv_response_count": 0,
+    "error_response_count": 0
+  },
+  {
+    "window": "gap-0946",
+    "access_response_count": 56,
+    "route_counts": [
+      {
+        "peer_ip": "127.0.0.1",
+        "method": "GET",
+        "route": "/health",
+        "status": 200,
+        "count": 1
+      },
+      {
+        "peer_ip": "172.20.0.1",
+        "method": "GET",
+        "route": "/v1/quality/inspections",
+        "status": 200,
+        "count": 3
+      },
+      {
+        "peer_ip": "172.20.0.6",
+        "method": "POST",
+        "route": "/v1/inspections",
+        "status": 200,
+        "count": 6
+      },
+      {
+        "peer_ip": "172.20.0.8",
+        "method": "GET",
+        "route": "/health",
+        "status": 200,
+        "count": 1
+      },
+      {
+        "peer_ip": "172.20.0.8",
+        "method": "GET",
+        "route": "/v1/quality/fault-images",
+        "status": 200,
+        "count": 5
+      },
+      {
+        "peer_ip": "172.20.0.8",
+        "method": "GET",
+        "route": "/v1/quality/previews/*",
+        "status": 200,
+        "count": 36
+      },
+      {
+        "peer_ip": "172.20.0.8",
+        "method": "GET",
+        "route": "/v1/quality/snapshot",
+        "status": 200,
+        "count": 4
+      }
+    ],
+    "csv_response_count": 0,
+    "error_response_count": 0
+  },
+  {
+    "window": "gap-0949",
+    "access_response_count": 124,
+    "route_counts": [
+      {
+        "peer_ip": "127.0.0.1",
+        "method": "GET",
+        "route": "/health",
+        "status": 200,
+        "count": 2
+      },
+      {
+        "peer_ip": "172.20.0.1",
+        "method": "GET",
+        "route": "/v1/quality/inspections",
+        "status": 200,
+        "count": 3
+      },
+      {
+        "peer_ip": "172.20.0.6",
+        "method": "POST",
+        "route": "/v1/inspections",
+        "status": 200,
+        "count": 7
+      },
+      {
+        "peer_ip": "172.20.0.8",
+        "method": "GET",
+        "route": "/health",
+        "status": 200,
+        "count": 2
+      },
+      {
+        "peer_ip": "172.20.0.8",
+        "method": "GET",
+        "route": "/v1/quality/fault-images",
+        "status": 200,
+        "count": 13
+      },
+      {
+        "peer_ip": "172.20.0.8",
+        "method": "GET",
+        "route": "/v1/quality/previews/*",
+        "status": 200,
+        "count": 84
+      },
+      {
+        "peer_ip": "172.20.0.8",
+        "method": "GET",
+        "route": "/v1/quality/snapshot",
+        "status": 200,
+        "count": 13
+      }
+    ],
+    "csv_response_count": 0,
+    "error_response_count": 0
+  }
+]

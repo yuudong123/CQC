@@ -1,0 +1,204 @@
+{
+  "services": {
+    "mysql": {
+      "image": "sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a",
+      "pull_policy": "never",
+      "restart": "no",
+      "networks": [
+        "qa"
+      ],
+      "working_dir": "/",
+      "command": [
+        "mysqld"
+      ],
+      "entrypoint": [
+        "docker-entrypoint.sh"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "MYSQL_PWD=\"$$MYSQL_ROOT_PASSWORD\" mysql --protocol=TCP -h127.0.0.1 -uroot -Nse \"SELECT 1\" >/dev/null 2>&1"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "start_period": "300s",
+        "retries": 5
+      },
+      "environment": {
+        "MYSQL_DATABASE": "cqc_mo103_qa",
+        "MYSQL_USER": "cqc_mo103_qa",
+        "MYSQL_PASSWORD": "${CQC_QA_MYSQL_PASSWORD:?Set a dedicated QA password}",
+        "MYSQL_ROOT_PASSWORD": "${CQC_QA_MYSQL_ROOT_PASSWORD:?Set a dedicated QA root password}"
+      },
+      "volumes": [
+        "qa_mysql:/var/lib/mysql"
+      ]
+    },
+    "inference": {
+      "image": "sha256:2981744a4c3862fde22ee7c265797134574f8a84105baa1bb1eec1822c63ce9d",
+      "pull_policy": "never",
+      "restart": "no",
+      "networks": [
+        "qa"
+      ],
+      "working_dir": "/app",
+      "command": [
+        "python",
+        "-m",
+        "src.inference.api",
+        "--model-dir",
+        "/app/models/approved",
+        "--device",
+        "cpu",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8001"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=3)"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "start_period": "60s",
+        "retries": 5
+      },
+      "environment": {
+        "LOG_DIR": "/var/log/cqc"
+      },
+      "volumes": [
+        "qa_inference_logs:/var/log/cqc"
+      ],
+      "ports": [
+        "127.0.0.1:28001:8001"
+      ]
+    },
+    "backend": {
+      "image": "sha256:f682fe6f081db7b511b18dc820b600674d26f97abd6a747921fe03ea946af157",
+      "pull_policy": "never",
+      "restart": "no",
+      "networks": [
+        "qa"
+      ],
+      "working_dir": "/app",
+      "command": [
+        "sh",
+        "-c",
+        "alembic upgrade head && python -m src.api.main"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "start_period": "15s",
+        "retries": 5
+      },
+      "environment": {
+        "INFERENCE_CLIENT_MODE": "http",
+        "INFERENCE_URL": "http://inference:8001/v1/predict",
+        "INFERENCE_CONNECT_TIMEOUT_MS": "200",
+        "CULTIVAR_CONFIDENCE_THRESHOLD": "0.50",
+        "QUALITY_CONFIDENCE_THRESHOLD": "0.60",
+        "SIMULATOR_INTERNAL_URL": "http://simulator:8002",
+        "FAULT_IMAGE_STORAGE_ROOT": "/data/fault-images",
+        "DATABASE_URL": "mysql+pymysql://cqc_mo103_qa:${CQC_QA_MYSQL_PASSWORD:?Set a dedicated QA password}@mysql:3306/cqc_mo103_qa",
+        "SIMULATOR_FAULT_TOKEN": "${CQC_QA_FAULT_TOKEN:?Set a dedicated QA token}",
+        "LOG_DIR": "/var/log/cqc"
+      },
+      "depends_on": {
+        "mysql": {
+          "condition": "service_healthy"
+        },
+        "inference": {
+          "condition": "service_healthy"
+        }
+      },
+      "ports": [
+        "127.0.0.1:28000:8000"
+      ],
+      "volumes": [
+        "qa_fault_images:/data/fault-images",
+        "qa_backend_logs:/var/log/cqc"
+      ]
+    },
+    "simulator": {
+      "image": "sha256:cce3135089712dbdfccc4bc1c5d379a97a3c3d6afb4c732e34e497d90afc51eb",
+      "pull_policy": "never",
+      "restart": "no",
+      "networks": [
+        "qa"
+      ],
+      "working_dir": "/app",
+      "command": [
+        "python",
+        "-m",
+        "src.simulator.main"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import json, time, urllib.request; data = json.load(urllib.request.urlopen('http://127.0.0.1:8002/health', timeout=3)); assert data['status'] == 'ok' and data['running'] is True; assert data['lastSeenAt'] is not None and 0 <= time.time() * 1000 - data['lastSeenAt'] <= 30000"
+        ],
+        "interval": "10s",
+        "timeout": "5s",
+        "start_period": "20s",
+        "retries": 5
+      },
+      "environment": {
+        "SIMULATOR_DATASET_ROOT": "/data/dataset",
+        "SIMULATOR_BRIX_CSV_PATH": "/data/dataset/demo-virtual-brix.csv",
+        "SIMULATOR_POSITION_PATH": "/data/state/position.json",
+        "SIMULATOR_BACKEND_URL": "http://backend:8000",
+        "SIMULATOR_INTERVAL_MS": "2000",
+        "SIMULATOR_FAULT_TOKEN": "${CQC_QA_FAULT_TOKEN:?Set a dedicated QA token}",
+        "LOG_DIR": "/var/log/cqc"
+      },
+      "depends_on": {
+        "backend": {
+          "condition": "service_healthy"
+        }
+      },
+      "ports": [
+        "127.0.0.1:28002:8002"
+      ],
+      "volumes": [
+        {
+          "type": "volume",
+          "source": "dataset",
+          "target": "/data/dataset",
+          "read_only": true
+        },
+        "qa_position:/data/state",
+        "qa_simulator_logs:/var/log/cqc"
+      ]
+    }
+  },
+  "networks": {
+    "qa": {
+      "internal": true
+    }
+  },
+  "volumes": {
+    "qa_mysql": {},
+    "qa_fault_images": {},
+    "qa_position": {},
+    "qa_backend_logs": {},
+    "qa_inference_logs": {},
+    "qa_simulator_logs": {},
+    "dataset": {
+      "external": true,
+      "name": "cqc_simulator_dataset"
+    }
+  }
+}

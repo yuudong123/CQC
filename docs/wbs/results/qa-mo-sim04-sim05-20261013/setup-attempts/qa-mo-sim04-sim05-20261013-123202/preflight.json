@@ -1,0 +1,17 @@
+{
+  "project": "cqc-mo103-sim0405-20261013-122650",
+  "checks": "All configured isolation/image/port assertions passed",
+  "services": [
+    "mysql",
+    "inference",
+    "backend",
+    "simulator"
+  ],
+  "disk_free_bytes": {
+    "C:/": 17266065408,
+    "D:/": 351901786112
+  },
+  "shared_resource_limit": "Shares host CPU/RAM/disk with E1; separate network/DB/position/images/logs",
+  "no_build": true,
+  "no_pull": true
+}

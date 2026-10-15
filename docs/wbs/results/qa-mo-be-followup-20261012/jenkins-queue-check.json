@@ -1,0 +1,12 @@
+{
+  "api": {
+    "accessible": false,
+    "error": "HTTP Error 403: Forbidden"
+  },
+  "persisted_queue": {
+    "root": "hudson.model.Queue_-State",
+    "item_count": 0,
+    "task_names": []
+  },
+  "limits": "Persisted queue is not a live executor/queue assertion."
+}

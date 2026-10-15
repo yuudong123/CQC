@@ -1,0 +1,25 @@
+﻿{
+    "execution_count":  1,
+    "D_before_GiB":  448.40468597412109,
+    "post_test_database_reset":  false,
+    "qa_documents_updated":  false,
+    "log_sha256":  "b6cd139c8a0fd09c872733465a0ee5588adc66448a81f5170e663cd8f1489a9b",
+    "command":  "python -m pytest tests/api -k mysql -q -rs -p no:cacheprovider",
+    "github_updated":  false,
+    "C_before_GiB":  5.3187942504882813,
+    "D_after_GiB":  448.4046745300293,
+    "C_after_GiB":  4.3110923767089844,
+    "result":  {
+                   "collected_from_totals":  510,
+                   "selected":  13,
+                   "deselected":  497,
+                   "passed":  13,
+                   "failed":  0,
+                   "errors":  0,
+                   "skipped":  0,
+                   "warnings":  1,
+                   "duration_seconds":  12.62,
+                   "exit_code":  0
+               },
+    "source_sha":  "0094807a159e4bedadd2700fd689b3c848ee803f"
+}

@@ -1,0 +1,128 @@
+{
+  "started_kst": "2026-10-12T16:25:13.080518+09:00",
+  "finished_kst": "2026-10-12T16:25:15.501190+09:00",
+  "snapshot_at": 1791789913080,
+  "date_kst": "2026-10-12",
+  "actor": "홍유나",
+  "precondition": "User confirmed no measurement/server QA/new build in this chat before reading CSV.",
+  "requests": [
+    {
+      "label": "date_free_csv",
+      "path": "/v1/quality/statistics.csv?snapshotAt=1791789913080",
+      "http_status": 200,
+      "elapsed_seconds": 1.185755,
+      "response_headers": {
+        "cache-control": "no-store",
+        "content-disposition": "attachment; filename=\"cqc-statistics.csv\"",
+        "content-type": "text/csv; charset=utf-8"
+      }
+    },
+    {
+      "label": "same_day_json",
+      "path": "/v1/quality/statistics?from=2026-10-12&to=2026-10-12&snapshotAt=1791789913080",
+      "http_status": 200,
+      "elapsed_seconds": 1.070808,
+      "response_headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store"
+      }
+    }
+  ],
+  "rows": 87,
+  "suspicions": {
+    "CULTIVAR_SUSPECT": "0",
+    "QUALITY_SUSPECT": "0",
+    "OTHER": "0"
+  },
+  "same_day_json_suspicions": {},
+  "today": {
+    "total": "11097",
+    "normal": "11068",
+    "excluded": "29",
+    "reinspection": "1179",
+    "reinspection_ratio": "0.10624493106244931",
+    "average_inference_ms": "171.5021681423925"
+  },
+  "section_checks": {
+    "grades": {
+      "csv": {
+        "상": 3568.0,
+        "특": 3859.0,
+        "보통": 3641.0
+      },
+      "json": {
+        "상": 3568.0,
+        "특": 3859.0,
+        "보통": 3641.0
+      },
+      "equal": true
+    },
+    "varieties": {
+      "csv": {
+        "부사": 5933.0,
+        "양광": 5135.0
+      },
+      "json": {
+        "부사": 5933.0,
+        "양광": 5135.0
+      },
+      "equal": true
+    },
+    "bins": {
+      "csv": {
+        "TEST_REINSPECTION_BIN": 1179.0,
+        "DEMO_BIN_09": 596.0,
+        "DEMO_BIN_08": 965.0,
+        "DEMO_BIN_01": 881.0,
+        "DEMO_BIN_10": 519.0,
+        "DEMO_BIN_05": 863.0,
+        "DEMO_BIN_03": 617.0,
+        "DEMO_BIN_02": 791.0,
+        "DEMO_BIN_04": 1364.0,
+        "DEMO_BIN_12": 1098.0,
+        "DEMO_BIN_07": 759.0,
+        "DEMO_BIN_11": 638.0,
+        "DEMO_BIN_06": 827.0
+      },
+      "json": {
+        "TEST_REINSPECTION_BIN": 1179.0,
+        "DEMO_BIN_09": 596.0,
+        "DEMO_BIN_08": 965.0,
+        "DEMO_BIN_01": 881.0,
+        "DEMO_BIN_10": 519.0,
+        "DEMO_BIN_05": 863.0,
+        "DEMO_BIN_03": 617.0,
+        "DEMO_BIN_02": 791.0,
+        "DEMO_BIN_04": 1364.0,
+        "DEMO_BIN_12": 1098.0,
+        "DEMO_BIN_07": 759.0,
+        "DEMO_BIN_11": 638.0,
+        "DEMO_BIN_06": 827.0
+      },
+      "equal": true
+    }
+  },
+  "checks": {
+    "bom": true,
+    "crlf_only": true,
+    "header": true,
+    "all_cells_quoted": true,
+    "mode_backend": true,
+    "three_suspicions_once": true,
+    "suspicions_match_json": true,
+    "sections_present": true,
+    "grades_match_json": true,
+    "varieties_match_json": true,
+    "bins_match_json": true,
+    "today_total_match_json": true,
+    "today_normal_match_json": true,
+    "today_excluded_match_json": true,
+    "today_reinspection_match_json": true,
+    "reinspection_ratio": true,
+    "jenkins_still_143": true,
+    "average_inference_ms_match_json": true
+  },
+  "all_checks_passed": true,
+  "scope": "One date-free CSV plus matching same-day JSON; historical period/minute CSV evidence reused, no new inspection, settings or DB write.",
+  "result_for_be": "Read-only evidence for BE final QA-OPS-13 judgment; no official QA record or #65 FAIL changed."
+}

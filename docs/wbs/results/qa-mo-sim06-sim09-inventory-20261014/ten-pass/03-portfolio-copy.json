@@ -1,0 +1,10 @@
+{
+  "round": 3,
+  "at_kst": "2026-10-14T12:41:02.468883+09:00",
+  "title": "Portfolio checkout ignored QA/evidence files compared to main workspace",
+  "checked_files": 341,
+  "different_files": 0,
+  "files": [],
+  "condition_matches_in_different_files": [],
+  "new_raw_bundle_found": false
+}

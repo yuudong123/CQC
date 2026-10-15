@@ -1,0 +1,371 @@
+{
+  "INSPECTIONS": [
+    {
+      "inspection_id": "04729f9a-4b96-49e0-94d8-dc2da26b3287",
+      "source_reference": "demo-601031015000-004",
+      "created_at": "2026-10-08 01:16:03.941",
+      "completed_at": "2026-10-08 01:16:04.731",
+      "inspection_status": "COMPLETED",
+      "target_bin_code": "DEMO_BIN_01",
+      "control_status": "NO_RESPONSE",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "used_frame_count": "12",
+      "model_name": "mobilenet_v3_small_multiview",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930"
+    },
+    {
+      "inspection_id": "0a2bf277-71fa-4789-b7dc-bbd880377e41",
+      "source_reference": "demo-601033011000-005",
+      "created_at": "2026-10-08 01:15:49.951",
+      "completed_at": "2026-10-08 01:15:50.926",
+      "inspection_status": "COMPLETED",
+      "target_bin_code": "DEMO_BIN_06",
+      "control_status": "NO_RESPONSE",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "used_frame_count": "12",
+      "model_name": "mobilenet_v3_small_multiview",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930"
+    },
+    {
+      "inspection_id": "55f7651f-a917-49f2-a6f1-bb16f8399ba9",
+      "source_reference": "demo-601142012000-006",
+      "created_at": "2026-10-08 01:15:53.897",
+      "completed_at": "2026-10-08 01:15:54.731",
+      "inspection_status": "COMPLETED",
+      "target_bin_code": "DEMO_BIN_10",
+      "control_status": "NO_RESPONSE",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "used_frame_count": "12",
+      "model_name": "mobilenet_v3_small_multiview",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930"
+    },
+    {
+      "inspection_id": "7cc9eff1-08eb-4beb-bcdc-6e39a0c41382",
+      "source_reference": "demo-601033012000-001",
+      "created_at": "2026-10-08 01:16:06.183",
+      "completed_at": "2026-10-08 01:16:07.255",
+      "inspection_status": "COMPLETED",
+      "target_bin_code": "DEMO_BIN_06",
+      "control_status": "NO_RESPONSE",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "used_frame_count": "12",
+      "model_name": "mobilenet_v3_small_multiview",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930"
+    },
+    {
+      "inspection_id": "87779173-6c0d-4d46-925e-ff65287b0120",
+      "source_reference": "demo-601031002000-004",
+      "created_at": "2026-10-08 01:15:59.977",
+      "completed_at": "2026-10-08 01:16:00.873",
+      "inspection_status": "COMPLETED",
+      "target_bin_code": "DEMO_BIN_02",
+      "control_status": "NO_RESPONSE",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "used_frame_count": "12",
+      "model_name": "mobilenet_v3_small_multiview",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930"
+    },
+    {
+      "inspection_id": "8c4c4ef1-8f26-43ea-9b32-36ff36720dcf",
+      "source_reference": "demo-601143011000-003",
+      "created_at": "2026-10-08 01:16:01.913",
+      "completed_at": "2026-10-08 01:16:02.958",
+      "inspection_status": "COMPLETED",
+      "target_bin_code": "DEMO_BIN_12",
+      "control_status": "NO_RESPONSE",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "used_frame_count": "12",
+      "model_name": "mobilenet_v3_small_multiview",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930"
+    },
+    {
+      "inspection_id": "b3988a22-8397-4855-ad8e-bb5e171c18c1",
+      "source_reference": "demo-601143004000-002",
+      "created_at": "2026-10-08 01:15:51.973",
+      "completed_at": "2026-10-08 01:15:52.816",
+      "inspection_status": "COMPLETED",
+      "target_bin_code": "DEMO_BIN_11",
+      "control_status": "NO_RESPONSE",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "used_frame_count": "12",
+      "model_name": "mobilenet_v3_small_multiview",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930"
+    },
+    {
+      "inspection_id": "b7c645b4-eaf1-413e-a156-463ea50ebc26",
+      "source_reference": "demo-601032003000-004",
+      "created_at": "2026-10-08 01:14:54.004",
+      "completed_at": "2026-10-08 01:14:54.943",
+      "inspection_status": "COMPLETED",
+      "target_bin_code": "DEMO_BIN_04",
+      "control_status": "NO_RESPONSE",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "used_frame_count": "12",
+      "model_name": "mobilenet_v3_small_multiview",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930"
+    },
+    {
+      "inspection_id": "d9c1d8cf-e90e-429e-925f-e874c56b01b8",
+      "source_reference": "demo-601143005000-000",
+      "created_at": "2026-10-08 01:15:55.950",
+      "completed_at": "2026-10-08 01:15:56.788",
+      "inspection_status": "COMPLETED",
+      "target_bin_code": "DEMO_BIN_11",
+      "control_status": "NO_RESPONSE",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "used_frame_count": "12",
+      "model_name": "mobilenet_v3_small_multiview",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930"
+    },
+    {
+      "inspection_id": "dffb02c3-33e3-471b-a4a5-3ae129eb971e",
+      "source_reference": "demo-601031013000-002",
+      "created_at": "2026-10-08 01:15:58.025",
+      "completed_at": "2026-10-08 01:15:58.896",
+      "inspection_status": "COMPLETED",
+      "target_bin_code": "DEMO_BIN_01",
+      "control_status": "NO_RESPONSE",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "used_frame_count": "12",
+      "model_name": "mobilenet_v3_small_multiview",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930"
+    },
+    {
+      "inspection_id": "f2e1fe20-9fc3-4567-9c5e-8b7ec125edf8",
+      "source_reference": "demo-601033007000-003",
+      "created_at": "2026-10-08 01:16:07.945",
+      "completed_at": "2026-10-08 01:16:09.019",
+      "inspection_status": "COMPLETED",
+      "target_bin_code": "DEMO_BIN_05",
+      "control_status": "NO_RESPONSE",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "used_frame_count": "12",
+      "model_name": "mobilenet_v3_small_multiview",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930"
+    }
+  ],
+  "CONTROLS": [
+    {
+      "id": "68076",
+      "command_id": "e5c8ba52-f6a8-4a05-ae1a-a208a0a05140",
+      "inspection_id": "04729f9a-4b96-49e0-94d8-dc2da26b3287",
+      "attempt_no": "1",
+      "requested_bin_code": "DEMO_BIN_01",
+      "command_type": "ROUTE_TO_BIN",
+      "control_status": "NO_RESPONSE",
+      "requested_at": "2026-10-08 01:16:04.731",
+      "responded_at": "2026-10-08 01:16:04.731",
+      "response_time_ms": "0.046",
+      "failure_reason": "NULL"
+    },
+    {
+      "id": "68069",
+      "command_id": "688892b9-99b6-4bb8-a7ee-d1ef314eee10",
+      "inspection_id": "0a2bf277-71fa-4789-b7dc-bbd880377e41",
+      "attempt_no": "1",
+      "requested_bin_code": "DEMO_BIN_06",
+      "command_type": "ROUTE_TO_BIN",
+      "control_status": "NO_RESPONSE",
+      "requested_at": "2026-10-08 01:15:50.926",
+      "responded_at": "2026-10-08 01:15:50.926",
+      "response_time_ms": "0.054",
+      "failure_reason": "NULL"
+    },
+    {
+      "id": "68071",
+      "command_id": "df8f2381-357e-4767-95f6-7ceeda7f26dd",
+      "inspection_id": "55f7651f-a917-49f2-a6f1-bb16f8399ba9",
+      "attempt_no": "1",
+      "requested_bin_code": "DEMO_BIN_10",
+      "command_type": "ROUTE_TO_BIN",
+      "control_status": "NO_RESPONSE",
+      "requested_at": "2026-10-08 01:15:54.730",
+      "responded_at": "2026-10-08 01:15:54.730",
+      "response_time_ms": "0.049",
+      "failure_reason": "NULL"
+    },
+    {
+      "id": "68077",
+      "command_id": "243b949f-0bc4-47b2-8183-543631780e94",
+      "inspection_id": "7cc9eff1-08eb-4beb-bcdc-6e39a0c41382",
+      "attempt_no": "1",
+      "requested_bin_code": "DEMO_BIN_06",
+      "command_type": "ROUTE_TO_BIN",
+      "control_status": "NO_RESPONSE",
+      "requested_at": "2026-10-08 01:16:07.255",
+      "responded_at": "2026-10-08 01:16:07.255",
+      "response_time_ms": "0.077",
+      "failure_reason": "NULL"
+    },
+    {
+      "id": "68074",
+      "command_id": "ba006b7a-67a1-4f43-b558-c010a180736b",
+      "inspection_id": "87779173-6c0d-4d46-925e-ff65287b0120",
+      "attempt_no": "1",
+      "requested_bin_code": "DEMO_BIN_02",
+      "command_type": "ROUTE_TO_BIN",
+      "control_status": "NO_RESPONSE",
+      "requested_at": "2026-10-08 01:16:00.873",
+      "responded_at": "2026-10-08 01:16:00.873",
+      "response_time_ms": "0.108",
+      "failure_reason": "NULL"
+    },
+    {
+      "id": "68075",
+      "command_id": "8cee4983-d78c-43ba-b7dc-a9fd298570ec",
+      "inspection_id": "8c4c4ef1-8f26-43ea-9b32-36ff36720dcf",
+      "attempt_no": "1",
+      "requested_bin_code": "DEMO_BIN_12",
+      "command_type": "ROUTE_TO_BIN",
+      "control_status": "NO_RESPONSE",
+      "requested_at": "2026-10-08 01:16:02.958",
+      "responded_at": "2026-10-08 01:16:02.958",
+      "response_time_ms": "0.043",
+      "failure_reason": "NULL"
+    },
+    {
+      "id": "68070",
+      "command_id": "d3bc5014-b04f-4edc-a641-4a637dc4a314",
+      "inspection_id": "b3988a22-8397-4855-ad8e-bb5e171c18c1",
+      "attempt_no": "1",
+      "requested_bin_code": "DEMO_BIN_11",
+      "command_type": "ROUTE_TO_BIN",
+      "control_status": "NO_RESPONSE",
+      "requested_at": "2026-10-08 01:15:52.816",
+      "responded_at": "2026-10-08 01:15:52.816",
+      "response_time_ms": "0.050",
+      "failure_reason": "NULL"
+    },
+    {
+      "id": "68041",
+      "command_id": "60653d89-57ed-4aac-b970-1948b55d26c3",
+      "inspection_id": "b7c645b4-eaf1-413e-a156-463ea50ebc26",
+      "attempt_no": "1",
+      "requested_bin_code": "DEMO_BIN_04",
+      "command_type": "ROUTE_TO_BIN",
+      "control_status": "NO_RESPONSE",
+      "requested_at": "2026-10-08 01:14:54.943",
+      "responded_at": "2026-10-08 01:14:54.943",
+      "response_time_ms": "0.072",
+      "failure_reason": "NULL"
+    },
+    {
+      "id": "68072",
+      "command_id": "f65f45be-965e-488a-b6f7-648f9384a00e",
+      "inspection_id": "d9c1d8cf-e90e-429e-925f-e874c56b01b8",
+      "attempt_no": "1",
+      "requested_bin_code": "DEMO_BIN_11",
+      "command_type": "ROUTE_TO_BIN",
+      "control_status": "NO_RESPONSE",
+      "requested_at": "2026-10-08 01:15:56.788",
+      "responded_at": "2026-10-08 01:15:56.788",
+      "response_time_ms": "0.071",
+      "failure_reason": "NULL"
+    },
+    {
+      "id": "68073",
+      "command_id": "33e814bd-0bee-4d93-adb5-64b0fe268f10",
+      "inspection_id": "dffb02c3-33e3-471b-a4a5-3ae129eb971e",
+      "attempt_no": "1",
+      "requested_bin_code": "DEMO_BIN_01",
+      "command_type": "ROUTE_TO_BIN",
+      "control_status": "NO_RESPONSE",
+      "requested_at": "2026-10-08 01:15:58.896",
+      "responded_at": "2026-10-08 01:15:58.896",
+      "response_time_ms": "0.140",
+      "failure_reason": "NULL"
+    },
+    {
+      "id": "68078",
+      "command_id": "3cf4ca0c-939f-49e4-aeab-85268cf4b15a",
+      "inspection_id": "f2e1fe20-9fc3-4567-9c5e-8b7ec125edf8",
+      "attempt_no": "1",
+      "requested_bin_code": "DEMO_BIN_05",
+      "command_type": "ROUTE_TO_BIN",
+      "control_status": "NO_RESPONSE",
+      "requested_at": "2026-10-08 01:16:09.019",
+      "responded_at": "2026-10-08 01:16:09.019",
+      "response_time_ms": "0.053",
+      "failure_reason": "NULL"
+    }
+  ],
+  "ERRORS": [
+    {
+      "inspection_id": "04729f9a-4b96-49e0-94d8-dc2da26b3287",
+      "component": "virtual_control",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "occurred_at": "2026-10-08 01:16:04.731"
+    },
+    {
+      "inspection_id": "0a2bf277-71fa-4789-b7dc-bbd880377e41",
+      "component": "virtual_control",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "occurred_at": "2026-10-08 01:15:50.926"
+    },
+    {
+      "inspection_id": "55f7651f-a917-49f2-a6f1-bb16f8399ba9",
+      "component": "virtual_control",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "occurred_at": "2026-10-08 01:15:54.730"
+    },
+    {
+      "inspection_id": "7cc9eff1-08eb-4beb-bcdc-6e39a0c41382",
+      "component": "virtual_control",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "occurred_at": "2026-10-08 01:16:07.255"
+    },
+    {
+      "inspection_id": "87779173-6c0d-4d46-925e-ff65287b0120",
+      "component": "virtual_control",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "occurred_at": "2026-10-08 01:16:00.873"
+    },
+    {
+      "inspection_id": "8c4c4ef1-8f26-43ea-9b32-36ff36720dcf",
+      "component": "virtual_control",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "occurred_at": "2026-10-08 01:16:02.958"
+    },
+    {
+      "inspection_id": "b3988a22-8397-4855-ad8e-bb5e171c18c1",
+      "component": "virtual_control",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "occurred_at": "2026-10-08 01:15:52.816"
+    },
+    {
+      "inspection_id": "b7c645b4-eaf1-413e-a156-463ea50ebc26",
+      "component": "virtual_control",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "occurred_at": "2026-10-08 01:14:54.943"
+    },
+    {
+      "inspection_id": "d9c1d8cf-e90e-429e-925f-e874c56b01b8",
+      "component": "virtual_control",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "occurred_at": "2026-10-08 01:15:56.788"
+    },
+    {
+      "inspection_id": "dffb02c3-33e3-471b-a4a5-3ae129eb971e",
+      "component": "virtual_control",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "occurred_at": "2026-10-08 01:15:58.896"
+    },
+    {
+      "inspection_id": "f2e1fe20-9fc3-4567-9c5e-8b7ec125edf8",
+      "component": "virtual_control",
+      "error_code": "CONTROL_NO_RESPONSE",
+      "occurred_at": "2026-10-08 01:16:09.019"
+    }
+  ]
+}

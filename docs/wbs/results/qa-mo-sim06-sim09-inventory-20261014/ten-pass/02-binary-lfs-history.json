@@ -1,0 +1,249 @@
+{
+  "round": 2,
+  "at_kst": "2026-10-14T12:41:10.748299+09:00",
+  "title": "Binary/archive/LFS evidence names across whole repository history",
+  "candidate_paths": 59,
+  "files": [
+    {
+      "blob": "861d4db1a43aaf29fb9c59d5192628b1bc9fe203",
+      "path": "docs/wbs/BE-10-2-local-evidence.jsonl"
+    },
+    {
+      "blob": "5d86bbda39cae4f61b8041146dfdfdfcbbdb6fc9",
+      "path": "docs/wbs/results/qa-be-auto01-linux-20261012/auto01-pytest.log"
+    },
+    {
+      "blob": "149deb6850882822b67c89cc1fa6ccb30d8b6d5f",
+      "path": "docs/wbs/results/qa-be-auto02-mysql-20261012/auto02-pytest.log"
+    },
+    {
+      "blob": "ad95fb52a47b1742c4a131195c62dd8e7e7356a6",
+      "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/auto01-windows-ci-scope.log"
+    },
+    {
+      "blob": "074ee89d1568a9f9eeb6bcee71eccd2988f6202e",
+      "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/auto01-windows-ci-scope.xml"
+    },
+    {
+      "blob": "fa138a9edaa61d47fe4ab3ad0ab0dd9bc2530193",
+      "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/auto01-windows-full.log"
+    },
+    {
+      "blob": "4af543d5bc6277ea56ed77d3fba217f7d37956c5",
+      "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/auto01-windows-full.xml"
+    },
+    {
+      "blob": "61a175f73eb9013ce92627264e02b3ad01f4b29a",
+      "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/ops10-inspections.csv"
+    },
+    {
+      "blob": "fb9ec432665d2419260868032920be7bd87736d2",
+      "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/ops13-statistics-today-after-restore.csv"
+    },
+    {
+      "blob": "2375a3004a732bbf2867b15fd814967e00fae073",
+      "path": "docs/wbs/results/qa-be-proxy-20261008/supplement/ops13-statistics-today-with-other.csv"
+    },
+    {
+      "blob": "96e4b4647443432f40dac2ee56a42095b02ba88a",
+      "path": "docs/wbs/results/qa-mo-be-followup-20261012/ops13-date-free-statistics.csv"
+    },
+    {
+      "blob": "c166500f1731e6703ce149735fa789754db7aeba",
+      "path": "docs/wbs/results/qa-mo-e1-delay-20261012/inspection-timing.csv"
+    },
+    {
+      "blob": "f3d349d25614beb8a00416b5578c161a7f62ef32",
+      "path": "docs/wbs/results/qa-mo-e1-delay-20261012/logs/gap-0946-backend.log"
+    },
+    {
+      "blob": "be9112fd0de84b8b46db7be38496ea1c3daf6fec",
+      "path": "docs/wbs/results/qa-mo-e1-delay-20261012/logs/gap-0946-inference.log"
+    },
+    {
+      "blob": "3054d25569cba8dcc4b4b9e7eb46b151bdd57d82",
+      "path": "docs/wbs/results/qa-mo-e1-delay-20261012/logs/gap-0946-simulator.log"
+    },
+    {
+      "blob": "7eeb5dbe263990d45283887050956eef4d015f2a",
+      "path": "docs/wbs/results/qa-mo-e1-delay-20261012/logs/gap-0949-backend.log"
+    },
+    {
+      "blob": "1170831100740420687c898f8e1be9d8c2fcd7e5",
+      "path": "docs/wbs/results/qa-mo-e1-delay-20261012/logs/gap-0949-inference.log"
+    },
+    {
+      "blob": "4c21802bbedc43a4b93943fffd8319cdfca55e8a",
+      "path": "docs/wbs/results/qa-mo-e1-delay-20261012/logs/gap-0949-simulator.log"
+    },
+    {
+      "blob": "7dce241423f3aaa7ed101f23f1567d3d8e0b0a38",
+      "path": "docs/wbs/results/qa-mo-e1-delay-20261012/logs/initial-snapshot-backend.log"
+    },
+    {
+      "blob": "3be17361bed679c715fcbe580d1960cee4af2d8f",
+      "path": "docs/wbs/results/qa-mo-e1-delay-20261012/logs/initial-snapshot-inference.log"
+    },
+    {
+      "blob": "ecab69478bf0759f361496cb7b6f38b7666b415c",
+      "path": "docs/wbs/results/qa-mo-e1-delay-20261012/logs/initial-snapshot-simulator.log"
+    },
+    {
+      "blob": "6eca6f0a0ab06a00a5d8ce0a6a9da5d6ec13994a",
+      "path": "docs/wbs/results/qa-mo-e1-delay-20261012/mysql-result.jsonl"
+    },
+    {
+      "blob": "41882315ba73d4e0824120aafc5c1457e21d5aad",
+      "path": "docs/wbs/results/qa-mo-e1-delay-20261012/query.sql"
+    },
+    {
+      "blob": "db544de3f5e5acb21df4196673287918a07da4d0",
+      "path": "docs/wbs/results/qa-mo-ins14-ins17-20261012/e1-fallback-control-table.csv"
+    },
+    {
+      "blob": "00bb6026ff424bb8bc1e5bad9cfd8bac17b1a300",
+      "path": "docs/wbs/results/qa-mo-ins14-ins17-20261012/mysql-result.jsonl"
+    },
+    {
+      "blob": "210ef7962dd20c3836c2fbe19f180b69730db61b",
+      "path": "docs/wbs/results/qa-mo-ins14-ins17-20261012/query.sql"
+    },
+    {
+      "blob": "b92b2cb59ddab17f9ca4d355111488c862a2ecd2",
+      "path": "docs/wbs/results/qa-mo-sim03-sim12-docker-20261014/backend.log"
+    },
+    {
+      "blob": "77d00e54ec9111e3dc30122f3ad82747daa5457a",
+      "path": "docs/wbs/results/qa-mo-sim03-sim12-docker-20261014/inference.log"
+    },
+    {
+      "blob": "cfb54fed0979696a0dcf9bec8f61f4767e9b47e7",
+      "path": "docs/wbs/results/qa-mo-sim03-sim12-docker-20261014/mysql.log"
+    },
+    {
+      "blob": "b5a3e93d51829642311f7b50c5022d8262220487",
+      "path": "docs/wbs/results/qa-mo-sim03-sim12-docker-20261014/qa-database.sql"
+    },
+    {
+      "blob": "0ff5a792e78410420fdd31dddea2faae790615b7",
+      "path": "docs/wbs/results/qa-mo-sim03-sim12-docker-20261014/setup-attempts/qa-mo-sim03-sim12-20261014-093128/inference.log"
+    },
+    {
+      "blob": "16276ebafaeda99dcc95d0a438ef9b558fd16ba1",
+      "path": "docs/wbs/results/qa-mo-sim03-sim12-docker-20261014/setup-attempts/qa-mo-sim03-sim12-20261014-093128/mysql.log"
+    },
+    {
+      "blob": "078826e3a7dce57dacdbff45cc11ee7aa46cd527",
+      "path": "docs/wbs/results/qa-mo-sim03-sim12-docker-20261014/setup-attempts/qa-mo-sim03-sim12-20261014-093341/inference.log"
+    },
+    {
+      "blob": "10c2d10df0965b0968055e38d0768be3ef304cc7",
+      "path": "docs/wbs/results/qa-mo-sim03-sim12-docker-20261014/setup-attempts/qa-mo-sim03-sim12-20261014-093341/mysql.log"
+    },
+    {
+      "blob": "64858699bcdd418ca6d0be46ea27e8c5a768174e",
+      "path": "docs/wbs/results/qa-mo-sim03-sim12-docker-20261014/simulator.log"
+    },
+    {
+      "blob": "89048d6138d22ee56f5df17b60506a21fb947667",
+      "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/backend.log"
+    },
+    {
+      "blob": "16fc07440adf392e5010c10eea4ca0767b491edb",
+      "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/inference.log"
+    },
+    {
+      "blob": "18a329f752e932d8df0518eac110ec71b85af5a0",
+      "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/mysql.log"
+    },
+    {
+      "blob": "6a69b105334f8dd5e6fecb723a6d1122a5c6532b",
+      "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/qa-database.sql"
+    },
+    {
+      "blob": "b25c78e766404f43b9a2818be6b3e11a8f69c866",
+      "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/setup-attempts/qa-mo-sim04-sim05-20261013-122650/backend.log"
+    },
+    {
+      "blob": "48f4df67ab54b7d766c7f47f383d77c9ad4af568",
+      "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/setup-attempts/qa-mo-sim04-sim05-20261013-122650/inference.log"
+    },
+    {
+      "blob": "a14b281c43e2cffe1be217c7f2266134827cf77c",
+      "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/setup-attempts/qa-mo-sim04-sim05-20261013-122650/mysql.log"
+    },
+    {
+      "blob": "33b6af4c17d3fb51900e1b06e52b7d8e32ff9dc1",
+      "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/setup-attempts/qa-mo-sim04-sim05-20261013-122650/qa-database.sql"
+    },
+    {
+      "blob": "04cc8126ee54d684a4bbb445c4d3e9d1ff0928e6",
+      "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/setup-attempts/qa-mo-sim04-sim05-20261013-123202/backend.log"
+    },
+    {
+      "blob": "155c313e889bba1aa71161c86650260d50d3fb3a",
+      "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/setup-attempts/qa-mo-sim04-sim05-20261013-123202/inference.log"
+    },
+    {
+      "blob": "449f624b9e864e8a02287723331e941e6092df86",
+      "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/setup-attempts/qa-mo-sim04-sim05-20261013-123202/mysql.log"
+    },
+    {
+      "blob": "43cb13a3d22cad593276ec02c08469ddcc0958a3",
+      "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/setup-attempts/qa-mo-sim04-sim05-20261013-123202/qa-database.sql"
+    },
+    {
+      "blob": "2fed85d7dc4f0f8b1a901aa35121f07261f4e877",
+      "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/setup-attempts/qa-mo-sim04-sim05-20261013-123202/simulator.log"
+    },
+    {
+      "blob": "ebd4167a6912d5a67dde3f6942eca407b41377a8",
+      "path": "docs/wbs/results/qa-mo-sim04-sim05-20261013/simulator.log"
+    },
+    {
+      "blob": "97b8663c01ca66ce1c3aea629088c231e2e6a8f0",
+      "path": "docs/wbs/results/qa-mo-sim06-sim09-inventory-20261014/deeper-pass/be10-effects-audit.jsonl"
+    },
+    {
+      "blob": "f24e9e75926778745ea5a2ca78ef8454a1c5c283",
+      "path": "docs/wbs/results/qa-mo-sim06-sim09-inventory-20261014/deeper-pass/be10-final-control-outcomes.jsonl"
+    },
+    {
+      "blob": "0b0522d5d874644486475f390e6b28ddffa330b2",
+      "path": "docs/wbs/results/qa-be-sim07-local-20261013/combined/backend-error.log"
+    },
+    {
+      "blob": "fefcf9110a422b62c800babba23bbc9f851373a5",
+      "path": "docs/wbs/results/qa-be-sim07-local-20261013/combined/review-targets.csv"
+    },
+    {
+      "blob": "7c14e8093a0d5eae00b03dff8b56d5e7ba7c9a90",
+      "path": "docs/wbs/results/qa-be-sim07-local-20261013/independent/backend-error.log"
+    },
+    {
+      "blob": "aff90885b1d5f99a52dd2bfc355e9858e599957d",
+      "path": "docs/wbs/results/qa-be-sim07-local-20261013/independent/target-inspections.csv"
+    },
+    {
+      "blob": "6b5d7a261098c0e9d6aa820861dace2e963c7a8f",
+      "path": "docs/wbs/results/qa-be-sim11-local-20261013/full-sequence.csv"
+    },
+    {
+      "blob": "fefedcc24beac938516a044bbe59be43429e5305",
+      "path": "docs/wbs/results/qa-be-sim11-local-20261013/progress.jsonl"
+    },
+    {
+      "blob": "faf755cce22229847ac89f74e86cd31b5552a25b",
+      "path": "docs/wbs/results/qa-be-sim12-local-20261013/http-supplement/events.jsonl"
+    },
+    {
+      "blob": "219f50193f87195fd16c93ce7dcad543ba9fae17",
+      "path": "docs/최종발표/assets/qa-sheet-sample-1014.jpg"
+    }
+  ],
+  "outside_docs_outputs": [],
+  "git_lfs_available": true,
+  "git_lfs_tracked_entries": [],
+  "new_raw_bundle_found": false,
+  "scope": "Names and LFS metadata only; did not download model/image data"
+}

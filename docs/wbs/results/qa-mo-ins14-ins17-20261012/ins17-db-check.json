@@ -1,0 +1,26 @@
+{
+  "inspection_id": "qa-e1-20261008-091125-45628a-ins08",
+  "inspection_rows": [
+    {
+      "kind": "inspection",
+      "created_at": "2026-10-08 00:11:29.543000",
+      "error_code": "INFERENCE_HTTP_ERROR",
+      "completed_at": "2026-10-08 00:11:29.860000",
+      "inspection_id": "qa-e1-20261008-091125-45628a-ins08",
+      "control_status": "SUCCEEDED",
+      "target_bin_code": "TEST_REINSPECTION_BIN",
+      "inspection_status": "REINSPECTION_REQUIRED",
+      "persistence_status": "SUCCEEDED"
+    }
+  ],
+  "inspection_error_rows": [
+    {
+      "id": 979,
+      "kind": "inspection_error",
+      "component": "inference",
+      "error_code": "INFERENCE_HTTP_ERROR",
+      "occurred_at": "2026-10-08 00:11:29.856000",
+      "inspection_id": "qa-e1-20261008-091125-45628a-ins08"
+    }
+  ]
+}

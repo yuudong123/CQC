@@ -1,0 +1,38 @@
+{
+  "active_context": "desktop-linux",
+  "containers": [
+    "cqc-cicd-simulator-1\tUp About an hour (healthy)",
+    "cqc-cicd-logistics-web-1\tUp About an hour (healthy)",
+    "cqc-cicd-backend-1\tUp About an hour (healthy)",
+    "cqc-cicd-inference-1\tUp About an hour (healthy)",
+    "cqc-cicd-logistics-api-1\tUp About an hour (healthy)",
+    "cqc-cicd-mysql-1\tUp 4 hours (healthy)",
+    "cqc-cicd-logistics-mongodb-1\tUp 4 hours (healthy)",
+    "ai-model-api\tExited (255) 3 weeks ago",
+    "jenkins\tUp 4 hours"
+  ],
+  "volumes": [
+    "1b00b0b087ff422c93d7aa34e4af5a5fc4ac0a69acc500e694694788b7bcafc7",
+    "6a4876fce9706cc803fcd3c46f0c3eb4c6c6107105d85efa91d43d6e2c181e3e",
+    "9fb31711d2058c2300357c4be36ce3e11806d10fe4cdb6f542868145b15297e9",
+    "429e630df6981211e4e978eecbf3f1ccbaa33fc764540cd6c9c65736af31c0dd",
+    "599ac233d0546df56889b596ae634323066b4a159a86f5636de752765154f2f1",
+    "612dc52384a067d286f65d98317ac00783ee140312630a9ac1a5f843b9ef1bf5",
+    "accc08edbf5b63fc2f5f5439d9d06ad83dde097517fca12a7c180999c90c3286",
+    "cqc-cicd_backend_logs",
+    "cqc-cicd_fault_images",
+    "cqc-cicd_inference_logs",
+    "cqc-cicd_logistics_mongodb_data",
+    "cqc-cicd_mysql_data",
+    "cqc-cicd_simulator_logs",
+    "cqc-cicd_simulator_state",
+    "cqc_mysql_data",
+    "cqc_simulator_dataset",
+    "e2519337e35010fdc8e41f4373f2735d4ffe51d20cc2b054fa6942f64adfa608",
+    "f5d120eab403b40dd7c646c530f4e3e382c098569be62857dfd16d2fe1afc643",
+    "jenkins_home",
+    "jenkins_home_data"
+  ],
+  "no_active_e2_mysql": true,
+  "note": "No E2 database server was started; disconnected volume contents and databases on other computers were not inspected."
+}

@@ -1,0 +1,19 @@
+{
+  "build": 155,
+  "result": "SUCCESS",
+  "source_sha": "9723907f2a9cd3c4cb747ca80bc9b72892e2d4d0",
+  "images": {
+    "mysql": "sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a",
+    "inference": "sha256:90043a53a8bf5ba9d85f3ebb4481c0201196823179261b52cb5ea78381776d2f",
+    "backend": "sha256:169228d055a076de75f1d4dee42a9a7c3e2dc877e36e86226b77cf41d764d99b",
+    "simulator": "sha256:e1bd01ab69e904497c99ca05578d9ddb218838072839beda8b88d07d82180125"
+  },
+  "build_image_matches": {
+    "backend": true,
+    "inference": true,
+    "simulator": true
+  },
+  "runtime_same_host": true,
+  "jenkins_live_queue_verified": false,
+  "schedule_authorization": "User explicitly requested SIM-03 unhealthy and SIM-12 Docker restart verification; latest Jenkins build SUCCESS checked before execution"
+}

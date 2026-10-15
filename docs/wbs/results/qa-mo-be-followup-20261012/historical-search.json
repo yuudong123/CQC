@@ -1,0 +1,28 @@
+{
+  "patterns": [
+    "5e85ae9c-0549-47a4-8445-eca477465a2e",
+    "dcec597f-4bc8-4b1f-bb2e-8f04a7476974",
+    "59927979-f841-45ea-ac1f-90c7537b3fae",
+    "0693b8aa-8328-4c5e-b7e8-907bdc6eb14b",
+    "29d70749-2320-4733-8be4-2a483e532851",
+    "351f479f-31e0-4647-b491-d75ceebc8a5a",
+    "0c07fa47-e9a4-443f-ae74-ab6675b58a08",
+    "e8b70f39-f7a9-4f16-8df6-b2219ef69d8f",
+    "b0d422ed-13fb-431a-b4a5-76b61bf2fab5",
+    "07aeb8cb-2bb8-42a6-9d89-ad270cc13cf1"
+  ],
+  "roots": [
+    "docs",
+    "outputs"
+  ],
+  "matched_paths": [
+    "outputs\\mo09-e2-faults-20261006\\results.json",
+    "outputs\\mo09-e2-faults-20261006\\all04-rows.md",
+    "outputs\\mo09-e2-detailed-20261006\\results.json",
+    "outputs\\mo09-e2-detailed-20261006\\fault-evidence.json",
+    "outputs\\mo09-e2-detailed-20261006\\all04-rows.md",
+    "docs\\wbs\\results\\mo09-qa-preliminary-20261006.json"
+  ],
+  "scope_limit": "Local text evidence only; other computers, WSL filesystems, offline DB volumes and binary archives were not examined.",
+  "excludes_new_generated_package": true
+}

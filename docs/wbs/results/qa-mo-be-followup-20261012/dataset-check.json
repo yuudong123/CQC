@@ -1,0 +1,10 @@
+{
+  "bundles": 869,
+  "first_bundle": "demo-601143002000-006",
+  "last_bundle": "demo-601141016000-000",
+  "first_frames": 12,
+  "last_frames": 12,
+  "index_sha256": "dc866e0ccd91f8cff9ce9a523d1707c4df678d564ace24016c5344537ba7e959",
+  "brix_sha256": "72377db48cc9ff5bd4f4978364e41b2c1e9807cb99eebb428a6a22f1a851c346",
+  "scope": "read existing index/CSV plus first and last bundle; not full 869-bundle runtime cycle"
+}

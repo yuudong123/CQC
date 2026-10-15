@@ -1,0 +1,80 @@
+[
+  {
+    "path": "outputs/qa-mo-be-followup-20261012.zip",
+    "sha256": "d95b7e510a0777d1bbaf2c1130287cf079707916c98c7af21b6c4317b8c5a077",
+    "members": 46,
+    "matches": [
+      {
+        "member": "qa-mo-be-followup-20261012/historical-detailed-fault-evidence.json",
+        "matching_ids": [
+          "d6d5d20c-02db-493d-8de4-baa3ca5434fd",
+          "5e85ae9c-0549-47a4-8445-eca477465a2e",
+          "dcec597f-4bc8-4b1f-bb2e-8f04a7476974",
+          "bb57f84e-dca3-4281-9c67-92d5273d7948",
+          "74927e8d-01e6-41e6-b257-8b866cbdabf7",
+          "0693b8aa-8328-4c5e-b7e8-907bdc6eb14b",
+          "a440c461-8225-4932-a641-b527e2232150",
+          "59927979-f841-45ea-ac1f-90c7537b3fae",
+          "29d70749-2320-4733-8be4-2a483e532851",
+          "61a0923e-bee6-4b5f-bba0-5b639c6c863b",
+          "581d56a1-337a-42cf-80c6-bb0fe574320c"
+        ]
+      },
+      {
+        "member": "qa-mo-be-followup-20261012/historical-earlier-fault-evidence.json",
+        "matching_ids": [
+          "1d5e2f82-d6f3-4779-9a17-fc2bbaeec8b9",
+          "ab56fdb5-3d2d-4b38-8cbc-4a7467d38a97",
+          "74e024ed-8f3e-4122-9a25-7f621aa7d8a0",
+          "827fb89f-059f-41cc-9166-b6eaefd339c8",
+          "ca4b28aa-6858-4b15-8ede-a8b0a0185be0",
+          "97e579a1-8473-4b04-91f0-11f7feb286cf",
+          "157d32e2-2975-45bd-a31e-4a876fa890e4",
+          "1f331621-4ee6-4bbd-a5ea-5b005b18aae6",
+          "1f396404-4325-4377-a2a7-81534e217a18",
+          "23913200-b757-4cc1-800f-2741299fa1fc",
+          "0096b353-151d-4160-8b6b-d0fa88e048b2"
+        ]
+      },
+      {
+        "member": "qa-mo-be-followup-20261012/historical-recovery-evidence.json",
+        "matching_ids": [
+          "qa-mo09-mysql-down-e87f0b64e1624fbc",
+          "qa-mo09-mysql-recovered-d6ecd322e9494b34"
+        ]
+      },
+      {
+        "member": "qa-mo-be-followup-20261012/historical-search.json",
+        "matching_ids": [
+          "5e85ae9c-0549-47a4-8445-eca477465a2e",
+          "dcec597f-4bc8-4b1f-bb2e-8f04a7476974",
+          "0693b8aa-8328-4c5e-b7e8-907bdc6eb14b",
+          "59927979-f841-45ea-ac1f-90c7537b3fae",
+          "29d70749-2320-4733-8be4-2a483e532851"
+        ]
+      },
+      {
+        "member": "qa-mo-be-followup-20261012/sim06-evidence-review.json",
+        "matching_ids": [
+          "d6d5d20c-02db-493d-8de4-baa3ca5434fd",
+          "5e85ae9c-0549-47a4-8445-eca477465a2e",
+          "dcec597f-4bc8-4b1f-bb2e-8f04a7476974",
+          "bb57f84e-dca3-4281-9c67-92d5273d7948",
+          "74927e8d-01e6-41e6-b257-8b866cbdabf7",
+          "0693b8aa-8328-4c5e-b7e8-907bdc6eb14b",
+          "a440c461-8225-4932-a641-b527e2232150",
+          "59927979-f841-45ea-ac1f-90c7537b3fae",
+          "29d70749-2320-4733-8be4-2a483e532851",
+          "61a0923e-bee6-4b5f-bba0-5b639c6c863b",
+          "581d56a1-337a-42cf-80c6-bb0fe574320c"
+        ]
+      }
+    ]
+  },
+  {
+    "path": "outputs/qa-mo-ins14-ins17-20261012.zip",
+    "sha256": "f89bc609ec1bbd0ea8003f857ee083e21534bd2070cfefab825c4ddb6efb1195",
+    "members": 22,
+    "matches": []
+  }
+]

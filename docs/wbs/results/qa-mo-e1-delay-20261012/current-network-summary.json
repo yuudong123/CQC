@@ -1,0 +1,46 @@
+[
+  {
+    "service": "backend",
+    "container_id": "1f1996c1ae3d76f88a4667bd12791d4e568f2e1ac533a7a255ac028937ca2a01",
+    "created_utc": "2026-10-12T00:28:49.152092606Z",
+    "addresses": [
+      {
+        "network": "cqc-cicd_default",
+        "ip": "172.20.0.5"
+      }
+    ]
+  },
+  {
+    "service": "simulator",
+    "container_id": "2de754d6d6446c24b5927ac82c8e4bf29d5b96ead034c346d336faa25b10acfa",
+    "created_utc": "2026-10-12T00:28:59.292712002Z",
+    "addresses": [
+      {
+        "network": "cqc-cicd_default",
+        "ip": "172.20.0.6"
+      }
+    ]
+  },
+  {
+    "service": "inference",
+    "container_id": "1a9e598664e204d56ab70e24fb8160234859744e3af4e73d4094f363de6ca92b",
+    "created_utc": "2026-10-12T00:28:35.170923887Z",
+    "addresses": [
+      {
+        "network": "cqc-cicd_default",
+        "ip": "172.20.0.3"
+      }
+    ]
+  },
+  {
+    "service": "logistics-web",
+    "container_id": "a4ac16a83a8c67215cfc8ea9368a4163fdd273735fd86f5286e8eb0b3117f8ec",
+    "created_utc": "2026-10-12T00:28:59.231426714Z",
+    "addresses": [
+      {
+        "network": "cqc-cicd_default",
+        "ip": "172.20.0.8"
+      }
+    ]
+  }
+]

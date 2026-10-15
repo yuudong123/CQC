@@ -1,0 +1,98 @@
+"""신뢰도 기준을 검토할 수 있도록 검증 사과별 정답·예측·확률과 logits를 내보낸다.
+
+logits 열(``cultivar_logit_*``, ``quality_logit_*``)은 ``src.training.calibration``의 temperature 적합에 쓴다.
+"""
+
+from __future__ import annotations
+
+import argparse
+import csv
+from pathlib import Path
+
+import torch
+from torch.utils.data import DataLoader
+
+from src.data.multiview import CULTIVAR_CLASSES, QUALITY_CLASSES, MultiViewDataset, load_groups
+from src.data.torch_dataset import TorchMultiViewDataset
+
+from .evaluate import load_checkpoint
+from .models import build_model
+from .train import resolve_device
+
+
+def main(argv: list[str] | None = None) -> int:
+    """실행 인자를 읽고 다음 작업을 수행한다: 신뢰도 기준을 검토할 수 있도록 검증 사과별 정답·예측·확률을 내보낸다."""
+    parser = argparse.ArgumentParser(description="검증 fold 그룹별 확률 내보내기")
+    parser.add_argument("--checkpoint", type=Path, required=True)
+    parser.add_argument("--cv-fold", type=int, choices=range(5), required=True)
+    parser.add_argument("--manifest", type=Path, default=Path("data/processed/manifest.csv"))
+    parser.add_argument("--splits", type=Path, default=Path("configs/splits/seed-42.csv"))
+    parser.add_argument("--raw-root", type=Path, default=Path("data/raw"))
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")
+    args = parser.parse_args(argv)
+    device = resolve_device(args.device)
+    checkpoint = load_checkpoint(args.checkpoint, device)
+    config = checkpoint["config"]
+    groups = load_groups(args.manifest, args.splits)
+    source = MultiViewDataset(
+        groups,
+        args.raw_root,
+        int(config["views"]),
+        cv_fold=args.cv_fold,
+        cv_role="validation",
+    )
+    loader = DataLoader(
+        TorchMultiViewDataset(source, training=False, image_size=int(config["image_size"])),
+        batch_size=1,
+        shuffle=False,
+        num_workers=0,
+    )
+    model = build_model(str(config.get("model_kind", "joint")), pretrained=False).to(device)
+    model.load_state_dict(checkpoint["model_state"])
+    model.eval()
+    rows = []
+    try:
+        with torch.inference_mode():
+            for batch in loader:
+                output = model(batch["images"].to(device), batch["view_mask"].to(device))
+                cultivar_logits = output["cultivar_logits"][0].cpu()
+                quality_logits = output["quality_logits"][0].cpu()
+                cultivar = cultivar_logits.softmax(dim=0)
+                quality = quality_logits.softmax(dim=0)
+                cultivar_prediction = int(cultivar.argmax())
+                quality_prediction = int(quality.argmax())
+                rows.append(
+                    {
+                        "group_no": batch["group_no"][0],
+                        "fold": args.cv_fold,
+                        "cultivar_target": CULTIVAR_CLASSES[int(batch["cultivar_target"][0])],
+                        "cultivar_prediction": CULTIVAR_CLASSES[cultivar_prediction],
+                        "cultivar_confidence": float(cultivar[cultivar_prediction]),
+                        "quality_target": QUALITY_CLASSES[int(batch["quality_target"][0])],
+                        "quality_prediction": QUALITY_CLASSES[quality_prediction],
+                        "quality_confidence": float(quality[quality_prediction]),
+                        "checkpoint_epoch": int(checkpoint["epoch"]),
+                        **{
+                            f"cultivar_logit_{name}": float(value)
+                            for name, value in zip(CULTIVAR_CLASSES, cultivar_logits)
+                        },
+                        **{
+                            f"quality_logit_{name}": float(value)
+                            for name, value in zip(QUALITY_CLASSES, quality_logits)
+                        },
+                    }
+                )
+    finally:
+        source.close()
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    with args.output.open("w", encoding="utf-8-sig", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
+        writer.writeheader()
+        writer.writerows(rows)
+    print(f"predictions={args.output} groups={len(rows)} test_used=False")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

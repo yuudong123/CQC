@@ -1,0 +1,11 @@
+[
+  "cqc-cicd-simulator-1\tUp 2 hours (healthy)",
+  "cqc-cicd-logistics-web-1\tUp 2 hours (healthy)",
+  "cqc-cicd-backend-1\tUp 2 hours (healthy)",
+  "cqc-cicd-inference-1\tUp 2 hours (healthy)",
+  "cqc-cicd-logistics-api-1\tUp 2 hours (healthy)",
+  "cqc-cicd-mysql-1\tUp 7 hours (healthy)",
+  "cqc-cicd-logistics-mongodb-1\tUp 7 hours (healthy)",
+  "ai-model-api\tExited (255) 3 weeks ago",
+  "jenkins\tUp 7 hours"
+]

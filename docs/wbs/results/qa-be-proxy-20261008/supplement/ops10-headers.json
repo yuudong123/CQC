@@ -1,0 +1,9 @@
+{
+ "Date": "Thu, 08 Oct 2026 07:28:34 GMT",
+ "Server": "uvicorn",
+ "Cache-Control": "no-store",
+ "Content-Disposition": "attachment; filename=\"cqc-inspections.csv\"",
+ "Content-Length": "2677630",
+ "Content-Type": "text/csv; charset=utf-8",
+ "Connection": "close"
+}

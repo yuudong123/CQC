@@ -1,0 +1,110 @@
+[
+  {
+    "created_at": "2026-10-12 00:46:25.946000",
+    "error_code": null,
+    "updated_at": "2026-10-12 00:46:26.685000",
+    "completed_at": "2026-10-12 00:46:26.685000",
+    "inspection_id": "80b3c9ab-8b4c-4eb8-90b1-344ad22039c4",
+    "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+    "control_status": "SUCCEEDED",
+    "inference_time_ms": 132.878,
+    "inspection_status": "COMPLETED",
+    "persistence_status": "SUCCEEDED"
+  },
+  {
+    "created_at": "2026-10-12 00:46:28.042000",
+    "error_code": null,
+    "updated_at": "2026-10-12 00:46:28.761000",
+    "completed_at": "2026-10-12 00:46:28.761000",
+    "inspection_id": "00bf0b8a-3220-4f16-ada7-e94dd401b3ce",
+    "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+    "control_status": "SUCCEEDED",
+    "inference_time_ms": 154.559,
+    "inspection_status": "COMPLETED",
+    "persistence_status": "SUCCEEDED"
+  },
+  {
+    "created_at": "2026-10-12 00:46:32.725000",
+    "error_code": null,
+    "updated_at": "2026-10-12 00:46:33.501000",
+    "completed_at": "2026-10-12 00:46:33.501000",
+    "inspection_id": "5c24ef65-afbb-4917-8928-72fc1b0316de",
+    "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+    "control_status": "SUCCEEDED",
+    "inference_time_ms": 151.771,
+    "inspection_status": "COMPLETED",
+    "persistence_status": "SUCCEEDED"
+  },
+  {
+    "created_at": "2026-10-12 00:46:35.392000",
+    "error_code": null,
+    "updated_at": "2026-10-12 00:46:36.230000",
+    "completed_at": "2026-10-12 00:46:36.230000",
+    "inspection_id": "a5012a91-b947-44da-bdd6-5bedd3c150ce",
+    "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+    "control_status": "SUCCEEDED",
+    "inference_time_ms": 151.343,
+    "inspection_status": "COMPLETED",
+    "persistence_status": "SUCCEEDED"
+  },
+  {
+    "created_at": "2026-10-12 00:49:23.508000",
+    "error_code": null,
+    "updated_at": "2026-10-12 00:49:24.393000",
+    "completed_at": "2026-10-12 00:49:24.393000",
+    "inspection_id": "661b239d-57d3-4616-bf85-7f7c85e1275b",
+    "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+    "control_status": "SUCCEEDED",
+    "inference_time_ms": 189.305,
+    "inspection_status": "COMPLETED",
+    "persistence_status": "SUCCEEDED"
+  },
+  {
+    "created_at": "2026-10-12 00:49:25.428000",
+    "error_code": null,
+    "updated_at": "2026-10-12 00:49:26.208000",
+    "completed_at": "2026-10-12 00:49:26.208000",
+    "inspection_id": "63cb91f7-70f7-4261-8933-62d80fe6fe76",
+    "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+    "control_status": "SUCCEEDED",
+    "inference_time_ms": 170.875,
+    "inspection_status": "COMPLETED",
+    "persistence_status": "SUCCEEDED"
+  },
+  {
+    "created_at": "2026-10-12 00:49:28.624000",
+    "error_code": null,
+    "updated_at": "2026-10-12 00:49:30.139000",
+    "completed_at": "2026-10-12 00:49:30.139000",
+    "inspection_id": "c18c2ed9-1ff8-4dde-8c10-c1e5e5aff411",
+    "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+    "control_status": "SUCCEEDED",
+    "inference_time_ms": 482.42,
+    "inspection_status": "COMPLETED",
+    "persistence_status": "SUCCEEDED"
+  },
+  {
+    "created_at": "2026-10-12 00:49:35.125000",
+    "error_code": null,
+    "updated_at": "2026-10-12 00:49:35.894000",
+    "completed_at": "2026-10-12 00:49:35.894000",
+    "inspection_id": "6cb7a7d8-be6d-4d72-a494-adf58134ea3d",
+    "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+    "control_status": "SUCCEEDED",
+    "inference_time_ms": 165.413,
+    "inspection_status": "COMPLETED",
+    "persistence_status": "SUCCEEDED"
+  },
+  {
+    "created_at": "2026-10-12 00:49:37.712000",
+    "error_code": null,
+    "updated_at": "2026-10-12 00:49:38.498000",
+    "completed_at": "2026-10-12 00:49:38.498000",
+    "inspection_id": "7f1b4dfc-6b82-4532-aef3-ac079fc827f1",
+    "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+    "control_status": "SUCCEEDED",
+    "inference_time_ms": 160.454,
+    "inspection_status": "COMPLETED",
+    "persistence_status": "SUCCEEDED"
+  }
+]

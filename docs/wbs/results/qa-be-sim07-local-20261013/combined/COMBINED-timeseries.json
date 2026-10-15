@@ -1,0 +1,2581 @@
+{
+  "window_started_utc": "2026-10-13T08:15:43.004292+00:00",
+  "window_start_monotonic": 13194.722070078,
+  "clear_request_started_utc": "2026-10-13T08:15:53.303863+00:00",
+  "clear_start_monotonic": 13205.021643581,
+  "clear_end_monotonic": 13205.252518788,
+  "observed_seconds": 10.29957350299992,
+  "samples": [
+    {
+      "at": "2026-10-13T08:15:43.304726+00:00",
+      "monotonic": 13195.022525691,
+      "simulator": {
+        "revision": 3,
+        "running": true,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [
+          "CONTROL_REJECTED",
+          "INFERENCE_TIMEOUT"
+        ],
+        "scope": "ALL",
+        "status": "healthy",
+        "lastSeenAt": null
+      },
+      "counts": {
+        "inspections": 1015,
+        "control_attempts": 1019,
+        "inspection_errors": 11
+      },
+      "position": {
+        "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+        "next_position": 1015
+      },
+      "snapshot": {
+        "contractVersion": "1",
+        "source": "backend",
+        "capturedAt": 1791879343083.0,
+        "revision": 3,
+        "components": {
+          "Simulator": {
+            "status": "healthy",
+            "lastSeenAt": null,
+            "detail": "검사 전송 중"
+          },
+          "Inference": {
+            "status": "healthy",
+            "lastSeenAt": 1791879343083.0,
+            "detail": "추론 서비스 준비 완료"
+          },
+          "Backend": {
+            "status": "healthy",
+            "lastSeenAt": 1791879343083.0,
+            "detail": "관제 API 응답 중"
+          },
+          "MySQL": {
+            "status": "healthy",
+            "lastSeenAt": 1791879343083.0,
+            "detail": "검사 이력 조회 성공"
+          }
+        },
+        "state": {
+          "running": true,
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "faults": [
+            "CONTROL_REJECTED",
+            "INFERENCE_TIMEOUT"
+          ],
+          "scope": "ALL",
+          "jobs": [],
+          "errors": [
+            {
+              "id": "38e572dd-8df9-444d-afd5-a64865e42936",
+              "date": "2026-10-13",
+              "time": "17:03:41.530",
+              "timestamp": 1791878621530.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.2,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+              "date": "2026-10-13",
+              "time": "17:03:39.712",
+              "timestamp": 1791878619712.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+              "date": "2026-10-13",
+              "time": "17:03:37.412",
+              "timestamp": 1791878617412.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "e67898fa-f9de-4f60-8a57-5432820d7764",
+              "date": "2026-10-13",
+              "time": "17:03:35.361",
+              "timestamp": 1791878615361.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "11e020dc-9d1d-44f0-a1de-31a87eafe843",
+              "date": "2026-10-13",
+              "time": "17:03:33.474",
+              "timestamp": 1791878613474.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.7,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "965416ef-e124-485b-9535-bf5d6b3163c3",
+              "date": "2026-10-13",
+              "time": "17:03:31.120",
+              "timestamp": 1791878611120.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "58a962ce-01da-4d2c-853e-5e9180a6bf6f",
+              "date": "2026-10-13",
+              "time": "17:03:25.545",
+              "timestamp": 1791878605545.0,
+              "variety": "양광",
+              "grade": "상",
+              "confidence": 50.9006,
+              "cultivarConfidence": 99.3538,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.4,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 149.68,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "a9309f7c-2883-4612-996b-13986995e0e9",
+              "date": "2026-10-13",
+              "time": "17:03:23.286",
+              "timestamp": 1791878603286.0,
+              "variety": "부사",
+              "grade": "보통",
+              "confidence": 98.0896,
+              "cultivarConfidence": 100.0,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 159.066,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "FALLBACK",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "at": "2026-10-13T08:15:44.554798+00:00",
+      "monotonic": 13196.272598645,
+      "simulator": {
+        "revision": 3,
+        "running": true,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [
+          "CONTROL_REJECTED",
+          "INFERENCE_TIMEOUT"
+        ],
+        "scope": "ALL",
+        "status": "healthy",
+        "lastSeenAt": 1791879343765.0
+      },
+      "counts": {
+        "inspections": 1016,
+        "control_attempts": 1020,
+        "inspection_errors": 13
+      },
+      "position": {
+        "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+        "next_position": 1016
+      },
+      "snapshot": {
+        "contractVersion": "1",
+        "source": "backend",
+        "capturedAt": 1791879344406.0,
+        "revision": 3,
+        "components": {
+          "Simulator": {
+            "status": "healthy",
+            "lastSeenAt": 1791879343765.0,
+            "detail": "검사 전송 중"
+          },
+          "Inference": {
+            "status": "healthy",
+            "lastSeenAt": 1791879344406.0,
+            "detail": "추론 서비스 준비 완료"
+          },
+          "Backend": {
+            "status": "healthy",
+            "lastSeenAt": 1791879344406.0,
+            "detail": "관제 API 응답 중"
+          },
+          "MySQL": {
+            "status": "healthy",
+            "lastSeenAt": 1791879344406.0,
+            "detail": "검사 이력 조회 성공"
+          }
+        },
+        "state": {
+          "running": true,
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "faults": [
+            "CONTROL_REJECTED",
+            "INFERENCE_TIMEOUT"
+          ],
+          "scope": "ALL",
+          "jobs": [],
+          "errors": [
+            {
+              "id": "a74081fc-4c51-4d43-9e48-f90fecd37b87",
+              "date": "2026-10-13",
+              "time": "17:15:43.510",
+              "timestamp": 1791879343510.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.4,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "38e572dd-8df9-444d-afd5-a64865e42936",
+              "date": "2026-10-13",
+              "time": "17:03:41.530",
+              "timestamp": 1791878621530.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.2,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+              "date": "2026-10-13",
+              "time": "17:03:39.712",
+              "timestamp": 1791878619712.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+              "date": "2026-10-13",
+              "time": "17:03:37.412",
+              "timestamp": 1791878617412.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "e67898fa-f9de-4f60-8a57-5432820d7764",
+              "date": "2026-10-13",
+              "time": "17:03:35.361",
+              "timestamp": 1791878615361.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "11e020dc-9d1d-44f0-a1de-31a87eafe843",
+              "date": "2026-10-13",
+              "time": "17:03:33.474",
+              "timestamp": 1791878613474.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.7,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "965416ef-e124-485b-9535-bf5d6b3163c3",
+              "date": "2026-10-13",
+              "time": "17:03:31.120",
+              "timestamp": 1791878611120.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "58a962ce-01da-4d2c-853e-5e9180a6bf6f",
+              "date": "2026-10-13",
+              "time": "17:03:25.545",
+              "timestamp": 1791878605545.0,
+              "variety": "양광",
+              "grade": "상",
+              "confidence": 50.9006,
+              "cultivarConfidence": 99.3538,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.4,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 149.68,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "at": "2026-10-13T08:15:45.872517+00:00",
+      "monotonic": 13197.590326603,
+      "simulator": {
+        "revision": 3,
+        "running": true,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [
+          "CONTROL_REJECTED",
+          "INFERENCE_TIMEOUT"
+        ],
+        "scope": "ALL",
+        "status": "healthy",
+        "lastSeenAt": 1791879343765.0
+      },
+      "counts": {
+        "inspections": 1016,
+        "control_attempts": 1020,
+        "inspection_errors": 13
+      },
+      "position": {
+        "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+        "next_position": 1016
+      },
+      "snapshot": {
+        "contractVersion": "1",
+        "source": "backend",
+        "capturedAt": 1791879345658.0,
+        "revision": 3,
+        "components": {
+          "Simulator": {
+            "status": "healthy",
+            "lastSeenAt": 1791879343765.0,
+            "detail": "검사 전송 중"
+          },
+          "Inference": {
+            "status": "healthy",
+            "lastSeenAt": 1791879345658.0,
+            "detail": "추론 서비스 준비 완료"
+          },
+          "Backend": {
+            "status": "healthy",
+            "lastSeenAt": 1791879345658.0,
+            "detail": "관제 API 응답 중"
+          },
+          "MySQL": {
+            "status": "healthy",
+            "lastSeenAt": 1791879345658.0,
+            "detail": "검사 이력 조회 성공"
+          }
+        },
+        "state": {
+          "running": true,
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "faults": [
+            "CONTROL_REJECTED",
+            "INFERENCE_TIMEOUT"
+          ],
+          "scope": "ALL",
+          "jobs": [],
+          "errors": [
+            {
+              "id": "a74081fc-4c51-4d43-9e48-f90fecd37b87",
+              "date": "2026-10-13",
+              "time": "17:15:43.510",
+              "timestamp": 1791879343510.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.4,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "38e572dd-8df9-444d-afd5-a64865e42936",
+              "date": "2026-10-13",
+              "time": "17:03:41.530",
+              "timestamp": 1791878621530.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.2,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+              "date": "2026-10-13",
+              "time": "17:03:39.712",
+              "timestamp": 1791878619712.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+              "date": "2026-10-13",
+              "time": "17:03:37.412",
+              "timestamp": 1791878617412.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "e67898fa-f9de-4f60-8a57-5432820d7764",
+              "date": "2026-10-13",
+              "time": "17:03:35.361",
+              "timestamp": 1791878615361.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "11e020dc-9d1d-44f0-a1de-31a87eafe843",
+              "date": "2026-10-13",
+              "time": "17:03:33.474",
+              "timestamp": 1791878613474.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.7,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "965416ef-e124-485b-9535-bf5d6b3163c3",
+              "date": "2026-10-13",
+              "time": "17:03:31.120",
+              "timestamp": 1791878611120.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "58a962ce-01da-4d2c-853e-5e9180a6bf6f",
+              "date": "2026-10-13",
+              "time": "17:03:25.545",
+              "timestamp": 1791878605545.0,
+              "variety": "양광",
+              "grade": "상",
+              "confidence": 50.9006,
+              "cultivarConfidence": 99.3538,
+              "status": "REVIEW",
+              "processingStatus": "COMPLETED",
+              "errorCode": "CONTROL_REJECTED",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.4,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": 149.68,
+              "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+              "reviewRequired": true,
+              "excluded": false,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "CONTROL_REJECTED"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "at": "2026-10-13T08:15:47.145566+00:00",
+      "monotonic": 13198.863368458,
+      "simulator": {
+        "revision": 3,
+        "running": true,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [
+          "CONTROL_REJECTED",
+          "INFERENCE_TIMEOUT"
+        ],
+        "scope": "ALL",
+        "status": "healthy",
+        "lastSeenAt": 1791879346214.0
+      },
+      "counts": {
+        "inspections": 1017,
+        "control_attempts": 1021,
+        "inspection_errors": 15
+      },
+      "position": {
+        "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+        "next_position": 1017
+      },
+      "snapshot": {
+        "contractVersion": "1",
+        "source": "backend",
+        "capturedAt": 1791879346984.0,
+        "revision": 3,
+        "components": {
+          "Simulator": {
+            "status": "healthy",
+            "lastSeenAt": 1791879346214.0,
+            "detail": "검사 전송 중"
+          },
+          "Inference": {
+            "status": "healthy",
+            "lastSeenAt": 1791879346984.0,
+            "detail": "추론 서비스 준비 완료"
+          },
+          "Backend": {
+            "status": "healthy",
+            "lastSeenAt": 1791879346984.0,
+            "detail": "관제 API 응답 중"
+          },
+          "MySQL": {
+            "status": "healthy",
+            "lastSeenAt": 1791879346984.0,
+            "detail": "검사 이력 조회 성공"
+          }
+        },
+        "state": {
+          "running": true,
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "faults": [
+            "CONTROL_REJECTED",
+            "INFERENCE_TIMEOUT"
+          ],
+          "scope": "ALL",
+          "jobs": [],
+          "errors": [
+            {
+              "id": "179a00f4-da7a-466a-b013-4ae18c93a62d",
+              "date": "2026-10-13",
+              "time": "17:15:46.087",
+              "timestamp": 1791879346087.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "a74081fc-4c51-4d43-9e48-f90fecd37b87",
+              "date": "2026-10-13",
+              "time": "17:15:43.510",
+              "timestamp": 1791879343510.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.4,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "38e572dd-8df9-444d-afd5-a64865e42936",
+              "date": "2026-10-13",
+              "time": "17:03:41.530",
+              "timestamp": 1791878621530.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.2,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+              "date": "2026-10-13",
+              "time": "17:03:39.712",
+              "timestamp": 1791878619712.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+              "date": "2026-10-13",
+              "time": "17:03:37.412",
+              "timestamp": 1791878617412.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "e67898fa-f9de-4f60-8a57-5432820d7764",
+              "date": "2026-10-13",
+              "time": "17:03:35.361",
+              "timestamp": 1791878615361.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "11e020dc-9d1d-44f0-a1de-31a87eafe843",
+              "date": "2026-10-13",
+              "time": "17:03:33.474",
+              "timestamp": 1791878613474.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.7,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "965416ef-e124-485b-9535-bf5d6b3163c3",
+              "date": "2026-10-13",
+              "time": "17:03:31.120",
+              "timestamp": 1791878611120.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "at": "2026-10-13T08:15:48.456811+00:00",
+      "monotonic": 13200.174611615,
+      "simulator": {
+        "revision": 3,
+        "running": true,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [
+          "CONTROL_REJECTED",
+          "INFERENCE_TIMEOUT"
+        ],
+        "scope": "ALL",
+        "status": "healthy",
+        "lastSeenAt": 1791879347797.0
+      },
+      "counts": {
+        "inspections": 1018,
+        "control_attempts": 1022,
+        "inspection_errors": 17
+      },
+      "position": {
+        "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+        "next_position": 1018
+      },
+      "snapshot": {
+        "contractVersion": "1",
+        "source": "backend",
+        "capturedAt": 1791879348284.0,
+        "revision": 3,
+        "components": {
+          "Simulator": {
+            "status": "healthy",
+            "lastSeenAt": 1791879347797.0,
+            "detail": "검사 전송 중"
+          },
+          "Inference": {
+            "status": "healthy",
+            "lastSeenAt": 1791879348284.0,
+            "detail": "추론 서비스 준비 완료"
+          },
+          "Backend": {
+            "status": "healthy",
+            "lastSeenAt": 1791879348284.0,
+            "detail": "관제 API 응답 중"
+          },
+          "MySQL": {
+            "status": "healthy",
+            "lastSeenAt": 1791879348284.0,
+            "detail": "검사 이력 조회 성공"
+          }
+        },
+        "state": {
+          "running": true,
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "faults": [
+            "CONTROL_REJECTED",
+            "INFERENCE_TIMEOUT"
+          ],
+          "scope": "ALL",
+          "jobs": [],
+          "errors": [
+            {
+              "id": "9307189a-6a07-41aa-819c-ed08c0704cb9",
+              "date": "2026-10-13",
+              "time": "17:15:47.677",
+              "timestamp": 1791879347677.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.8,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "179a00f4-da7a-466a-b013-4ae18c93a62d",
+              "date": "2026-10-13",
+              "time": "17:15:46.087",
+              "timestamp": 1791879346087.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "a74081fc-4c51-4d43-9e48-f90fecd37b87",
+              "date": "2026-10-13",
+              "time": "17:15:43.510",
+              "timestamp": 1791879343510.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.4,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "38e572dd-8df9-444d-afd5-a64865e42936",
+              "date": "2026-10-13",
+              "time": "17:03:41.530",
+              "timestamp": 1791878621530.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.2,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+              "date": "2026-10-13",
+              "time": "17:03:39.712",
+              "timestamp": 1791878619712.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+              "date": "2026-10-13",
+              "time": "17:03:37.412",
+              "timestamp": 1791878617412.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "e67898fa-f9de-4f60-8a57-5432820d7764",
+              "date": "2026-10-13",
+              "time": "17:03:35.361",
+              "timestamp": 1791878615361.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "11e020dc-9d1d-44f0-a1de-31a87eafe843",
+              "date": "2026-10-13",
+              "time": "17:03:33.474",
+              "timestamp": 1791878613474.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.7,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "at": "2026-10-13T08:15:49.755642+00:00",
+      "monotonic": 13201.473444072,
+      "simulator": {
+        "revision": 3,
+        "running": true,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [
+          "CONTROL_REJECTED",
+          "INFERENCE_TIMEOUT"
+        ],
+        "scope": "ALL",
+        "status": "healthy",
+        "lastSeenAt": 1791879347797.0
+      },
+      "counts": {
+        "inspections": 1018,
+        "control_attempts": 1022,
+        "inspection_errors": 17
+      },
+      "position": {
+        "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+        "next_position": 1018
+      },
+      "snapshot": {
+        "contractVersion": "1",
+        "source": "backend",
+        "capturedAt": 1791879349537.0,
+        "revision": 3,
+        "components": {
+          "Simulator": {
+            "status": "healthy",
+            "lastSeenAt": 1791879347797.0,
+            "detail": "검사 전송 중"
+          },
+          "Inference": {
+            "status": "healthy",
+            "lastSeenAt": 1791879349537.0,
+            "detail": "추론 서비스 준비 완료"
+          },
+          "Backend": {
+            "status": "healthy",
+            "lastSeenAt": 1791879349537.0,
+            "detail": "관제 API 응답 중"
+          },
+          "MySQL": {
+            "status": "healthy",
+            "lastSeenAt": 1791879349537.0,
+            "detail": "검사 이력 조회 성공"
+          }
+        },
+        "state": {
+          "running": true,
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "faults": [
+            "CONTROL_REJECTED",
+            "INFERENCE_TIMEOUT"
+          ],
+          "scope": "ALL",
+          "jobs": [],
+          "errors": [
+            {
+              "id": "9307189a-6a07-41aa-819c-ed08c0704cb9",
+              "date": "2026-10-13",
+              "time": "17:15:47.677",
+              "timestamp": 1791879347677.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.8,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "179a00f4-da7a-466a-b013-4ae18c93a62d",
+              "date": "2026-10-13",
+              "time": "17:15:46.087",
+              "timestamp": 1791879346087.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "a74081fc-4c51-4d43-9e48-f90fecd37b87",
+              "date": "2026-10-13",
+              "time": "17:15:43.510",
+              "timestamp": 1791879343510.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.4,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "38e572dd-8df9-444d-afd5-a64865e42936",
+              "date": "2026-10-13",
+              "time": "17:03:41.530",
+              "timestamp": 1791878621530.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.2,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+              "date": "2026-10-13",
+              "time": "17:03:39.712",
+              "timestamp": 1791878619712.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+              "date": "2026-10-13",
+              "time": "17:03:37.412",
+              "timestamp": 1791878617412.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "e67898fa-f9de-4f60-8a57-5432820d7764",
+              "date": "2026-10-13",
+              "time": "17:03:35.361",
+              "timestamp": 1791878615361.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "11e020dc-9d1d-44f0-a1de-31a87eafe843",
+              "date": "2026-10-13",
+              "time": "17:03:33.474",
+              "timestamp": 1791878613474.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.7,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "at": "2026-10-13T08:15:51.001094+00:00",
+      "monotonic": 13202.718896212,
+      "simulator": {
+        "revision": 3,
+        "running": true,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [
+          "CONTROL_REJECTED",
+          "INFERENCE_TIMEOUT"
+        ],
+        "scope": "ALL",
+        "status": "healthy",
+        "lastSeenAt": 1791879350094.0
+      },
+      "counts": {
+        "inspections": 1019,
+        "control_attempts": 1023,
+        "inspection_errors": 19
+      },
+      "position": {
+        "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+        "next_position": 1019
+      },
+      "snapshot": {
+        "contractVersion": "1",
+        "source": "backend",
+        "capturedAt": 1791879350852.0,
+        "revision": 3,
+        "components": {
+          "Simulator": {
+            "status": "healthy",
+            "lastSeenAt": 1791879350094.0,
+            "detail": "검사 전송 중"
+          },
+          "Inference": {
+            "status": "healthy",
+            "lastSeenAt": 1791879350852.0,
+            "detail": "추론 서비스 준비 완료"
+          },
+          "Backend": {
+            "status": "healthy",
+            "lastSeenAt": 1791879350852.0,
+            "detail": "관제 API 응답 중"
+          },
+          "MySQL": {
+            "status": "healthy",
+            "lastSeenAt": 1791879350852.0,
+            "detail": "검사 이력 조회 성공"
+          }
+        },
+        "state": {
+          "running": true,
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "faults": [
+            "CONTROL_REJECTED",
+            "INFERENCE_TIMEOUT"
+          ],
+          "scope": "ALL",
+          "jobs": [],
+          "errors": [
+            {
+              "id": "b146e1ff-1223-4b8d-9482-3ead3a7fc4bd",
+              "date": "2026-10-13",
+              "time": "17:15:49.947",
+              "timestamp": 1791879349947.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "9307189a-6a07-41aa-819c-ed08c0704cb9",
+              "date": "2026-10-13",
+              "time": "17:15:47.677",
+              "timestamp": 1791879347677.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.8,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "179a00f4-da7a-466a-b013-4ae18c93a62d",
+              "date": "2026-10-13",
+              "time": "17:15:46.087",
+              "timestamp": 1791879346087.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "a74081fc-4c51-4d43-9e48-f90fecd37b87",
+              "date": "2026-10-13",
+              "time": "17:15:43.510",
+              "timestamp": 1791879343510.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.4,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "38e572dd-8df9-444d-afd5-a64865e42936",
+              "date": "2026-10-13",
+              "time": "17:03:41.530",
+              "timestamp": 1791878621530.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.2,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+              "date": "2026-10-13",
+              "time": "17:03:39.712",
+              "timestamp": 1791878619712.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+              "date": "2026-10-13",
+              "time": "17:03:37.412",
+              "timestamp": 1791878617412.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "e67898fa-f9de-4f60-8a57-5432820d7764",
+              "date": "2026-10-13",
+              "time": "17:03:35.361",
+              "timestamp": 1791878615361.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "at": "2026-10-13T08:15:52.256282+00:00",
+      "monotonic": 13203.97408395,
+      "simulator": {
+        "revision": 3,
+        "running": true,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [
+          "CONTROL_REJECTED",
+          "INFERENCE_TIMEOUT"
+        ],
+        "scope": "ALL",
+        "status": "healthy",
+        "lastSeenAt": 1791879351801.0
+      },
+      "counts": {
+        "inspections": 1020,
+        "control_attempts": 1024,
+        "inspection_errors": 21
+      },
+      "position": {
+        "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+        "next_position": 1020
+      },
+      "snapshot": {
+        "contractVersion": "1",
+        "source": "backend",
+        "capturedAt": 1791879352108.0,
+        "revision": 3,
+        "components": {
+          "Simulator": {
+            "status": "healthy",
+            "lastSeenAt": 1791879351801.0,
+            "detail": "검사 전송 중"
+          },
+          "Inference": {
+            "status": "healthy",
+            "lastSeenAt": 1791879352108.0,
+            "detail": "추론 서비스 준비 완료"
+          },
+          "Backend": {
+            "status": "healthy",
+            "lastSeenAt": 1791879352108.0,
+            "detail": "관제 API 응답 중"
+          },
+          "MySQL": {
+            "status": "healthy",
+            "lastSeenAt": 1791879352108.0,
+            "detail": "검사 이력 조회 성공"
+          }
+        },
+        "state": {
+          "running": true,
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "faults": [
+            "CONTROL_REJECTED",
+            "INFERENCE_TIMEOUT"
+          ],
+          "scope": "ALL",
+          "jobs": [],
+          "errors": [
+            {
+              "id": "75b5190e-41a3-465f-bab4-3217a9cd155c",
+              "date": "2026-10-13",
+              "time": "17:15:51.717",
+              "timestamp": 1791879351717.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "b146e1ff-1223-4b8d-9482-3ead3a7fc4bd",
+              "date": "2026-10-13",
+              "time": "17:15:49.947",
+              "timestamp": 1791879349947.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "9307189a-6a07-41aa-819c-ed08c0704cb9",
+              "date": "2026-10-13",
+              "time": "17:15:47.677",
+              "timestamp": 1791879347677.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.8,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "179a00f4-da7a-466a-b013-4ae18c93a62d",
+              "date": "2026-10-13",
+              "time": "17:15:46.087",
+              "timestamp": 1791879346087.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "a74081fc-4c51-4d43-9e48-f90fecd37b87",
+              "date": "2026-10-13",
+              "time": "17:15:43.510",
+              "timestamp": 1791879343510.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.4,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "38e572dd-8df9-444d-afd5-a64865e42936",
+              "date": "2026-10-13",
+              "time": "17:03:41.530",
+              "timestamp": 1791878621530.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.2,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+              "date": "2026-10-13",
+              "time": "17:03:39.712",
+              "timestamp": 1791878619712.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+              "date": "2026-10-13",
+              "time": "17:03:37.412",
+              "timestamp": 1791878617412.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "at": "2026-10-13T08:15:53.303833+00:00",
+      "monotonic": 13205.021635381,
+      "simulator": {
+        "revision": 3,
+        "running": true,
+        "concurrency": 1,
+        "intervalMs": 2000,
+        "faults": [
+          "CONTROL_REJECTED",
+          "INFERENCE_TIMEOUT"
+        ],
+        "scope": "ALL",
+        "status": "healthy",
+        "lastSeenAt": 1791879351801.0
+      },
+      "counts": {
+        "inspections": 1020,
+        "control_attempts": 1024,
+        "inspection_errors": 21
+      },
+      "position": {
+        "dataset_id": "512718fef0ccd33be866e81d4cb334675eb65285031a9b0d88fa36678e2c2ebf",
+        "next_position": 1020
+      },
+      "snapshot": {
+        "contractVersion": "1",
+        "source": "backend",
+        "capturedAt": 1791879353135.0,
+        "revision": 3,
+        "components": {
+          "Simulator": {
+            "status": "healthy",
+            "lastSeenAt": 1791879351801.0,
+            "detail": "검사 전송 중"
+          },
+          "Inference": {
+            "status": "healthy",
+            "lastSeenAt": 1791879353135.0,
+            "detail": "추론 서비스 준비 완료"
+          },
+          "Backend": {
+            "status": "healthy",
+            "lastSeenAt": 1791879353135.0,
+            "detail": "관제 API 응답 중"
+          },
+          "MySQL": {
+            "status": "healthy",
+            "lastSeenAt": 1791879353135.0,
+            "detail": "검사 이력 조회 성공"
+          }
+        },
+        "state": {
+          "running": true,
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "faults": [
+            "CONTROL_REJECTED",
+            "INFERENCE_TIMEOUT"
+          ],
+          "scope": "ALL",
+          "jobs": [],
+          "errors": [
+            {
+              "id": "75b5190e-41a3-465f-bab4-3217a9cd155c",
+              "date": "2026-10-13",
+              "time": "17:15:51.717",
+              "timestamp": 1791879351717.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "b146e1ff-1223-4b8d-9482-3ead3a7fc4bd",
+              "date": "2026-10-13",
+              "time": "17:15:49.947",
+              "timestamp": 1791879349947.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "9307189a-6a07-41aa-819c-ed08c0704cb9",
+              "date": "2026-10-13",
+              "time": "17:15:47.677",
+              "timestamp": 1791879347677.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.8,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "179a00f4-da7a-466a-b013-4ae18c93a62d",
+              "date": "2026-10-13",
+              "time": "17:15:46.087",
+              "timestamp": 1791879346087.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "a74081fc-4c51-4d43-9e48-f90fecd37b87",
+              "date": "2026-10-13",
+              "time": "17:15:43.510",
+              "timestamp": 1791879343510.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 14.4,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "REJECTED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT",
+                "CONTROL_REJECTED"
+              ]
+            },
+            {
+              "id": "38e572dd-8df9-444d-afd5-a64865e42936",
+              "date": "2026-10-13",
+              "time": "17:03:41.530",
+              "timestamp": 1791878621530.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 12.2,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+              "date": "2026-10-13",
+              "time": "17:03:39.712",
+              "timestamp": 1791878619712.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.5,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            },
+            {
+              "id": "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+              "date": "2026-10-13",
+              "time": "17:03:37.412",
+              "timestamp": 1791878617412.0,
+              "variety": null,
+              "grade": null,
+              "confidence": null,
+              "cultivarConfidence": null,
+              "status": "FAIL",
+              "processingStatus": "TIMEOUT",
+              "errorCode": "INFERENCE_TIMEOUT",
+              "misclassification": "NONE",
+              "bin": "TEST_REINSPECTION_BIN",
+              "virtualBrix": 13.6,
+              "brixMeasured": false,
+              "imageIndex": null,
+              "inferenceMs": null,
+              "modelVersion": null,
+              "reviewRequired": true,
+              "excluded": true,
+              "control": "SUCCEEDED",
+              "persistence": "SAVED",
+              "faults": [
+                "INFERENCE_TIMEOUT"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

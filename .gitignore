@@ -1,7 +1,22 @@
 data/raw/*
 data/processed/*
-models/*
+models/*.zip
 outputs/*
 !*/.gitkeep
 __pycache__/
+.venv/
 .ipynb_checkpoints/
+
+.vscode/
+.codex/
+AGENTS.md
+
+.idea/
+
+.env
+
+.ruff_cache/
+.pytest_cache/
+
+# Runtime deployment snapshots contain credentials. Never commit them.
+.cqc-deploy-state/

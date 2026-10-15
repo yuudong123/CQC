@@ -1,0 +1,97 @@
+{
+  "project": "cqc-mo09-e2-restart4-20261007",
+  "started_kst": "2026-10-07 11:11:41 KST",
+  "cases": {
+    "QA-SIM-01": {
+      "time_kst": "2026-10-07 11:11:41 KST",
+      "detail": {
+        "initial_total": 1,
+        "later_total": 2,
+        "revision": 0,
+        "component_status": "healthy",
+        "interval_ms": 2000
+      },
+      "status": "통과"
+    },
+    "QA-IMG-06-precondition": {
+      "time_kst": "2026-10-07 11:11:41 KST",
+      "detail": {
+        "system_error_count": 100
+      },
+      "status": "통과"
+    },
+    "QA-DEP-06+QA-IMG-07": {
+      "time_kst": "2026-10-07 11:12:01 KST",
+      "detail": {
+        "history_total_before_after": [
+          12,
+          12
+        ],
+        "saved_inspection_id": "3b0aae4f-af5c-4a2d-935d-6479a3dbe0b3",
+        "system_image_count": 100,
+        "all_image_count": 100,
+        "sample_image_id": "bf7c33bd6c134d7dad7e7fe5d6658884_11",
+        "preview_sha256": "9cff361d2b5742c0b3573eb72e00b17e83ef070cbee8ac2948fdcacb5b323688",
+        "new_inspection_id": "qa-mo09-restart-1791339170627",
+        "new_persistence": "SUCCEEDED"
+      },
+      "status": "통과"
+    },
+    "QA-SIM-08": {
+      "time_kst": "2026-10-07 11:12:57 KST",
+      "detail": {
+        "previous_source_reference": "demo-601141004000-001",
+        "position_before_restart": 15,
+        "first_three_source_references": [
+          "demo-601031007000-001",
+          "demo-601033028000-000",
+          "demo-601032009000-006"
+        ],
+        "settings_after": {
+          "faults": [],
+          "concurrency": 1,
+          "intervalMs": 2000,
+          "running": true,
+          "revision": 0
+        }
+      },
+      "status": "통과"
+    }
+  },
+  "post_restart_probe": {
+    "http_status": 200,
+    "body": {
+      "inspection_id": "qa-mo09-restart-1791339170627",
+      "crop_type": "apple",
+      "predicted_cultivar": "yanggwang",
+      "cultivar_confidence": 0.9999955892562866,
+      "cultivar_probabilities": {
+        "fuji": 4.46533294962137e-06,
+        "yanggwang": 0.9999955892562866
+      },
+      "predicted_grade": "S",
+      "quality_confidence": 0.9999043941497803,
+      "quality_probabilities": {
+        "L": 1.4079355423746165e-06,
+        "M": 9.417574619874358e-05,
+        "S": 0.9999043941497803
+      },
+      "inference_time_ms": 149.17272400089132,
+      "model_name": "mobilenet_v3_small_multiview",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+      "preprocessing_version": "rgb-resize-imagenet-v1",
+      "used_frame_count": 12,
+      "inspection_status": "COMPLETED",
+      "review_required": false,
+      "exclude_from_normal_stats": false,
+      "decision_reason": "NORMAL",
+      "virtual_brix": 15.6,
+      "brix_is_measured": false,
+      "sweetness_band": "sweet",
+      "target_bin_code": "DEMO_BIN_12",
+      "control_status": "SUCCEEDED",
+      "persistence_status": "SUCCEEDED"
+    }
+  },
+  "finished_kst": "2026-10-07 11:13:16 KST"
+}

@@ -1,0 +1,7 @@
+{
+  "kind": "database_info",
+  "queried_utc": "2026-10-12 02:02:25.490000",
+  "mysql_version": "8.4.11",
+  "session_time_zone": "+00:00",
+  "time_semantics": "UTC-naive DATETIME(3) written by utc_now/to_utc_naive; KST values in derived tables are UTC + 09:00."
+}

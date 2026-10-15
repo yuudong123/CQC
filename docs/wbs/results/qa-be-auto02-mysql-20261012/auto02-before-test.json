@@ -1,0 +1,48 @@
+{
+  "mysql_namespace": "net:[4026532873]",
+  "binary": "/opt/cqc-auto02/mysql/usr/sbin/mysqld",
+  "test_uid": 1000,
+  "databases": {
+    "cqc_test": {
+      "host": "127.0.0.1",
+      "port": 13324,
+      "version": "8.4.11",
+      "datadir": "/opt/cqc-auto02/mysql-data/",
+      "revision": "20260929_02",
+      "active_bin_count": 13,
+      "counts": {
+        "inspections": 0,
+        "control_attempts": 0,
+        "inspection_errors": 0
+      }
+    },
+    "cqc_auto02_retention": {
+      "host": "127.0.0.1",
+      "port": 13324,
+      "version": "8.4.11",
+      "datadir": "/opt/cqc-auto02/mysql-data/",
+      "revision": "20260929_02",
+      "active_bin_count": 13,
+      "counts": {
+        "inspections": 0,
+        "control_attempts": 0,
+        "inspection_errors": 0
+      }
+    },
+    "be10_3": {
+      "host": "127.0.0.1",
+      "port": 13324,
+      "version": "8.4.11",
+      "datadir": "/opt/cqc-auto02/mysql-data/",
+      "revision": "20260929_02",
+      "active_bin_count": 13,
+      "counts": {
+        "inspections": 0,
+        "control_attempts": 0,
+        "inspection_errors": 0
+      }
+    }
+  },
+  "source_sha": "0094807a159e4bedadd2700fd689b3c848ee803f",
+  "source_mismatches": []
+}

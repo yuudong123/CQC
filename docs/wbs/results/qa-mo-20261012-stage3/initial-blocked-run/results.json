@@ -1,0 +1,54 @@
+[
+  {
+    "case": "QA-DEP-02",
+    "status": "통과",
+    "actor": "홍유나",
+    "time_kst": "2026-10-12 09:44:10 KST",
+    "commit_model": "deployed SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930",
+    "note": "ready; model=cqc-apple-separate12-focal-v2-cal-20260930; checkpoint=b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a",
+    "environment": "E1",
+    "coverage": "전체",
+    "qa_case": "QA-DEP-02",
+    "owner": "DM",
+    "record_status": "통과"
+  },
+  {
+    "case": "QA-DEP-04",
+    "status": "통과",
+    "actor": "홍유나",
+    "time_kst": "2026-10-12 09:44:10 KST",
+    "commit_model": "deployed SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930",
+    "note": "Backend /health and threshold/inference/storage settings OK",
+    "environment": "E1",
+    "coverage": "전체",
+    "qa_case": "QA-DEP-04",
+    "owner": "MO",
+    "record_status": "통과"
+  },
+  {
+    "case": "QA-DEP-03",
+    "status": "통과",
+    "actor": "홍유나",
+    "time_kst": "2026-10-12 09:44:10 KST",
+    "commit_model": "deployed SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930",
+    "note": "model.pt SHA-256=b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a",
+    "environment": "E1",
+    "coverage": "전체",
+    "qa_case": "QA-DEP-03",
+    "owner": "DM",
+    "record_status": "통과"
+  },
+  {
+    "case": "MO-09-live",
+    "status": "차단",
+    "actor": "홍유나",
+    "time_kst": "2026-10-12 09:44:30 KST",
+    "commit_model": "deployed SHA unverified / cqc-apple-separate12-focal-v2-cal-20260930",
+    "note": "timed out",
+    "environment": "E1",
+    "coverage": "전체",
+    "qa_case": "MO-09-live",
+    "owner": "MO",
+    "record_status": "차단"
+  }
+]

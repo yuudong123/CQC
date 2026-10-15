@@ -1,0 +1,786 @@
+{
+ "run": "qa-be-10081526",
+ "environment": "E1 192.168.133.106:8000 (학원 서버), 실행자 조현재(에이전트), BE 담당 대행(#103)",
+ "raw": {
+  "preflight": {
+   "run": "qa-be-10081526",
+   "date_kst": "2026-10-08",
+   "snapshot_revision": 0,
+   "retention": {
+    "images": 300
+   },
+   "source": "backend",
+   "started_kst": "2026-10-08T15:27:27.309564+09:00"
+  },
+  "images_before": {
+   "total": 300,
+   "by_category": {
+    "SYSTEM_ERROR": 100,
+    "LOW_CONFIDENCE": 200
+   }
+  },
+  "sent": {
+   "FL": {
+    "id": "qa-be-10081526-ins01-FL-13.9",
+    "status": 200,
+    "reused": true
+   },
+   "YS": {
+    "id": "qa-be-10081526-ins01-YS-15.0",
+    "status": 200,
+    "reused": true
+   },
+   "ins03": {
+    "id": "qa-be-10081526-ins03",
+    "status": 200,
+    "reused": true
+   },
+   "LQ": {
+    "id": "qa-be-10081526-ins04-LQ",
+    "status": 200,
+    "reused": true
+   },
+   "ins08": {
+    "id": "qa-be-10081526-ins08",
+    "status": 200,
+    "reused": true
+   },
+   "ops11": {
+    "id": "-qa-be-10081526-ops11",
+    "status": 200,
+    "reused": true
+   }
+  },
+  "finished_kst": "2026-10-08T15:28:07.022252+09:00",
+  "sent_first_run_15_27_kst": {
+   "note": "본인 검사 6건은 15:27 첫 실행에서 만들었다. 두 번째 실행(헤더 대소문자 비교 수정)은 같은 ID를 재사용하고 새로 만들지 않았다.",
+   "FL": {
+    "id": "qa-be-10081526-ins01-FL-13.9",
+    "status": 200,
+    "inspection_status": "COMPLETED",
+    "decision_reason": "NORMAL",
+    "target_bin_code": "DEMO_BIN_01"
+   },
+   "YS": {
+    "id": "qa-be-10081526-ins01-YS-15.0",
+    "status": 200,
+    "inspection_status": "COMPLETED",
+    "decision_reason": "NORMAL",
+    "target_bin_code": "DEMO_BIN_12"
+   },
+   "ins03": {
+    "id": "qa-be-10081526-ins03",
+    "status": 200,
+    "inspection_status": "REINSPECTION_REQUIRED",
+    "decision_reason": "VIRTUAL_BRIX_MISSING",
+    "target_bin_code": "TEST_REINSPECTION_BIN"
+   },
+   "LQ": {
+    "id": "qa-be-10081526-ins04-LQ",
+    "status": 200,
+    "inspection_status": "REINSPECTION_REQUIRED",
+    "decision_reason": "LOW_QUALITY_CONFIDENCE",
+    "target_bin_code": "TEST_REINSPECTION_BIN"
+   },
+   "ins08": {
+    "id": "qa-be-10081526-ins08",
+    "status": 200,
+    "inspection_status": "REINSPECTION_REQUIRED",
+    "decision_reason": "INFERENCE_HTTP_ERROR",
+    "target_bin_code": "TEST_REINSPECTION_BIN"
+   },
+   "ops11": {
+    "id": "-qa-be-10081526-ops11",
+    "status": 200,
+    "inspection_status": "COMPLETED",
+    "decision_reason": "NORMAL",
+    "target_bin_code": "DEMO_BIN_01"
+   }
+  }
+ },
+ "results": [
+  {
+   "case": "QA-OPS-03",
+   "result": "통과",
+   "expected": "B-FL 13.9: 부사/특/DEMO_BIN_01/PASS/COMPLETED/NONE, confidence≈99.0·cultivar≈100.0, brix 13.9 비실측, 모델 버전, control SUCCEEDED·persistence SAVED, 시각 3형식 일치, 내림차순, bins에 DEMO_BIN_01",
+   "actual": {
+    "id": "qa-be-10081526-ins01-FL-13.9",
+    "variety": "부사",
+    "grade": "특",
+    "bin": "DEMO_BIN_01",
+    "status": "PASS",
+    "processingStatus": "COMPLETED",
+    "errorCode": "NONE",
+    "confidence": 98.96589999999999,
+    "cultivarConfidence": 99.998,
+    "virtualBrix": 13.9,
+    "brixMeasured": false,
+    "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930",
+    "inferenceMs": 153.95,
+    "control": "SUCCEEDED",
+    "persistence": "SAVED",
+    "faults": [],
+    "misclassification": "NONE",
+    "reviewRequired": false,
+    "excluded": false,
+    "date": "2026-10-08",
+    "time": "15:26:38.960",
+    "timestamp": 1791440798960.0
+   },
+   "note": "목록 200건 내림차순=True, bins 필드 있음·DEMO_BIN_01 포함"
+  },
+  {
+   "case": "QA-OPS-04",
+   "result": "통과(부분)",
+   "expected": "INS-01 정상·INS-04 저신뢰·INS-03 당도 누락·INS-08 오류 행의 status/processingStatus/errorCode/variety·grade/excluded/bin, 오류 행 faults·null 필드",
+   "actual": {
+    "FL": {
+     "status": "PASS",
+     "processingStatus": "COMPLETED",
+     "errorCode": "NONE",
+     "variety": "부사",
+     "grade": "특",
+     "excluded": false,
+     "bin": "DEMO_BIN_01",
+     "faults": [],
+     "confidence": 98.96589999999999,
+     "cultivarConfidence": 99.998,
+     "inferenceMs": 153.95,
+     "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930"
+    },
+    "LQ": {
+     "status": "REVIEW",
+     "processingStatus": "COMPLETED",
+     "errorCode": "NONE",
+     "variety": "부사",
+     "grade": "특",
+     "excluded": false,
+     "bin": "TEST_REINSPECTION_BIN",
+     "faults": [],
+     "confidence": 46.6216,
+     "cultivarConfidence": 100.0,
+     "inferenceMs": 215.294,
+     "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930"
+    },
+    "ins03": {
+     "status": "REVIEW",
+     "processingStatus": "COMPLETED",
+     "errorCode": "NONE",
+     "variety": "부사",
+     "grade": "특",
+     "excluded": false,
+     "bin": "TEST_REINSPECTION_BIN",
+     "faults": [],
+     "confidence": 98.96589999999999,
+     "cultivarConfidence": 99.998,
+     "inferenceMs": 163.802,
+     "modelVersion": "cqc-apple-separate12-focal-v2-cal-20260930"
+    },
+    "ins08": {
+     "status": "FAIL",
+     "processingStatus": "ERROR",
+     "errorCode": "INFERENCE_ERROR",
+     "variety": null,
+     "grade": null,
+     "excluded": true,
+     "bin": "TEST_REINSPECTION_BIN",
+     "faults": [
+      "INFERENCE_ERROR"
+     ],
+     "confidence": null,
+     "cultivarConfidence": null,
+     "inferenceMs": null,
+     "modelVersion": null
+    }
+   },
+   "note": "E1 행 4종 확인. INS-10 연결 실패·INS-12 시간 초과 행은 E2 전용이라 미확인(BE E2 INS-10·12 통과 결과로 보완)"
+  },
+  {
+   "case": "QA-OPS-05",
+   "result": "통과(부분)",
+   "expected": "a~n 필터 결과가 조건만 포함하고 본인 $RUN 행 포함, total·items 일치",
+   "actual": {
+    "a variety=부사": {
+     "status": 200,
+     "total": 5249,
+     "items": 200,
+     "ok": true
+    },
+    "b 양광·보통": {
+     "status": 200,
+     "total": 1638,
+     "items": 200,
+     "ok": true
+    },
+    "c bin=DEMO_BIN_02": {
+     "status": 200,
+     "total": 702,
+     "items": 200,
+     "ok": true
+    },
+    "d 재검사함(저신뢰)": {
+     "status": 200,
+     "total": 1037,
+     "items": 200,
+     "ok": true
+    },
+    "d 재검사함(당도 누락)": {
+     "status": 200,
+     "total": 1037,
+     "items": 200,
+     "ok": true
+    },
+    "d 재검사함(오류)": {
+     "status": 200,
+     "total": 1037,
+     "items": 200,
+     "ok": true
+    },
+    "e COMPLETED": {
+     "status": 200,
+     "total": 9806,
+     "items": 200,
+     "ok": true
+    },
+    "f ERROR": {
+     "status": 200,
+     "total": 21,
+     "items": 21,
+     "ok": true
+    },
+    "h INFERENCING": {
+     "status": 200,
+     "total": 0,
+     "items": 0,
+     "ok": true
+    },
+    "i errorCode=NONE": {
+     "status": 200,
+     "total": 9796,
+     "items": 200,
+     "ok": true
+    },
+    "i errorCode=NONE(당도 누락)": {
+     "status": 200,
+     "total": 9796,
+     "items": 200,
+     "ok": true
+    },
+    "j INFERENCE_ERROR": {
+     "status": 200,
+     "total": 21,
+     "items": 21,
+     "ok": true
+    },
+    "l misclassification=NONE": {
+     "status": 200,
+     "total": 9831,
+     "items": 200,
+     "ok": true
+    },
+    "l misclassification=OTHER": {
+     "status": 200,
+     "total": 0,
+     "items": 0,
+     "ok": true
+    },
+    "m 2026-01-01": {
+     "status": 200,
+     "total": 0,
+     "ok": true
+    },
+    "n 부사·특·BIN_01": {
+     "status": 200,
+     "total": 790,
+     "items": 200,
+     "ok": true
+    },
+    "g TIMEOUT(E2)": {
+     "status": 200,
+     "total": 2,
+     "ok": true
+    },
+    "k INFERENCE_TIMEOUT(E2)": {
+     "status": 200,
+     "total": 2,
+     "ok": true
+    }
+   },
+   "note": "g·k의 `$RUN-ins12`(시간 초과)는 E2 전용이라 필터 정합성만 확인. l OTHER는 BE OPS-16에서 지정 후 NONE으로 복구해 오늘 OTHER 행 수만 기록"
+  },
+  {
+   "case": "QA-OPS-06",
+   "result": "통과",
+   "expected": "a 50건씩·중복 없음, b ≤100·200·pageSize 반환, c·d 422 INVALID_QUERY, e 빈 목록",
+   "actual": {
+    "a": [
+     50,
+     50,
+     0,
+     76662,
+     76662
+    ],
+    "b": [
+     100,
+     100,
+     200,
+     200
+    ],
+    "c": [
+     422,
+     {
+      "code": "INVALID_QUERY"
+     }
+    ],
+    "d": [
+     422,
+     {
+      "code": "INVALID_QUERY"
+     }
+    ],
+    "e": [
+     200,
+     0,
+     76663
+    ]
+   },
+   "note": ""
+  },
+  {
+   "case": "QA-OPS-08",
+   "result": "통과",
+   "expected": "4개 엔드포인트 × a~e 422와 지정 code, f statistics?minutes=1 422 UNKNOWN_QUERY_FIELD, 본문 code 하나·no-store",
+   "actual": {
+    "inspections a": [
+     422,
+     {
+      "code": "UNKNOWN_QUERY_FIELD"
+     }
+    ],
+    "inspections b": [
+     422,
+     {
+      "code": "INVALID_DATE_RANGE"
+     }
+    ],
+    "inspections c": [
+     422,
+     {
+      "code": "INVALID_SNAPSHOT"
+     }
+    ],
+    "inspections d": [
+     422,
+     {
+      "code": "INVALID_QUERY"
+     }
+    ],
+    "inspections e": [
+     422,
+     {
+      "code": "INVALID_QUERY"
+     }
+    ],
+    "statistics a": [
+     422,
+     {
+      "code": "UNKNOWN_QUERY_FIELD"
+     }
+    ],
+    "statistics b": [
+     422,
+     {
+      "code": "INVALID_DATE_RANGE"
+     }
+    ],
+    "statistics c": [
+     422,
+     {
+      "code": "INVALID_SNAPSHOT"
+     }
+    ],
+    "statistics d": [
+     422,
+     {
+      "code": "INVALID_QUERY"
+     }
+    ],
+    "statistics e": [
+     422,
+     {
+      "code": "INVALID_QUERY"
+     }
+    ],
+    "inspections.csv a": [
+     422,
+     {
+      "code": "UNKNOWN_QUERY_FIELD"
+     }
+    ],
+    "inspections.csv b": [
+     422,
+     {
+      "code": "INVALID_DATE_RANGE"
+     }
+    ],
+    "inspections.csv c": [
+     422,
+     {
+      "code": "INVALID_SNAPSHOT"
+     }
+    ],
+    "inspections.csv d": [
+     422,
+     {
+      "code": "INVALID_QUERY"
+     }
+    ],
+    "inspections.csv e": [
+     422,
+     {
+      "code": "INVALID_QUERY"
+     }
+    ],
+    "statistics.csv a": [
+     422,
+     {
+      "code": "UNKNOWN_QUERY_FIELD"
+     }
+    ],
+    "statistics.csv b": [
+     422,
+     {
+      "code": "INVALID_DATE_RANGE"
+     }
+    ],
+    "statistics.csv c": [
+     422,
+     {
+      "code": "INVALID_SNAPSHOT"
+     }
+    ],
+    "statistics.csv d": [
+     422,
+     {
+      "code": "INVALID_QUERY"
+     }
+    ],
+    "statistics.csv e": [
+     422,
+     {
+      "code": "INVALID_QUERY"
+     }
+    ],
+    "statistics f minutes=1": [
+     422,
+     {
+      "code": "UNKNOWN_QUERY_FIELD"
+     }
+    ]
+   },
+   "note": ""
+  },
+  {
+   "case": "QA-OPS-10",
+   "result": "통과",
+   "expected": "헤더 3종, BOM·CRLF·모든 칸 따옴표, 열 17개 순서, 행 수 = /inspections total, brix false, 오류 행 error_codes, 이미지 열 없음, 한글 UTF-8",
+   "actual": {
+    "status": 200,
+    "content_type": "text/csv; charset=utf-8",
+    "disposition": "attachment; filename=\"cqc-inspections.csv\"",
+    "cache": "no-store",
+    "bom": "efbbbf",
+    "crlf": true,
+    "all_quoted": true,
+    "header_ok": true,
+    "rows": 9834,
+    "history_total_at_check": 9836,
+    "brix_all_false": true,
+    "ins08_error_codes": "INFERENCE_ERROR",
+    "image_columns": [],
+    "korean_sample": "부사/상"
+   },
+   "note": "행 수와 total은 CSV·목록 요청 사이 Simulator 입력으로 0~1건 차이 허용. Excel 미설치라 직접 열기 대신 UTF-8 BOM과 한글 디코딩으로 확인"
+  },
+  {
+   "case": "QA-OPS-11",
+   "result": "통과",
+   "expected": "하이픈 시작 ID 행 첫 칸이 작은따옴표로 시작(\"'-qa-…-ops11\"), 수식으로 실행되지 않음",
+   "actual": {
+    "send": {
+     "id": "-qa-be-10081526-ops11",
+     "status": 200,
+     "reused": true
+    },
+    "first_cell": "'-qa-be-10081526-ops11",
+    "raw_line_head": "\"'-qa-be-10081526-ops11\",\"2026-10-08\",\"1"
+   },
+   "note": "Excel 미설치. 수식 시작 문자(-)가 작은따옴표로 무력화된 것을 원문 바이트로 확인"
+  },
+  {
+   "case": "QA-OPS-13",
+   "result": "통과",
+   "expected": "a 기간 형식·total 그룹 비율/평균, b 오늘 형식·섹션, c 300행, d 60·600·1800행, e 422, BOM·CRLF·mode BACKEND",
+   "actual": {
+    "a": {
+     "header": [
+      "mode",
+      "from_kst",
+      "to_kst",
+      "group",
+      "key",
+      "value"
+     ],
+     "total_keys": [
+      "average_inference_ms",
+      "excluded",
+      "inferenceCount",
+      "inferenceTotalMs",
+      "normal",
+      "reinspection",
+      "reinspection_ratio",
+      "total"
+     ],
+     "mode": [
+      "BACKEND"
+     ],
+     "ratio_ok": true
+    },
+    "b": {
+     "status": 200,
+     "sections": [
+      "bins",
+      "grades",
+      "last_1_minutes",
+      "today",
+      "varieties"
+     ],
+     "last_rows": 60
+    },
+    "c": {
+     "status": 200,
+     "sections": [
+      "bins",
+      "grades",
+      "last_5_minutes",
+      "today",
+      "varieties"
+     ],
+     "last_rows": 300
+    },
+    "d1": {
+     "status": 200,
+     "sections": [
+      "bins",
+      "grades",
+      "last_1_minutes",
+      "today",
+      "varieties"
+     ],
+     "last_rows": 60
+    },
+    "d10": {
+     "status": 200,
+     "sections": [
+      "bins",
+      "grades",
+      "last_10_minutes",
+      "today",
+      "varieties"
+     ],
+     "last_rows": 600
+    },
+    "d30": {
+     "status": 200,
+     "sections": [
+      "bins",
+      "grades",
+      "last_30_minutes",
+      "today",
+      "varieties"
+     ],
+     "last_rows": 1800
+    },
+    "e": [
+     422,
+     {
+      "code": "INVALID_QUERY"
+     }
+    ]
+   },
+   "note": ""
+  },
+  {
+   "case": "QA-IMG-01",
+   "result": "통과",
+   "expected": "정상·당도 누락 요청은 사진 저장 없음, 저신뢰 요청만 12장(LOW_CONFIDENCE, errorCode null, LOW_*_CONFIDENCE)",
+   "actual": {
+    "LQ_images": 12,
+    "LQ_categories": [
+     "LOW_CONFIDENCE"
+    ],
+    "LQ_errorCode": [
+     "None"
+    ],
+    "LQ_reason": [
+     "LOW_QUALITY_CONFIDENCE"
+    ],
+    "normal_and_brix_missing_images": 0,
+    "LQ_send": {
+     "id": "qa-be-10081526-ins04-LQ",
+     "status": 200,
+     "reused": true
+    }
+   },
+   "note": "저신뢰 보관이 200장 한도라 전체 수 대신 검사 ID 필터로 12장 증가를 확인(오래된 저신뢰 12장은 순환 삭제 = 보존 정책)"
+  },
+  {
+   "case": "QA-IMG-02",
+   "result": "통과(부분)",
+   "expected": "≤300·최신순·키 12개·id 형식·previewUrl, category·inspectionId 필터, $RUN-ins08 imageIndex 0·INFERENCE_HTTP_ERROR",
+   "actual": {
+    "count": 300,
+    "keys": [
+     "appliedCultivarThreshold",
+     "appliedQualityThreshold",
+     "category",
+     "createdAt",
+     "cultivarConfidence",
+     "decisionReason",
+     "errorCode",
+     "id",
+     "imageIndex",
+     "inspectionId",
+     "previewUrl",
+     "qualityConfidence"
+    ],
+    "sorted_desc": true,
+    "format_ok": true,
+    "category_filter": true,
+    "ins08_items": [
+     {
+      "imageIndex": 0,
+      "errorCode": "INFERENCE_HTTP_ERROR",
+      "category": "SYSTEM_ERROR"
+     }
+    ],
+    "by_category": {
+     "SYSTEM_ERROR": 100,
+     "LOW_CONFIDENCE": 200
+    }
+   },
+   "note": "시간 초과 기록(E2)의 errorCode=INFERENCE_TIMEOUT 표시는 E2 전용이라 미확인"
+  },
+  {
+   "case": "QA-IMG-03",
+   "result": "통과",
+   "expected": "200 image/png no-store, 보낸 손상 사진과 SHA-256 같음, a·b 410 IMAGE_EXPIRED, c 404/410(저장소 밖 미노출)",
+   "actual": {
+    "status": 200,
+    "type": "image/png",
+    "cache": "no-store",
+    "sha_match": true,
+    "invalid": {
+     "a": [
+      410,
+      {
+       "code": "IMAGE_EXPIRED"
+      },
+      24
+     ],
+     "b": [
+      410,
+      {
+       "code": "IMAGE_EXPIRED"
+      },
+      24
+     ],
+     "c": [
+      404,
+      {
+       "detail": "Not Found"
+      },
+      22
+     ]
+    }
+   },
+   "note": ""
+  },
+  {
+   "case": "QA-IMG-05",
+   "result": "통과",
+   "expected": "a 200 deletedIds [], b·c·d·e 422 INVALID_IDS, 이미지 그대로",
+   "actual": {
+    "a": [
+     200,
+     {
+      "deletedIds": []
+     }
+    ],
+    "b": [
+     422,
+     {
+      "code": "INVALID_IDS"
+     }
+    ],
+    "c": [
+     422,
+     {
+      "code": "INVALID_IDS"
+     }
+    ],
+    "d": [
+     422,
+     {
+      "code": "INVALID_IDS"
+     }
+    ],
+    "e": [
+     422,
+     {
+      "code": "INVALID_IDS"
+     }
+    ],
+    "own_LQ_images_after": 12
+   },
+   "note": "d는 본인 $RUN 이미지 id에 all 필드를 붙여 거부되는지 확인(삭제되지 않음)"
+  },
+  {
+   "case": "QA-IMG-04",
+   "result": "통과",
+   "expected": "200 deletedIds [A,B](중복·없는 id 무시), A·B만 목록에서 빠짐, 미리보기 410, 이력·CSV 유지, retention -2",
+   "actual": {
+    "delete": [
+     200,
+     {
+      "deletedIds": [
+       "b2089a3e39de45b0a5c23ce55ba9e023_11",
+       "b2089a3e39de45b0a5c23ce55ba9e023_10"
+      ]
+     }
+    ],
+    "own_left": 10,
+    "A_B_gone": true,
+    "preview_A": [
+     410,
+     {
+      "code": "IMAGE_EXPIRED"
+     }
+    ],
+    "preview_B": [
+     410,
+     {
+      "code": "IMAGE_EXPIRED"
+     }
+    ],
+    "history_kept": true,
+    "csv_kept": true,
+    "retention_before_after": [
+     300,
+     298
+    ]
+   },
+   "note": ""
+  }
+ ]
+}

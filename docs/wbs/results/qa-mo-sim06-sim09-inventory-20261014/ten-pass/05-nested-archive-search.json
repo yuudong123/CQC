@@ -1,0 +1,460 @@
+{
+  "round": 5,
+  "at_kst": "2026-10-14T12:42:25.257728+09:00",
+  "title": "ZIP/TAR/GZIP/7z candidates including ignored copies",
+  "archives_checked": 3,
+  "files": [
+    {
+      "path": "C:\\CQC\\outputs\\qa-mo-be-followup-20261012.zip",
+      "sha256": "d95b7e510a0777d1bbaf2c1130287cf079707916c98c7af21b6c4317b8c5a077",
+      "member_count": 46,
+      "members": [
+        {
+          "name": "qa-mo-be-followup-20261012/.gitattributes",
+          "bytes": 9
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/backend-health.json",
+          "bytes": 80
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/check_ops13_readonly_20261012.py",
+          "bytes": 4305
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/collect_mo103_followup_20261012.py",
+          "bytes": 8631
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/current-containers.json",
+          "bytes": 429
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/dataset-check.json",
+          "bytes": 430
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/deployed-config.py.txt",
+          "bytes": 884
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/deployed-main.py.txt",
+          "bytes": 5646
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/deployed-quality-operations.py.txt",
+          "bytes": 13616
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/deployed-schemas.py.txt",
+          "bytes": 2869
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/deployment-provenance.json",
+          "bytes": 5498
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/empty.env",
+          "bytes": 0
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/environment-template-source.json",
+          "bytes": 5724
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/execution-plan.md",
+          "bytes": 6386
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/historical-detailed-fault-evidence.json",
+          "bytes": 3721
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/historical-detailed-run.json",
+          "bytes": 426
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/historical-earlier-fault-evidence.json",
+          "bytes": 3409
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/historical-primary-fault-extract.json",
+          "bytes": 3835
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/historical-recovery-evidence.json",
+          "bytes": 2894
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/historical-restart-evidence.json",
+          "bytes": 17289
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/historical-search.json",
+          "bytes": 1086
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/historical-sources.json",
+          "bytes": 1234
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/inference-health.json",
+          "bytes": 503
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/isolated-compose-rendered-redacted.json",
+          "bytes": 7470
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/isolated-compose.json",
+          "bytes": 5892
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/isolated-preflight.json",
+          "bytes": 1181
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/issue-comment-draft.md",
+          "bytes": 5536
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/jenkins-builds.json",
+          "bytes": 2033
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/jenkins-queue-check.json",
+          "bytes": 279
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/jenkins-selected-log.txt",
+          "bytes": 1692
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/manifest.sha256",
+          "bytes": 4199
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/ops13-date-free-statistics.csv",
+          "bytes": 8904
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/ops13-review.json",
+          "bytes": 3730
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/ops13-same-day-statistics.json",
+          "bytes": 515
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/prepare_mo103_e2_config_20261012.py",
+          "bytes": 6239
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/README.md",
+          "bytes": 10399
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/resource-preflight.json",
+          "bytes": 2770
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/sim03-sim12-evidence-review.json",
+          "bytes": 1492
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/sim05-request-matrix.json",
+          "bytes": 999
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/sim06-evidence-review.json",
+          "bytes": 3486
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/simulator-source-config.json",
+          "bytes": 199
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/simulator-source-main.json",
+          "bytes": 197
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/simulator-source-schemas.json",
+          "bytes": 200
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/simulator-state.json",
+          "bytes": 181
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/verification.json",
+          "bytes": 502
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/volume-availability.json",
+          "bytes": 1233
+        }
+      ],
+      "matches": [
+        {
+          "name": "qa-mo-be-followup-20261012/deployed-schemas.py.txt",
+          "terms": [
+            "CONTROL_NO_RESPONSE",
+            "CONTROL_FAILED"
+          ],
+          "sha256": "c3d036b34fae04ade7d322cb0268fa2e8b9ba564a89e309e875b0e6c8d0672f1"
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/historical-detailed-fault-evidence.json",
+          "terms": [
+            "CONTROL_NO_RESPONSE",
+            "CONTROL_FAILED"
+          ],
+          "sha256": "993cb4cfdccfcba7ba891e12cd144211bf5fc6ea4220d87eed0a57a30d2f626d"
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/historical-earlier-fault-evidence.json",
+          "terms": [
+            "CONTROL_NO_RESPONSE",
+            "CONTROL_FAILED"
+          ],
+          "sha256": "eead8795952d03409b532c64f89f485fd1889035e93f62adc7c516cf405b23aa"
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/historical-primary-fault-extract.json",
+          "terms": [
+            "CONTROL_NO_RESPONSE",
+            "CONTROL_FAILED"
+          ],
+          "sha256": "b42fed5ef776dddd520c4d19fcd31d22ebb4b829b358db8f3ea3f7243d482830"
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/README.md",
+          "terms": [
+            "CONTROL_NO_RESPONSE",
+            "CONTROL_FAILED"
+          ],
+          "sha256": "45c732c535b2e0e58e439de8dc79ea5ecde731a87589c9a741ba92a5e20450c9"
+        },
+        {
+          "name": "qa-mo-be-followup-20261012/sim06-evidence-review.json",
+          "terms": [
+            "CONTROL_NO_RESPONSE",
+            "CONTROL_FAILED"
+          ],
+          "sha256": "238f690519bfc5a8817b5050411888a47be08b3fe9f3bfedefd44156461c4909"
+        }
+      ],
+      "error": null
+    },
+    {
+      "path": "C:\\CQC\\outputs\\qa-mo-ins14-ins17-20261012.zip",
+      "sha256": "f89bc609ec1bbd0ea8003f857ee083e21534bd2070cfefab825c4ddb6efb1195",
+      "member_count": 22,
+      "members": [
+        {
+          "name": "qa-mo-ins14-ins17-20261012/.gitattributes",
+          "bytes": 8
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/collect-existing-evidence.py",
+          "bytes": 9436
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/database-container.json",
+          "bytes": 463
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/deployed-error-code-mapping.py.txt",
+          "bytes": 1526
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/deployed-mapping-source.json",
+          "bytes": 359
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/docker-inventory.json",
+          "bytes": 1704
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/e1-fallback-control-review.json",
+          "bytes": 10986
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/e1-fallback-control-table.csv",
+          "bytes": 1267
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/e1-fallback-db-check.json",
+          "bytes": 9652
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/existing-csv-extract.json",
+          "bytes": 954
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/ins14-db-check.json",
+          "bytes": 2885
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/ins14-existing-evidence-extract.json",
+          "bytes": 38150
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/ins17-db-check.json",
+          "bytes": 824
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/issue-comment-draft.md",
+          "bytes": 4159
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/local-search.json",
+          "bytes": 1287
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/manifest.sha256",
+          "bytes": 1893
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/mysql-result.jsonl",
+          "bytes": 9394
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/query.sql",
+          "bytes": 3727
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/README.md",
+          "bytes": 7095
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/remote-source-check.json",
+          "bytes": 381
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/requested-targets.json",
+          "bytes": 1478
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/summary.json",
+          "bytes": 585
+        }
+      ],
+      "matches": [
+        {
+          "name": "qa-mo-ins14-ins17-20261012/deployed-error-code-mapping.py.txt",
+          "terms": [
+            "CONTROL_NO_RESPONSE",
+            "CONTROL_FAILED"
+          ],
+          "sha256": "e5e73e7f0c2fa53bdb1c48779715d38980e92e7e4b4ac6a9c78ec145f93694b8"
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/e1-fallback-control-review.json",
+          "terms": [
+            "attempt_no"
+          ],
+          "sha256": "56a7b0c6462eb451d770982c81d3d2953b8ae2ba5f1caf4ce2a14202072c4a9d"
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/e1-fallback-control-table.csv",
+          "terms": [
+            "attempt_no"
+          ],
+          "sha256": "60c8f37ef312c7d9d699753090615aacc2b2f3297bfe6001a02bcb0ff0358feb"
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/e1-fallback-db-check.json",
+          "terms": [
+            "attempt_no"
+          ],
+          "sha256": "41631d8f3ad7429897bbc640a5c961839ac327691aee8b65a616700b0a5994b4"
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/issue-comment-draft.md",
+          "terms": [
+            "attempt_no"
+          ],
+          "sha256": "9fb7f56ee6229fb01dfd4a560bbf157122de7b18c0d754296b58cc730f309b42"
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/mysql-result.jsonl",
+          "terms": [
+            "attempt_no"
+          ],
+          "sha256": "de5211af35fc396d297f0ce060c3872e14c50086669a8711d671c08bbd57b4d6"
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/query.sql",
+          "terms": [
+            "attempt_no"
+          ],
+          "sha256": "8444f8ad55a02b53d41224e0a4538f0d1369ff43d562b9de87c1a61e4e19cfc3"
+        },
+        {
+          "name": "qa-mo-ins14-ins17-20261012/README.md",
+          "terms": [
+            "attempt_no"
+          ],
+          "sha256": "8400aba39c735efdee803f8847777e60eef915285e404c717915461e7c99064f"
+        }
+      ],
+      "error": null
+    },
+    {
+      "path": "C:\\Users\\admin\\Documents\\Codex\\2026-10-12\\new-chat\\outputs\\CQC_Codex_handoff.zip",
+      "sha256": "9953fbc60af6d219f909b5d98817993421cf431499877de49c387bedce2c0225",
+      "member_count": 3,
+      "members": [
+        {
+          "name": "docs/SOURCE.md",
+          "bytes": 2553
+        },
+        {
+          "name": "CQC_HANDOFF.md",
+          "bytes": 6847
+        },
+        {
+          "name": "README.md",
+          "bytes": 11977
+        }
+      ],
+      "matches": [],
+      "error": null
+    }
+  ],
+  "new_raw_bundle_found": false,
+  "scope": "Text members searched in place without filesystem extraction; unsupported archives reported",
+  "jenkins_workspace_search": {
+    "returncode": 0,
+    "matches": [
+      "/var/jenkins_home/workspace/CQC-CICD/docs/wbs/results/qa-mo-be-followup-20261012/historical-detailed-fault-evidence.json",
+      "/var/jenkins_home/workspace/CQC-CICD/docs/wbs/results/qa-mo-be-followup-20261012/historical-earlier-fault-evidence.json",
+      "/var/jenkins_home/workspace/CQC-CICD/docs/wbs/results/qa-mo-be-followup-20261012/historical-recovery-evidence.json",
+      "/var/jenkins_home/workspace/CQC-CICD/docs/wbs/results/qa-mo-20261007-evidence/20261006-recovery-recovery-evidence.json"
+    ],
+    "scope": "Jenkins workspace raw QA filenames, node_modules pruned; no credentials/config contents read",
+    "copy_checks": [
+      {
+        "path": "/var/jenkins_home/workspace/CQC-CICD/docs/wbs/results/qa-mo-be-followup-20261012/historical-detailed-fault-evidence.json",
+        "sha256": "993cb4cfdccfcba7ba891e12cd144211bf5fc6ea4220d87eed0a57a30d2f626d",
+        "same_main_workspace_copy": true
+      },
+      {
+        "path": "/var/jenkins_home/workspace/CQC-CICD/docs/wbs/results/qa-mo-be-followup-20261012/historical-earlier-fault-evidence.json",
+        "sha256": "eead8795952d03409b532c64f89f485fd1889035e93f62adc7c516cf405b23aa",
+        "same_main_workspace_copy": true
+      },
+      {
+        "path": "/var/jenkins_home/workspace/CQC-CICD/docs/wbs/results/qa-mo-be-followup-20261012/historical-recovery-evidence.json",
+        "sha256": "5263386a256cb07353a3a3c9ff1bb282455b657fd9df6e164a4687c066a485e6",
+        "same_main_workspace_copy": true
+      },
+      {
+        "path": "/var/jenkins_home/workspace/CQC-CICD/docs/wbs/results/qa-mo-20261007-evidence/20261006-recovery-recovery-evidence.json",
+        "sha256": "5263386a256cb07353a3a3c9ff1bb282455b657fd9df6e164a4687c066a485e6",
+        "same_main_workspace_copy": true
+      }
+    ]
+  }
+}

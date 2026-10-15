@@ -1,0 +1,115 @@
+# CQC 모델 카드 — v2 후보 (현재 서비스 모델)
+
+> 2026-09-30 신뢰도 보정 반영. 승인 상태는 그대로 `unverified_candidate`다. v1 카드는 [model-card.md](model-card.md).
+
+## 식별 정보
+
+| 항목 | 값 |
+|---|---|
+| 모델명 | `mobilenet_v3_small_multiview` |
+| 모델 버전 | `cqc-apple-separate12-focal-v2-cal-20260930` (보정 전 `cqc-apple-separate12-focal-v2-candidate`) |
+| 모델 폴더 | 서비스 모델은 `models/selected/`(Docker `/app/models/approved`로 복사). 모든 버전은 `models/model_<버전·특징>/`에 두고, 선정한 것을 `selected`에 복사한다: `model_v2-focal-cal-20260930`(보정본, 현재 `selected`와 동일), `model_v2-focal-uncalibrated`(보정 전 v2), `model_v1.0.0-separate12`(v1) |
+| 체크포인트 SHA-256 | `b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a` |
+| 승인 상태 | `unverified_candidate` (독립 holdout 승인 없음) |
+| 신뢰도 보정 | `calibrated_dev_oof` (개발 5-fold OOF 152그룹 temperature scaling, Test 미사용) |
+| 구조 | 품종·품질 분리 인코더 MobileNetV3 Small (`separate`), 사진별 특징 masked mean pooling |
+| 입력 | 같은 사과 12장, 224×224 RGB, 전처리 `rgb-resize-imagenet-v1` |
+| 학습 | 개발 152그룹 전체, Focal γ2, dropout 0.4, AdamW lr 3e-4·wd 5e-4, batch 2, seed 42, **4 epoch 고정** |
+| 당도 입력 | 없음. 가상 당도는 배차 정책에서만 쓰며 실측 당도가 아니다 |
+
+## 출력
+
+- 품종 `fuji`·`yanggwang`, 품질 `L`(특)·`M`(상)·`S`(보통)의 확률, 예측, 각 신뢰도(최대 확률)
+- 모델 계산 시간, 모델명·버전·전처리 버전
+- bin·재검사·DB 정책은 Backend 담당
+
+## 평가
+
+| 근거 | 결과 | 해석 |
+|---|---|---|
+| 개발 5-fold Group CV (DM-06, 공통 4 epoch) | 품종 Macro F1 0.9799, 품질 Macro F1 0.8844 | 모델 선정 기준. 발표 23·30쪽과 같은 값 |
+| 개발 비교 source holdout (DM-06) | 품질 Macro F1 0.7932 | 가장 보수적인 개발 추정치 |
+| 참고: v1 기존 Test (DM-05) | 품질 Macro F1 0.7778, 상 등급 6/12 오분류 | v2 재설계의 출발점. 승인 기준 0.90 미달 |
+| 기존 Test 27그룹 회귀 진단 (DM-09) | 품종·품질 Macro F1 1.0000 (27/27) | v1 실패를 본 뒤 만든 모델을 같은 Test로 다시 잰 값. **독립 승인 아님** |
+| 실제 시연 사진 드라이런 (DM-08) | Test 사과 21개 중 품질 20개 정답. 보정 후 품질 0.60 기준 재검사 8.3%, 자동 처리 33묶음 전부 정답 | 같은 사과의 다른 사진. 독립 평가 아님 |
+
+- 발표·문서에서는 "기존 Test에서 v1 대비 개선"으로 쓰고, 운영 정확도 100%로 쓰지 않는다. source holdout 0.793을 함께 공개한다.
+- 시연 사진 드라이런의 유일한 오분류(`601141014000`, L→M)는 같은 사과의 Test 대표 사진에서는 정답이었다. 사진 구성에 따라 결과가 달라질 수 있다.
+
+## 신뢰도 특성
+
+- v2는 **과소 확신**이다. 기존 Test 27개 품질 신뢰도 평균 0.715·최저 0.527, 시연 사진 36개 중앙값 0.649·최저 0.393. v1(평균 0.939, 과신)과 반대다.
+- 보정 전에는 v1 근거의 0.50/0.50을 썼고, 시연 사진 기준 품질 임계값 0.50·0.60·0.70·0.80의 재검사 비율이 13.9%·36.1%·58.3%·80.6%였다. 보정 후 같은 사진에서 2.8%·8.3%·13.9%·27.8%다.
+- 보정: v2 설정 5-fold OOF(4 epoch 고정) → temperature scaling. 품질 ECE 0.259 → 0.081, 품종 0.059 → 0.013. 보정 후 시연 사진 품질 신뢰도 중앙값 0.649 → 0.921. 상세는 DM-08 문서 2026-09-30 절.
+
+## 운영 설정
+
+| 항목 | 값 |
+|---|---|
+| 품종 temperature | 0.384 |
+| 품질 temperature | 0.391 |
+| 품종 임계값 | 0.50 |
+| 품질 임계값 | 0.60 |
+| 보정 후 자동 처리 비율·정확도 | 개발 OOF: 자동 처리 83.6%(재검사 16.4%), 자동 구간 품질 92.9%·품종 98.4%. 보정 전 0.50/0.50은 재검사 23.7%·품질 92.2% |
+| 사진 해제 병렬 수 | 자동(CPU 수) |
+
+## 성능
+
+| 환경 | 입력 | 결과 |
+|---|---|---|
+| 서버컴, Compose HTTP (MO-06) | 합성 224 JPEG 12장 | p95 205.76ms, 초당 6.00건 |
+| 클라우드 2 vCPU, 서버 내부 (DM-07) | 실제 1000×1000 PNG 12장 | 순차 해제 p95 410ms, 병렬 해제 p95 261ms |
+| **서버컴, 서버 내부 (DM-08, 09-30)** | 실제 1000×1000 PNG 12장 36묶음 | 동시 처리 1: 해제 p95 149ms, 모델 p95 161ms, **전체 p95 309ms**, 500ms 초과 0건 |
+
+서버컴에서는 병렬 사진 해제로 해제 시간이 모델 계산과 비슷하다. 동시 처리 2는 전체 p95 528ms로 느려져 운영 기본값 1을 유지한다.
+
+## 한계
+
+- 독립 holdout이 없다. 기존 Test 27개는 v1 실패 분석에 이미 쓰였다.
+- 부사·양광, L/M/S 외 입력과 다른 촬영 환경으로의 일반화는 검증되지 않았다.
+- 원본 PNG가 아닌 JPEG·축소 사진을 넣으면 학습 입력 분포와 달라진다.
+- 라벨은 특·상·보통뿐이고 결점(상처) 라벨이 없다. 상처가 큰 사과처럼 등급 밖(불합격) 사례를 판정할 근거가 없고, 그런 사과가 저신뢰 재검사로 빠지는지도 검증하지 못했다.
+- AI Hub는 "농산물 품질 기준으로 특, 상, 보통 품으로 분류"라고만 밝히고 착색·크기·결점의 세부 수치 기준을 공개하지 않는다. 등급 판정 근거는 등급별 대표 사진과 모델 확률로 보여준다.
+- 서버컴 성능은 실제 시연 사진으로 확인했다(추론 서버 내부 p95 309ms, 운영 간격 2초에서 시간 초과 0건). 초당 2건 목표는 현재 구조로 미달이다.
+
+## 동결 후 최종 Test (DM-09, #75) — 10-13 동결 뒤 1회
+
+> 2026-10-08 미리 작성. 아래 결과 칸만 동결 뒤 채운다. Test 27그룹은 v1 분석과 v2 회귀 비교(1.0000)에 이미 쓰였으므로, 이 실행은 **동결 버전의 재확인**이며 독립 승인 근거로 쓰지 않는다.
+
+### 실행 전 확인 (10-08 노트북에서 확인함)
+
+| 항목 | 값 |
+|---|---|
+| 체크포인트 | `models/selected/model.pt` = `model_v2-focal-cal-20260930/model.pt`, SHA-256 `b254206e…2ba8753a`, 필드 `model_state·config·epoch(4)·metrics` 있음 |
+| 입력 | `data/processed/manifest.csv`(SHA-256 `1a817020…08b3bbec`), `configs/splits/seed-42.csv`(`375afc73…b078cbe1`), 원본 `data/raw/` |
+| 실행 환경 | 노트북 CPU, torch 2.14.0+cpu |
+| 보정 | 온도 보정은 확률 크기만 바꾸고 예측 순위는 그대로라 Macro F1·혼동행렬은 보정 전과 같다. 신뢰도·재검사율은 `model.json`의 온도로 따로 계산한다 |
+
+### 실행 명령
+
+`evaluate.py`는 체크포인트 옆에 `.final-test.lock`을 만들어 두 번째 실행을 막는다. 서비스 모델 폴더(`models/selected/`, Docker 복사 대상)에 잠금 파일이 생기지 않도록, Git 제외 폴더에 복사본을 두고 SHA를 대조한 뒤 실행한다.
+
+```powershell
+New-Item -ItemType Directory -Force outputs\dm09-final | Out-Null
+Copy-Item models\selected\model.pt outputs\dm09-final\model.pt
+(Get-FileHash outputs\dm09-final\model.pt -Algorithm SHA256).Hash  # b254206e…2ba8753a 확인
+python -m src.training.evaluate --checkpoint outputs\dm09-final\model.pt --output outputs\dm09-final\final-test-v2.json --device cpu --confirm-final-test RUN_FINAL_TEST_ONCE
+```
+
+### 결과 (동결 뒤 채움)
+
+| 항목 | 값 |
+|---|---|
+| 실행 일시·동결 커밋 | 2026-10-13 17:22:27–17:22:57 KST · dev `dac3a66` · 노트북 CPU(torch 2.14.0+cpu) · 복사본 SHA-256 `b254206e…2ba8753a` 일치 |
+| 표본 | 27그룹 |
+| 품종 Macro F1 | **1.0000** · Accuracy 1.0000 · 부사 10 / 양광 17 모두 정답 |
+| 품질(외관) Macro F1 | **1.0000** · Accuracy 1.0000 · 등급별 Precision·Recall·F1 모두 1.00(특 7 · 상 12 · 보통 8) |
+| 품질 혼동행렬 L/M/S | `[[7,0,0],[0,12,0],[0,0,8]]` |
+| 승인 기준(각 0.90 이상) | 수치는 충족. 단 Test 재사용이라 **동결 버전 재확인**이며 독립 승인으로 쓰지 않음(`unverified_candidate` 유지) |
+| 10-06 회귀 비교(1.0000)와 차이 | 차이 없음(같은 체크포인트·같은 Test 27그룹) |
+| 결과 파일 | `outputs/dm09-final/final-test-v2.json` → [`docs/wbs/results/final-test-v2-20261013.json`](../../results/final-test-v2-20261013.json). 잠금 파일 `model.pt.final-test.lock` 생성(재실행 차단) |
+
+### 확정할 문구
+
+- 승인 상태는 바이너리·`model.json`의 `unverified_candidate`를 바꾸지 않는다. 카드에는 "동결 버전 재확인 결과"로만 적는다.
+- 발표·문서에는 개발 CV 0.8844, source 0.7932, 동결 재확인 결과를 함께 적는다.

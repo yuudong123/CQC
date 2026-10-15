@@ -1,0 +1,28 @@
+{
+  "round": 9,
+  "at_kst": "2026-10-14T12:43:56.306680+09:00",
+  "title": "CQC command/tool output histories using newly found alternative BE IDs and original filenames",
+  "other_CQC_threads": 16,
+  "tool_outputs_checked": 1113,
+  "matching_outputs": 1,
+  "matches": [
+    {
+      "thread_id": "01a11997-52d7-7572-832c-0c40a367114c",
+      "session_path": "\\\\?\\C:\\Users\\admin\\.codex\\sessions\\2026\\10\\08\\rollout-2026-10-08T12-38-30-01a11997-52d7-7572-832c-0c40a367114c.jsonl",
+      "line": 43,
+      "tool_output_chars": 75400,
+      "output_sha256": "206858d040f016580a794da9b48739065999bdcc75d4ba8f48d2df116da24635",
+      "terms": [
+        "be10-3.outage",
+        "DB-01-INJECTED",
+        "acceptance-evidence.jsonl"
+      ],
+      "attempt_no_occurrences": 0,
+      "StartedAt_occurrences": 0,
+      "RestartCount_occurrences": 0,
+      "classification": "Tracked BE-10 result/QA document stdout; no individual attempt rows"
+    }
+  ],
+  "scope": "Only command/tool results; no user messages, agent reasoning or full chats exported",
+  "new_raw_rows_confirmed": false
+}

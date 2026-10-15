@@ -1,0 +1,86 @@
+{
+  "round": 4,
+  "at_kst": "2026-10-14T12:42:05.396974+09:00",
+  "title": "Other local task/export roots and explicitly named BE originals",
+  "files_names_checked": 4107,
+  "roots": [
+    "C:\\Users\\admin\\Documents\\Codex",
+    "C:\\workspace",
+    "C:\\tmp"
+  ],
+  "named_candidates": [
+    {
+      "path": "C:\\Users\\admin\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an\\work\\CQC\\docs\\중간발표\\10월 1일\\cqc-final-presentation-draft.html",
+      "bytes": 990696
+    },
+    {
+      "path": "C:\\Users\\admin\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an\\work\\CQC\\docs\\중간발표\\10월 1일\\CQC-시연대본-1001.md",
+      "bytes": 12042
+    },
+    {
+      "path": "C:\\Users\\admin\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an\\work\\CQC\\docs\\중간발표\\9월 22일\\cqc-asis-tobe-report.html",
+      "bytes": 975783
+    },
+    {
+      "path": "C:\\Users\\admin\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an\\work\\CQC\\docs\\중간발표\\9월 22일\\cqc-presentation-script-short.md",
+      "bytes": 3823
+    },
+    {
+      "path": "C:\\Users\\admin\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an\\work\\CQC\\docs\\중간발표\\9월 29일\\cqc-second-presentation-script-short.md",
+      "bytes": 5866
+    },
+    {
+      "path": "C:\\Users\\admin\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an\\work\\CQC\\docs\\중간발표\\9월 29일\\cqc-second-presentation.html",
+      "bytes": 464285
+    },
+    {
+      "path": "C:\\Users\\admin\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an\\work\\CQC\\docs\\중간발표\\9월 29일\\cqc-second-presentation.pdf",
+      "bytes": 604088
+    },
+    {
+      "path": "C:\\Users\\admin\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an\\work\\CQC\\docs\\최종발표\\cqc-final-presentation-draft.html",
+      "bytes": 1158770
+    },
+    {
+      "path": "C:\\Users\\admin\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an\\work\\CQC\\docs\\최종발표\\cqc-final-presentation-draft.pdf",
+      "bytes": 2175351
+    },
+    {
+      "path": "C:\\Users\\admin\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an\\work\\CQC\\docs\\최종발표\\cqc-final-presentation-script-draft.md",
+      "bytes": 21828
+    },
+    {
+      "path": "C:\\Users\\admin\\Documents\\Codex\\2026-10-07\\referenced-chatgpt-conversation-this-is-an\\outputs\\CQC_103_65_QA_인계.md",
+      "bytes": 6609
+    },
+    {
+      "path": "C:\\Users\\admin\\Documents\\Codex\\2026-10-12\\new-chat\\outputs\\CQC_Codex_handoff.zip",
+      "bytes": 9671
+    },
+    {
+      "path": "C:\\Users\\admin\\Documents\\Codex\\2026-10-12\\new-chat\\outputs\\CQC_Codex_handoff.zip.library-identity.json",
+      "bytes": 228
+    },
+    {
+      "path": "C:\\Users\\admin\\Documents\\Codex\\2026-10-12\\new-chat\\outputs\\CQC_Codex_handoff\\CQC_HANDOFF.md",
+      "bytes": 6847
+    }
+  ],
+  "archive_candidates": [
+    {
+      "path": "C:\\Users\\admin\\Documents\\Codex\\2026-10-12\\new-chat\\outputs\\CQC_Codex_handoff.zip",
+      "bytes": 9671
+    }
+  ],
+  "named_BE_originals_here": {
+    "be10-3": false,
+    "qa-be-e2-ins13-20261008": false,
+    "qa-be-117-reproduction-20261008": false,
+    "qa-be-117-dns-20261008": false,
+    "qa-e2-restore-20261008": false
+  },
+  "new_raw_bundle_found": false,
+  "scope": "File names/metadata, not unrelated personal document contents",
+  "additional_CQC_workspace": "C:\\Users\\admin\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an\\work\\CQC",
+  "additional_CQC_outputs": []
+}

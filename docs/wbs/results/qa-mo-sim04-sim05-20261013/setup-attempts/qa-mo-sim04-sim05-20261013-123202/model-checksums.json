@@ -1,0 +1,12 @@
+[
+  {
+    "path": "/app/models/approved/model.json",
+    "bytes": 990,
+    "sha256": "38a2da374c0152ce28667a99a47785e0b9ebbcbf37a1c0c1a66b163b296ecb41"
+  },
+  {
+    "path": "/app/models/approved/model.pt",
+    "bytes": 22758599,
+    "sha256": "b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a"
+  }
+]

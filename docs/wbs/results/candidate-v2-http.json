@@ -1,0 +1,49 @@
+{
+  "scope": "loopback_http_synthetic_images",
+  "health": {
+    "status": "ready",
+    "model_loaded": true,
+    "model_name": "mobilenet_v3_small_multiview",
+    "model_version": "cqc-apple-separate12-focal-v2-candidate",
+    "device": "cpu",
+    "views": 12
+  },
+  "cases": [
+    {
+      "case": "twelve_frames",
+      "status": 200,
+      "round_trip_ms": 283.3327000262216
+    },
+    {
+      "case": "masked_eight_frames",
+      "status": 200,
+      "round_trip_ms": 173.0719999759458
+    },
+    {
+      "case": "too_many_frames",
+      "status": 413,
+      "round_trip_ms": 5.353500018827617
+    },
+    {
+      "case": "metadata_mismatch",
+      "status": 422,
+      "round_trip_ms": 4.507599980570376
+    },
+    {
+      "case": "unsupported_type",
+      "status": 415,
+      "round_trip_ms": 4.634200013242662
+    },
+    {
+      "case": "corrupt_image",
+      "status": 422,
+      "round_trip_ms": 2615.2826999896206
+    }
+  ],
+  "backend_schema_validated": true,
+  "backend_revision": "2490cfe7f9a75fcbd75acb36ccf99aad758e45d9",
+  "backend_orchestration_verified": false,
+  "quality_evaluated": false,
+  "target_cpu_verified": false,
+  "production_approved": false
+}

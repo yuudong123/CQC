@@ -1,0 +1,477 @@
+pipeline {
+
+    agent any
+
+    // ========================================================
+    // CQC Jenkins Pipeline
+    // WBS: MO-03 + MO-04 연동 검증
+    // 담당: 홍유나
+    //
+    // 목적:
+    // - GitHub에서 Jenkinsfile과 프로젝트 코드를 checkout
+    // - Docker / Docker Compose 실행 환경 확인
+    // - compose.yaml 문법 검증
+    // - Compose 서비스 빌드 및 기동
+    // - MO-04에서 추가한 healthcheck / 기동 의존성 검증
+    //
+    // 현재 검증 대상:
+    // - mysql
+    // - 실제 inference
+    // - 실제 backend
+    // - logistics-web
+    // - simulator
+    //
+    // Healthcheck 대상:
+    // - mysql
+    // - inference
+    // - backend
+    //
+    // 기동 의존성:
+    //   MySQL ─────┐
+    //              ├→ Backend → Simulator
+    //   Inference ─┘          └→ logistics-web
+    // ========================================================
+
+    // ========================================================
+    // Jenkins 기본 실행 정책
+    // ========================================================
+    options {
+
+        // 같은 Job이 동시에 여러 번 실행되는 것을 방지한다.
+        // 동시에 두 배포가 실행되면 같은 Docker 컨테이너를
+        // 서로 변경할 수 있기 때문에 막는다.
+        disableConcurrentBuilds()
+
+        // Jenkins 빌드 기록을 최근 30개까지만 유지한다.
+        buildDiscarder(
+            logRotator(numToKeepStr: '30')
+        )
+    }
+
+    parameters {
+        booleanParam(
+            name: 'FORCE_BUILD_FAILURE',
+            defaultValue: false,
+            description: 'MO-07 preservation test: fail Build before Deploy'
+        )
+        booleanParam(
+            name: 'FORCE_HEALTH_FAILURE',
+            defaultValue: false,
+            description: 'MO-07 rollback test: fail health verification after deploy'
+        )
+    }
+
+    // ========================================================
+    // 자동 실행 Trigger
+    // ========================================================
+    // GitHub에 push가 발생하면 Jenkins Pipeline을 자동 실행한다.
+    //
+    // 배포 Job은 Pipeline script from SCM의 Branch Specifier를 */dev로 설정한다.
+    // PR 검사는 .github/workflows/pr-checks.yml에서 수행한다.
+    // 이 파일의 배포 단계는 dev에서만 실행한다.
+    //
+    // GitHub 저장소의 Webhook이 Jenkins와 연결되어 있어야
+    // push 이벤트가 Jenkins로 전달된다.
+    // ========================================================
+    triggers {
+        githubPush()
+    }
+
+    // ========================================================
+    // MO-05 MySQL 환경변수 / Credentials
+    // ========================================================
+    environment {
+        MYSQL_ROOT_PASSWORD = credentials('cqc-mysql-root-password')
+        MYSQL_CREDS = credentials('cqc-mysql-creds')
+
+        // BE-07 Backend ↔ Simulator 내부 인증 토큰
+        SIMULATOR_FAULT_TOKEN = credentials('cqc-simulator-fault-token')
+
+        MYSQL_DATABASE = 'cqc'
+        MYSQL_USER = "${MYSQL_CREDS_USR}"
+        MYSQL_PASSWORD = "${MYSQL_CREDS_PSW}"
+
+        // 물류 Web 번들에 포함되는 Jenkins 배포 호스트의 공개 주소
+        LOGISTICS_PUBLIC_WEB_ORIGIN = 'http://192.168.133.106:3100'
+        LOGISTICS_PUBLIC_API_URL = 'http://192.168.133.106:8100/api/v1'
+        LOGISTICS_WEB_PORT = '3100'
+        LOGISTICS_API_PORT = '8100'
+
+        // google maps api key
+        GOOGLE_MAPS_API_KEY = credentials('google-maps-api-key')
+    }
+    
+    stages {
+
+        stage('Branch Policy') {
+            steps {
+                script {
+                    // Multibranch uses BRANCH_NAME; a single Pipeline-from-SCM Job
+                    // can expose only its configured SCM Branch Specifier.
+                    def branch = env.BRANCH_NAME ?: env.GIT_BRANCH ?: scm.branches?.first()?.name ?: ''
+                    def normalized = branch.replaceFirst('^refs/heads/', '')
+                                           .replaceFirst('^refs/remotes/', '')
+                                           .replaceFirst('^origin/', '')
+                                           .replaceFirst('^\\*/', '')
+                    env.CQC_DEPLOY_ALLOWED = (!env.CHANGE_ID && normalized == 'dev') ? 'true' : 'false'
+                    echo "Branch policy: branch=${branch}, PR=${env.CHANGE_ID ?: 'none'}, deploy=${env.CQC_DEPLOY_ALLOWED}"
+                }
+            }
+        }
+
+        // Keep recovery outside the CI/CD timeout so it receives its own budget.
+        stage('CI/CD') {
+            options {
+                timeout(time: 20, unit: 'MINUTES')
+            }
+            stages {
+
+        // ====================================================
+        // 1. Environment Check
+        // ====================================================
+        // Pipeline script from SCM을 사용하므로
+        // Jenkins Job의 SCM 설정에 지정된 브랜치를 자동 checkout한다.
+        //
+        // 따라서 Jenkinsfile 내부에서 별도의 git clone / checkout을
+        // 다시 수행하지 않는다.
+        //
+        // 배포 Job의 Branch Specifier는 */dev로 설정한다.
+        //
+        // 이 단계에서는 Jenkins 실행 환경에서
+        // Git / Docker / Docker Compose 사용 가능 여부를 확인한다.
+        // ====================================================
+        stage('Environment Check') {
+
+            steps {
+
+                sh '''
+                    set -eu
+
+                    echo "======================================"
+                    echo " Git Version"
+                    echo "======================================"
+                    git --version
+
+                    echo "======================================"
+                    echo " Current Git Branch / Commit"
+                    echo "======================================"
+                    git branch --show-current || true
+                    git rev-parse --short HEAD
+                    if [ "${CQC_DEPLOY_ALLOWED:-false}" = true ] && [ -f .cqc-deploy-state/pending ]; then
+                        echo "Recovering an interrupted deployment before starting CI..."
+                        sh scripts/ci/compose-rollback.sh
+                    fi
+
+                    echo "======================================"
+                    echo " Docker Version"
+                    echo "======================================"
+                    docker --version
+
+                    echo "======================================"
+                    echo " Docker Compose Version"
+                    echo "======================================"
+                    docker-compose --version
+                '''
+            }
+        }
+
+        // ====================================================
+        // 2. Compose Validate
+        // ====================================================
+        // 현재 compose.yaml 전체 설정을 검사한다.
+        //
+        // 실제 컨테이너를 변경하기 전에
+        // YAML 문법, 필수 모델 경로, healthcheck, depends_on 등
+        // Compose 설정 오류가 없는지 먼저 확인한다.
+        // ====================================================
+        stage('Compose Validate') {
+
+            steps {
+
+                sh '''
+                    set -eu
+
+                    export INFERENCE_CLIENT_MODE=http
+                    export INFERENCE_URL=http://inference:8001/v1/predict
+                    export INFERENCE_MODEL_DIR="$PWD/models/selected"
+
+                    echo "======================================"
+                    echo " Compose Validate"
+                    echo "======================================"
+
+                    docker-compose -f compose.yaml config --quiet
+                '''
+            }
+        }
+
+        // ====================================================
+        stage('Python Test') {
+            steps {
+                sh '''
+                    set -eu
+                    container_id="$(docker create \
+                        -w /app \
+                        python:3.11-slim \
+                        sh -c "pip install --disable-pip-version-check -r requirements-backend-dev.txt && python -m pytest -q tests/api tests/simulator tests/ci tests/test_service_logging.py")"
+                    trap 'docker rm -f "$container_id" >/dev/null' EXIT
+                    docker cp . "$container_id:/app"
+                    docker start "$container_id" >/dev/null
+                    exit_code="$(docker wait "$container_id")"
+                    docker logs "$container_id"
+                    [ "$exit_code" -eq 0 ]
+                '''
+            }
+        }
+
+        stage('Web Test') {
+            steps {
+                sh '''
+                    set -eu
+                    container_id="$(docker create \
+                        --tmpfs /repo/cqc-logistics-platform/apps/web/node_modules \
+                        -w /repo/cqc-logistics-platform/apps/web \
+                        node:24-alpine \
+                        sh -c "npm ci --ignore-scripts && npm test")"
+                    trap 'docker rm -f "$container_id" >/dev/null' EXIT
+                    docker cp . "$container_id:/repo"
+                    docker start "$container_id" >/dev/null
+                    exit_code="$(docker wait "$container_id")"
+                    docker logs "$container_id"
+                    [ "$exit_code" -eq 0 ]
+                '''
+            }
+        }
+
+        // 3. Docker Build
+        // ====================================================
+        // Compose의 build 설정이 존재하는 서비스를 빌드한다.
+        //
+        // Backend / Inference / Simulator는 실제 Dockerfile로 빌드된다.
+        // logistics-web은 apps/web/Dockerfile로 빌드한다.
+        // ====================================================
+        stage('Docker Build') {
+
+            when { expression { env.CQC_DEPLOY_ALLOWED == 'true' } }
+
+            steps {
+
+                sh '''
+                    set -eu
+
+                    export INFERENCE_CLIENT_MODE=http
+                    export INFERENCE_URL=http://inference:8001/v1/predict
+                    export INFERENCE_MODEL_DIR="$PWD/models/selected"
+
+                    echo "======================================"
+                    echo " Docker Build"
+                    echo "======================================"
+
+                    if [ "${FORCE_BUILD_FAILURE:-false}" = true ]; then
+                        echo "[EXPECTED TEST FAILURE] Build failure injection enabled"
+                        exit 1
+                    fi
+                    sh scripts/ci/preserve-compose-images.sh
+                    docker-compose -f compose.yaml build
+                '''
+            }
+        }
+
+        // ====================================================
+        // 4. Basic Check
+        // ====================================================
+        // 현재 프로젝트에서 반드시 존재해야 하는
+        // 기본 디렉터리 구조를 확인한다.
+        //
+        // Python / Web 자동 테스트와 별도로 배포 필수 파일을 확인한다.
+        // ====================================================
+        stage('Basic Check') {
+
+            steps {
+
+                sh '''
+                    set -eu
+
+                    echo "======================================"
+                    echo " Project Structure Check"
+                    echo "======================================"
+
+                    test -d src
+                    test -d tests
+                    test -d docs
+                    test -f models/selected/model.json
+                    test -f models/selected/model.pt
+                    test -d scripts
+                    test -d cqc-logistics-platform/apps/api
+                    test -d cqc-logistics-platform/apps/web
+
+                    echo "CQC project structure OK"
+                '''
+            }
+        }
+
+        // ====================================================
+        // 5. Deploy
+        // ====================================================
+        // 이전 단계의 검증과 Build가 성공한 경우에만
+        // Compose 서비스를 실행한다.
+        //
+        // --no-build를 사용해 Deploy 단계에서
+        // 이미지를 다시 빌드하지 않는다.
+        //
+        // compose.yaml의 depends_on + service_healthy 설정에 따라
+        // MySQL / Inference가 healthy 상태가 된 뒤 Backend가 기동되고,
+        // Backend가 healthy 상태가 된 뒤 logistics-web / Simulator가 기동된다.
+        // 이전 frontend placeholder 컨테이너는 orphan으로 제거한다.
+        // ====================================================
+        stage('Deploy') {
+
+            when { expression { env.CQC_DEPLOY_ALLOWED == 'true' } }
+
+            steps {
+
+                sh '''
+                    set -eu
+
+                    export INFERENCE_CLIENT_MODE=http
+                    export INFERENCE_URL=http://inference:8001/v1/predict
+                    export INFERENCE_MODEL_DIR="$PWD/models/selected"
+
+                    echo "======================================"
+                    echo " CQC Deploy"
+                    echo "======================================"
+
+                    sh scripts/ci/compose-deploy.sh
+                '''
+            }
+        }
+
+        // ====================================================
+        // 6. Verify
+        // ====================================================
+        // MO-04에서 적용한 healthcheck와 기동 상태를 검증한다.
+        //
+        // 1) 전체 서비스 상태 출력
+        // 2) mysql / inference / backend 컨테이너 존재 여부 확인
+        // 3) 각 컨테이너의 Health.Status가 healthy인지 확인
+        // 4) logistics-web / simulator 상태 확인
+        //
+        // healthcheck가 아직 완료되지 않은 경우를 고려해
+        // 서비스별 최대 120초 동안 반복 확인한다.
+        // ====================================================
+        stage('Verify') {
+
+            when { expression { env.CQC_DEPLOY_ALLOWED == 'true' } }
+
+            steps {
+
+                sh '''
+                    set -eu
+
+                    export INFERENCE_CLIENT_MODE=http
+                    export INFERENCE_URL=http://inference:8001/v1/predict
+                    export INFERENCE_MODEL_DIR="$PWD/models/selected"
+
+                    echo "======================================"
+                    echo " CQC Container Status"
+                    echo "======================================"
+
+                    docker-compose -f compose.yaml ps
+
+                    echo "======================================"
+                    echo " Healthcheck Verification"
+                    echo "======================================"
+
+                    CQC_FORCE_HEALTH_FAILURE="$FORCE_HEALTH_FAILURE" \
+                        sh scripts/ci/verify-compose-health.sh
+
+                    echo "======================================"
+                    echo " API Smoke Verification"
+                    echo "======================================"
+
+                    backend_id="$(docker-compose -f compose.yaml ps -q backend)"
+                    inference_id="$(docker-compose -f compose.yaml ps -q inference)"
+                    simulator_id="$(docker-compose -f compose.yaml ps -q simulator)"
+                    logistics_web_id="$(docker-compose -f compose.yaml ps -q logistics-web)"
+
+                    docker exec "$inference_id" python -c \
+                        "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=5)"
+                    docker exec "$backend_id" python -c \
+                        "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"
+                    docker exec "$logistics_web_id" node -e \
+                        "fetch('http://127.0.0.1:3000/api/quality/health').then(async response => { const body = await response.json(); if (!response.ok || body.status !== 'ok') throw new Error(JSON.stringify(body)); console.log('Quality backend proxy OK:', body); }).catch(error => { console.error(error); process.exit(1); })"
+
+                    echo "======================================"
+                    echo " Simulator Playback Verification"
+                    echo "======================================"
+
+                    # Simulator 실제 재생 상태 및 첫 검사 전송 성공 확인
+                    docker exec "$simulator_id" python -c "
+import json
+import time
+import urllib.request
+
+with urllib.request.urlopen(
+    'http://127.0.0.1:8002/health',
+    timeout=5
+) as response:
+    data = json.load(response)
+
+assert data['status'] == 'ok'
+assert data['running'] is True
+assert data['lastSeenAt'] is not None
+
+# 마지막 검사 성공 시각이 현재 기준 30초 이내인지 확인
+age_ms = time.time() * 1000 - data['lastSeenAt']
+assert 0 <= age_ms <= 30000, f'Simulator playback stale: {age_ms}ms'
+
+print('Simulator playback OK:', data)
+"
+
+                    echo "======================================"
+                    echo " MO-04 healthcheck + API verification OK"
+                    echo "======================================"
+
+                    docker-compose -f compose.yaml ps
+                    rm -f .cqc-deploy-state/pending .cqc-deploy-state/rollback.json .cqc-deploy-state/project
+                '''
+            }
+        }
+            }
+        }
+    }
+
+    // ========================================================
+    // Pipeline 최종 결과
+    // ========================================================
+    post {
+
+        success {
+            echo '======================================'
+            echo ' CQC CI/CD + MO-04 VERIFY SUCCESS'
+            echo '======================================'
+        }
+
+        unsuccessful {
+            echo '======================================'
+            echo ' CQC CI/CD FAILED'
+            echo '======================================'
+
+            // Failure, manual abort and timeout all enter the recovery path.
+            timeout(time: 5, unit: 'MINUTES') {
+                sh '''
+                    set -eu
+                    if [ "${CQC_DEPLOY_ALLOWED:-false}" = true ] && [ -f .cqc-deploy-state/pending ]; then
+                        echo "Restoring the previous healthy deployment..."
+                        sh scripts/ci/compose-rollback.sh
+                    fi
+                '''
+            }
+        }
+
+        always {
+            // 현재는 MO-04 서비스 상태 확인이 필요하므로
+            // Pipeline 종료 후 컨테이너를 자동으로 내리지 않는다.
+            echo 'CQC Pipeline finished.'
+        }
+    }
+}

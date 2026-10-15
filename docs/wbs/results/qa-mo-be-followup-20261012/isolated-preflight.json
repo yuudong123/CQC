@@ -1,0 +1,35 @@
+{
+  "project": "cqc-mo103-e2-20261012",
+  "render_exit_code": 0,
+  "checks": {
+    "four_services_only": true,
+    "pinned_deployed_images": true,
+    "no_build": true,
+    "no_pulls": true,
+    "no_e1_db_url": true,
+    "no_e1_rw_volumes": true,
+    "dataset_read_only": true,
+    "independent_position": true,
+    "internal_network": true,
+    "loopback_ports": true,
+    "no_auto_start_false_assumption": true,
+    "ports_unused": true
+  },
+  "ports": {
+    "28000": {
+      "listening": false
+    },
+    "28001": {
+      "listening": false
+    },
+    "28002": {
+      "listening": false
+    }
+  },
+  "executed": "docker compose config only",
+  "containers_created": false,
+  "volumes_created": false,
+  "runtime_health_verified": false,
+  "startup_behavior": "Current image automatically starts valid dataset playback; only separate QA DB would receive it. Stopped boot requires a separately agreed product option; SIM-04/05 may instead stop an approved isolated running instance first.",
+  "shared_host_limit": "Network and volumes are independent, but CPU/RAM/disk are shared with E1. Schedule runtime outside E1 acceptance measurement."
+}

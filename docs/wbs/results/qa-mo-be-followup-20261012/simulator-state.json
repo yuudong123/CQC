@@ -1,0 +1,10 @@
+{
+  "revision": 0,
+  "running": true,
+  "concurrency": 1,
+  "intervalMs": 2000,
+  "faults": [],
+  "scope": "ALL",
+  "status": "healthy",
+  "lastSeenAt": 1791789745679.0
+}

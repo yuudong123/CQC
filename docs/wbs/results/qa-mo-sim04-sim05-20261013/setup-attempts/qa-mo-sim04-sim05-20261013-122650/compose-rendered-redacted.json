@@ -1,0 +1,273 @@
+{
+  "name": "cqc-mo103-sim0405-20261013-122650",
+  "networks": {
+    "qa": {
+      "name": "cqc-mo103-sim0405-20261013-122650_qa",
+      "ipam": {},
+      "internal": true
+    }
+  },
+  "services": {
+    "backend": {
+      "command": [
+        "sh",
+        "-c",
+        "alembic upgrade head && python -m src.api.main"
+      ],
+      "depends_on": {
+        "inference": {
+          "condition": "service_healthy",
+          "required": true
+        },
+        "mysql": {
+          "condition": "service_healthy",
+          "required": true
+        }
+      },
+      "entrypoint": null,
+      "environment": {
+        "CULTIVAR_CONFIDENCE_THRESHOLD": "0.50",
+        "DATABASE_URL": "mysql+pymysql://cqc_mo103_qa:[REDACTED]@mysql:3306/cqc_mo103_qa",
+        "FAULT_IMAGE_STORAGE_ROOT": "/data/fault-images",
+        "INFERENCE_CLIENT_MODE": "http",
+        "INFERENCE_CONNECT_TIMEOUT_MS": "200",
+        "INFERENCE_URL": "http://inference:8001/v1/predict",
+        "LOG_DIR": "/var/log/cqc",
+        "QUALITY_CONFIDENCE_THRESHOLD": "0.60",
+        "SIMULATOR_FAULT_TOKEN": "[REDACTED]",
+        "SIMULATOR_INTERNAL_URL": "http://simulator:8002"
+      },
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"
+        ],
+        "timeout": "5s",
+        "interval": "10s",
+        "retries": 5,
+        "start_period": "15s"
+      },
+      "image": "sha256:66cb3b275c1fd1cc7c3f072359fa27879c122cfad0d592b43bb3db65e0538afb",
+      "networks": {
+        "qa": null
+      },
+      "ports": [
+        {
+          "mode": "ingress",
+          "host_ip": "127.0.0.1",
+          "target": 8000,
+          "published": "28000",
+          "protocol": "tcp"
+        }
+      ],
+      "pull_policy": "never",
+      "restart": "no",
+      "volumes": [
+        {
+          "type": "volume",
+          "source": "qa_fault_images",
+          "target": "/data/fault-images",
+          "volume": {}
+        },
+        {
+          "type": "volume",
+          "source": "qa_backend_logs",
+          "target": "/var/log/cqc",
+          "volume": {}
+        }
+      ],
+      "working_dir": "/app"
+    },
+    "inference": {
+      "command": [
+        "python",
+        "-m",
+        "src.inference.api",
+        "--model-dir",
+        "/app/models/approved",
+        "--device",
+        "cpu",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8001"
+      ],
+      "entrypoint": null,
+      "environment": {
+        "LOG_DIR": "/var/log/cqc"
+      },
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=3)"
+        ],
+        "timeout": "5s",
+        "interval": "10s",
+        "retries": 5,
+        "start_period": "1m0s"
+      },
+      "image": "sha256:06c57dce24ac8e96a369e40a07dbd77c3a31655e4b1b845505b11bebc197ed13",
+      "networks": {
+        "qa": null
+      },
+      "ports": [
+        {
+          "mode": "ingress",
+          "host_ip": "127.0.0.1",
+          "target": 8001,
+          "published": "28001",
+          "protocol": "tcp"
+        }
+      ],
+      "pull_policy": "never",
+      "restart": "no",
+      "volumes": [
+        {
+          "type": "volume",
+          "source": "qa_inference_logs",
+          "target": "/var/log/cqc",
+          "volume": {}
+        }
+      ],
+      "working_dir": "/app"
+    },
+    "mysql": {
+      "command": [
+        "mysqld"
+      ],
+      "entrypoint": [
+        "docker-entrypoint.sh"
+      ],
+      "environment": {
+        "MYSQL_DATABASE": "cqc_mo103_qa",
+        "MYSQL_PASSWORD": "[REDACTED]",
+        "MYSQL_ROOT_PASSWORD": "[REDACTED]",
+        "MYSQL_USER": "cqc_mo103_qa"
+      },
+      "healthcheck": {
+        "test": [
+          "CMD-SHELL",
+          "MYSQL_PWD=\"$$MYSQL_ROOT_PASSWORD\" mysql --protocol=TCP -h127.0.0.1 -uroot -Nse \"SELECT 1\" >/dev/null 2>&1"
+        ],
+        "timeout": "5s",
+        "interval": "10s",
+        "retries": 5,
+        "start_period": "5m0s"
+      },
+      "image": "sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a",
+      "networks": {
+        "qa": null
+      },
+      "pull_policy": "never",
+      "restart": "no",
+      "volumes": [
+        {
+          "type": "volume",
+          "source": "qa_mysql",
+          "target": "/var/lib/mysql",
+          "volume": {}
+        }
+      ],
+      "working_dir": "/"
+    },
+    "simulator": {
+      "command": [
+        "python",
+        "-m",
+        "src.simulator.main"
+      ],
+      "depends_on": {
+        "backend": {
+          "condition": "service_healthy",
+          "required": true
+        }
+      },
+      "entrypoint": null,
+      "environment": {
+        "LOG_DIR": "/var/log/cqc",
+        "SIMULATOR_BACKEND_URL": "http://backend:8000",
+        "SIMULATOR_BRIX_CSV_PATH": "/data/dataset/demo-virtual-brix.csv",
+        "SIMULATOR_DATASET_ROOT": "/data/dataset",
+        "SIMULATOR_FAULT_TOKEN": "[REDACTED]",
+        "SIMULATOR_INTERVAL_MS": "2000",
+        "SIMULATOR_POSITION_PATH": "/data/state/position.json"
+      },
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import json, time, urllib.request; data = json.load(urllib.request.urlopen('http://127.0.0.1:8002/health', timeout=3)); assert data['status'] == 'ok' and data['running'] is True; assert data['lastSeenAt'] is not None and 0 <= time.time() * 1000 - data['lastSeenAt'] <= 30000"
+        ],
+        "timeout": "5s",
+        "interval": "10s",
+        "retries": 5,
+        "start_period": "20s"
+      },
+      "image": "sha256:aa841dd2512e848b10185ca293604579937eddcc6c7749402bf9a0f92e5fee27",
+      "networks": {
+        "qa": null
+      },
+      "ports": [
+        {
+          "mode": "ingress",
+          "host_ip": "127.0.0.1",
+          "target": 8002,
+          "published": "28002",
+          "protocol": "tcp"
+        }
+      ],
+      "pull_policy": "never",
+      "restart": "no",
+      "volumes": [
+        {
+          "type": "volume",
+          "source": "dataset",
+          "target": "/data/dataset",
+          "read_only": true
+        },
+        {
+          "type": "volume",
+          "source": "qa_position",
+          "target": "/data/state",
+          "volume": {}
+        },
+        {
+          "type": "volume",
+          "source": "qa_simulator_logs",
+          "target": "/var/log/cqc",
+          "volume": {}
+        }
+      ],
+      "working_dir": "/app"
+    }
+  },
+  "volumes": {
+    "dataset": {
+      "name": "cqc_simulator_dataset",
+      "external": true
+    },
+    "qa_backend_logs": {
+      "name": "cqc-mo103-sim0405-20261013-122650_qa_backend_logs"
+    },
+    "qa_fault_images": {
+      "name": "cqc-mo103-sim0405-20261013-122650_qa_fault_images"
+    },
+    "qa_inference_logs": {
+      "name": "cqc-mo103-sim0405-20261013-122650_qa_inference_logs"
+    },
+    "qa_mysql": {
+      "name": "cqc-mo103-sim0405-20261013-122650_qa_mysql"
+    },
+    "qa_position": {
+      "name": "cqc-mo103-sim0405-20261013-122650_qa_position"
+    },
+    "qa_simulator_logs": {
+      "name": "cqc-mo103-sim0405-20261013-122650_qa_simulator_logs"
+    }
+  }
+}

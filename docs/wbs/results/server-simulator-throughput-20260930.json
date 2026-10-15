@@ -1,0 +1,30 @@
+{
+ "date": "2026-09-30 17:20",
+ "target": "http://192.168.133.106:8000 (서버컴, Jenkins 배포 dev bbc5b7c)",
+ "method": "운영 중인 Simulator 결과를 관제 이력 API로 읽기만 함 (최근 200건). 설정 변경 없음",
+ "simulator": {
+  "interval_ms": 500,
+  "concurrency": 1
+ },
+ "inspections": 200,
+ "span_s": 319.0,
+ "per_s": 0.627,
+ "start_to_start_ms": {
+  "p10": 1233.0,
+  "p50": 1389.0,
+  "p90": 1795.0,
+  "max": 6523.0
+ },
+ "timeouts": 6,
+ "timeout_rate": 0.03,
+ "model_ms": {
+  "p50": 150.1,
+  "p95": 195.7
+ },
+ "warmup_note": "배포 직후 첫 1분 30초는 78건 중 14건(18%) 시간 초과. 위 수치는 안정 구간",
+ "after_warmup_90s_sample": {
+  "inspections": 57,
+  "per_s": 0.63,
+  "timeouts": 5
+ }
+}

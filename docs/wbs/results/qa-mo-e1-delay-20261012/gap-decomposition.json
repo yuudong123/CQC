@@ -1,0 +1,38 @@
+[
+  {
+    "previous_id": "00bf0b8a-3220-4f16-ada7-e94dd401b3ce",
+    "next_id": "5c24ef65-afbb-4917-8928-72fc1b0316de",
+    "previous_completed_kst": "2026-10-12T09:46:28.761+09:00",
+    "next_completed_kst": "2026-10-12T09:46:33.501+09:00",
+    "completed_gap_seconds": 4.74,
+    "created_gap_seconds": 4.683,
+    "previous_created_to_completed_seconds": 0.719,
+    "next_created_to_completed_seconds": 0.776,
+    "duration_delta_seconds": 0.057,
+    "next_inference_ms": 151.771
+  },
+  {
+    "previous_id": "63cb91f7-70f7-4261-8933-62d80fe6fe76",
+    "next_id": "c18c2ed9-1ff8-4dde-8c10-c1e5e5aff411",
+    "previous_completed_kst": "2026-10-12T09:49:26.208+09:00",
+    "next_completed_kst": "2026-10-12T09:49:30.139+09:00",
+    "completed_gap_seconds": 3.931,
+    "created_gap_seconds": 3.196,
+    "previous_created_to_completed_seconds": 0.78,
+    "next_created_to_completed_seconds": 1.515,
+    "duration_delta_seconds": 0.735,
+    "next_inference_ms": 482.42
+  },
+  {
+    "previous_id": "c18c2ed9-1ff8-4dde-8c10-c1e5e5aff411",
+    "next_id": "6cb7a7d8-be6d-4d72-a494-adf58134ea3d",
+    "previous_completed_kst": "2026-10-12T09:49:30.139+09:00",
+    "next_completed_kst": "2026-10-12T09:49:35.894+09:00",
+    "completed_gap_seconds": 5.755,
+    "created_gap_seconds": 6.501,
+    "previous_created_to_completed_seconds": 1.515,
+    "next_created_to_completed_seconds": 0.769,
+    "duration_delta_seconds": -0.746,
+    "next_inference_ms": 165.413
+  }
+]

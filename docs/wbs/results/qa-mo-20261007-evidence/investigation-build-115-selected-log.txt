@@ -1,0 +1,21 @@
+Checking out Revision 328baaaf702f42687204b9d904815676479ae3e0 (refs/remotes/origin/dev)
+Branch policy: branch=origin/dev, PR=none, deploy=true
+#17 exporting manifest list sha256:ad3a8437d6f7b17a02756c135681c9fc3e0c05a24fac3e181823743c43e0676c
+#17 exporting manifest list sha256:ad3a8437d6f7b17a02756c135681c9fc3e0c05a24fac3e181823743c43e0676c 0.8s done
+#17 naming to docker.io/library/cqc-cicd-inference:latest
+#17 naming to docker.io/library/cqc-cicd-inference:latest 0.2s done
+#18 exporting manifest list sha256:12da2820e9295f680358ecf6ed41c00e17a1ba8661cf24058443198d3ef06957 0.8s done
+#18 naming to docker.io/library/cqc-cicd-logistics-api:latest 0.2s done
+#26 exporting manifest list sha256:b0b170f5eab979c59817c07d65480333032dddf04fead95b7fc092f4d655feb4
+#26 exporting manifest list sha256:b0b170f5eab979c59817c07d65480333032dddf04fead95b7fc092f4d655feb4 0.4s done
+#26 naming to docker.io/library/cqc-cicd-backend:latest
+#26 naming to docker.io/library/cqc-cicd-backend:latest 0.3s done
+#38 exporting manifest list sha256:69c4cb1f2823fd05583b200f316b215252041bf7e6f67c01b4b8432b1c59972b
+#38 exporting manifest list sha256:69c4cb1f2823fd05583b200f316b215252041bf7e6f67c01b4b8432b1c59972b 0.9s done
+#38 naming to docker.io/library/cqc-cicd-simulator:latest
+#38 naming to docker.io/library/cqc-cicd-simulator:latest 0.4s done
+#45 exporting manifest list sha256:a22098d54f6e3aecb1a0c6d1941ae4333713439f06a0c95c199535282facd167
+#45 exporting manifest list sha256:a22098d54f6e3aecb1a0c6d1941ae4333713439f06a0c95c199535282facd167 1.4s done
+#45 naming to docker.io/library/cqc-cicd-logistics-web:latest
+#45 naming to docker.io/library/cqc-cicd-logistics-web:latest 0.5s done
+ CQC CI/CD + MO-04 VERIFY SUCCESS

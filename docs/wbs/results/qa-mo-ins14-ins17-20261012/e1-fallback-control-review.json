@@ -1,0 +1,325 @@
+{
+  "source": "E1 cqc-cicd-mysql-1 / cqc",
+  "reuse_status": "candidate; BE acceptance and comparison to original E1 API responses pending",
+  "requested_original_e2_run": "be10-2-63f2ca4e",
+  "this_run_prefix": "qa-be-10081636t-ins01-",
+  "inspections": 12,
+  "control_attempts": 12,
+  "distinct_bins": 12,
+  "max_response_time_ms": 0.09,
+  "all_requested_db_checks_satisfied": true,
+  "rows": [
+    {
+      "inspection_id": "qa-be-10081636t-ins01-FL-13.9",
+      "target_bin_code": "DEMO_BIN_01",
+      "control_count": 1,
+      "control_attempt": {
+        "id": 78456,
+        "kind": "fallback_control_attempt",
+        "attempt_no": 1,
+        "command_type": "ROUTE_TO_BIN",
+        "requested_at": "2026-10-08 07:36:11.595000",
+        "responded_at": "2026-10-08 07:36:11.595000",
+        "inspection_id": "qa-be-10081636t-ins01-FL-13.9",
+        "control_status": "SUCCEEDED",
+        "failure_reason": null,
+        "response_time_ms": 0.065,
+        "requested_bin_code": "DEMO_BIN_01"
+      },
+      "checks": {
+        "exactly_one_control": true,
+        "attempt_no_1": true,
+        "route_to_bin": true,
+        "succeeded": true,
+        "matches_inspection_db_target": true,
+        "response_time_below_100ms": true
+      }
+    },
+    {
+      "inspection_id": "qa-be-10081636t-ins01-FL-15.0",
+      "target_bin_code": "DEMO_BIN_02",
+      "control_count": 1,
+      "control_attempt": {
+        "id": 78458,
+        "kind": "fallback_control_attempt",
+        "attempt_no": 1,
+        "command_type": "ROUTE_TO_BIN",
+        "requested_at": "2026-10-08 07:36:12.971000",
+        "responded_at": "2026-10-08 07:36:12.971000",
+        "inspection_id": "qa-be-10081636t-ins01-FL-15.0",
+        "control_status": "SUCCEEDED",
+        "failure_reason": null,
+        "response_time_ms": 0.073,
+        "requested_bin_code": "DEMO_BIN_02"
+      },
+      "checks": {
+        "exactly_one_control": true,
+        "attempt_no_1": true,
+        "route_to_bin": true,
+        "succeeded": true,
+        "matches_inspection_db_target": true,
+        "response_time_below_100ms": true
+      }
+    },
+    {
+      "inspection_id": "qa-be-10081636t-ins01-FM-13.9",
+      "target_bin_code": "DEMO_BIN_03",
+      "control_count": 1,
+      "control_attempt": {
+        "id": 78460,
+        "kind": "fallback_control_attempt",
+        "attempt_no": 1,
+        "command_type": "ROUTE_TO_BIN",
+        "requested_at": "2026-10-08 07:36:14.912000",
+        "responded_at": "2026-10-08 07:36:14.913000",
+        "inspection_id": "qa-be-10081636t-ins01-FM-13.9",
+        "control_status": "SUCCEEDED",
+        "failure_reason": null,
+        "response_time_ms": 0.049,
+        "requested_bin_code": "DEMO_BIN_03"
+      },
+      "checks": {
+        "exactly_one_control": true,
+        "attempt_no_1": true,
+        "route_to_bin": true,
+        "succeeded": true,
+        "matches_inspection_db_target": true,
+        "response_time_below_100ms": true
+      }
+    },
+    {
+      "inspection_id": "qa-be-10081636t-ins01-FM-15.0",
+      "target_bin_code": "DEMO_BIN_04",
+      "control_count": 1,
+      "control_attempt": {
+        "id": 78462,
+        "kind": "fallback_control_attempt",
+        "attempt_no": 1,
+        "command_type": "ROUTE_TO_BIN",
+        "requested_at": "2026-10-08 07:36:16.640000",
+        "responded_at": "2026-10-08 07:36:16.640000",
+        "inspection_id": "qa-be-10081636t-ins01-FM-15.0",
+        "control_status": "SUCCEEDED",
+        "failure_reason": null,
+        "response_time_ms": 0.044,
+        "requested_bin_code": "DEMO_BIN_04"
+      },
+      "checks": {
+        "exactly_one_control": true,
+        "attempt_no_1": true,
+        "route_to_bin": true,
+        "succeeded": true,
+        "matches_inspection_db_target": true,
+        "response_time_below_100ms": true
+      }
+    },
+    {
+      "inspection_id": "qa-be-10081636t-ins01-FS-13.9",
+      "target_bin_code": "DEMO_BIN_05",
+      "control_count": 1,
+      "control_attempt": {
+        "id": 78463,
+        "kind": "fallback_control_attempt",
+        "attempt_no": 1,
+        "command_type": "ROUTE_TO_BIN",
+        "requested_at": "2026-10-08 07:36:18.578000",
+        "responded_at": "2026-10-08 07:36:18.578000",
+        "inspection_id": "qa-be-10081636t-ins01-FS-13.9",
+        "control_status": "SUCCEEDED",
+        "failure_reason": null,
+        "response_time_ms": 0.086,
+        "requested_bin_code": "DEMO_BIN_05"
+      },
+      "checks": {
+        "exactly_one_control": true,
+        "attempt_no_1": true,
+        "route_to_bin": true,
+        "succeeded": true,
+        "matches_inspection_db_target": true,
+        "response_time_below_100ms": true
+      }
+    },
+    {
+      "inspection_id": "qa-be-10081636t-ins01-FS-15.0",
+      "target_bin_code": "DEMO_BIN_06",
+      "control_count": 1,
+      "control_attempt": {
+        "id": 78465,
+        "kind": "fallback_control_attempt",
+        "attempt_no": 1,
+        "command_type": "ROUTE_TO_BIN",
+        "requested_at": "2026-10-08 07:36:20.250000",
+        "responded_at": "2026-10-08 07:36:20.250000",
+        "inspection_id": "qa-be-10081636t-ins01-FS-15.0",
+        "control_status": "SUCCEEDED",
+        "failure_reason": null,
+        "response_time_ms": 0.09,
+        "requested_bin_code": "DEMO_BIN_06"
+      },
+      "checks": {
+        "exactly_one_control": true,
+        "attempt_no_1": true,
+        "route_to_bin": true,
+        "succeeded": true,
+        "matches_inspection_db_target": true,
+        "response_time_below_100ms": true
+      }
+    },
+    {
+      "inspection_id": "qa-be-10081636t-ins01-YL-13.9",
+      "target_bin_code": "DEMO_BIN_07",
+      "control_count": 1,
+      "control_attempt": {
+        "id": 78467,
+        "kind": "fallback_control_attempt",
+        "attempt_no": 1,
+        "command_type": "ROUTE_TO_BIN",
+        "requested_at": "2026-10-08 07:36:21.903000",
+        "responded_at": "2026-10-08 07:36:21.903000",
+        "inspection_id": "qa-be-10081636t-ins01-YL-13.9",
+        "control_status": "SUCCEEDED",
+        "failure_reason": null,
+        "response_time_ms": 0.089,
+        "requested_bin_code": "DEMO_BIN_07"
+      },
+      "checks": {
+        "exactly_one_control": true,
+        "attempt_no_1": true,
+        "route_to_bin": true,
+        "succeeded": true,
+        "matches_inspection_db_target": true,
+        "response_time_below_100ms": true
+      }
+    },
+    {
+      "inspection_id": "qa-be-10081636t-ins01-YL-15.0",
+      "target_bin_code": "DEMO_BIN_08",
+      "control_count": 1,
+      "control_attempt": {
+        "id": 78469,
+        "kind": "fallback_control_attempt",
+        "attempt_no": 1,
+        "command_type": "ROUTE_TO_BIN",
+        "requested_at": "2026-10-08 07:36:23.429000",
+        "responded_at": "2026-10-08 07:36:23.429000",
+        "inspection_id": "qa-be-10081636t-ins01-YL-15.0",
+        "control_status": "SUCCEEDED",
+        "failure_reason": null,
+        "response_time_ms": 0.045,
+        "requested_bin_code": "DEMO_BIN_08"
+      },
+      "checks": {
+        "exactly_one_control": true,
+        "attempt_no_1": true,
+        "route_to_bin": true,
+        "succeeded": true,
+        "matches_inspection_db_target": true,
+        "response_time_below_100ms": true
+      }
+    },
+    {
+      "inspection_id": "qa-be-10081636t-ins01-YM-13.9",
+      "target_bin_code": "DEMO_BIN_09",
+      "control_count": 1,
+      "control_attempt": {
+        "id": 78471,
+        "kind": "fallback_control_attempt",
+        "attempt_no": 1,
+        "command_type": "ROUTE_TO_BIN",
+        "requested_at": "2026-10-08 07:36:25.216000",
+        "responded_at": "2026-10-08 07:36:25.216000",
+        "inspection_id": "qa-be-10081636t-ins01-YM-13.9",
+        "control_status": "SUCCEEDED",
+        "failure_reason": null,
+        "response_time_ms": 0.044,
+        "requested_bin_code": "DEMO_BIN_09"
+      },
+      "checks": {
+        "exactly_one_control": true,
+        "attempt_no_1": true,
+        "route_to_bin": true,
+        "succeeded": true,
+        "matches_inspection_db_target": true,
+        "response_time_below_100ms": true
+      }
+    },
+    {
+      "inspection_id": "qa-be-10081636t-ins01-YM-15.0",
+      "target_bin_code": "DEMO_BIN_10",
+      "control_count": 1,
+      "control_attempt": {
+        "id": 78473,
+        "kind": "fallback_control_attempt",
+        "attempt_no": 1,
+        "command_type": "ROUTE_TO_BIN",
+        "requested_at": "2026-10-08 07:36:26.941000",
+        "responded_at": "2026-10-08 07:36:26.941000",
+        "inspection_id": "qa-be-10081636t-ins01-YM-15.0",
+        "control_status": "SUCCEEDED",
+        "failure_reason": null,
+        "response_time_ms": 0.042,
+        "requested_bin_code": "DEMO_BIN_10"
+      },
+      "checks": {
+        "exactly_one_control": true,
+        "attempt_no_1": true,
+        "route_to_bin": true,
+        "succeeded": true,
+        "matches_inspection_db_target": true,
+        "response_time_below_100ms": true
+      }
+    },
+    {
+      "inspection_id": "qa-be-10081636t-ins01-YS-13.9",
+      "target_bin_code": "DEMO_BIN_11",
+      "control_count": 1,
+      "control_attempt": {
+        "id": 78475,
+        "kind": "fallback_control_attempt",
+        "attempt_no": 1,
+        "command_type": "ROUTE_TO_BIN",
+        "requested_at": "2026-10-08 07:36:28.734000",
+        "responded_at": "2026-10-08 07:36:28.734000",
+        "inspection_id": "qa-be-10081636t-ins01-YS-13.9",
+        "control_status": "SUCCEEDED",
+        "failure_reason": null,
+        "response_time_ms": 0.067,
+        "requested_bin_code": "DEMO_BIN_11"
+      },
+      "checks": {
+        "exactly_one_control": true,
+        "attempt_no_1": true,
+        "route_to_bin": true,
+        "succeeded": true,
+        "matches_inspection_db_target": true,
+        "response_time_below_100ms": true
+      }
+    },
+    {
+      "inspection_id": "qa-be-10081636t-ins01-YS-15.0",
+      "target_bin_code": "DEMO_BIN_12",
+      "control_count": 1,
+      "control_attempt": {
+        "id": 78477,
+        "kind": "fallback_control_attempt",
+        "attempt_no": 1,
+        "command_type": "ROUTE_TO_BIN",
+        "requested_at": "2026-10-08 07:36:30.365000",
+        "responded_at": "2026-10-08 07:36:30.365000",
+        "inspection_id": "qa-be-10081636t-ins01-YS-15.0",
+        "control_status": "SUCCEEDED",
+        "failure_reason": null,
+        "response_time_ms": 0.078,
+        "requested_bin_code": "DEMO_BIN_12"
+      },
+      "checks": {
+        "exactly_one_control": true,
+        "attempt_no_1": true,
+        "route_to_bin": true,
+        "succeeded": true,
+        "matches_inspection_db_target": true,
+        "response_time_below_100ms": true
+      }
+    }
+  ]
+}

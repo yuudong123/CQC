@@ -1,0 +1,28 @@
+{
+  "source_url": "https://github.com/yuudong123/CQC/blob/dev/docs/wbs/results/qa-be-proxy-20261008/supplement/ops10-inspections.csv",
+  "source_sha256": "c186020e62e801f0459d109192b9ccd4b35357334c829a55532a0a7b28e7379e",
+  "selected": [
+    {
+      "source_row": 11095,
+      "record": {
+        "inspection_id": "qa-e1-20261008-091125-45628a-ins08",
+        "date": "2026-10-08",
+        "time_kst": "09:11:29.860",
+        "variety": "",
+        "grade": "",
+        "cultivar_confidence_pct": "",
+        "quality_confidence_pct": "",
+        "inference_ms": "",
+        "model_version": "",
+        "target_bin": "TEST_REINSPECTION_BIN",
+        "processing_status": "ERROR",
+        "control_status": "SUCCEEDED",
+        "persistence_status": "SAVED",
+        "error_codes": "INFERENCE_ERROR",
+        "misclassification": "NONE",
+        "virtual_brix": "15.0",
+        "brix_is_measured": "false"
+      }
+    }
+  ]
+}

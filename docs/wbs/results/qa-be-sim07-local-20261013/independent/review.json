@@ -1,0 +1,143 @@
+{
+  "rounds": [
+    {
+      "fault": "CONTROL_REJECTED",
+      "exact_observation_seconds": 10,
+      "clear_requested_after_seconds": 10.223076689000663,
+      "exact_window_ids": [
+        "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+        "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+        "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+        "a9309f7c-2883-4612-996b-13986995e0e9",
+        "58a962ce-01da-4d2c-853e-5e9180a6bf6f"
+      ],
+      "all_target_ids": [
+        "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+        "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+        "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+        "a9309f7c-2883-4612-996b-13986995e0e9",
+        "58a962ce-01da-4d2c-853e-5e9180a6bf6f"
+      ],
+      "missing": [],
+      "unapplied": [],
+      "public_history_verified": true,
+      "db_save_verified": true,
+      "revisions": [
+        {
+          "stage": "apply",
+          "http": 200,
+          "from_revision": 1,
+          "to_revision": 2,
+          "started": "2026-10-13T08:03:14.047302+00:00",
+          "ended": "2026-10-13T08:03:14.155140+00:00"
+        },
+        {
+          "stage": "start",
+          "http": 200,
+          "from_revision": 2,
+          "to_revision": 3,
+          "started": "2026-10-13T08:03:14.390478+00:00",
+          "ended": "2026-10-13T08:03:16.121995+00:00"
+        },
+        {
+          "stage": "clear",
+          "http": 200,
+          "from_revision": 3,
+          "to_revision": 4,
+          "started": "2026-10-13T08:03:26.369161+00:00",
+          "ended": "2026-10-13T08:03:26.496193+00:00"
+        },
+        {
+          "stage": "stop",
+          "http": 200,
+          "from_revision": 4,
+          "to_revision": 5,
+          "started": "2026-10-13T08:03:27.949017+00:00",
+          "ended": "2026-10-13T08:03:28.062189+00:00"
+        }
+      ]
+    },
+    {
+      "fault": "INFERENCE_TIMEOUT",
+      "exact_observation_seconds": 10,
+      "clear_requested_after_seconds": 10.277624505999484,
+      "exact_window_ids": [
+        "965416ef-e124-485b-9535-bf5d6b3163c3",
+        "11e020dc-9d1d-44f0-a1de-31a87eafe843",
+        "e67898fa-f9de-4f60-8a57-5432820d7764",
+        "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+        "c9fb3db6-ad73-4da8-af4e-365e3423f4cc"
+      ],
+      "all_target_ids": [
+        "965416ef-e124-485b-9535-bf5d6b3163c3",
+        "11e020dc-9d1d-44f0-a1de-31a87eafe843",
+        "e67898fa-f9de-4f60-8a57-5432820d7764",
+        "3dad205b-adfa-4d82-b1cd-1c7c26ef14d6",
+        "c9fb3db6-ad73-4da8-af4e-365e3423f4cc",
+        "38e572dd-8df9-444d-afd5-a64865e42936"
+      ],
+      "missing": [],
+      "unapplied": [],
+      "public_history_verified": true,
+      "db_save_verified": true,
+      "revisions": [
+        {
+          "stage": "apply",
+          "http": 200,
+          "from_revision": 5,
+          "to_revision": 6,
+          "started": "2026-10-13T08:03:28.527095+00:00",
+          "ended": "2026-10-13T08:03:28.638988+00:00"
+        },
+        {
+          "stage": "start",
+          "http": 200,
+          "from_revision": 6,
+          "to_revision": 7,
+          "started": "2026-10-13T08:03:28.901326+00:00",
+          "ended": "2026-10-13T08:03:30.625175+00:00"
+        },
+        {
+          "stage": "clear",
+          "http": 200,
+          "from_revision": 7,
+          "to_revision": 8,
+          "started": "2026-10-13T08:03:40.933434+00:00",
+          "ended": "2026-10-13T08:03:41.139915+00:00"
+        },
+        {
+          "stage": "stop",
+          "http": 200,
+          "from_revision": 8,
+          "to_revision": 9,
+          "started": "2026-10-13T08:03:44.788369+00:00",
+          "ended": "2026-10-13T08:03:45.753110+00:00"
+        }
+      ]
+    }
+  ],
+  "trace_requests": 15,
+  "trace_responses": 15,
+  "missing_db": [],
+  "baseline_counts": {
+    "inspections": 998,
+    "control_attempts": 998,
+    "inspection_errors": 0
+  },
+  "prepared_counts": {
+    "inspections": 999,
+    "control_attempts": 999,
+    "inspection_errors": 0
+  },
+  "final_counts": {
+    "inspections": 1014,
+    "control_attempts": 1018,
+    "inspection_errors": 11
+  },
+  "new_rows": 16,
+  "wrapper_bootstrap_rows": 1,
+  "restore_bootstrap_rows": 1,
+  "previous_evidence_unchanged": true,
+  "nominal_10_second_window_verified": true,
+  "nominal_10_second_timer_overrun_preserved": true
+}

@@ -1,0 +1,162 @@
+{
+  "round": 6,
+  "title": "Further BE integration/operations issues and PR discussions",
+  "threads": [
+    {
+      "type": "issue",
+      "number": 66,
+      "comment_count": 4,
+      "comments": [
+        {
+          "url": "https://github.com/yuudong123/CQC/issues/66#issuecomment-5990266299",
+          "links": [
+            "https://github.com/yuudong123/CQC/tree/feat/backend",
+            "https://github.com/yuudong123/CQC/blob/feat/backend/docs/wbs/BE-10.md",
+            "https://github.com/yuudong123/CQC/blob/feat/backend/docs/wbs/BE-10-results.md"
+          ],
+          "original_location_lines": []
+        },
+        {
+          "url": "https://github.com/yuudong123/CQC/issues/66#issuecomment-5990305214",
+          "links": [],
+          "original_location_lines": []
+        },
+        {
+          "url": "https://github.com/yuudong123/CQC/issues/66#issuecomment-6007733423",
+          "links": [],
+          "original_location_lines": []
+        },
+        {
+          "url": "https://github.com/yuudong123/CQC/issues/66#issuecomment-6012671650",
+          "links": [],
+          "original_location_lines": []
+        }
+      ]
+    },
+    {
+      "type": "issue",
+      "number": 70,
+      "comment_count": 2,
+      "comments": [
+        {
+          "url": "https://github.com/yuudong123/CQC/issues/70#issuecomment-5990404894",
+          "links": [],
+          "original_location_lines": []
+        },
+        {
+          "url": "https://github.com/yuudong123/CQC/issues/70#issuecomment-5990831570",
+          "links": [],
+          "original_location_lines": [
+            "### 1. Simulator 재시작 후 재생 위치 복구",
+            "재시작 전:",
+            "재시작 후:",
+            "- 재시작 후 0으로 초기화되지 않고 기존 위치 이후부터 이어서 재생됨",
+            "- [x] Simulator 재시작 후 재생 위치 이어서 진행"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "issue",
+      "number": 96,
+      "comment_count": 3,
+      "comments": [
+        {
+          "url": "https://github.com/yuudong123/CQC/issues/96#issuecomment-6007726930",
+          "links": [],
+          "original_location_lines": []
+        },
+        {
+          "url": "https://github.com/yuudong123/CQC/issues/96#issuecomment-6010807203",
+          "links": [
+            "http://192.168.133.106:8080/job/CQC-CICD/109/"
+          ],
+          "original_location_lines": []
+        },
+        {
+          "url": "https://github.com/yuudong123/CQC/issues/96#issuecomment-6013799408",
+          "links": [],
+          "original_location_lines": []
+        }
+      ]
+    },
+    {
+      "type": "issue",
+      "number": 99,
+      "comment_count": 3,
+      "comments": [
+        {
+          "url": "https://github.com/yuudong123/CQC/issues/99#issuecomment-5990404324",
+          "links": [],
+          "original_location_lines": []
+        },
+        {
+          "url": "https://github.com/yuudong123/CQC/issues/99#issuecomment-6006690253",
+          "links": [],
+          "original_location_lines": []
+        },
+        {
+          "url": "https://github.com/yuudong123/CQC/issues/99#issuecomment-6006771975",
+          "links": [],
+          "original_location_lines": []
+        }
+      ]
+    },
+    {
+      "type": "issue",
+      "number": 101,
+      "comment_count": 0,
+      "comments": []
+    },
+    {
+      "type": "issue",
+      "number": 111,
+      "comment_count": 0,
+      "comments": []
+    },
+    {
+      "type": "pr",
+      "number": 104,
+      "comment_count": 0,
+      "comments": []
+    },
+    {
+      "type": "pr",
+      "number": 106,
+      "comment_count": 0,
+      "comments": []
+    },
+    {
+      "type": "pr",
+      "number": 112,
+      "comment_count": 0,
+      "comments": []
+    },
+    {
+      "type": "pr",
+      "number": 114,
+      "comment_count": 0,
+      "comments": []
+    },
+    {
+      "type": "pr",
+      "number": 125,
+      "comment_count": 0,
+      "comments": []
+    },
+    {
+      "type": "pr",
+      "number": 128,
+      "comment_count": 0,
+      "comments": []
+    },
+    {
+      "type": "pr",
+      "number": 131,
+      "comment_count": 0,
+      "comments": []
+    }
+  ],
+  "external_attachment_links": [],
+  "new_raw_bundle_found": false
+}

@@ -1,0 +1,21 @@
+{
+  "head": "6f32cddd24fa19d577e2d53d1d2a2f7a35f4f0cc",
+  "collected_from_final_totals": 662,
+  "passed": 571,
+  "failed": 0,
+  "skipped": 91,
+  "errors": 0,
+  "warnings": 1,
+  "subtests_passed": 20,
+  "duration_seconds": 73.38,
+  "skip_reasons": {
+    "isolated CQC_BE10_DATABASE_URL not configured": 70,
+    "completed isolated BE-10 evidence run not configured": 1,
+    "isolated CQC_BE10_3_DATABASE_URL not configured": 12,
+    "CQC_TEST_DATABASE_URL이 없어 MySQL duplicate test를 건너뜁니다": 2,
+    "격리 순환 삭제 MySQL URL이 없으면 건너뜁니다": 1,
+    "CQC_TEST_DATABASE_URL이 없어 MySQL integration test를 건너뜁니다": 5
+  },
+  "source_mismatches": [],
+  "pytest_log_sha256": "398e8088d393a8a385b642f082567982ef0a445fae77da65fb92ee436d43a139"
+}

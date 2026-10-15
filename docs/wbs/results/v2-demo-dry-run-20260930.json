@@ -1,0 +1,463 @@
+{
+  "evaluation_role": "demo_dry_run_not_independent_evaluation",
+  "date": "2026-09-30",
+  "model_version": "cqc-apple-separate12-focal-v2-candidate",
+  "checkpoint_sha256": "b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a",
+  "temperature": {
+    "quality": 1.0,
+    "cultivar": 1.0
+  },
+  "selection": "기본 재생 12장 묶음 중 Test 사과 21개 전부(사과당 첫 묶음) + 개발 사과 15개(seed 7 무작위), 사과당 1묶음",
+  "environment": "클라우드 CPU 2 vCPU, torch 2.11 CPU. 목표 서버컴 측정이 아니다.",
+  "note": "시연 묶음은 같은 실제 사과의 다른 사진이다. dev 사과는 v2 학습 사과라 정확도를 성능으로 인용하지 않는다. Test 사과도 기존 Test 27개를 반복 사용한 것이므로 독립 평가가 아니다.",
+  "runs": {
+    "dry-run-omp1-w1": {
+      "mode": "local",
+      "description": "OMP_NUM_THREADS=1, 사진 해제 순차",
+      "decode_workers": 1,
+      "latency_ms": {
+        "decode_ms": {
+          "p50": 294.5,
+          "max": 314.5
+        },
+        "model_ms": {
+          "p50": 83.5,
+          "max": 104.0
+        },
+        "total_ms": {
+          "p50": 376.3,
+          "max": 416.2
+        }
+      },
+      "end_to_end_p95_ms": 409.5,
+      "over_500ms": 0
+    },
+    "dry-run-omp1-w0": {
+      "mode": "local",
+      "description": "OMP_NUM_THREADS=1, 사진 해제 병렬(2스레드)",
+      "decode_workers": 2,
+      "latency_ms": {
+        "decode_ms": {
+          "p50": 164.4,
+          "max": 181.6
+        },
+        "model_ms": {
+          "p50": 81.7,
+          "max": 98.3
+        },
+        "total_ms": {
+          "p50": 248.3,
+          "max": 268.1
+        }
+      },
+      "end_to_end_p95_ms": 260.7,
+      "over_500ms": 0
+    },
+    "dry-run-http": {
+      "mode": "http",
+      "description": "실제 uvicorn(OMP=1, 병렬 해제) loopback HTTP",
+      "decode_workers": null,
+      "latency_ms": {
+        "server_decode_ms": {
+          "p50": 164.8,
+          "max": 187.4
+        },
+        "server_model_ms": {
+          "p50": 83.7,
+          "max": 94.3
+        },
+        "server_total_ms": {
+          "p50": 248.0,
+          "max": 272.5
+        },
+        "round_trip_ms": {
+          "p50": 278.0,
+          "max": 309.4
+        }
+      },
+      "end_to_end_p95_ms": 295.1,
+      "over_500ms": 0
+    }
+  },
+  "mean_upload_mib": 13.81,
+  "quality": {
+    "all": {
+      "bundles": 36,
+      "cultivar_accuracy": 1.0,
+      "quality_accuracy": 0.9722222222222222,
+      "quality_confidence": {
+        "mean": 0.6609896462824609,
+        "median": 0.6493462026119232,
+        "min": 0.3928643763065338,
+        "p10": 0.486042857170105
+      },
+      "cultivar_confidence_min": 0.8831658959388733
+    },
+    "dev_apples": {
+      "bundles": 15,
+      "cultivar_accuracy": 1.0,
+      "quality_accuracy": 1.0,
+      "quality_confidence": {
+        "mean": 0.6428816378116607,
+        "median": 0.6274905204772949,
+        "min": 0.3928643763065338,
+        "p10": 0.4847362279891968
+      },
+      "cultivar_confidence_min": 0.8831658959388733
+    },
+    "test_apples": {
+      "bundles": 21,
+      "cultivar_accuracy": 1.0,
+      "quality_accuracy": 0.9523809523809523,
+      "quality_confidence": {
+        "mean": 0.6739239380473182,
+        "median": 0.6599422693252563,
+        "min": 0.43063539266586304,
+        "p10": 0.5174118876457214
+      },
+      "cultivar_confidence_min": 0.90193772315979
+    }
+  },
+  "reinspection_rate": {
+    "all": {
+      "cultivar>=0.50,quality>=0.50": 0.1388888888888889,
+      "cultivar>=0.50,quality>=0.60": 0.3611111111111111,
+      "cultivar>=0.50,quality>=0.70": 0.5833333333333334,
+      "cultivar>=0.50,quality>=0.80": 0.8055555555555556
+    },
+    "dev_apples": {
+      "cultivar>=0.50,quality>=0.50": 0.2,
+      "cultivar>=0.50,quality>=0.60": 0.4,
+      "cultivar>=0.50,quality>=0.70": 0.6666666666666666,
+      "cultivar>=0.50,quality>=0.80": 0.8
+    },
+    "test_apples": {
+      "cultivar>=0.50,quality>=0.50": 0.09523809523809523,
+      "cultivar>=0.50,quality>=0.60": 0.3333333333333333,
+      "cultivar>=0.50,quality>=0.70": 0.5238095238095238,
+      "cultivar>=0.50,quality>=0.80": 0.8095238095238095
+    }
+  },
+  "concurrency_http_loopback": {
+    "requests": 12,
+    "results": [
+      {
+        "concurrency": 1,
+        "req_per_s": 3.45,
+        "p50_ms": 280,
+        "max_ms": 292
+      },
+      {
+        "concurrency": 2,
+        "req_per_s": 4.1,
+        "p50_ms": 440,
+        "max_ms": 538
+      },
+      {
+        "concurrency": 4,
+        "req_per_s": 3.97,
+        "p50_ms": 917,
+        "max_ms": 1098
+      }
+    ]
+  },
+  "errors": [
+    {
+      "bundle_id": "demo-601141014000-000",
+      "role": "test",
+      "expected": "L",
+      "predicted": "M",
+      "quality_confidence": 0.4478
+    }
+  ],
+  "bundles": [
+    {
+      "bundle_id": "demo-601031005000-000",
+      "role": "dev",
+      "expected": "fuji/L",
+      "predicted": "fuji/L",
+      "cultivar_confidence": 0.9902,
+      "quality_confidence": 0.5633
+    },
+    {
+      "bundle_id": "demo-601031007000-000",
+      "role": "dev",
+      "expected": "fuji/L",
+      "predicted": "fuji/L",
+      "cultivar_confidence": 0.9929,
+      "quality_confidence": 0.6275
+    },
+    {
+      "bundle_id": "demo-601031008000-000",
+      "role": "dev",
+      "expected": "fuji/L",
+      "predicted": "fuji/L",
+      "cultivar_confidence": 0.9847,
+      "quality_confidence": 0.8064
+    },
+    {
+      "bundle_id": "demo-601031010000-000",
+      "role": "dev",
+      "expected": "fuji/L",
+      "predicted": "fuji/L",
+      "cultivar_confidence": 0.9961,
+      "quality_confidence": 0.713
+    },
+    {
+      "bundle_id": "demo-601031011000-000",
+      "role": "test",
+      "expected": "fuji/L",
+      "predicted": "fuji/L",
+      "cultivar_confidence": 0.9959,
+      "quality_confidence": 0.6117
+    },
+    {
+      "bundle_id": "demo-601031014000-000",
+      "role": "dev",
+      "expected": "fuji/L",
+      "predicted": "fuji/L",
+      "cultivar_confidence": 0.9969,
+      "quality_confidence": 0.5109
+    },
+    {
+      "bundle_id": "demo-601031015000-000",
+      "role": "test",
+      "expected": "fuji/L",
+      "predicted": "fuji/L",
+      "cultivar_confidence": 0.9631,
+      "quality_confidence": 0.7702
+    },
+    {
+      "bundle_id": "demo-601031016000-000",
+      "role": "test",
+      "expected": "fuji/L",
+      "predicted": "fuji/L",
+      "cultivar_confidence": 0.9977,
+      "quality_confidence": 0.6402
+    },
+    {
+      "bundle_id": "demo-601031028000-000",
+      "role": "dev",
+      "expected": "fuji/L",
+      "predicted": "fuji/L",
+      "cultivar_confidence": 0.9982,
+      "quality_confidence": 0.3929
+    },
+    {
+      "bundle_id": "demo-601032003000-000",
+      "role": "test",
+      "expected": "fuji/M",
+      "predicted": "fuji/M",
+      "cultivar_confidence": 0.9991,
+      "quality_confidence": 0.8005
+    },
+    {
+      "bundle_id": "demo-601032009000-000",
+      "role": "dev",
+      "expected": "fuji/M",
+      "predicted": "fuji/M",
+      "cultivar_confidence": 0.9988,
+      "quality_confidence": 0.7239
+    },
+    {
+      "bundle_id": "demo-601032015000-000",
+      "role": "test",
+      "expected": "fuji/M",
+      "predicted": "fuji/M",
+      "cultivar_confidence": 0.9998,
+      "quality_confidence": 0.7179
+    },
+    {
+      "bundle_id": "demo-601032016000-000",
+      "role": "test",
+      "expected": "fuji/M",
+      "predicted": "fuji/M",
+      "cultivar_confidence": 0.9998,
+      "quality_confidence": 0.8461
+    },
+    {
+      "bundle_id": "demo-601032028000-000",
+      "role": "test",
+      "expected": "fuji/M",
+      "predicted": "fuji/M",
+      "cultivar_confidence": 0.9979,
+      "quality_confidence": 0.7135
+    },
+    {
+      "bundle_id": "demo-601033003000-000",
+      "role": "test",
+      "expected": "fuji/S",
+      "predicted": "fuji/S",
+      "cultivar_confidence": 0.9918,
+      "quality_confidence": 0.7718
+    },
+    {
+      "bundle_id": "demo-601033004000-000",
+      "role": "dev",
+      "expected": "fuji/S",
+      "predicted": "fuji/S",
+      "cultivar_confidence": 0.9982,
+      "quality_confidence": 0.9077
+    },
+    {
+      "bundle_id": "demo-601033009000-000",
+      "role": "dev",
+      "expected": "fuji/S",
+      "predicted": "fuji/S",
+      "cultivar_confidence": 0.9984,
+      "quality_confidence": 0.6183
+    },
+    {
+      "bundle_id": "demo-601033013000-000",
+      "role": "test",
+      "expected": "fuji/S",
+      "predicted": "fuji/S",
+      "cultivar_confidence": 0.9951,
+      "quality_confidence": 0.7609
+    },
+    {
+      "bundle_id": "demo-601033014000-000",
+      "role": "dev",
+      "expected": "fuji/S",
+      "predicted": "fuji/S",
+      "cultivar_confidence": 0.9147,
+      "quality_confidence": 0.4795
+    },
+    {
+      "bundle_id": "demo-601033026000-000",
+      "role": "test",
+      "expected": "fuji/S",
+      "predicted": "fuji/S",
+      "cultivar_confidence": 0.9797,
+      "quality_confidence": 0.4306
+    },
+    {
+      "bundle_id": "demo-601141006000-000",
+      "role": "test",
+      "expected": "yanggwang/L",
+      "predicted": "yanggwang/L",
+      "cultivar_confidence": 0.9727,
+      "quality_confidence": 0.5705
+    },
+    {
+      "bundle_id": "demo-601141007000-000",
+      "role": "dev",
+      "expected": "yanggwang/L",
+      "predicted": "yanggwang/L",
+      "cultivar_confidence": 0.9229,
+      "quality_confidence": 0.5509
+    },
+    {
+      "bundle_id": "demo-601141009000-000",
+      "role": "test",
+      "expected": "yanggwang/L",
+      "predicted": "yanggwang/L",
+      "cultivar_confidence": 0.9718,
+      "quality_confidence": 0.5299
+    },
+    {
+      "bundle_id": "demo-601141012000-000",
+      "role": "dev",
+      "expected": "yanggwang/L",
+      "predicted": "yanggwang/L",
+      "cultivar_confidence": 0.9567,
+      "quality_confidence": 0.6294
+    },
+    {
+      "bundle_id": "demo-601141013000-000",
+      "role": "test",
+      "expected": "yanggwang/L",
+      "predicted": "yanggwang/L",
+      "cultivar_confidence": 0.9184,
+      "quality_confidence": 0.5306
+    },
+    {
+      "bundle_id": "demo-601141014000-000",
+      "role": "test",
+      "expected": "yanggwang/L",
+      "predicted": "yanggwang/M",
+      "cultivar_confidence": 0.9126,
+      "quality_confidence": 0.4478
+    },
+    {
+      "bundle_id": "demo-601141020000-000",
+      "role": "dev",
+      "expected": "yanggwang/L",
+      "predicted": "yanggwang/L",
+      "cultivar_confidence": 0.9483,
+      "quality_confidence": 0.4926
+    },
+    {
+      "bundle_id": "demo-601142004000-000",
+      "role": "test",
+      "expected": "yanggwang/M",
+      "predicted": "yanggwang/M",
+      "cultivar_confidence": 0.9019,
+      "quality_confidence": 0.6585
+    },
+    {
+      "bundle_id": "demo-601142007000-000",
+      "role": "dev",
+      "expected": "yanggwang/M",
+      "predicted": "yanggwang/M",
+      "cultivar_confidence": 0.9456,
+      "quality_confidence": 0.6695
+    },
+    {
+      "bundle_id": "demo-601142010000-000",
+      "role": "test",
+      "expected": "yanggwang/M",
+      "predicted": "yanggwang/M",
+      "cultivar_confidence": 0.9635,
+      "quality_confidence": 0.5174
+    },
+    {
+      "bundle_id": "demo-601142014000-000",
+      "role": "test",
+      "expected": "yanggwang/M",
+      "predicted": "yanggwang/M",
+      "cultivar_confidence": 0.9565,
+      "quality_confidence": 0.5718
+    },
+    {
+      "bundle_id": "demo-601143008000-000",
+      "role": "test",
+      "expected": "yanggwang/S",
+      "predicted": "yanggwang/S",
+      "cultivar_confidence": 0.9734,
+      "quality_confidence": 0.6599
+    },
+    {
+      "bundle_id": "demo-601143013000-000",
+      "role": "test",
+      "expected": "yanggwang/S",
+      "predicted": "yanggwang/S",
+      "cultivar_confidence": 0.96,
+      "quality_confidence": 0.9469
+    },
+    {
+      "bundle_id": "demo-601143015000-000",
+      "role": "test",
+      "expected": "yanggwang/S",
+      "predicted": "yanggwang/S",
+      "cultivar_confidence": 0.9433,
+      "quality_confidence": 0.7274
+    },
+    {
+      "bundle_id": "demo-601143020000-000",
+      "role": "dev",
+      "expected": "yanggwang/S",
+      "predicted": "yanggwang/S",
+      "cultivar_confidence": 0.8832,
+      "quality_confidence": 0.9574
+    },
+    {
+      "bundle_id": "demo-601143028000-000",
+      "role": "test",
+      "expected": "yanggwang/S",
+      "predicted": "yanggwang/S",
+      "cultivar_confidence": 0.919,
+      "quality_confidence": 0.9283
+    }
+  ]
+}

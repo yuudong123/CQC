@@ -1,0 +1,45 @@
+{
+  "evaluation_role": "reused_test_diagnostic_simulated_commercial_target",
+  "independent_final_approval": false,
+  "may_select_model_or_epoch": false,
+  "method": "v2_appearance_prediction_plus_exact_demo_commercial_rule",
+  "policy_version": "demo-commercial-v1",
+  "brix_is_measured": false,
+  "samples": 27,
+  "commercial": {
+    "accuracy": 1.0,
+    "macro_f1": 1.0,
+    "precision": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "recall": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "f1": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "confusion_matrix": [
+      [
+        4,
+        0,
+        0
+      ],
+      [
+        0,
+        14,
+        0
+      ],
+      [
+        0,
+        0,
+        9
+      ]
+    ]
+  }
+}

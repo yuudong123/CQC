@@ -1,0 +1,402 @@
+# ============================================================
+# CQC Docker Compose
+# WBS: MO-04
+# 담당: 홍유나
+# 목적:
+# - CQC 품질 검사 5개 서비스와 물류 3개 서비스를 Docker Compose로 관리
+# - 각 서비스의 healthcheck를 통해 정상 상태 확인
+# - 서비스 간 기동 순서를 service_healthy 기준으로 제어
+#
+# 현재 MO-04 반영 범위:
+# - mysql healthcheck 적용
+# - 실제 inference / backend healthcheck 적용
+# - inference → backend 기동 의존성 적용
+# - backend는 mysql / inference가 healthy 상태 이후 기동
+# - simulator / logistics-web은 backend가 healthy 상태 이후 기동
+# - 모든 서비스에 restart: unless-stopped 유지
+# - simulator는 실제 이미지(Dockerfile.simulator)로 자동 재생, 재생 여부를 healthcheck로 확인
+#
+# 현재 기동 구조:
+#   MySQL ─────┐
+#              ├→ Backend → Simulator
+#   Inference ─┘          └→ logistics-web
+#
+# 물류 및 품질 화면은 logistics-web에서 제공
+# ============================================================
+
+services:
+  # ==========================================================
+  # MySQL
+  # ==========================================================
+  # 검사 결과, 통계, 제어 결과 등의 데이터를 저장하는 DB 서비스
+  #
+  # 현재 MySQL 사용은 프로젝트에서 확정된 상태이며,
+  # 실제 테이블 구조와 마이그레이션 방식은 Backend 작업에서 결정한다.
+  #
+  # MO-04에서는 MySQL 컨테이너 기본 설정과 함께
+  # 실제 연결 가능 여부를 확인하는 healthcheck를 적용한다.
+  # ==========================================================
+  mysql:
+    # MySQL 공식 Docker 이미지 사용
+    image: mysql:8.4
+
+    # 컨테이너가 비정상 종료되거나 Docker가 재시작되면 자동 재시작
+    # 단, 사용자가 직접 중지한 경우에는 자동으로 다시 실행하지 않음
+    restart: unless-stopped
+
+    # MySQL 초기 실행에 필요한 환경 변수
+    #
+    # ${환경변수:-기본값}
+    # 형태는 환경 변수가 존재하면 해당 값을 사용하고,
+    # 없으면 뒤의 기본값을 사용하는 Docker Compose 문법이다.
+    #
+    # 실제 배포 시 비밀번호는 .env에서 관리할 예정
+    environment:
+      # MySQL root 계정 비밀번호
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+
+      # 최초 생성할 기본 DB 이름
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+
+      # 프로젝트에서 사용할 일반 DB 사용자
+      MYSQL_USER: ${MYSQL_USER}
+
+      # 일반 DB 사용자의 비밀번호
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+    # ==========================================================
+    # MO-04 Healthcheck
+    # ==========================================================
+    # 단순히 컨테이너가 실행 중인지가 아니라,
+    # MySQL이 실제 연결 요청을 받을 수 있는 상태인지 확인한다.
+    #
+    # $$MYSQL_ROOT_PASSWORD:
+    # Compose가 아닌 컨테이너 내부 환경 변수의 값을 사용하기 위해
+    # $ 문자를 두 번 작성한다.
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD --silent
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ==========================================================
+  # Inference
+  # ==========================================================
+  # AI 모델 추론을 담당하는 서비스
+  #
+  # Backend가 HTTP 요청으로 이미지를 전달하면
+  # 품종 / 품질 예측 결과와 신뢰도 등을 반환하는 역할이다.
+  #
+  # 모델 담당자가 제공한 실제 Inference API 이미지와 모델 패키지를 사용한다.
+  # ==========================================================
+  inference:
+    build:
+      context: .
+      dockerfile: Dockerfile.inference
+
+    # Docker 또는 컨테이너 재시작 시 자동 복구
+    restart: unless-stopped
+
+    command:
+      - python
+      - -m
+      - src.inference.api
+      - --model-dir
+      - /app/models/approved
+      - --device
+      - cpu
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8001"
+
+    environment:
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      LOG_DIR: /var/log/cqc
+      LOG_MAX_BYTES: ${LOG_MAX_BYTES:-10485760}
+      LOG_BACKUP_COUNT: ${LOG_BACKUP_COUNT:-5}
+
+    volumes:
+      - inference_logs:/var/log/cqc
+
+    ports:
+      - "${INFERENCE_PORT:-8001}:8001"
+
+    # ==========================================================
+    # MO-04 Healthcheck
+    # ==========================================================
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  # ==========================================================
+  # Backend
+  # ==========================================================
+  # CQC 전체 검사 흐름을 제어하는 핵심 API 서비스
+  #
+  # 주요 역할:
+  # - simulator 입력 수신
+  # - inference 호출
+  # - 품종 / 품질 결과 처리
+  # - 신뢰도 및 재검사 정책 처리
+  # - Virtual Control / bin 판정
+  # - MySQL 검사 이력 저장
+  # - Frontend용 API 제공
+  #
+  # 실제 Backend FastAPI 이미지로 검사 요청을 받아 Inference에 전달한다.
+  # ==========================================================
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+
+    # 서비스 비정상 종료 시 자동 재시작
+    restart: unless-stopped
+
+    # DB 마이그레이션 적용 후 Backend 실행
+    command: ["sh", "-c", "alembic upgrade head && python -m src.api.main"]
+
+    # ==========================================================
+    # MO-04 기동 의존성
+    # ==========================================================
+    # Backend는 DB와 AI 추론 서비스를 모두 사용하므로,
+    # 두 서비스가 단순 실행 상태가 아니라 healthy 상태가 된 뒤 기동한다.
+    depends_on:
+      mysql:
+        condition: service_healthy
+      inference:
+        condition: service_healthy
+
+    environment:
+      INFERENCE_CLIENT_MODE: ${INFERENCE_CLIENT_MODE:-http}
+      INFERENCE_URL: ${INFERENCE_URL:-http://inference:8001/v1/predict}
+      INFERENCE_CONNECT_TIMEOUT_MS: ${INFERENCE_CONNECT_TIMEOUT_MS:-200}
+      DATABASE_URL: ${DATABASE_URL:-mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}}
+      FAULT_IMAGE_STORAGE_ROOT: /data/fault-images
+      # DM-08 v2 보정 모델(cal-20260930) 기준 신뢰도 임계값. 보정 전 model.json에서는 품질 0.60을 쓰지 않는다.
+      CULTIVAR_CONFIDENCE_THRESHOLD: ${CULTIVAR_CONFIDENCE_THRESHOLD:-0.50}
+      QUALITY_CONFIDENCE_THRESHOLD: ${QUALITY_CONFIDENCE_THRESHOLD:-0.60}
+      LOG_DIR: /var/log/cqc
+      LOG_MAX_BYTES: ${LOG_MAX_BYTES:-10485760}
+      LOG_BACKUP_COUNT: ${LOG_BACKUP_COUNT:-5}
+
+      # ==========================================================
+      # BE-07 독립 Simulator 연동
+      # ==========================================================
+      # Docker 내부 Simulator 주소
+      SIMULATOR_INTERNAL_URL: http://simulator:8002
+
+      # Simulator와 동일한 내부 인증 토큰 사용
+      SIMULATOR_FAULT_TOKEN: ${SIMULATOR_FAULT_TOKEN:?SIMULATOR_FAULT_TOKEN is required}
+
+    # 장애 이미지 저장
+    volumes:
+      - fault_images:/data/fault-images
+      - backend_logs:/var/log/cqc
+
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+
+    # ==========================================================
+    # MO-04 Healthcheck
+    # ==========================================================
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # ==========================================================
+  # Simulator
+  # ==========================================================
+  # 실제 농산물 검사 장비 대신 저장된 사과 이미지 그룹을
+  # 일정 간격으로 Backend에 전달하는 독립 실행 서비스
+  #
+  # BE-07 반영 사항:
+  # - Backend에서 Simulator 실행 및 상태 관리 기능 분리
+  # - python -m src.simulator.main 독립 프로세스 실행
+  # - Backend가 healthy 상태가 된 뒤 Simulator 기동
+  #
+  # 시연 데이터:
+  # - 실제 데이터는 D드라이브에 보관하며 이미지에 포함하지 않음
+  # - Dataset은 읽기 전용(RO)으로 연결
+  # - 재생 위치(position.json)는 별도 Volume에 저장(RW)
+  #
+  # 실행 정책:
+  # - 기본 입력 간격 500ms
+  # - Backend 내부 주소로 검사 데이터 전송
+  # - Backend와 공유하는 내부 인증 토큰 사용
+  # - 컨테이너 재시작 후에도 재생 위치 유지
+  # ==========================================================
+  simulator:
+    # BE-07 독립 Simulator 이미지 빌드
+    build:
+      context: .
+      dockerfile: Dockerfile.simulator
+
+    # Docker 재시작 후에도 서비스 자동 재실행
+    restart: unless-stopped
+
+    # ==========================================================
+    # Simulator 실행 환경변수
+    # ==========================================================
+    environment:
+      # 시연 데이터 및 가상 당도 CSV 경로
+      SIMULATOR_DATASET_ROOT: /data/dataset
+      SIMULATOR_BRIX_CSV_PATH: /data/dataset/demo-virtual-brix.csv
+
+      # 재생 위치 저장 경로
+      SIMULATOR_POSITION_PATH: /data/state/position.json
+
+      # Docker 내부 네트워크의 Backend 주소
+      SIMULATOR_BACKEND_URL: http://backend:8000
+
+      # Backend와 공유하는 내부 인증 토큰
+      SIMULATOR_FAULT_TOKEN: ${SIMULATOR_FAULT_TOKEN:?SIMULATOR_FAULT_TOKEN is required}
+
+      # 입력 간격 (DM-08). 서버컴 동시 처리 1에서 한 건 처리 주기가 p90 약 1.8초라
+      # 500ms로는 요청이 밀려 실제 초당 0.63건에 그친다. 처리 주기보다 긴 2000ms로 맞춘다.
+      SIMULATOR_INTERVAL_MS: ${SIMULATOR_INTERVAL_MS:-2000}
+      LOG_DIR: /var/log/cqc
+      LOG_MAX_BYTES: ${LOG_MAX_BYTES:-10485760}
+      LOG_BACKUP_COUNT: ${LOG_BACKUP_COUNT:-5}
+
+    # ==========================================================
+    # 시연 데이터 및 상태 저장 Volume
+    # ==========================================================
+    volumes:
+      # Windows D드라이브의 실제 시연 데이터 (읽기 전용)
+      - type: volume
+        source: simulator_dataset
+        target: /data/dataset
+        read_only: true
+
+      # 재생 위치를 별도 Docker Volume에 영구 저장
+      - simulator_state:/data/state
+      - simulator_logs:/var/log/cqc
+
+    # ==========================================================
+    # MO-04 기동 의존성
+    # ==========================================================
+    # Backend가 healthy 상태가 된 뒤 Simulator 기동
+    depends_on:
+      backend:
+        condition: service_healthy
+
+    # ==========================================================
+    # Simulator Healthcheck
+    # ==========================================================
+    # 자동 재생 중이며 최근 30초 내 Backend 검사 전송이 성공했는지 확인
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import json, time, urllib.request; data = json.load(urllib.request.urlopen('http://127.0.0.1:8002/health', timeout=3)); assert data['status'] == 'ok' and data['running'] is True; assert data['lastSeenAt'] is not None and 0 <= time.time() * 1000 - data['lastSeenAt'] <= 30000"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # CQC 판정 결과를 경매·배차·배송 관제로 연결하는 물류 확장 서비스다.
+  # GPU를 사용하지 않으며 Jenkins가 다른 CQC 서비스와 함께 배포한다.
+  logistics-mongodb:
+    image: mongo:8
+    restart: unless-stopped
+    volumes:
+      - logistics_mongodb_data:/data/db
+    healthcheck:
+      test:
+        ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ ping: 1 }).ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  logistics-api:
+    build:
+      context: ./cqc-logistics-platform/apps/api
+    restart: unless-stopped
+    environment:
+      MONGODB_URL: mongodb://logistics-mongodb:27017
+      MONGODB_DATABASE: ${LOGISTICS_MONGODB_DATABASE:-cqc_logistics}
+      STORE_MODE: mongo
+      CORS_ORIGINS: ${LOGISTICS_PUBLIC_WEB_ORIGIN:-http://localhost:3100}
+    ports:
+      - "${LOGISTICS_API_PORT:-8100}:8000"
+    depends_on:
+      logistics-mongodb:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  logistics-web:
+    build:
+      context: ./cqc-logistics-platform/apps/web
+      args:
+        NEXT_PUBLIC_API_URL: ${LOGISTICS_PUBLIC_API_URL:-http://localhost:8100/api/v1}
+        NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-}
+    restart: unless-stopped
+    environment:
+      CQC_QUALITY_MODE: api
+      CQC_QUALITY_BACKEND_URL: http://backend:8000
+    ports:
+      - "${LOGISTICS_WEB_PORT:-3100}:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+      logistics-api:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://localhost:3000/api/quality/health').then(async r=>{const b=await r.json();if(!r.ok||b.status!=='ok')process.exit(1)}).catch(()=>process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+volumes:
+  mysql_data:
+  logistics_mongodb_data:
+  fault_images:
+  backend_logs:
+  inference_logs:
+  simulator_logs:
+
+  # 기존 Windows D드라이브 Dataset 연결
+  simulator_dataset:
+    external: true
+    name: cqc_simulator_dataset
+
+  # Simulator 재생 위치 영구 저장
+  simulator_state:

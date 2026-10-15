@@ -1,0 +1,9 @@
+services:
+  mysql:
+    image: sha256:85b9bf2e29cf836ecb8c2a15a935d4ba0c606631dff1dd79531a11983c638f2a
+  inference:
+    image: sha256:ad3a8437d6f7b17a02756c135681c9fc3e0c05a24fac3e181823743c43e0676c
+  backend:
+    image: sha256:b0b170f5eab979c59817c07d65480333032dddf04fead95b7fc092f4d655feb4
+  simulator:
+    image: sha256:69c4cb1f2823fd05583b200f316b215252041bf7e6f67c01b4b8432b1c59972b

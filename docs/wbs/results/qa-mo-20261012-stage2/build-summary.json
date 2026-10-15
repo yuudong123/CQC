@@ -1,0 +1,11 @@
+{
+  "jenkins_job": "CQC-CICD",
+  "jenkins_build": 139,
+  "result": "SUCCESS",
+  "checkout_sha": "b5f1995a7e4a494ef116d62819b169fa9d5a788e",
+  "started_kst": "2026-10-12T09:22:07.558+09:00",
+  "duration_ms": 472377,
+  "completed_kst": "2026-10-12T09:29:59.935+09:00",
+  "stability_10_minutes_kst": "2026-10-12T09:39:59.935+09:00",
+  "evidence_note": "Selected build facts extracted from Jenkins build.xml; full XML excluded."
+}

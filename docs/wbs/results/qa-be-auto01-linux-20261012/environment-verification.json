@@ -1,0 +1,58 @@
+{
+  "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+  "executable": "/opt/cqc-auto01/venv/bin/python",
+  "prefix": "/opt/cqc-auto01/venv",
+  "packages": {
+    "pytest": {
+      "version": "9.1.1",
+      "path": "/opt/cqc-auto01/venv/lib/python3.13/site-packages/pytest/__init__.py"
+    },
+    "torch": {
+      "version": "2.11.0+cpu",
+      "path": "/opt/cqc-auto01/venv/lib/python3.13/site-packages/torch/__init__.py"
+    },
+    "torchvision": {
+      "version": "0.26.0+cpu",
+      "path": "/opt/cqc-auto01/venv/lib/python3.13/site-packages/torchvision/__init__.py"
+    },
+    "numpy": {
+      "version": "2.5.2",
+      "path": "/opt/cqc-auto01/venv/lib/python3.13/site-packages/numpy/__init__.py"
+    },
+    "sqlalchemy": {
+      "version": "2.0.54",
+      "path": "/opt/cqc-auto01/venv/lib/python3.13/site-packages/sqlalchemy/__init__.py"
+    },
+    "httpx": {
+      "version": "0.28.1",
+      "path": "/opt/cqc-auto01/venv/lib/python3.13/site-packages/httpx/__init__.py"
+    },
+    "fastapi": {
+      "version": "0.141.1",
+      "path": "/opt/cqc-auto01/venv/lib/python3.13/site-packages/fastapi/__init__.py"
+    },
+    "pydantic": {
+      "version": "2.13.5",
+      "path": "/opt/cqc-auto01/venv/lib/python3.13/site-packages/pydantic/__init__.py"
+    },
+    "PIL": {
+      "version": "12.3.0",
+      "path": "/opt/cqc-auto01/venv/lib/python3.13/site-packages/PIL/__init__.py"
+    },
+    "yaml": {
+      "version": "6.0.3",
+      "path": "/opt/cqc-auto01/venv/lib/python3.13/site-packages/yaml/__init__.py"
+    }
+  },
+  "db_env_configured": [],
+  "directories": {
+    "tests": true,
+    "tests/api": true,
+    "tests/simulator": true,
+    "data/sampling/tests": true
+  },
+  "cuda_packages": [],
+  "env_files": [],
+  "torch_cuda_build": null,
+  "cuda_available": false
+}

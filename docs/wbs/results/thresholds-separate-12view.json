@@ -1,0 +1,17 @@
+{
+  "selection": {
+    "cultivar_threshold": 0.5,
+    "quality_threshold": 0.5,
+    "accepted": 150,
+    "total": 152,
+    "coverage": 0.9868421052631579,
+    "cultivar_accuracy": 0.9866666666666667,
+    "quality_accuracy": 0.98
+  },
+  "requirements": {
+    "min_cultivar_accuracy": 0.98,
+    "min_quality_accuracy": 0.98
+  },
+  "validation_groups": 152,
+  "test_used": false
+}

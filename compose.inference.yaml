@@ -1,0 +1,24 @@
+# Standalone integration slot. Does not change the team's main Compose stack.
+services:
+  inference:
+    build:
+      context: .
+      dockerfile: Dockerfile.inference
+    command: ["python", "-m", "src.inference.api", "--model-dir", "/app/models/approved", "--device", "cpu", "--host", "0.0.0.0", "--port", "8001"]
+    environment:
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+    ports:
+      - "127.0.0.1:${INFERENCE_PORT:-8001}:8001"
+    volumes:
+      - type: bind
+        source: ${INFERENCE_MODEL_DIR:?Set an explicit model package directory}
+        target: /app/models/approved
+        read_only: true
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 60s

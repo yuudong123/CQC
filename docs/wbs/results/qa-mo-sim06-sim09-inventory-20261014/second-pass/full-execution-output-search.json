@@ -1,0 +1,216 @@
+{
+  "source": "item_completed CommandExecution stdout/aggregated_output, not formatted_output",
+  "command_events_checked": 1062,
+  "matches": [
+    {
+      "session": "rollout-2026-10-06T09-26-05-01a10e9a-73ec-74b0-810c-78ca566d56cf.jsonl",
+      "line": 2586,
+      "time": "2026-10-06T02:21:34.369Z",
+      "stdout_chars": 3501,
+      "matching_ids": [
+        "0096b353-151d-4160-8b6b-d0fa88e048b2",
+        "157d32e2-2975-45bd-a31e-4a876fa890e4",
+        "1d5e2f82-d6f3-4779-9a17-fc2bbaeec8b9",
+        "1f331621-4ee6-4bbd-a5ea-5b005b18aae6",
+        "1f396404-4325-4377-a2a7-81534e217a18",
+        "23913200-b757-4cc1-800f-2741299fa1fc",
+        "74e024ed-8f3e-4122-9a25-7f621aa7d8a0",
+        "827fb89f-059f-41cc-9166-b6eaefd339c8",
+        "97e579a1-8473-4b04-91f0-11f7feb286cf",
+        "ab56fdb5-3d2d-4b38-8cbc-4a7467d38a97",
+        "ca4b28aa-6858-4b15-8ede-a8b0a0185be0"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "session": "rollout-2026-10-06T09-26-05-01a10e9a-73ec-74b0-810c-78ca566d56cf.jsonl",
+      "line": 2913,
+      "time": "2026-10-06T02:33:29.224Z",
+      "stdout_chars": 3557,
+      "matching_ids": [
+        "0693b8aa-8328-4c5e-b7e8-907bdc6eb14b",
+        "29d70749-2320-4733-8be4-2a483e532851",
+        "581d56a1-337a-42cf-80c6-bb0fe574320c",
+        "59927979-f841-45ea-ac1f-90c7537b3fae",
+        "5e85ae9c-0549-47a4-8445-eca477465a2e",
+        "61a0923e-bee6-4b5f-bba0-5b639c6c863b",
+        "74927e8d-01e6-41e6-b257-8b866cbdabf7",
+        "a440c461-8225-4932-a641-b527e2232150",
+        "bb57f84e-dca3-4281-9c67-92d5273d7948",
+        "d6d5d20c-02db-493d-8de4-baa3ca5434fd",
+        "dcec597f-4bc8-4b1f-bb2e-8f04a7476974"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "session": "rollout-2026-10-06T09-26-05-01a10e9a-73ec-74b0-810c-78ca566d56cf.jsonl",
+      "line": 2941,
+      "time": "2026-10-06T02:34:14.436Z",
+      "stdout_chars": 6860,
+      "matching_ids": [
+        "5e85ae9c-0549-47a4-8445-eca477465a2e",
+        "d6d5d20c-02db-493d-8de4-baa3ca5434fd",
+        "dcec597f-4bc8-4b1f-bb2e-8f04a7476974"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "session": "rollout-2026-10-06T09-26-05-01a10e9a-73ec-74b0-810c-78ca566d56cf.jsonl",
+      "line": 3000,
+      "time": "2026-10-06T02:36:44.054Z",
+      "stdout_chars": 126258,
+      "matching_ids": [
+        "0096b353-151d-4160-8b6b-d0fa88e048b2",
+        "157d32e2-2975-45bd-a31e-4a876fa890e4",
+        "1d5e2f82-d6f3-4779-9a17-fc2bbaeec8b9",
+        "1f331621-4ee6-4bbd-a5ea-5b005b18aae6",
+        "1f396404-4325-4377-a2a7-81534e217a18",
+        "23913200-b757-4cc1-800f-2741299fa1fc",
+        "74e024ed-8f3e-4122-9a25-7f621aa7d8a0",
+        "827fb89f-059f-41cc-9166-b6eaefd339c8",
+        "97e579a1-8473-4b04-91f0-11f7feb286cf",
+        "ab56fdb5-3d2d-4b38-8cbc-4a7467d38a97",
+        "ca4b28aa-6858-4b15-8ede-a8b0a0185be0"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "session": "rollout-2026-10-06T09-26-05-01a10e9a-73ec-74b0-810c-78ca566d56cf.jsonl",
+      "line": 3007,
+      "time": "2026-10-06T02:36:54.403Z",
+      "stdout_chars": 9554,
+      "matching_ids": [
+        "0693b8aa-8328-4c5e-b7e8-907bdc6eb14b",
+        "29d70749-2320-4733-8be4-2a483e532851",
+        "581d56a1-337a-42cf-80c6-bb0fe574320c",
+        "59927979-f841-45ea-ac1f-90c7537b3fae",
+        "5e85ae9c-0549-47a4-8445-eca477465a2e",
+        "61a0923e-bee6-4b5f-bba0-5b639c6c863b",
+        "74927e8d-01e6-41e6-b257-8b866cbdabf7",
+        "a440c461-8225-4932-a641-b527e2232150",
+        "bb57f84e-dca3-4281-9c67-92d5273d7948",
+        "d6d5d20c-02db-493d-8de4-baa3ca5434fd",
+        "dcec597f-4bc8-4b1f-bb2e-8f04a7476974"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "session": "rollout-2026-10-06T09-26-05-01a10e9a-73ec-74b0-810c-78ca566d56cf.jsonl",
+      "line": 4231,
+      "time": "2026-10-06T05:57:37.478Z",
+      "stdout_chars": 4361,
+      "matching_ids": [
+        "qa-mo09-mysql-down-e87f0b64e1624fbc",
+        "qa-mo09-mysql-recovered-d6ecd322e9494b34"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "session": "rollout-2026-10-06T09-26-05-01a10e9a-73ec-74b0-810c-78ca566d56cf.jsonl",
+      "line": 4254,
+      "time": "2026-10-06T05:58:28.543Z",
+      "stdout_chars": 12354,
+      "matching_ids": [
+        "qa-mo09-mysql-down-e87f0b64e1624fbc",
+        "qa-mo09-mysql-recovered-d6ecd322e9494b34"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "session": "rollout-2026-10-07T09-47-42-01a113d4-9933-70c2-afc1-1fcfd9dfa324.jsonl",
+      "line": 1652,
+      "time": "2026-10-07T03:36:51.614Z",
+      "stdout_chars": 1044991,
+      "matching_ids": [
+        "qa-mo09-mysql-down-e87f0b64e1624fbc",
+        "qa-mo09-mysql-recovered-d6ecd322e9494b34"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "session": "rollout-2026-10-08T11-15-39-01a1194b-7618-70a0-bc9e-9e0e1259cffc.jsonl",
+      "line": 463,
+      "time": "2026-10-08T02:34:41.184Z",
+      "stdout_chars": 3525,
+      "matching_ids": [
+        "qa-mo09-mysql-down-e87f0b64e1624fbc",
+        "qa-mo09-mysql-recovered-d6ecd322e9494b34"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "session": "rollout-2026-10-12T09-24-52-01a12d7f-7ba8-7871-ae1d-c584e0caced4.jsonl",
+      "line": 1662,
+      "time": "2026-10-12T07:18:19.353Z",
+      "stdout_chars": 14231,
+      "matching_ids": [
+        "0096b353-151d-4160-8b6b-d0fa88e048b2",
+        "157d32e2-2975-45bd-a31e-4a876fa890e4",
+        "1d5e2f82-d6f3-4779-9a17-fc2bbaeec8b9",
+        "5e85ae9c-0549-47a4-8445-eca477465a2e",
+        "74e024ed-8f3e-4122-9a25-7f621aa7d8a0",
+        "bb57f84e-dca3-4281-9c67-92d5273d7948",
+        "d6d5d20c-02db-493d-8de4-baa3ca5434fd",
+        "dcec597f-4bc8-4b1f-bb2e-8f04a7476974"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "session": "rollout-2026-10-12T09-24-52-01a12d7f-7ba8-7871-ae1d-c584e0caced4.jsonl",
+      "line": 1747,
+      "time": "2026-10-12T07:26:13.233Z",
+      "stdout_chars": 4733,
+      "matching_ids": [
+        "0096b353-151d-4160-8b6b-d0fa88e048b2",
+        "157d32e2-2975-45bd-a31e-4a876fa890e4",
+        "1f331621-4ee6-4bbd-a5ea-5b005b18aae6",
+        "1f396404-4325-4377-a2a7-81534e217a18",
+        "581d56a1-337a-42cf-80c6-bb0fe574320c",
+        "61a0923e-bee6-4b5f-bba0-5b639c6c863b",
+        "74927e8d-01e6-41e6-b257-8b866cbdabf7",
+        "97e579a1-8473-4b04-91f0-11f7feb286cf",
+        "a440c461-8225-4932-a641-b527e2232150",
+        "bb57f84e-dca3-4281-9c67-92d5273d7948",
+        "ca4b28aa-6858-4b15-8ede-a8b0a0185be0",
+        "d6d5d20c-02db-493d-8de4-baa3ca5434fd"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    },
+    {
+      "session": "rollout-2026-10-12T09-24-52-01a12d7f-7ba8-7871-ae1d-c584e0caced4.jsonl",
+      "line": 1783,
+      "time": "2026-10-12T07:31:13.663Z",
+      "stdout_chars": 1956,
+      "matching_ids": [
+        "qa-mo09-mysql-down-e87f0b64e1624fbc",
+        "qa-mo09-mysql-recovered-d6ecd322e9494b34"
+      ],
+      "attempt_no_text": false,
+      "started_at_text": false,
+      "restart_count_text": false
+    }
+  ],
+  "note": "Large untruncated stdout was examined too; retained candidate data still consist of summaries/document outputs, not missing individual control rows"
+}

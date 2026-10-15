@@ -1,0 +1,7 @@
+{
+  "url": "https://api.github.com/repos/yuudong123/CQC/contents/docs/wbs/BE-10-2-local-evidence.jsonl?ref=dev",
+  "target_records": 12,
+  "api_db_bins_match": true,
+  "results_directory": "https://api.github.com/repos/yuudong123/CQC/contents/docs/wbs/results?ref=dev",
+  "limitations": "GitHub dev source records checked; other computers and unpublished exports not inspected."
+}

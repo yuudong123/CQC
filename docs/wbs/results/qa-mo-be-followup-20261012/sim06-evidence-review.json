@@ -1,0 +1,81 @@
+{
+  "source_run": "cqc-mo09-e2-final-20261006 at 2026-10-06 11:32:53 KST",
+  "deployed_sha": "unverified in source metadata",
+  "recorded_counts_are_not_full_raw_db_or_image_lists": true,
+  "source_text_limit": "Some historical status strings contain replacement characters; original bytes retained; status text not used to change official QA verdict.",
+  "rows": [
+    {
+      "fault": "INFERENCE_TIMEOUT",
+      "inspection_id": "5e85ae9c-0549-47a4-8445-eca477465a2e",
+      "recorded_image_count": 12,
+      "recorded_control_attempt_count": 1,
+      "next_normal_id": "d6d5d20c-02db-493d-8de4-baa3ca5434fd",
+      "set_revision": 1,
+      "clear_revision": 2,
+      "image_id_list_preserved": false,
+      "individual_control_rows_preserved": false,
+      "remaining": "Per-inspection list of 12 image IDs/metadata and linking original files not found."
+    },
+    {
+      "fault": "INFERENCE_ERROR",
+      "inspection_id": "dcec597f-4bc8-4b1f-bb2e-8f04a7476974",
+      "recorded_image_count": 12,
+      "recorded_control_attempt_count": 1,
+      "next_normal_id": "bb57f84e-dca3-4281-9c67-92d5273d7948",
+      "set_revision": 3,
+      "clear_revision": 4,
+      "image_id_list_preserved": false,
+      "individual_control_rows_preserved": false,
+      "remaining": "Per-inspection list of 12 image IDs/metadata and linking original files not found."
+    },
+    {
+      "fault": "DB_ERROR",
+      "inspection_id": null,
+      "recorded_image_count": null,
+      "recorded_control_attempt_count": null,
+      "next_normal_id": "74927e8d-01e6-41e6-b257-8b866cbdabf7",
+      "set_revision": 5,
+      "clear_revision": 6,
+      "image_id_list_preserved": false,
+      "individual_control_rows_preserved": false,
+      "remaining": "Fault inspection ID and log linking failed persistence to next normal ID missing; no-row alone is insufficient."
+    },
+    {
+      "fault": "CONTROL_REJECTED",
+      "inspection_id": "59927979-f841-45ea-ac1f-90c7537b3fae",
+      "recorded_image_count": 0,
+      "recorded_control_attempt_count": 2,
+      "next_normal_id": "61a0923e-bee6-4b5f-bba0-5b639c6c863b",
+      "set_revision": 7,
+      "clear_revision": 8,
+      "image_id_list_preserved": false,
+      "individual_control_rows_preserved": false,
+      "remaining": "Two-attempt count retained, but ordered normal rejection then fallback success rows missing."
+    },
+    {
+      "fault": "CONTROL_NO_RESPONSE",
+      "inspection_id": "0693b8aa-8328-4c5e-b7e8-907bdc6eb14b",
+      "recorded_image_count": 0,
+      "recorded_control_attempt_count": 1,
+      "next_normal_id": "581d56a1-337a-42cf-80c6-bb0fe574320c",
+      "set_revision": 9,
+      "clear_revision": 10,
+      "image_id_list_preserved": false,
+      "individual_control_rows_preserved": false,
+      "remaining": "One-attempt count retained, but control row and before/after successful-bin statistics missing."
+    },
+    {
+      "fault": "CONTROL_FAILED",
+      "inspection_id": "29d70749-2320-4733-8be4-2a483e532851",
+      "recorded_image_count": 0,
+      "recorded_control_attempt_count": 1,
+      "next_normal_id": "a440c461-8225-4932-a641-b527e2232150",
+      "set_revision": 11,
+      "clear_revision": 12,
+      "image_id_list_preserved": false,
+      "individual_control_rows_preserved": false,
+      "remaining": "One-attempt count retained, but full row fields and retry trace missing."
+    }
+  ],
+  "official_qa_verdict_changed": false
+}

@@ -1,0 +1,578 @@
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 12%]
+sssssssssss......................................................ss..... [ 25%]
+...........................F...s........................................ [ 38%]
+........................................................................ [ 51%]
+.........................................s........F..................... [ 64%]
+..........F..................................s.....s...s................ [ 77%]
+...................s.....F.............................................. [ 90%]
+.....F.................................................                  [100%]
+================================== FAILURES ===================================
+_____ test_prune_list_and_preview_race_with_delete_keep_consistent_files ______
+
+fault_root = WindowsPath('C:/CQC/cqc-fault-test-tixoioww/fault-images')
+
+    def test_prune_list_and_preview_race_with_delete_keep_consistent_files(
+        fault_root: Path,
+    ) -> None:
+        storage = FaultImageStorage(fault_root, limit=2)
+>       old = storage.save(
+            inspection_id="old",
+            error_code="INFERENCE_ERROR",
+            images=[_jpeg()],
+            created_at=START,
+        )[0]
+
+tests\api\test_fault_image_storage.py:849: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\api\services\fault_image_storage.py:118: in save
+    stage.rename(self._root / group_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/CQC/cqc-fault-test-tixoioww/fault-images/.pending-brv2di08')
+target = WindowsPath('C:/CQC/cqc-fault-test-tixoioww/fault-images/6896a21d558548aa93777c5ddb6cf07e')
+
+    def rename(self, target):
+        """
+        Rename this path to the target path.
+    
+        The target path may be absolute or relative. Relative paths are
+        interpreted relative to the current working directory, *not* the
+        directory of the Path object.
+    
+        Returns the new Path instance pointing to the target path.
+        """
+>       os.rename(self, target)
+E       PermissionError: [WinError 5] 액세스가 거부되었습니다: 'C:\\CQC\\cqc-fault-test-tixoioww\\fault-images\\.pending-brv2di08' -> 'C:\\CQC\\cqc-fault-test-tixoioww\\fault-images\\6896a21d558548aa93777c5ddb6cf07e'
+
+C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1175: PermissionError
+___ test_late_result_is_diagnostic_only_and_does_not_change_decision[0.95] ____
+
+cultivar_threshold = 0.95
+
+    @pytest.mark.parametrize("cultivar_threshold", [0.50, 0.95])
+    def test_late_result_is_diagnostic_only_and_does_not_change_decision(
+        cultivar_threshold: float,
+    ) -> None:
+        async def run() -> tuple[
+            dict[str, object], dict[str, object], LateResultManager, int
+        ]:
+            manager = LateResultManager(hard_timeout_ms=200, max_tasks=4)
+            service, control = _service(
+                manager,
+                response_delay_ms=30,
+                business_deadline_ms=1,
+                cultivar_threshold=cultivar_threshold,
+            )
+            response = await service.inspect(
+                inspection_id="inspection-late-result",
+                images=_upload_files(),
+                metadata=_metadata_items(),
+            )
+            before_late_result = response.model_dump()
+            assert manager.active_count == 1
+            await manager.wait_until_idle()
+            return before_late_result, response.model_dump(), manager, len(control.requests)
+    
+>       before, after, manager, control_request_count = asyncio.run(run())
+                                                        ^^^^^^^^^^^^^^^^^^
+
+tests\api\test_late_results.py:212: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run() -> tuple[
+        dict[str, object], dict[str, object], LateResultManager, int
+    ]:
+        manager = LateResultManager(hard_timeout_ms=200, max_tasks=4)
+        service, control = _service(
+            manager,
+            response_delay_ms=30,
+            business_deadline_ms=1,
+            cultivar_threshold=cultivar_threshold,
+        )
+        response = await service.inspect(
+            inspection_id="inspection-late-result",
+            images=_upload_files(),
+            metadata=_metadata_items(),
+        )
+        before_late_result = response.model_dump()
+>       assert manager.active_count == 1
+E       assert 0 == 1
+E        +  where 0 = <src.api.services.late_results.LateResultManager object at 0x000001DE11566810>.active_count
+
+tests\api\test_late_results.py:208: AssertionError
+------------------------------ Captured log call ------------------------------
+ERROR    src.api.services.inspections:inspections.py:387 Inspection image storage: inspection_id=inspection-late-result decision_reason=INFERENCE_DEADLINE_EXCEEDED image_storage=disabled images_saved=0
+______ test_late_manager_cancels_each_task_at_its_own_total_hard_timeout ______
+
+    def test_late_manager_cancels_each_task_at_its_own_total_hard_timeout():
+        async def run():
+            manager = LateResultManager(hard_timeout_ms=1, max_tasks=4)
+            cancelled = []
+    
+            async def hang(identifier):
+                try:
+                    await asyncio.Event().wait()
+                finally:
+                    cancelled.append(identifier)
+    
+            loop = asyncio.get_running_loop()
+            tasks = [asyncio.create_task(hang(identifier)) for identifier in ("a", "b")]
+            await asyncio.sleep(0)
+            for identifier, task, hard in zip(("a", "b"), tasks, (30, 100), strict=True):
+                manager.track(
+                    inspection_id=identifier,
+                    inference_task=task,
+                    started_at=loop.time(),
+                    hard_timeout_ms=hard,
+                )
+            await asyncio.sleep(0.06)
+            assert cancelled == ["a"]
+            assert not tasks[1].done()
+            await manager.wait_until_idle()
+            assert cancelled == ["a", "b"]
+            assert all(task.cancelled() for task in tasks)
+    
+>       asyncio.run(run())
+
+tests\api\test_line_deadlines.py:353: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def run():
+        manager = LateResultManager(hard_timeout_ms=1, max_tasks=4)
+        cancelled = []
+    
+        async def hang(identifier):
+            try:
+                await asyncio.Event().wait()
+            finally:
+                cancelled.append(identifier)
+    
+        loop = asyncio.get_running_loop()
+        tasks = [asyncio.create_task(hang(identifier)) for identifier in ("a", "b")]
+        await asyncio.sleep(0)
+        for identifier, task, hard in zip(("a", "b"), tasks, (30, 100), strict=True):
+            manager.track(
+                inspection_id=identifier,
+                inference_task=task,
+                started_at=loop.time(),
+                hard_timeout_ms=hard,
+            )
+        await asyncio.sleep(0.06)
+>       assert cancelled == ["a"]
+E       AssertionError: assert [] == ['a']
+E         
+E         Right contains one more item: 'a'
+E         Use -v to get more diff
+
+tests\api\test_line_deadlines.py:347: AssertionError
+_______________ test_independent_100_200_retention_and_bulk_api _______________
+
+fault_root = WindowsPath('C:/CQC/cqc-review-test-ae07odqu/fault-images')
+
+    def test_independent_100_200_retention_and_bulk_api(fault_root: Path):
+        app = create_app(Settings(fault_image_storage_root=fault_root))
+        system, low = app.state.fault_image_storage, app.state.low_confidence_image_storage
+        assert app.state.settings.fault_image_limit == 100
+        assert app.state.settings.low_confidence_image_limit == 200
+        system_ids, low_ids = [], []
+        for index in range(101):
+            system_ids.extend(
+                system.save(
+                    inspection_id=f"system-{index}",
+                    error_code="INFERENCE_CONNECTION_ERROR",
+                    images=[_jpeg()],
+                    created_at=START + timedelta(seconds=index),
+                )
+            )
+        for index in range(201):
+            low_ids.extend(
+>               low.save(
+                    inspection_id=f"low-{index}",
+                    error_code=None,
+                    category="LOW_CONFIDENCE",
+                    decision_reason="LOW_BOTH_CONFIDENCE",
+                    images=[_jpeg()],
+                    created_at=START + timedelta(seconds=index),
+                )
+            )
+
+tests\api\test_review_images.py:158: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\api\services\fault_image_storage.py:118: in save
+    stage.rename(self._root / group_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/CQC/cqc-review-test-ae07odqu/fault-images/low-confidence/.pending-u249oeui')
+target = WindowsPath('C:/CQC/cqc-review-test-ae07odqu/fault-images/low-confidence/e1a6638e403d484d8feeaf5ebb273db4')
+
+    def rename(self, target):
+        """
+        Rename this path to the target path.
+    
+        The target path may be absolute or relative. Relative paths are
+        interpreted relative to the current working directory, *not* the
+        directory of the Path object.
+    
+        Returns the new Path instance pointing to the target path.
+        """
+>       os.rename(self, target)
+E       PermissionError: [WinError 5] 액세스가 거부되었습니다: 'C:\\CQC\\cqc-review-test-ae07odqu\\fault-images\\low-confidence\\.pending-u249oeui' -> 'C:\\CQC\\cqc-review-test-ae07odqu\\fault-images\\low-confidence\\e1a6638e403d484d8feeaf5ebb273db4'
+
+C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1175: PermissionError
+________________ test_runner_schedules_and_bounds_inflight[1] _________________
+
+fut = <Task cancelled name='Task-6002' coro=<Event.wait() done, defined at C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\asyncio\locks.py:200>>
+timeout = 15
+
+    async def wait_for(fut, timeout):
+        """Wait for the single Future or coroutine to complete, with timeout.
+    
+        Coroutine will be wrapped in Task.
+    
+        Returns result of the Future or coroutine.  When a timeout occurs,
+        it cancels the task and raises TimeoutError.  To avoid the task
+        cancellation, wrap it in shield().
+    
+        If the wait is cancelled, the task is also cancelled.
+    
+        This function is a coroutine.
+        """
+        loop = events.get_running_loop()
+    
+        if timeout is None:
+            return await fut
+    
+        if timeout <= 0:
+            fut = ensure_future(fut, loop=loop)
+    
+            if fut.done():
+                return fut.result()
+    
+            await _cancel_and_wait(fut, loop=loop)
+            try:
+                return fut.result()
+            except exceptions.CancelledError as exc:
+                raise exceptions.TimeoutError() from exc
+    
+        waiter = loop.create_future()
+        timeout_handle = loop.call_later(timeout, _release_waiter, waiter)
+        cb = functools.partial(_release_waiter, waiter)
+    
+        fut = ensure_future(fut, loop=loop)
+        fut.add_done_callback(cb)
+    
+        try:
+            # wait until the future completes or the timeout
+            try:
+                await waiter
+            except exceptions.CancelledError:
+                if fut.done():
+                    return fut.result()
+                else:
+                    fut.remove_done_callback(cb)
+                    # We must ensure that the task is not running
+                    # after wait_for() returns.
+                    # See https://bugs.python.org/issue32751
+                    await _cancel_and_wait(fut, loop=loop)
+                    raise
+    
+            if fut.done():
+                return fut.result()
+            else:
+                fut.remove_done_callback(cb)
+                # We must ensure that the task is not running
+                # after wait_for() returns.
+                # See https://bugs.python.org/issue32751
+                await _cancel_and_wait(fut, loop=loop)
+                # In case task cancellation failed with some
+                # exception, we should re-raise it
+                # See https://bugs.python.org/issue40607
+                try:
+>                   return fut.result()
+                           ^^^^^^^^^^^^
+
+C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\asyncio\tasks.py:500: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <asyncio.locks.Event object at 0x000001DE120FCBD0 [unset]>
+
+    async def wait(self):
+        """Block until the internal flag is true.
+    
+        If the internal flag is true on entry, return True
+        immediately.  Otherwise, block until another coroutine calls
+        set() to set the flag to true, then return True.
+        """
+        if self._value:
+            return True
+    
+        fut = self._get_loop().create_future()
+        self._waiters.append(fut)
+        try:
+>           await fut
+E           asyncio.exceptions.CancelledError
+
+C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\asyncio\locks.py:213: CancelledError
+
+The above exception was the direct cause of the following exception:
+
+concurrency = 1
+
+    @pytest.mark.parametrize("concurrency", [1, 2, 4])
+    def test_runner_schedules_and_bounds_inflight(concurrency: int) -> None:
+        async def exercise(root: Path) -> None:
+            _dataset(root)
+            state = SimulatorStateService(interval_ms=10)
+            state.update_state(
+                SimulatorSettingsUpdate(
+                    expectedRevision=0,
+                    running=True,
+                    concurrency=concurrency,
+                    faults=["INFERENCE_ERROR"],
+                    scope="NEXT",
+                )
+            )
+            seen: list[tuple[float, str, str]] = []
+            in_flight = 0
+            peak = 0
+            reached = asyncio.Event()
+    
+            async def respond(request: httpx.Request) -> httpx.Response:
+                nonlocal in_flight, peak
+                in_flight += 1
+                peak = max(peak, in_flight)
+                body = await request.aread()
+                marker = "demo-0" if b"demo-0" in body else "demo-1"
+                seen.append(
+                    (
+                        monotonic(),
+                        request.headers["x-cqc-simulator-faults"],
+                        marker,
+                    )
+                )
+                if len(seen) >= 20:
+                    reached.set()
+                await asyncio.sleep(0.025)
+                in_flight -= 1
+                return httpx.Response(200, json={"inspection_id": "ok"})
+    
+            async with httpx.AsyncClient(transport=httpx.MockTransport(respond)) as client:
+                runner = SimulatorRunner(
+                    dataset_root=root,
+                    position_path=root / "state" / "position.json",
+                    backend_url="http://backend",
+                    state=state,
+                    max_bytes=24 * 1024 * 1024,
+                    fault_token="test-token",
+                    client=client,
+                )
+                prepared = runner.prepare()
+                runner.start(prepared)
+                runner.start(prepared)
+                try:
+                    await asyncio.wait_for(reached.wait(), timeout=15)
+                finally:
+                    await runner.stop()
+                assert not runner.active
+                assert not runner.failed
+                assert 1 <= peak <= concurrency
+                if concurrency > 1:
+                    assert peak > 1
+                assert len(seen) >= 20
+                assert sum(bool(fault) for _, fault, _ in seen) == 1
+                assert state.get_state().revision == 2
+                assert state.get_state().faults == ()
+                assert all(
+                    seen[index][0] <= seen[index + 1][0] for index in range(len(seen) - 1)
+                )
+                store = SimulatorPositionStore(
+                    root / "state" / "position.json", prepared[0]
+                )
+                assert store.load() == len(seen)
+                assert [marker for _, _, marker in seen[:4]] == [
+                    "demo-0",
+                    "demo-1",
+                    "demo-0",
+                    "demo-1",
+                ]
+    
+        with TemporaryDirectory(prefix="cqc-simulator-", dir=Path.cwd()) as temporary:
+>           asyncio.run(exercise(Path(temporary)))
+
+tests\simulator\test_runner.py:189: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:190: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\asyncio\runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests\simulator\test_runner.py:162: in exercise
+    await asyncio.wait_for(reached.wait(), timeout=15)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+fut = <Task cancelled name='Task-6002' coro=<Event.wait() done, defined at C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\asyncio\locks.py:200>>
+timeout = 15
+
+    async def wait_for(fut, timeout):
+        """Wait for the single Future or coroutine to complete, with timeout.
+    
+        Coroutine will be wrapped in Task.
+    
+        Returns result of the Future or coroutine.  When a timeout occurs,
+        it cancels the task and raises TimeoutError.  To avoid the task
+        cancellation, wrap it in shield().
+    
+        If the wait is cancelled, the task is also cancelled.
+    
+        This function is a coroutine.
+        """
+        loop = events.get_running_loop()
+    
+        if timeout is None:
+            return await fut
+    
+        if timeout <= 0:
+            fut = ensure_future(fut, loop=loop)
+    
+            if fut.done():
+                return fut.result()
+    
+            await _cancel_and_wait(fut, loop=loop)
+            try:
+                return fut.result()
+            except exceptions.CancelledError as exc:
+                raise exceptions.TimeoutError() from exc
+    
+        waiter = loop.create_future()
+        timeout_handle = loop.call_later(timeout, _release_waiter, waiter)
+        cb = functools.partial(_release_waiter, waiter)
+    
+        fut = ensure_future(fut, loop=loop)
+        fut.add_done_callback(cb)
+    
+        try:
+            # wait until the future completes or the timeout
+            try:
+                await waiter
+            except exceptions.CancelledError:
+                if fut.done():
+                    return fut.result()
+                else:
+                    fut.remove_done_callback(cb)
+                    # We must ensure that the task is not running
+                    # after wait_for() returns.
+                    # See https://bugs.python.org/issue32751
+                    await _cancel_and_wait(fut, loop=loop)
+                    raise
+    
+            if fut.done():
+                return fut.result()
+            else:
+                fut.remove_done_callback(cb)
+                # We must ensure that the task is not running
+                # after wait_for() returns.
+                # See https://bugs.python.org/issue32751
+                await _cancel_and_wait(fut, loop=loop)
+                # In case task cancellation failed with some
+                # exception, we should re-raise it
+                # See https://bugs.python.org/issue40607
+                try:
+                    return fut.result()
+                except exceptions.CancelledError as exc:
+>                   raise exceptions.TimeoutError() from exc
+E                   TimeoutError
+
+C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\asyncio\tasks.py:502: TimeoutError
+------------------------------ Captured log call ------------------------------
+ERROR    src.simulator.runner:runner.py:209 Simulator 실행 루프가 중단되었습니다
+Traceback (most recent call last):
+  File "C:\CQC\src\simulator\runner.py", line 170, in _run
+    worker.result()
+  File "C:\CQC\src\simulator\runner.py", line 156, in send
+    await asyncio.to_thread(store.save, committed)
+  File "C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\asyncio\threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\CQC\src\simulator\position.py", line 64, in save
+    os.replace(temporary, self.path)
+PermissionError: [WinError 5] 액세스가 거부되었습니다: 'C:\\CQC\\cqc-simulator-rf4cbvko\\state\\tmpdkz0l36g' -> 'C:\\CQC\\cqc-simulator-rf4cbvko\\state\\position.json'
+============================== warnings summary ===============================
+..\Users\present\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+..\Users\present\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/api/test_fault_image_storage.py::test_prune_list_and_preview_race_with_delete_keep_consistent_files
+FAILED tests/api/test_late_results.py::test_late_result_is_diagnostic_only_and_does_not_change_decision[0.95]
+FAILED tests/api/test_line_deadlines.py::test_late_manager_cancels_each_task_at_its_own_total_hard_timeout
+FAILED tests/api/test_review_images.py::test_independent_100_200_retention_and_bulk_api
+FAILED tests/simulator/test_runner.py::test_runner_schedules_and_bounds_inflight[1]
+SKIPPED [8] tests\api\test_be10_core_integration.py:228: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [3] tests\api\test_be10_core_integration.py:307: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_core_integration.py:374: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [6] tests\api\test_be10_core_integration.py:421: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_core_integration.py:489: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_core_integration.py:535: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [9] tests\api\test_be10_core_integration.py:566: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [6] tests\api\test_be10_core_integration.py:634: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [12] tests\api\test_be10_core_integration.py:683: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_core_integration.py:742: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_core_integration.py:830: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [5] tests\api\test_be10_core_integration.py:882: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [4] tests\api\test_be10_core_integration.py:935: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_core_integration.py:994: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [10] tests\api\test_be10_core_integration.py:1029: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_core_integration.py:1069: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_evidence_audit.py:29: completed isolated BE-10 evidence run not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:189: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:271: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:341: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:488: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:633: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:762: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:866: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:1023: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:1089: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:1219: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:1255: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:1376: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [2] tests\api\test_duplicate_inspections_mysql_integration.py:27: CQC_TEST_DATABASE_URL이 없어 MySQL duplicate test를 건너뜁니다
+SKIPPED [1] tests\api\test_history_retention_mysql_integration.py:30: 격리 순환 삭제 MySQL URL이 없으면 건너뜁니다
+SKIPPED [1] tests\api\test_late_result_mysql_integration.py:34: CQC_TEST_DATABASE_URL이 없어 MySQL integration test를 건너뜁니다
+SKIPPED [1] tests\api\test_quality_history_mysql_integration.py:25: CQC_TEST_DATABASE_URL이 없어 MySQL integration test를 건너뜁니다
+SKIPPED [1] tests\api\test_quality_operations_mysql_integration.py:31: CQC_TEST_DATABASE_URL이 없어 MySQL integration test를 건너뜁니다
+SKIPPED [1] tests\api\test_quality_review_mysql_integration.py:23: CQC_TEST_DATABASE_URL이 없어 MySQL integration test를 건너뜁니다
+SKIPPED [1] tests\api\test_repository_mysql_integration.py:34: CQC_TEST_DATABASE_URL이 없어 MySQL integration test를 건너뜁니다
+5 failed, 463 passed, 91 skipped, 2 warnings in 163.09s (0:02:43)

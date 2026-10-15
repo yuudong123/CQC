@@ -1,0 +1,177 @@
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 10%]
+sssssssssss......................................................ss..... [ 21%]
+F..............................s........................................ [ 32%]
+........................................................................ [ 43%]
+.........................................s.............................. [ 54%]
+.............................................s.....s...s................ [ 65%]
+...................s.....FF............................................. [ 76%]
+............................................................................................................................ [ 95%]
+............................                                             [100%]
+================================== FAILURES ===================================
+______________ test_limit_counts_files_across_multi_image_groups ______________
+
+fault_root = WindowsPath('C:/CQC/cqc-fault-test-c4zx4p8r/fault-images')
+
+    def test_limit_counts_files_across_multi_image_groups(fault_root: Path) -> None:
+        storage = FaultImageStorage(fault_root, limit=3)
+>       first_ids = storage.save(
+            inspection_id="first-inspection",
+            error_code="INFERENCE_ERROR",
+            images=[_jpeg(), _jpeg()],
+            created_at=START,
+        )
+
+tests\api\test_fault_image_storage.py:161: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\api\services\fault_image_storage.py:118: in save
+    stage.rename(self._root / group_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/CQC/cqc-fault-test-c4zx4p8r/fault-images/.pending-0wbxretd')
+target = WindowsPath('C:/CQC/cqc-fault-test-c4zx4p8r/fault-images/b84ab6914da840c7b2bb1537ce7c49e4')
+
+    def rename(self, target):
+        """
+        Rename this path to the target path.
+    
+        The target path may be absolute or relative. Relative paths are
+        interpreted relative to the current working directory, *not* the
+        directory of the Path object.
+    
+        Returns the new Path instance pointing to the target path.
+        """
+>       os.rename(self, target)
+E       PermissionError: [WinError 5] 액세스가 거부되었습니다: 'C:\\CQC\\cqc-fault-test-c4zx4p8r\\fault-images\\.pending-0wbxretd' -> 'C:\\CQC\\cqc-fault-test-c4zx4p8r\\fault-images\\b84ab6914da840c7b2bb1537ce7c49e4'
+
+C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1175: PermissionError
+_______________ test_independent_100_200_retention_and_bulk_api _______________
+
+fault_root = WindowsPath('C:/CQC/cqc-review-test-iny_moax/fault-images')
+
+    def test_independent_100_200_retention_and_bulk_api(fault_root: Path):
+        app = create_app(Settings(fault_image_storage_root=fault_root))
+        system, low = app.state.fault_image_storage, app.state.low_confidence_image_storage
+        assert app.state.settings.fault_image_limit == 100
+        assert app.state.settings.low_confidence_image_limit == 200
+        system_ids, low_ids = [], []
+        for index in range(101):
+            system_ids.extend(
+>               system.save(
+                    inspection_id=f"system-{index}",
+                    error_code="INFERENCE_CONNECTION_ERROR",
+                    images=[_jpeg()],
+                    created_at=START + timedelta(seconds=index),
+                )
+            )
+
+tests\api\test_review_images.py:149: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\api\services\fault_image_storage.py:118: in save
+    stage.rename(self._root / group_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/CQC/cqc-review-test-iny_moax/fault-images/.pending-9t15iotd')
+target = WindowsPath('C:/CQC/cqc-review-test-iny_moax/fault-images/ae48328e5649454eb92c0eca690b2259')
+
+    def rename(self, target):
+        """
+        Rename this path to the target path.
+    
+        The target path may be absolute or relative. Relative paths are
+        interpreted relative to the current working directory, *not* the
+        directory of the Path object.
+    
+        Returns the new Path instance pointing to the target path.
+        """
+>       os.rename(self, target)
+E       PermissionError: [WinError 5] 액세스가 거부되었습니다: 'C:\\CQC\\cqc-review-test-iny_moax\\fault-images\\.pending-9t15iotd' -> 'C:\\CQC\\cqc-review-test-iny_moax\\fault-images\\ae48328e5649454eb92c0eca690b2259'
+
+C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1175: PermissionError
+________________ test_legacy_filters_preview_delete_without_db ________________
+
+fault_root = WindowsPath('C:/CQC/cqc-review-test-wkh8o2j5/fault-images')
+
+    def test_legacy_filters_preview_delete_without_db(fault_root: Path):
+        system = FaultImageStorage(fault_root)
+        low = FaultImageStorage(fault_root / "low-confidence", limit=200)
+>       legacy = system.save(
+            inspection_id="same-inspection",
+            error_code="INFERENCE_DEADLINE_EXCEEDED",
+            images=[_jpeg()],
+            created_at=START,
+        )[0]
+
+tests\api\test_review_images.py:194: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\api\services\fault_image_storage.py:118: in save
+    stage.rename(self._root / group_id)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/CQC/cqc-review-test-wkh8o2j5/fault-images/.pending-88djxiwd')
+target = WindowsPath('C:/CQC/cqc-review-test-wkh8o2j5/fault-images/10032742c6d445a084e7ae60914b1566')
+
+    def rename(self, target):
+        """
+        Rename this path to the target path.
+    
+        The target path may be absolute or relative. Relative paths are
+        interpreted relative to the current working directory, *not* the
+        directory of the Path object.
+    
+        Returns the new Path instance pointing to the target path.
+        """
+>       os.rename(self, target)
+E       PermissionError: [WinError 5] 액세스가 거부되었습니다: 'C:\\CQC\\cqc-review-test-wkh8o2j5\\fault-images\\.pending-88djxiwd' -> 'C:\\CQC\\cqc-review-test-wkh8o2j5\\fault-images\\10032742c6d445a084e7ae60914b1566'
+
+C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1175: PermissionError
+============================== warnings summary ===============================
+..\Users\present\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+..\Users\present\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\present\AppData\Local\Programs\Python\Python311\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/api/test_fault_image_storage.py::test_limit_counts_files_across_multi_image_groups
+FAILED tests/api/test_review_images.py::test_independent_100_200_retention_and_bulk_api
+FAILED tests/api/test_review_images.py::test_legacy_filters_preview_delete_without_db
+SKIPPED [8] tests\api\test_be10_core_integration.py:228: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [3] tests\api\test_be10_core_integration.py:307: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_core_integration.py:374: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [6] tests\api\test_be10_core_integration.py:421: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_core_integration.py:489: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_core_integration.py:535: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [9] tests\api\test_be10_core_integration.py:566: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [6] tests\api\test_be10_core_integration.py:634: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [12] tests\api\test_be10_core_integration.py:683: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_core_integration.py:742: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_core_integration.py:830: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [5] tests\api\test_be10_core_integration.py:882: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [4] tests\api\test_be10_core_integration.py:935: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_core_integration.py:994: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [10] tests\api\test_be10_core_integration.py:1029: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_core_integration.py:1069: isolated CQC_BE10_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_evidence_audit.py:29: completed isolated BE-10 evidence run not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:189: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:271: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:341: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:488: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:633: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:762: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:866: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:1023: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:1089: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:1219: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:1255: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [1] tests\api\test_be10_operations_integration.py:1376: isolated CQC_BE10_3_DATABASE_URL not configured
+SKIPPED [2] tests\api\test_duplicate_inspections_mysql_integration.py:27: CQC_TEST_DATABASE_URL이 없어 MySQL duplicate test를 건너뜁니다
+SKIPPED [1] tests\api\test_history_retention_mysql_integration.py:30: 격리 순환 삭제 MySQL URL이 없으면 건너뜁니다
+SKIPPED [1] tests\api\test_late_result_mysql_integration.py:34: CQC_TEST_DATABASE_URL이 없어 MySQL integration test를 건너뜁니다
+SKIPPED [1] tests\api\test_quality_history_mysql_integration.py:25: CQC_TEST_DATABASE_URL이 없어 MySQL integration test를 건너뜁니다
+SKIPPED [1] tests\api\test_quality_operations_mysql_integration.py:31: CQC_TEST_DATABASE_URL이 없어 MySQL integration test를 건너뜁니다
+SKIPPED [1] tests\api\test_quality_review_mysql_integration.py:23: CQC_TEST_DATABASE_URL이 없어 MySQL integration test를 건너뜁니다
+SKIPPED [1] tests\api\test_repository_mysql_integration.py:34: CQC_TEST_DATABASE_URL이 없어 MySQL integration test를 건너뜁니다
+3 failed, 562 passed, 91 skipped, 2 warnings, 20 subtests passed in 184.73s (0:03:04)

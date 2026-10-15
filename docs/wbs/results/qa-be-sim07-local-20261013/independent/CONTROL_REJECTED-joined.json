@@ -1,0 +1,637 @@
+[
+  {
+    "request": {
+      "inspection_id": "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+      "source_reference": "demo-601141011000-001",
+      "faults": [
+        "CONTROL_REJECTED"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12447.935886799,
+      "started_utc": "2026-10-13T08:03:16.218110+00:00",
+      "kind": "request_start"
+    },
+    "response": {
+      "inspection_id": "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+      "source_reference": "demo-601141011000-001",
+      "faults": [
+        "CONTROL_REJECTED"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12447.935886799,
+      "started_utc": "2026-10-13T08:03:16.218110+00:00",
+      "kind": "request_end",
+      "ended_utc": "2026-10-13T08:03:17.115762+00:00",
+      "end_monotonic": 12448.833564099,
+      "http_status": 200,
+      "response": {
+        "inspection_id": "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+        "crop_type": "apple",
+        "predicted_cultivar": "yanggwang",
+        "cultivar_confidence": 0.999321699142456,
+        "cultivar_probabilities": {
+          "fuji": 0.000678366341162473,
+          "yanggwang": 0.999321699142456
+        },
+        "predicted_grade": "L",
+        "quality_confidence": 0.8113511204719543,
+        "quality_probabilities": {
+          "L": 0.8113511204719543,
+          "M": 0.10919930040836334,
+          "S": 0.07944954186677933
+        },
+        "inference_time_ms": 155.36050699847692,
+        "model_name": "mobilenet_v3_small_multiview",
+        "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+        "preprocessing_version": "rgb-resize-imagenet-v1",
+        "used_frame_count": 12,
+        "inspection_status": "COMPLETED",
+        "review_required": false,
+        "exclude_from_normal_stats": false,
+        "decision_reason": "NORMAL",
+        "virtual_brix": 14.9,
+        "brix_is_measured": false,
+        "sweetness_band": "sweet",
+        "target_bin_code": "TEST_REINSPECTION_BIN",
+        "control_status": "SUCCEEDED",
+        "persistence_status": "SUCCEEDED"
+      },
+      "error_type": null
+    },
+    "db": {
+      "inspection_id": "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+      "source_reference": "demo-601141011000-001",
+      "created_at": "2026-10-13 08:03:16.283000",
+      "completed_at": "2026-10-13 08:03:16.956000",
+      "inspection_status": "COMPLETED",
+      "control_status": "SUCCEEDED",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "CONTROL_REJECTED",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+      "used_frame_count": 12,
+      "inference_time_ms": "155.361",
+      "target_bin_code": "TEST_REINSPECTION_BIN"
+    },
+    "controls": [
+      {
+        "id": 1000,
+        "command_id": "5fd4b768-d055-407f-bc27-bec64e432862",
+        "inspection_id": "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+        "attempt_no": 1,
+        "requested_bin_code": "DEMO_BIN_08",
+        "command_type": "ROUTE_TO_BIN",
+        "control_status": "REJECTED",
+        "requested_at": "2026-10-13 08:03:16.956000",
+        "responded_at": "2026-10-13 08:03:16.956000",
+        "response_time_ms": "0.060",
+        "failure_reason": null
+      },
+      {
+        "id": 1001,
+        "command_id": "5d7069c1-c444-4777-b74f-39ba66312f43",
+        "inspection_id": "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+        "attempt_no": 2,
+        "requested_bin_code": "TEST_REINSPECTION_BIN",
+        "command_type": "ROUTE_TO_BIN",
+        "control_status": "SUCCEEDED",
+        "requested_at": "2026-10-13 08:03:16.956000",
+        "responded_at": "2026-10-13 08:03:16.956000",
+        "response_time_ms": "0.026",
+        "failure_reason": null
+      }
+    ],
+    "errors": [
+      {
+        "inspection_id": "64b5a596-70b7-4e98-bd04-0e9b466b3b3b",
+        "component": "virtual_control",
+        "error_code": "CONTROL_REJECTED",
+        "occurred_at": "2026-10-13 08:03:16.956000"
+      }
+    ],
+    "in_observation_window": true,
+    "boundary_during_clear": false
+  },
+  {
+    "request": {
+      "inspection_id": "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+      "source_reference": "demo-601033017000-004",
+      "faults": [
+        "CONTROL_REJECTED"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12450.40038377,
+      "started_utc": "2026-10-13T08:03:18.682608+00:00",
+      "kind": "request_start"
+    },
+    "response": {
+      "inspection_id": "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+      "source_reference": "demo-601033017000-004",
+      "faults": [
+        "CONTROL_REJECTED"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12450.40038377,
+      "started_utc": "2026-10-13T08:03:18.682608+00:00",
+      "kind": "request_end",
+      "ended_utc": "2026-10-13T08:03:19.563681+00:00",
+      "end_monotonic": 12451.28147621,
+      "http_status": 200,
+      "response": {
+        "inspection_id": "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+        "crop_type": "apple",
+        "predicted_cultivar": "fuji",
+        "cultivar_confidence": 0.9999639987945557,
+        "cultivar_probabilities": {
+          "fuji": 0.9999639987945557,
+          "yanggwang": 3.602359720389359e-05
+        },
+        "predicted_grade": "S",
+        "quality_confidence": 0.9562020897865295,
+        "quality_probabilities": {
+          "L": 0.000670603767503053,
+          "M": 0.043127283453941345,
+          "S": 0.9562020897865295
+        },
+        "inference_time_ms": 148.08790700044483,
+        "model_name": "mobilenet_v3_small_multiview",
+        "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+        "preprocessing_version": "rgb-resize-imagenet-v1",
+        "used_frame_count": 12,
+        "inspection_status": "COMPLETED",
+        "review_required": false,
+        "exclude_from_normal_stats": false,
+        "decision_reason": "NORMAL",
+        "virtual_brix": 15.0,
+        "brix_is_measured": false,
+        "sweetness_band": "sweet",
+        "target_bin_code": "TEST_REINSPECTION_BIN",
+        "control_status": "SUCCEEDED",
+        "persistence_status": "SUCCEEDED"
+      },
+      "error_type": null
+    },
+    "db": {
+      "inspection_id": "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+      "source_reference": "demo-601033017000-004",
+      "created_at": "2026-10-13 08:03:18.783000",
+      "completed_at": "2026-10-13 08:03:19.477000",
+      "inspection_status": "COMPLETED",
+      "control_status": "SUCCEEDED",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "CONTROL_REJECTED",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+      "used_frame_count": 12,
+      "inference_time_ms": "148.088",
+      "target_bin_code": "TEST_REINSPECTION_BIN"
+    },
+    "controls": [
+      {
+        "id": 1002,
+        "command_id": "b121afce-304a-44ea-ac97-439b9605091f",
+        "inspection_id": "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+        "attempt_no": 1,
+        "requested_bin_code": "DEMO_BIN_06",
+        "command_type": "ROUTE_TO_BIN",
+        "control_status": "REJECTED",
+        "requested_at": "2026-10-13 08:03:19.477000",
+        "responded_at": "2026-10-13 08:03:19.477000",
+        "response_time_ms": "0.110",
+        "failure_reason": null
+      },
+      {
+        "id": 1003,
+        "command_id": "069305bf-2f80-4980-a944-838c32b72760",
+        "inspection_id": "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+        "attempt_no": 2,
+        "requested_bin_code": "TEST_REINSPECTION_BIN",
+        "command_type": "ROUTE_TO_BIN",
+        "control_status": "SUCCEEDED",
+        "requested_at": "2026-10-13 08:03:19.477000",
+        "responded_at": "2026-10-13 08:03:19.477000",
+        "response_time_ms": "0.039",
+        "failure_reason": null
+      }
+    ],
+    "errors": [
+      {
+        "inspection_id": "ab045cf4-6eab-4fd2-8101-11df2f5b26a4",
+        "component": "virtual_control",
+        "error_code": "CONTROL_REJECTED",
+        "occurred_at": "2026-10-13 08:03:19.477000"
+      }
+    ],
+    "in_observation_window": true,
+    "boundary_during_clear": false
+  },
+  {
+    "request": {
+      "inspection_id": "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+      "source_reference": "demo-601033020000-001",
+      "faults": [
+        "CONTROL_REJECTED"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12452.210381152,
+      "started_utc": "2026-10-13T08:03:20.492604+00:00",
+      "kind": "request_start"
+    },
+    "response": {
+      "inspection_id": "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+      "source_reference": "demo-601033020000-001",
+      "faults": [
+        "CONTROL_REJECTED"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12452.210381152,
+      "started_utc": "2026-10-13T08:03:20.492604+00:00",
+      "kind": "request_end",
+      "ended_utc": "2026-10-13T08:03:21.264256+00:00",
+      "end_monotonic": 12452.982048987,
+      "http_status": 200,
+      "response": {
+        "inspection_id": "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+        "crop_type": "apple",
+        "predicted_cultivar": "fuji",
+        "cultivar_confidence": 0.9999961853027344,
+        "cultivar_probabilities": {
+          "fuji": 0.9999961853027344,
+          "yanggwang": 3.7713946312578628e-06
+        },
+        "predicted_grade": "S",
+        "quality_confidence": 0.6757089495658875,
+        "quality_probabilities": {
+          "L": 0.04382457956671715,
+          "M": 0.2804664075374603,
+          "S": 0.6757089495658875
+        },
+        "inference_time_ms": 164.99040799862996,
+        "model_name": "mobilenet_v3_small_multiview",
+        "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+        "preprocessing_version": "rgb-resize-imagenet-v1",
+        "used_frame_count": 12,
+        "inspection_status": "COMPLETED",
+        "review_required": false,
+        "exclude_from_normal_stats": false,
+        "decision_reason": "NORMAL",
+        "virtual_brix": 12.9,
+        "brix_is_measured": false,
+        "sweetness_band": "less_sweet",
+        "target_bin_code": "TEST_REINSPECTION_BIN",
+        "control_status": "SUCCEEDED",
+        "persistence_status": "SUCCEEDED"
+      },
+      "error_type": null
+    },
+    "db": {
+      "inspection_id": "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+      "source_reference": "demo-601033020000-001",
+      "created_at": "2026-10-13 08:03:20.527000",
+      "completed_at": "2026-10-13 08:03:21.235000",
+      "inspection_status": "COMPLETED",
+      "control_status": "SUCCEEDED",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "CONTROL_REJECTED",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+      "used_frame_count": 12,
+      "inference_time_ms": "164.990",
+      "target_bin_code": "TEST_REINSPECTION_BIN"
+    },
+    "controls": [
+      {
+        "id": 1004,
+        "command_id": "890fbc5d-d974-4c55-834c-9d95e8a235ab",
+        "inspection_id": "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+        "attempt_no": 1,
+        "requested_bin_code": "DEMO_BIN_05",
+        "command_type": "ROUTE_TO_BIN",
+        "control_status": "REJECTED",
+        "requested_at": "2026-10-13 08:03:21.235000",
+        "responded_at": "2026-10-13 08:03:21.235000",
+        "response_time_ms": "0.034",
+        "failure_reason": null
+      },
+      {
+        "id": 1005,
+        "command_id": "1a3e0029-b5e0-4938-87e0-f7c95f5ebcd1",
+        "inspection_id": "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+        "attempt_no": 2,
+        "requested_bin_code": "TEST_REINSPECTION_BIN",
+        "command_type": "ROUTE_TO_BIN",
+        "control_status": "SUCCEEDED",
+        "requested_at": "2026-10-13 08:03:21.235000",
+        "responded_at": "2026-10-13 08:03:21.235000",
+        "response_time_ms": "0.012",
+        "failure_reason": null
+      }
+    ],
+    "errors": [
+      {
+        "inspection_id": "7f1b7fbc-5bdc-4247-97f4-342a0607375e",
+        "component": "virtual_control",
+        "error_code": "CONTROL_REJECTED",
+        "occurred_at": "2026-10-13 08:03:21.235000"
+      }
+    ],
+    "in_observation_window": true,
+    "boundary_during_clear": false
+  },
+  {
+    "request": {
+      "inspection_id": "a9309f7c-2883-4612-996b-13986995e0e9",
+      "source_reference": "demo-601033005000-004",
+      "faults": [
+        "CONTROL_REJECTED"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12454.314636948,
+      "started_utc": "2026-10-13T08:03:22.596860+00:00",
+      "kind": "request_start"
+    },
+    "response": {
+      "inspection_id": "a9309f7c-2883-4612-996b-13986995e0e9",
+      "source_reference": "demo-601033005000-004",
+      "faults": [
+        "CONTROL_REJECTED"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12454.314636948,
+      "started_utc": "2026-10-13T08:03:22.596860+00:00",
+      "kind": "request_end",
+      "ended_utc": "2026-10-13T08:03:23.313629+00:00",
+      "end_monotonic": 12455.03142418,
+      "http_status": 200,
+      "response": {
+        "inspection_id": "a9309f7c-2883-4612-996b-13986995e0e9",
+        "crop_type": "apple",
+        "predicted_cultivar": "fuji",
+        "cultivar_confidence": 0.9999998807907104,
+        "cultivar_probabilities": {
+          "fuji": 0.9999998807907104,
+          "yanggwang": 7.949494573722404e-08
+        },
+        "predicted_grade": "S",
+        "quality_confidence": 0.9808964729309082,
+        "quality_probabilities": {
+          "L": 0.0017118895193561912,
+          "M": 0.017391638830304146,
+          "S": 0.9808964729309082
+        },
+        "inference_time_ms": 159.06610700039892,
+        "model_name": "mobilenet_v3_small_multiview",
+        "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+        "preprocessing_version": "rgb-resize-imagenet-v1",
+        "used_frame_count": 12,
+        "inspection_status": "COMPLETED",
+        "review_required": false,
+        "exclude_from_normal_stats": false,
+        "decision_reason": "NORMAL",
+        "virtual_brix": 13.5,
+        "brix_is_measured": false,
+        "sweetness_band": "less_sweet",
+        "target_bin_code": "TEST_REINSPECTION_BIN",
+        "control_status": "SUCCEEDED",
+        "persistence_status": "SUCCEEDED"
+      },
+      "error_type": null
+    },
+    "db": {
+      "inspection_id": "a9309f7c-2883-4612-996b-13986995e0e9",
+      "source_reference": "demo-601033005000-004",
+      "created_at": "2026-10-13 08:03:22.646000",
+      "completed_at": "2026-10-13 08:03:23.286000",
+      "inspection_status": "COMPLETED",
+      "control_status": "SUCCEEDED",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "CONTROL_REJECTED",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+      "used_frame_count": 12,
+      "inference_time_ms": "159.066",
+      "target_bin_code": "TEST_REINSPECTION_BIN"
+    },
+    "controls": [
+      {
+        "id": 1006,
+        "command_id": "5e7ea97f-3468-404e-a879-ab3890ebf413",
+        "inspection_id": "a9309f7c-2883-4612-996b-13986995e0e9",
+        "attempt_no": 1,
+        "requested_bin_code": "DEMO_BIN_05",
+        "command_type": "ROUTE_TO_BIN",
+        "control_status": "REJECTED",
+        "requested_at": "2026-10-13 08:03:23.286000",
+        "responded_at": "2026-10-13 08:03:23.286000",
+        "response_time_ms": "0.039",
+        "failure_reason": null
+      },
+      {
+        "id": 1007,
+        "command_id": "18c893a7-058f-44e7-b888-1202fca634dd",
+        "inspection_id": "a9309f7c-2883-4612-996b-13986995e0e9",
+        "attempt_no": 2,
+        "requested_bin_code": "TEST_REINSPECTION_BIN",
+        "command_type": "ROUTE_TO_BIN",
+        "control_status": "SUCCEEDED",
+        "requested_at": "2026-10-13 08:03:23.286000",
+        "responded_at": "2026-10-13 08:03:23.286000",
+        "response_time_ms": "0.012",
+        "failure_reason": null
+      }
+    ],
+    "errors": [
+      {
+        "inspection_id": "a9309f7c-2883-4612-996b-13986995e0e9",
+        "component": "virtual_control",
+        "error_code": "CONTROL_REJECTED",
+        "occurred_at": "2026-10-13 08:03:23.286000"
+      }
+    ],
+    "in_observation_window": true,
+    "boundary_during_clear": false
+  },
+  {
+    "request": {
+      "inspection_id": "58a962ce-01da-4d2c-853e-5e9180a6bf6f",
+      "source_reference": "demo-601141019000-002",
+      "faults": [
+        "CONTROL_REJECTED"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12456.382707548,
+      "started_utc": "2026-10-13T08:03:24.664931+00:00",
+      "kind": "request_start"
+    },
+    "response": {
+      "inspection_id": "58a962ce-01da-4d2c-853e-5e9180a6bf6f",
+      "source_reference": "demo-601141019000-002",
+      "faults": [
+        "CONTROL_REJECTED"
+      ],
+      "intervalMs": "2000",
+      "start_monotonic": 12456.382707548,
+      "started_utc": "2026-10-13T08:03:24.664931+00:00",
+      "kind": "request_end",
+      "ended_utc": "2026-10-13T08:03:25.655819+00:00",
+      "end_monotonic": 12457.373614757,
+      "http_status": 200,
+      "response": {
+        "inspection_id": "58a962ce-01da-4d2c-853e-5e9180a6bf6f",
+        "crop_type": "apple",
+        "predicted_cultivar": "yanggwang",
+        "cultivar_confidence": 0.9935378432273865,
+        "cultivar_probabilities": {
+          "fuji": 0.00646217679604888,
+          "yanggwang": 0.9935378432273865
+        },
+        "predicted_grade": "M",
+        "quality_confidence": 0.5090057253837585,
+        "quality_probabilities": {
+          "L": 0.4603903293609619,
+          "M": 0.5090057253837585,
+          "S": 0.030603988096117973
+        },
+        "inference_time_ms": 149.68026099995768,
+        "model_name": "mobilenet_v3_small_multiview",
+        "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+        "preprocessing_version": "rgb-resize-imagenet-v1",
+        "used_frame_count": 12,
+        "inspection_status": "REINSPECTION_REQUIRED",
+        "review_required": true,
+        "exclude_from_normal_stats": false,
+        "decision_reason": "LOW_QUALITY_CONFIDENCE",
+        "virtual_brix": 13.4,
+        "brix_is_measured": false,
+        "sweetness_band": "less_sweet",
+        "target_bin_code": "TEST_REINSPECTION_BIN",
+        "control_status": "REJECTED",
+        "persistence_status": "SUCCEEDED"
+      },
+      "error_type": null
+    },
+    "db": {
+      "inspection_id": "58a962ce-01da-4d2c-853e-5e9180a6bf6f",
+      "source_reference": "demo-601141019000-002",
+      "created_at": "2026-10-13 08:03:24.703000",
+      "completed_at": "2026-10-13 08:03:25.545000",
+      "inspection_status": "REINSPECTION_REQUIRED",
+      "control_status": "REJECTED",
+      "persistence_status": "SUCCEEDED",
+      "error_code": "LOW_QUALITY_CONFIDENCE",
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+      "used_frame_count": 12,
+      "inference_time_ms": "149.680",
+      "target_bin_code": "TEST_REINSPECTION_BIN"
+    },
+    "controls": [
+      {
+        "id": 1008,
+        "command_id": "a73767cc-cc1f-4a49-ab58-c37c9ffb3727",
+        "inspection_id": "58a962ce-01da-4d2c-853e-5e9180a6bf6f",
+        "attempt_no": 1,
+        "requested_bin_code": "TEST_REINSPECTION_BIN",
+        "command_type": "ROUTE_TO_BIN",
+        "control_status": "REJECTED",
+        "requested_at": "2026-10-13 08:03:25.544000",
+        "responded_at": "2026-10-13 08:03:25.544000",
+        "response_time_ms": "0.046",
+        "failure_reason": null
+      }
+    ],
+    "errors": [
+      {
+        "inspection_id": "58a962ce-01da-4d2c-853e-5e9180a6bf6f",
+        "component": "virtual_control",
+        "error_code": "CONTROL_REJECTED",
+        "occurred_at": "2026-10-13 08:03:25.544000"
+      }
+    ],
+    "in_observation_window": true,
+    "boundary_during_clear": false
+  },
+  {
+    "request": {
+      "inspection_id": "26a92337-bce4-4cac-8144-f5d5f48bfdab",
+      "source_reference": "demo-601143013000-002",
+      "faults": [],
+      "intervalMs": "2000",
+      "start_monotonic": 12458.215613412,
+      "started_utc": "2026-10-13T08:03:26.497835+00:00",
+      "kind": "request_start"
+    },
+    "response": {
+      "inspection_id": "26a92337-bce4-4cac-8144-f5d5f48bfdab",
+      "source_reference": "demo-601143013000-002",
+      "faults": [],
+      "intervalMs": "2000",
+      "start_monotonic": 12458.215613412,
+      "started_utc": "2026-10-13T08:03:26.497835+00:00",
+      "kind": "request_end",
+      "ended_utc": "2026-10-13T08:03:27.357522+00:00",
+      "end_monotonic": 12459.075318996,
+      "http_status": 200,
+      "response": {
+        "inspection_id": "26a92337-bce4-4cac-8144-f5d5f48bfdab",
+        "crop_type": "apple",
+        "predicted_cultivar": "yanggwang",
+        "cultivar_confidence": 0.9987504482269287,
+        "cultivar_probabilities": {
+          "fuji": 0.0012494814582169056,
+          "yanggwang": 0.9987504482269287
+        },
+        "predicted_grade": "S",
+        "quality_confidence": 0.996976375579834,
+        "quality_probabilities": {
+          "L": 2.54059395956574e-05,
+          "M": 0.0029982097912579775,
+          "S": 0.996976375579834
+        },
+        "inference_time_ms": 155.35780299978796,
+        "model_name": "mobilenet_v3_small_multiview",
+        "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+        "preprocessing_version": "rgb-resize-imagenet-v1",
+        "used_frame_count": 12,
+        "inspection_status": "COMPLETED",
+        "review_required": false,
+        "exclude_from_normal_stats": false,
+        "decision_reason": "NORMAL",
+        "virtual_brix": 12.6,
+        "brix_is_measured": false,
+        "sweetness_band": "less_sweet",
+        "target_bin_code": "DEMO_BIN_11",
+        "control_status": "SUCCEEDED",
+        "persistence_status": "SUCCEEDED"
+      },
+      "error_type": null
+    },
+    "db": {
+      "inspection_id": "26a92337-bce4-4cac-8144-f5d5f48bfdab",
+      "source_reference": "demo-601143013000-002",
+      "created_at": "2026-10-13 08:03:26.536000",
+      "completed_at": "2026-10-13 08:03:27.324000",
+      "inspection_status": "COMPLETED",
+      "control_status": "SUCCEEDED",
+      "persistence_status": "SUCCEEDED",
+      "error_code": null,
+      "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+      "used_frame_count": 12,
+      "inference_time_ms": "155.358",
+      "target_bin_code": "DEMO_BIN_11"
+    },
+    "controls": [
+      {
+        "id": 1009,
+        "command_id": "2be200ca-298b-49d5-8bcc-b5ffb8a1536e",
+        "inspection_id": "26a92337-bce4-4cac-8144-f5d5f48bfdab",
+        "attempt_no": 1,
+        "requested_bin_code": "DEMO_BIN_11",
+        "command_type": "ROUTE_TO_BIN",
+        "control_status": "SUCCEEDED",
+        "requested_at": "2026-10-13 08:03:27.324000",
+        "responded_at": "2026-10-13 08:03:27.324000",
+        "response_time_ms": "0.081",
+        "failure_reason": null
+      }
+    ],
+    "errors": [],
+    "in_observation_window": false,
+    "boundary_during_clear": true
+  }
+]

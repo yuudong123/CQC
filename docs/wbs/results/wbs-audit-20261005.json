@@ -1,0 +1,356 @@
+{
+  "audited_code_ref": "51c6e325213d50ac1781a223f454d7eaeaf64285",
+  "audited_on": "2026-10-05",
+  "timezone": "Asia/Seoul",
+  "scope": "code, WBS, Git branches, GitHub issues and PRs, live read-only QC HTTP",
+  "issue_actions": {
+    "created": [
+      95,
+      96,
+      97,
+      98,
+      99
+    ],
+    "closed_completed": [
+      64
+    ],
+    "updated": [
+      65,
+      66,
+      70,
+      75,
+      76
+    ],
+    "decision_left_open": 39
+  },
+  "branch_review": {
+    "dev": "51c6e32",
+    "backend": "3cf2b9e",
+    "backend_unique_commits": [
+      "e216fd2",
+      "6102344",
+      "3cf2b9e"
+    ],
+    "open_pull_requests": 0,
+    "dm_unique_commits": 0,
+    "fe_unique_commits": 0,
+    "mo_unique_commits": 0
+  },
+  "validation": {
+    "dm_focused_unittest": {
+      "passed": 45,
+      "scope": "10 focused modules; local CPU inference smoke, not accuracy/target performance"
+    },
+    "web": {
+      "passed": 50,
+      "tsc": "passed"
+    },
+    "ci": {
+      "passed": 16,
+      "scope": "local deploy/rollback harness"
+    },
+    "logistics_api": {
+      "passed": 12,
+      "scope": "MemoryStore API tests, not Mongo integration"
+    },
+    "backend_simulator_logging": {
+      "passed": 327,
+      "skipped": 6,
+      "failed": 3,
+      "environment": "Windows Python 3.11.9; full scope used pytest 8.4.2. Failed 3-case subset reproduced on required pytest 9.1.1; timer alone passed. No full suite rerun on pytest 9.1.",
+      "issues": [
+        66,
+        99
+      ],
+      "failed_subset_pytest_9_1": {
+        "timer_isolated_passed": 1,
+        "workspace_image_failures_repeated": 2,
+        "os_temp_110_writes_retained": 100,
+        "failed": 3
+      }
+    },
+    "pdf_artifacts": {
+      "final_pages": 36,
+      "intermediate_pages": 36,
+      "page31_embedded_images_each": 3
+    }
+  },
+  "live_source": {
+    "backend_health": "http://192.168.133.106:8000/health",
+    "inference_health": "http://192.168.133.106:8001/health",
+    "web_proxy_health": "http://192.168.133.106:3100/api/quality/health",
+    "source_commit": "unverified; Jenkins API 403",
+    "model_version": "cqc-apple-separate12-focal-v2-cal-20260930",
+    "approval_status": "unverified_candidate",
+    "checkpoint_sha256": "b254206e4091732a49c5db02c12e5fb6dc3d996dbce694c2e82d442a2ba8753a"
+  },
+  "memory_reproductions": {
+    "virtual_control": {
+      "local_sends": 50000,
+      "retained_requests": 50000,
+      "retained_status_histories": 50000,
+      "retained_growth_bytes": 31077885
+    },
+    "late_manager": {
+      "local_collected": 1000,
+      "max_active": 1,
+      "final_active": 0,
+      "retained_results": 1000,
+      "retained_growth_bytes": 2874103
+    },
+    "limitation": "local synthetic load; production RSS not measured"
+  },
+  "limitation": "No production changes, fault injection, deploy, retraining, or final Test. Final throughput acceptance pending #65. New issues do not start teammates' agents.",
+  "live_read_only_metrics": {
+    "observed_at": 1791185780130.0,
+    "source": "backend",
+    "components": {
+      "Simulator": {
+        "status": "healthy",
+        "lastSeenAt": 1791185779109.0,
+        "detail": "검사 전송 중"
+      },
+      "Inference": {
+        "status": "healthy",
+        "lastSeenAt": 1791185780130.0,
+        "detail": "추론 서비스 준비 완료"
+      },
+      "Backend": {
+        "status": "healthy",
+        "lastSeenAt": 1791185780130.0,
+        "detail": "관제 API 응답 중"
+      },
+      "MySQL": {
+        "status": "healthy",
+        "lastSeenAt": 1791185780130.0,
+        "detail": "검사 이력 조회 성공"
+      }
+    },
+    "periodTotals": {
+      "1": 30,
+      "5": 150,
+      "10": 263,
+      "30": 808
+    },
+    "retention": {
+      "images": 300
+    },
+    "read_only_history": {
+      "n": 200,
+      "first": "2026-10-05 16:29:41.015",
+      "last": "2026-10-05 16:36:19.003",
+      "rate_per_s": 0.5000150758314321,
+      "completion_interval_median_s": 2.003,
+      "completion_interval_p90_s": 2.1778000000000004,
+      "completion_interval_max_s": 2.645,
+      "status_counts": {
+        "PASS": 181,
+        "REVIEW": 19
+      },
+      "error_counts": {
+        "NONE": 200
+      },
+      "inference_internal_p95_ms": 153.61489999999998,
+      "note": "retrospective stored records; completion intervals rather than exact Simulator injection intervals; persisted data cannot prove no lost writes"
+    }
+  },
+  "final_open_issue_count": 16,
+  "final_open_issues": [
+    {
+      "number": 99,
+      "title": "[BE][BE-06·10] Windows 작업공간 검수 이미지 시험 rename 실패",
+      "labels": [
+        "BE",
+        "버그",
+        "P2"
+      ],
+      "assignees": [
+        "cyanaria89"
+      ]
+    },
+    {
+      "number": 98,
+      "title": "[DM][ALL-03] 과거 작업 기록과 현행 모델·QA 계약 구분",
+      "labels": [
+        "DM",
+        "요청",
+        "P2"
+      ],
+      "assignees": [
+        "yuudong123"
+      ]
+    },
+    {
+      "number": 97,
+      "title": "[DM][DM-06] 목표 서버 CPU의 모델·입력 장수 비교 근거 보완",
+      "labels": [
+        "DM",
+        "요청",
+        "P2"
+      ],
+      "assignees": [
+        "yuudong123"
+      ]
+    },
+    {
+      "number": 96,
+      "title": "[MO][MO-03] PR 검사·리뷰와 dev 전용 배포 경계 확인",
+      "labels": [
+        "MO",
+        "요청",
+        "P2"
+      ],
+      "assignees": [
+        "h-yuna-lab"
+      ]
+    },
+    {
+      "number": 95,
+      "title": "[BE][BE-10] 가상 제어·지연 결과 기록의 무제한 메모리 누적",
+      "labels": [
+        "BE",
+        "버그",
+        "P2"
+      ],
+      "assignees": [
+        "cyanaria89"
+      ]
+    },
+    {
+      "number": 76,
+      "title": "[ALL][ALL-05·06] 10-13 기능 동결과 발표 리허설·main 최종 표시",
+      "labels": [
+        "DM",
+        "FE",
+        "BE",
+        "MO",
+        "요청",
+        "P2"
+      ],
+      "assignees": [
+        "yuudong123"
+      ]
+    },
+    {
+      "number": 75,
+      "title": "[DM][DM-09] 최종 Test 1회·모델 카드 확정 (10-13~10-15)",
+      "labels": [
+        "DM",
+        "요청",
+        "P2"
+      ],
+      "assignees": [
+        "yuudong123"
+      ]
+    },
+    {
+      "number": 74,
+      "title": "[FE][FE-09] 화면 동결·발표 흐름 점검 (10-13~10-15)",
+      "labels": [
+        "FE",
+        "요청",
+        "P3"
+      ],
+      "assignees": [
+        "yuudong123"
+      ]
+    },
+    {
+      "number": 73,
+      "title": "[FE][FE-08] 목표 배포 환경 8시간 관제·탭 전환 검증",
+      "labels": [
+        "FE",
+        "요청",
+        "P2"
+      ],
+      "assignees": [
+        "yuudong123"
+      ]
+    },
+    {
+      "number": 72,
+      "title": "[MO][MO-10] 배포 버전 태그·실행·복구 절차 동결 (10-13~10-15)",
+      "labels": [
+        "MO",
+        "요청",
+        "P2"
+      ],
+      "assignees": [
+        "h-yuna-lab"
+      ]
+    },
+    {
+      "number": 71,
+      "title": "[MO][MO-09] 최종 수용시험 자동화",
+      "labels": [
+        "MO",
+        "요청",
+        "P2"
+      ],
+      "assignees": [
+        "h-yuna-lab"
+      ]
+    },
+    {
+      "number": 70,
+      "title": "[MO][MO-08] 위치 복구·로그 순환·장애 시험",
+      "labels": [
+        "MO",
+        "요청",
+        "P2"
+      ],
+      "assignees": [
+        "h-yuna-lab"
+      ]
+    },
+    {
+      "number": 68,
+      "title": "[BE][BE-11] API·DB 계약 동결 (10-13~10-15)",
+      "labels": [
+        "BE",
+        "요청",
+        "P2"
+      ],
+      "assignees": [
+        "cyanaria89"
+      ]
+    },
+    {
+      "number": 66,
+      "title": "[BE][BE-10] 연속 요청·오류·CSV 통합시험",
+      "labels": [
+        "BE",
+        "요청",
+        "P2"
+      ],
+      "assignees": [
+        "cyanaria89"
+      ]
+    },
+    {
+      "number": 65,
+      "title": "[ALL][ALL-04] 최종 수용시험 (10-12)",
+      "labels": [
+        "DM",
+        "FE",
+        "BE",
+        "MO",
+        "요청",
+        "P1"
+      ],
+      "assignees": [
+        "yuudong123"
+      ]
+    },
+    {
+      "number": 39,
+      "title": "[ALL] Git 이슈 작성 양식과 라벨 규칙 제안",
+      "labels": [
+        null
+      ],
+      "assignees": [
+        null
+      ]
+    }
+  ]
+}
