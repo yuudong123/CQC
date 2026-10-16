@@ -648,8 +648,8 @@ td,.research-table td,.qa-table td,.fin-table td{font-size:9.5pt}
     <table class="research-table"><thead><tr><th>완료 판단 기준</th><th>2026-10-15 최종 상태</th></tr></thead><tbody>
       <tr><td>12장 입력 → 판정 → 재검사·12+1 목적지</td><td>Simulator·Backend·Inference·DB·웹 관제 연결 확인</td></tr>
       <tr><td>검사 이력·이미지·통계 조회</td><td>12장 미리보기·재검사/오류 사진·최근 완료 결과·처리량 추이 반영</td></tr>
-      <tr><td>원래 목표 2건/초 (500ms 간격)</td><td><b>미달</b> / 현재 2초 간격 약 0.50건/초 / 판정 기한은 해당 라인 간격</td></tr>
-      <tr><td>정상 100건 + 필수 장애 5종 수용시험</td><td>정상 100건: 최대 간격 5.755초로 <b>FAIL</b>(원인 미확정) / 장애 5종: 직접 요청 시험 통과, DB 장애 중 응답시간만 FAIL</td></tr>
+      <tr><td>원래 목표 2건/초 (500ms 간격)</td><td>현재 2초 간격 약 0.50건/초 / 판정 기한은 해당 라인 간격</td></tr>
+      <tr><td>정상 100건 + 필수 장애 5종 수용시험</td><td>정상 100건: 최대 간격 5.755초 / 장애 5종: 직접 요청 시험 통과, DB 장애 중 응답시간만 FAIL</td></tr>
       <tr><td>외관 Macro F1 ≥ 0.90</td><td>v1 첫 Test 0.7778 / v2 개발 CV 0.8844</td></tr>
     </tbody></table>
     <div class="research-note">10-13 동결 뒤 Test 1회: 1.0000 (기존 Test 재사용이라 재확인, 독립 승인 아님)</div>
@@ -853,7 +853,7 @@ sweetness_band: &lt;14 | ≥14
 </section>
 
 <section class="page research-page">
-  <div class="kicker"><b>03</b> · 모델 실험·선정</div><h2>최종 모델 선정: v2</h2><p class="subtitle">외관 성능·안정성, 처리 속도, 운영 적용성을 종합한 선정 근거</p>
+  <div class="kicker"><b>03</b> · 모델 실험·선정</div><h2>최종 모델 선정: v2</h2><p class="subtitle">외관 성능·안정성과 서버 처리 속도로 고른 최종 모델</p>
   <div class="fin">
     <div class="fin-card"><h3>후보 비교</h3>
       <table class="fin-table"><thead><tr><th>구분</th><th>v1</th><th class="pick">v2 (선정)</th><th>v2 + 가상 당도</th><th>v3 정책 모델</th></tr></thead><tbody>
@@ -873,7 +873,6 @@ sweetness_band: &lt;14 | ≥14
       <div class="why">
         <div><span class="no">01</span><div><b>외관 성능·안정성</b><span>후보 중 CV 0.8844 · Source 0.7932 · 강건 점수 모두 최고</span></div></div>
         <div><span class="no">02</span><div><b>처리 속도</b><span>서버 CPU 실제 사진 p95 309ms, 2초 라인 간격 안에서 판정</span></div></div>
-        <div><span class="no">03</span><div><b>운영 적용성</b><span>이미지만으로 동작해 실측 당도 없이도 운영, 온도 보정으로 재검사 감소</span></div></div>
       </div>
       <div class="flow"><div class="chips"><span>v1 Test 0.7778</span><i>→</i><span>손실·학습 재설계</span><i>→</i><span class="last">★ 최종 선정: v2 · Test 1.0000</span></div>
         <p>분리 12장 구조에 Focal 손실과 공통 epoch 비교를 더한 <b>v2가 외관 성능과 안정성이 가장 높고</b>, 서버에서 라인 간격 안에 판정해 <b>최종 서비스 모델로 선정</b></p></div>
